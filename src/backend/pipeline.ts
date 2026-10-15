@@ -16,6 +16,7 @@ import type { CjGet } from "./cj.ts";
 import type { Browse } from "./qa-browser.ts";
 import { storeSteps } from "./store.ts";
 import { ensureMailbox, mailDns, mailSetup } from "./mail.ts";
+import { enableSmtp, imapHasSubject, type InboxCheck } from "./smtp.ts";
 
 export interface PipelineDeps {
   db: DatabaseSync;
@@ -36,6 +37,8 @@ export interface PipelineDeps {
   cj: CjGet;
   /** QA 截图用的浏览器；没有就跳过截图 */
   browse?: Browse;
+  /** 查客服邮箱收件箱（确认测试邮件送达）；默认用 IMAP */
+  inbox?: InboxCheck;
 }
 
 export interface SiteRow {
@@ -334,6 +337,13 @@ export async function provisionSite(d: PipelineDeps, siteId: number): Promise<{ 
           ? `已补上 ${r.fixed.length} 组记录（${[...new Set(r.fixed.map((f) => f.split(" ")[0]))].join("、")}）${r.snapshotId ? `，改动前的 DNS 快照 #${r.snapshotId}` : ""}`
           : "MX、SPF、DKIM、DMARC 都已正确",
       };
+    },
+
+    async smtp() {
+      // 发不出去不让建站失败：退回主机默认发信，QA 和站点页提醒
+      const r = await enableSmtp(ctx, d.inbox ?? imapHasSubject);
+      if (!r.ok) emit("warn", { message: r.detail });
+      return { status: r.ok ? "done" : "skipped", detail: r.detail };
     },
 
     async enroll() {

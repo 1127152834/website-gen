@@ -15,6 +15,7 @@ import { provisionSite, siteContext, type PipelineDeps } from "./pipeline.ts";
 import { createChats } from "./agent.ts";
 import { dueReverts, listChanges, revertChange, scheduleRevert } from "./changes.ts";
 import { ensureMailbox, mailDns, mailSetup, mailStatus } from "./mail.ts";
+import { enableSmtp, imapHasSubject, resetMailboxPassword, saveMailboxPassword, sendTestEmail, smtpStatus } from "./smtp.ts";
 import { launchSite } from "./launch.ts";
 import { buildRuntime, completeText, listProviders, listRoles, pingModel, seedModelDefaults, setProviderKey, setRole } from "./models.ts";
 import { browseWithEdge } from "./qa-browser.ts";
@@ -261,6 +262,30 @@ const handlers: Handlers = {
   "mail.password": (p) => {
     const row = db.prepare("SELECT mailbox_ciphertext FROM sites WHERE id = ?").get(siteIdOf(p)) as { mailbox_ciphertext: Uint8Array | null } | undefined;
     return row?.mailbox_ciphertext ? (JSON.parse(unseal(requireKey(), row.mailbox_ciphertext)) as { address: string; password: string }) : null;
+  },
+  // 交易邮件发信：状态、填已有邮箱的密码（先 IMAP 验证）后启用、发测试邮件、关闭
+  "smtp.status": (p) => smtpStatus(siteContext(pipelineDeps(), siteIdOf(p))),
+  "smtp.enable": async (p) => {
+    const ctx = siteContext(pipelineDeps(), siteIdOf(p));
+    const password = (p as { password?: string }).password;
+    if (password) await saveMailboxPassword(ctx, password);
+    const r = await enableSmtp(ctx, imapHasSubject);
+    if (r.ok) ctx.emit("step", { step: "smtp", name: "交易邮件发信", status: "done", detail: r.detail });
+    else ctx.emit("warn", { message: r.detail });
+    return r;
+  },
+  // 不知道已有邮箱的密码：由应用生成新密码改掉（你在界面上确认后才调），然后启用发信
+  "smtp.resetPassword": async (p) => {
+    const ctx = siteContext(pipelineDeps(), siteIdOf(p));
+    await resetMailboxPassword(ctx);
+    const r = await enableSmtp(ctx, imapHasSubject);
+    ctx.emit(r.ok ? "step" : "warn", r.ok ? { step: "smtp", name: "交易邮件发信", status: "done", detail: `已为 ${ctx.site.domain} 的客服邮箱生成新密码；${r.detail}` } : { message: r.detail });
+    return r;
+  },
+  "smtp.test": (p) => sendTestEmail(siteContext(pipelineDeps(), siteIdOf(p)), String((p as { to: string }).to ?? "").trim(), imapHasSubject),
+  "smtp.disable": async (p) => {
+    await siteContext(pipelineDeps(), siteIdOf(p)).wp("POST", "site-agent/v1/smtp", { enabled: false });
+    return { ok: true };
   },
   "changes.list": (p) => listChanges(db, siteIdOf(p)),
   // 回滚由你在界面上点（不是 pi 的工具调用）

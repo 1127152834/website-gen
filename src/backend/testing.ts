@@ -122,6 +122,12 @@ export function fakeHostinger(opts: { websiteAlreadyThere?: boolean } = {}) {
       case "mail_mailboxes_create-mailbox":
         st.mailboxes.push({ id: `AC${st.mailboxes.length + 1}`, address: `${params.local_part}@${DOMAIN}`, status: "active" });
         return {};
+      case "mail_mailboxes_change-mailbox-password": {
+        const box = st.mailboxes.find((m) => m.id === params.mailboxId) as ({ password?: string } & (typeof st.mailboxes)[number]) | undefined;
+        if (!box) throw new HostingerError("HTTP 404: mailbox not found", 404);
+        box.password = params.password;
+        throw new HostingerError("HTTP 500: [Hosting:9999] Request failed", 500);
+      }
       case "mail_aliases_list":
         return { data: st.aliases, meta: { total: st.aliases.length } };
       case "mail_aliases_create-alias":
@@ -166,6 +172,10 @@ export function fakeSite(st: ReturnType<typeof fakeHostinger>["st"], opts: { rej
     settings: {} as Record<string, unknown>,
     styles: null as unknown,
     failSiteWrites: false,
+    // 伴侣插件的 SMTP：保存的设置、发出的测试邮件；failSmtp 模拟密码错误
+    smtp: null as null | { host: string; port: number; username: string; password: string; from_email: string },
+    sentMails: [] as { to: string; subject: string; viaSmtp: boolean }[],
+    failSmtp: false,
     zones: [] as { id: number; name: string; locations: unknown[]; methods: { method_id: string; enabled: boolean; settings: unknown }[] }[],
     categories: [] as { id: number; name: string; slug: string }[],
     products: [] as { id: number; sku: string; status: string; name: string; type: string; price?: string; images: unknown[]; variations: { id: number; price: string }[]; description: string; short_description: string; featured: boolean }[],
@@ -215,6 +225,15 @@ export function fakeSite(st: ReturnType<typeof fakeHostinger>["st"], opts: { rej
         if (body.info) wp.info = body.info;
       }
       return json({ options: wp.options, info: wp.info });
+    }
+    if (path === "site-agent/v1/smtp") {
+      if (method === "POST") wp.smtp = body.enabled === false ? null : { host: body.host, port: body.port, username: body.username, password: body.password, from_email: body.from_email };
+      return json({ enabled: Boolean(wp.smtp), host: wp.smtp?.host ?? null, username: wp.smtp?.username ?? null });
+    }
+    if (path === "site-agent/v1/smtp/test") {
+      if (wp.smtp && wp.failSmtp) return json({ ok: false, smtp: true, error: "SMTP Error: Could not authenticate." });
+      wp.sentMails.push({ to: body.to, subject: body.subject, viaSmtp: Boolean(wp.smtp) });
+      return json({ ok: true, smtp: Boolean(wp.smtp), error: null });
     }
     if (path === "site-agent/v1/privacy-page" && method === "GET") {
       const page = wp.pages.get(Number(wp.options.wp_page_for_privacy_policy))!;
@@ -367,6 +386,7 @@ export function deps(db: PipelineDeps["db"], exec: HostingerExec, fetchImpl: typ
     ai: fakeAi([]),
     cj: fakeCj,
     browse: async (input) => ({ shots: input.pages.map((p) => ({ name: p.name, file: `${p.name}.png` })), problems: [] }),
+    inbox: async () => true,
     ...extra,
   };
 }

@@ -403,6 +403,11 @@ async function runQa(ctx: StepCtx): Promise<QaReport> {
         bad.length ? bad.map((c) => `${c.key}：${c.detail}`).join("；") + "。到站点页点「检查并修复」" : "四项都正确");
     }
   }
+  // 只看设置，不在每次 QA 时发测试邮件（免得刷屏）；发信测试在「交易邮件发信」步骤和站点页
+  await attempt("smtp", "交易邮件经客服邮箱发出", "warn", async () => {
+    const s = (await wp("GET", "site-agent/v1/smtp")) as { enabled: boolean; username: string | null };
+    add("smtp", "交易邮件经客服邮箱发出", "warn", s.enabled, s.enabled ? `经 SMTP 用 ${s.username} 发出` : "用的是主机默认发信，订单邮件容易进垃圾箱；到站点页启用");
+  });
   add("images", "商品图片版权", "warn", false, "图片来自 CJ 商品资料，正式上线前建议换成供应商授权或自己拍摄的图片");
 
   // 浏览器里看一遍：管理员登录后绕过维护模式，截图首页、商品列表、商品页，并把一个商品加入购物车走到结账页

@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Site Companion
  * Description:       Lets the website-gen desktop app manage this store over the REST API.
- * Version:           0.3.3
+ * Version:           0.4.0
  * Requires at least: 6.8
  * Requires PHP:      8.1
  * License:           GPLv2 or later
@@ -186,6 +186,138 @@ function site_companion_set_site( WP_REST_Request $request ) {
 		update_option( SITE_COMPANION_INFO, array_map( fn( $v ) => sanitize_text_field( (string) $v ), $info ), false );
 	}
 	return site_companion_get_site();
+}
+
+// ---- Transactional mail over SMTP --------------------------------------------------------------
+// WooCommerce and WordPress mail goes out through the store's own mailbox (e.g. support@ on Hostinger Email)
+// instead of the web server's sendmail, which mailbox providers often junk. The SMTP password is stored
+// encrypted with a key derived from this site's auth salt, so a database dump alone does not reveal it.
+const SITE_COMPANION_SMTP = 'site_companion_smtp';
+
+function site_companion_smtp_key(): string {
+	return hash( 'sha256', wp_salt( 'auth' ) . '|site-companion-smtp', true );
+}
+function site_companion_seal( string $plain ): string {
+	$nonce = random_bytes( SODIUM_CRYPTO_SECRETBOX_NONCEBYTES );
+	return base64_encode( $nonce . sodium_crypto_secretbox( $plain, $nonce, site_companion_smtp_key() ) );
+}
+function site_companion_unseal( string $sealed ): ?string {
+	$raw = base64_decode( $sealed, true );
+	if ( false === $raw || strlen( $raw ) <= SODIUM_CRYPTO_SECRETBOX_NONCEBYTES ) {
+		return null;
+	}
+	$plain = sodium_crypto_secretbox_open( substr( $raw, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES ), substr( $raw, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES ), site_companion_smtp_key() );
+	return false === $plain ? null : $plain;
+}
+
+/** Stored SMTP settings with the password decrypted, or null when SMTP is off. */
+function site_companion_smtp_config(): ?array {
+	$cfg = get_option( SITE_COMPANION_SMTP );
+	if ( ! is_array( $cfg ) || empty( $cfg['host'] ) || empty( $cfg['password'] ) ) {
+		return null;
+	}
+	$password = site_companion_unseal( (string) $cfg['password'] );
+	return null === $password ? null : array( 'password' => $password ) + $cfg;
+}
+
+add_action( 'phpmailer_init', 'site_companion_phpmailer' );
+function site_companion_phpmailer( $phpmailer ): void {
+	$cfg = site_companion_smtp_config();
+	if ( ! $cfg ) {
+		return;
+	}
+	$phpmailer->isSMTP();
+	$phpmailer->Host       = $cfg['host'];
+	$phpmailer->Port       = (int) $cfg['port'];
+	$phpmailer->SMTPSecure = $cfg['secure'];
+	$phpmailer->SMTPAuth   = true;
+	$phpmailer->Username   = $cfg['username'];
+	$phpmailer->Password   = $cfg['password'];
+	$phpmailer->Timeout    = 20;
+	// The SMTP server only accepts mail sent as the mailbox it authenticated.
+	$phpmailer->setFrom( $cfg['from_email'], $cfg['from_name'] ? $cfg['from_name'] : $phpmailer->FromName, false );
+	$phpmailer->Sender = $cfg['from_email'];
+}
+
+add_action(
+	'rest_api_init',
+	static function (): void {
+		$can = fn() => current_user_can( 'manage_woocommerce' );
+		register_rest_route(
+			'site-agent/v1',
+			'/smtp',
+			array(
+				array( 'methods' => 'GET', 'permission_callback' => $can, 'callback' => 'site_companion_get_smtp' ),
+				array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => 'site_companion_set_smtp' ),
+			)
+		);
+		register_rest_route( 'site-agent/v1', '/smtp/test', array( 'methods' => 'POST', 'permission_callback' => $can, 'callback' => 'site_companion_test_smtp' ) );
+	}
+);
+
+function site_companion_get_smtp(): array {
+	$cfg = get_option( SITE_COMPANION_SMTP );
+	$on  = null !== site_companion_smtp_config();
+	return array(
+		'enabled'    => $on,
+		'host'       => $on ? $cfg['host'] : null,
+		'port'       => $on ? (int) $cfg['port'] : null,
+		'secure'     => $on ? $cfg['secure'] : null,
+		'username'   => $on ? $cfg['username'] : null,
+		'from_email' => $on ? $cfg['from_email'] : null,
+		'from_name'  => $on ? $cfg['from_name'] : null,
+	);
+}
+
+function site_companion_set_smtp( WP_REST_Request $request ) {
+	if ( false === $request->get_param( 'enabled' ) ) {
+		delete_option( SITE_COMPANION_SMTP );
+		return site_companion_get_smtp();
+	}
+	$host     = sanitize_text_field( (string) $request->get_param( 'host' ) );
+	$port     = (int) $request->get_param( 'port' );
+	$secure   = (string) $request->get_param( 'secure' );
+	$username = sanitize_email( (string) $request->get_param( 'username' ) );
+	$from     = sanitize_email( (string) $request->get_param( 'from_email' ) );
+	$password = (string) $request->get_param( 'password' );
+	if ( '' === $host || ! in_array( $port, array( 25, 465, 587, 2525 ), true ) || ! in_array( $secure, array( 'ssl', 'tls', '' ), true ) || ! is_email( $username ) || ! is_email( $from ) || '' === $password ) {
+		return new WP_Error( 'site_companion_smtp', 'host, port (25/465/587/2525), secure (ssl/tls), username, from_email and password are required.', array( 'status' => 400 ) );
+	}
+	update_option(
+		SITE_COMPANION_SMTP,
+		array(
+			'host'       => $host,
+			'port'       => $port,
+			'secure'     => $secure,
+			'username'   => $username,
+			'password'   => site_companion_seal( $password ),
+			'from_email' => $from,
+			'from_name'  => sanitize_text_field( (string) $request->get_param( 'from_name' ) ),
+		),
+		false
+	);
+	return site_companion_get_smtp();
+}
+
+// Sends one plain-text email through wp_mail (the same path WooCommerce uses) and reports the SMTP error if any.
+function site_companion_test_smtp( WP_REST_Request $request ) {
+	$to = sanitize_email( (string) $request->get_param( 'to' ) );
+	if ( ! is_email( $to ) ) {
+		return new WP_Error( 'site_companion_smtp_test', 'A valid "to" address is required.', array( 'status' => 400 ) );
+	}
+	$error  = null;
+	$listen = function ( WP_Error $e ) use ( &$error ) {
+		$error = $e->get_error_message();
+	};
+	add_action( 'wp_mail_failed', $listen );
+	$subject = sanitize_text_field( (string) $request->get_param( 'subject' ) );
+	$sent    = wp_mail( $to, '' !== $subject ? $subject : 'Test email from ' . get_bloginfo( 'name' ), "This is a test email from your store's mail settings.\n\nIf you received it, order emails will be delivered the same way.\n" );
+	remove_action( 'wp_mail_failed', $listen );
+	return array(
+		'ok'    => (bool) $sent && null === $error,
+		'smtp'  => null !== site_companion_smtp_config(),
+		'error' => $error,
+	);
 }
 
 // [site_info key="email|phone|address|entity|announcement|copyright"]: per-site details used by the shared theme's header and footer.

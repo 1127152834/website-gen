@@ -55,7 +55,7 @@ export interface RoleSummary {
   problem: string | null;
 }
 
-/** 建站流水线的步骤（顺序即执行顺序）：前 11 步在 Hostinger 上搭站（含邮箱），后 6 步填内容并验收 */
+/** 建站流水线的步骤（顺序即执行顺序）：前 12 步在 Hostinger 上搭站（含邮箱和发信），后 6 步填内容并验收 */
 export const PROVISION_STEPS = [
   { key: "precheck", name: "预检" },
   { key: "create_site", name: "创建网站" },
@@ -68,6 +68,7 @@ export const PROVISION_STEPS = [
   { key: "enroll", name: "注册伴侣插件" },
   { key: "mailbox", name: "客服邮箱" },
   { key: "mail_dns", name: "邮件 DNS" },
+  { key: "smtp", name: "交易邮件发信" },
   { key: "products_pick", name: "从 CJ 选品" },
   { key: "content", name: "AI 撰写文案与政策" },
   { key: "store_setup", name: "配置商店" },
@@ -188,6 +189,15 @@ export interface MailStatus {
   passwordSaved: boolean;
   /** 有 Hostinger 邮箱订单时才检查 DNS */
   dns: MailDnsResult | null;
+}
+
+/** 交易邮件发信设置（站点上伴侣插件的 SMTP） */
+export interface SmtpStatus {
+  enabled: boolean;
+  host: string | null;
+  username: string | null;
+  /** 这台电脑上保存了客服邮箱的密码（流水线新建的，或你在站点页填过） */
+  passwordSaved: boolean;
 }
 
 export interface Request {

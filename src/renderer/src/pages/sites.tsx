@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { CircleAlert, CircleCheck, Clock, ExternalLink, LoaderCircle, MessageSquarePlus, RefreshCw, RotateCcw, Send, Square, Wrench } from "lucide-react";
-import type { ChangeSummary, ChatEvent, ChatItem, MailStatus, SiteListItem } from "../../../shared/protocol.ts";
+import type { ChangeSummary, ChatEvent, ChatItem, MailStatus, SiteListItem, SmtpStatus } from "../../../shared/protocol.ts";
 import { call, onChanged, onChat, onConnect } from "@/lib/backend.ts";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -422,6 +422,7 @@ function MailPanel({ siteId }: { siteId: number }) {
               ))}
             </ul>
           )}
+          {status.onDomain && status.mailbox === "active" && <SmtpSection siteId={siteId} email={status.email} />}
           {status.dns && !status.dns.atHostinger && status.dns.manual.length > 0 && (
             <div className="text-xs">
               <p className="text-amber-700">这个域名的 DNS 不在 Hostinger，不能自动修，需要在 DNS 服务商那里添加：</p>
@@ -459,5 +460,127 @@ function MailPanel({ siteId }: { siteId: number }) {
         </AlertDialogContent>
       </AlertDialog>
     </section>
+  );
+}
+
+/** 交易邮件发信：WooCommerce 订单邮件经客服邮箱的 SMTP 发出；发测试邮件并确认送达 */
+function SmtpSection({ siteId, email }: { siteId: number; email: string }) {
+  const [smtp, setSmtp] = useState<SmtpStatus | null>(null);
+  const [password, setPassword] = useState("");
+  const [to, setTo] = useState(email);
+  const [busy, setBusy] = useState<"enable" | "test" | null>(null);
+  const [result, setResult] = useState<{ ok: boolean; text: string } | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = useCallback(() => {
+    call<SmtpStatus>("smtp.status", { siteId }).then(setSmtp, (e: Error) => setError(/HTTP 404/.test(e.message) ? "站点上的伴侣插件版本太旧，重新部署后才能设置发信" : e.message));
+  }, [siteId]);
+  useEffect(() => onConnect(load), [load]);
+
+  const enable = async (e?: FormEvent) => {
+    e?.preventDefault();
+    setBusy("enable");
+    setError(null);
+    setResult(null);
+    try {
+      const r = await call<{ ok: boolean; detail: string }>("smtp.enable", { siteId, password: password || undefined });
+      setResult({ ok: r.ok, text: r.detail });
+      setPassword("");
+      load();
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  };
+  const [confirmReset, setConfirmReset] = useState(false);
+  const resetPassword = async () => {
+    setBusy("enable");
+    setError(null);
+    setResult(null);
+    try {
+      const r = await call<{ ok: boolean; detail: string }>("smtp.resetPassword", { siteId });
+      setResult({ ok: r.ok, text: r.detail });
+      load();
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusy(null);
+      setConfirmReset(false);
+    }
+  };
+  const sendTest = async (e: FormEvent) => {
+    e.preventDefault();
+    setBusy("test");
+    setError(null);
+    setResult(null);
+    try {
+      const r = await call<{ sent: boolean; delivered: boolean | null; detail: string }>("smtp.test", { siteId, to });
+      setResult({ ok: r.sent && r.delivered !== false, text: r.detail });
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  return (
+    <div aria-label="交易邮件" className="flex flex-col gap-2 border-t pt-2">
+      <p className="text-xs font-medium">交易邮件</p>
+      {error && <p role="alert" className="text-xs text-destructive">{error}</p>}
+      {smtp && (smtp.enabled ? (
+        <>
+          <p className="flex gap-2 text-xs"><CircleCheck className="size-3.5 shrink-0 text-green-600" aria-hidden />订单邮件经 {smtp.host} 用 {smtp.username} 发出</p>
+          <form onSubmit={sendTest} className="flex gap-2">
+            <label htmlFor={`smtp-to-${siteId}`} className="sr-only">测试邮件收件人</label>
+            <input id={`smtp-to-${siteId}`} type="email" value={to} onChange={(e) => setTo(e.target.value)} className="h-7 min-w-0 flex-1 rounded-md border border-input bg-transparent px-2 text-xs outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+            <Button type="submit" size="sm" variant="outline" disabled={busy !== null || !to.trim()}>
+              {busy === "test" && <LoaderCircle className="motion-safe:animate-spin" aria-hidden />}
+              发测试邮件
+            </Button>
+          </form>
+          {busy === "test" && to.trim().toLowerCase() === email.toLowerCase() && <p className="text-xs text-muted-foreground">发出后会登录 {email} 的收件箱确认送达，最多等 90 秒。</p>}
+        </>
+      ) : smtp.passwordSaved ? (
+        <>
+          <p className="text-xs text-amber-700">还没启用：订单邮件用的是主机默认发信，容易进垃圾箱。</p>
+          <Button size="sm" className="self-start" onClick={() => void enable()} disabled={busy !== null}>
+            {busy === "enable" && <LoaderCircle className="motion-safe:animate-spin" aria-hidden />}
+            启用并发测试邮件
+          </Button>
+        </>
+      ) : (
+        <form onSubmit={enable} className="flex flex-col gap-2">
+          <p className="text-xs text-amber-700">{email} 是之前就有的邮箱，这里没有它的密码。填上后会先登录验证，再启用发信并发一封测试邮件。</p>
+          <label htmlFor={`smtp-pass-${siteId}`} className="sr-only">{email} 的密码</label>
+          <input id={`smtp-pass-${siteId}`} type="password" autoComplete="off" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={`${email} 的密码`} className="h-7 rounded-md border border-input bg-transparent px-2 text-xs outline-none focus-visible:ring-2 focus-visible:ring-ring" />
+          <Button type="submit" size="sm" className="self-start" disabled={busy !== null || !password}>
+            {busy === "enable" && <LoaderCircle className="motion-safe:animate-spin" aria-hidden />}
+            验证并启用
+          </Button>
+          <p className="text-xs text-muted-foreground">密码加密保存在这台电脑上，同时写到站点上供发信用（用站点自己的密钥加密）。</p>
+          <button type="button" className="self-start text-xs underline underline-offset-2" disabled={busy !== null} onClick={() => setConfirmReset(true)}>不知道密码？生成新密码</button>
+        </form>
+      ))}
+      <AlertDialog open={confirmReset} onOpenChange={(open) => !open && busy === null && setConfirmReset(false)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>给 {email} 生成新密码？</AlertDialogTitle>
+            <AlertDialogDescription>
+              应用会生成一个随机强密码替换现在的密码，加密保存在这台电脑上，可以在上面「显示」查看。之后在其他地方（邮件客户端、手机、网页邮箱）登录这个邮箱都要用新密码，旧密码立即失效。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={busy !== null}>取消</AlertDialogCancel>
+            <AlertDialogAction disabled={busy !== null} onClick={(e) => { e.preventDefault(); void resetPassword(); }}>
+              {busy === "enable" && <LoaderCircle className="motion-safe:animate-spin" aria-hidden />}
+              生成新密码并启用发信
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      {busy === "enable" && <p className="text-xs text-muted-foreground">正在启用并发送测试邮件，确认送达最多要 90 秒…</p>}
+      {result && <p role="status" className={cn("text-xs", result.ok ? "text-green-700" : "text-amber-700")}>{result.text}</p>}
+    </div>
   );
 }

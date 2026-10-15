@@ -154,6 +154,16 @@
 | 实测 | 「客服邮箱」：support@ 已存在，复用，新建了别名 orders@（核对过，你原有的 sandra@ 别名没动）；「邮件 DNS」：四项都正确，没有写入；QA 两项邮件检查通过（13/15，剩没连支付和图片版权两个提醒） |
 | 没实测 | 线上「补 DNS 记录」的写入路径：测试域名的记录本来就齐全，没有为了测试去删记录。写入逻辑由单元测试覆盖（缺 DKIM/DMARC、合并 SPF、两条 SPF、MX 指向别家等），写入格式在线上用 validate 验证过 |
 
+## 第十一轮：交易邮件经客服邮箱 SMTP 发出（2026-10-15，经你同意）
+
+| 项 | 结论 |
+|---|---|
+| 服务器 | 取自 Hostinger 的邮件客户端自动配置（`autoconfig.mail.hostinger.com`）：SMTP `smtp.hostinger.com:465` SSL，IMAP `imap.hostinger.com:993` SSL，用户名是完整邮箱 |
+| 伴侣插件 0.4.0 | `phpmailer_init` 接管 wp_mail（WooCommerce 也走这条路），发件人强制为登录的邮箱；SMTP 密码用站点 auth salt 派生的密钥加密（sodium secretbox）后存进选项，数据库被导出也看不到明文；`/smtp/test` 经 wp_mail 发一封并回报 SMTP 错误 |
+| 已有邮箱没有密码 | support@shopunitycart.com 是你之前在 hPanel 建的，应用里没有密码。新增「生成新密码」：应用生成随机强密码、先加密保存再调 `mail_mailboxes_change-mailbox-password`，再用 IMAP 登录确认生效 |
+| 实测 | 生成新密码后约 12 秒 IMAP 登录成功；启用 SMTP、经站点发测试邮件、IMAP 在收件箱里找到它，共 19 秒；WooCommerce 发件人设为 Shopunitycart / support@shopunitycart.com（`wc/v3/settings/email`）；QA 14/16，「交易邮件经客服邮箱发出」通过 |
+| 注意 | support@shopunitycart.com 的旧密码已失效。新密码只在实测用的临时库里（加密），可以自己运行 `node poc/out/show-mailbox-password.ts` 查看，或在 hPanel 里再改一个 |
+
 ## POC 带来的设计修正（已同步进方案 v0.6）
 
 1. **批准后唤醒 pi 要用 `sendCustomMessage(..., { triggerTurn: true })`**。会话空闲时调用 `followUp()` 只会排队，不会开启新一轮（实测）。
