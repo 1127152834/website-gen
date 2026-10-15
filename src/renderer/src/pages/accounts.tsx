@@ -30,6 +30,7 @@ function ago(ts: number | null): string {
   if (Math.abs(s) < 86400) return rtf.format(Math.round(s / 3600), "hour");
   return rtf.format(Math.round(s / 86400), "day");
 }
+const DOMAIN_STATUS: Record<string, string> = { active: "正常", pending_setup: "待设置（还没选定域名）", expired: "已过期", pending_verification: "待验证" };
 const daysLeft = (iso: string) => Math.ceil((Date.parse(iso) - Date.now()) / 86_400_000);
 
 export function AccountsPage() {
@@ -140,7 +141,8 @@ export function AccountsPage() {
                 const syncing = syncingIds.has(a.id);
                 const status = syncing ? { label: "同步中", variant: "outline" as const } : STATUS[a.status];
                 return (
-                  <TableRow key={a.id} data-state={a.id === selected ? "selected" : undefined}>
+                  // 整行都能点：之前只有账号名那几个字能点，点空白处没反应
+                  <TableRow key={a.id} data-state={a.id === selected ? "selected" : undefined} className="cursor-pointer" onClick={() => setSelected(a.id)}>
                     <TableCell>
                       <button type="button" className="text-left outline-none focus-visible:underline" onClick={() => setSelected(a.id)} aria-pressed={a.id === selected}>
                         <span className="font-medium">{a.label}</span>
@@ -199,9 +201,10 @@ export function AccountsPage() {
                   {domains.map((d) => {
                     const left = d.expiresAt ? daysLeft(d.expiresAt) : null;
                     return (
-                      <TableRow key={d.domain}>
-                        <TableCell className="font-medium">{d.domain}</TableCell>
-                        <TableCell className="text-muted-foreground">{d.status === "active" ? "正常" : (d.status ?? "—")}</TableCell>
+                      // 按 Hostinger 的域名 ID 做 key：待设置的域名没有名字，用名字做 key 会重复，切换账号时残留旧行
+                      <TableRow key={d.id}>
+                        <TableCell className="font-medium">{d.domain || <span className="font-normal text-muted-foreground">（待设置的域名）</span>}</TableCell>
+                        <TableCell className="text-muted-foreground">{DOMAIN_STATUS[d.status ?? ""] ?? d.status ?? "—"}</TableCell>
                         <TableCell className={cn("tabular-nums", left !== null && left <= 30 ? "text-amber-600" : "text-muted-foreground")}>
                           {d.expiresAt ? new Date(d.expiresAt).toLocaleDateString("zh-CN") : "—"}
                           {left !== null && left <= 30 && `（${left} 天后到期）`}

@@ -12,7 +12,7 @@ export function listFreeDomains(db: DatabaseSync): FreeDomain[] {
     SELECT d.domain, d.account_id, a.label, d.expires_at,
       EXISTS (SELECT 1 FROM mail_orders m WHERE m.domain = d.domain) AS has_mail
     FROM domains d JOIN hostinger_accounts a ON a.id = d.account_id
-    WHERE (d.status IS NULL OR d.status = 'active')
+    WHERE (d.status IS NULL OR d.status = 'active') AND d.domain <> ''
       AND NOT EXISTS (SELECT 1 FROM hosting_websites w WHERE w.domain = d.domain)
       AND NOT EXISTS (SELECT 1 FROM sites s WHERE s.domain = d.domain)
     ORDER BY d.domain`).all() as { domain: string; account_id: number; label: string; expires_at: string | null; has_mail: number }[];

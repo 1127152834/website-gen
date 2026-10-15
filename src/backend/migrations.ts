@@ -160,4 +160,7 @@ export const MIGRATIONS: string[] = [
 
   // 008：流水线新建的客服邮箱的地址和密码（加密）；复用已有邮箱时为空，密码在 hPanel 里管理
   `ALTER TABLE sites ADD COLUMN mailbox_ciphertext BLOB;`,
+
+  // 009：旧版同步把待设置域名（Hostinger 返回 domain=null）存成了字符串 "null"，改为空字符串
+  `UPDATE domains SET domain = '' WHERE domain = 'null';`,
 ];

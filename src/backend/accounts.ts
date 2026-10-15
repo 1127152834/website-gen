@@ -60,7 +60,8 @@ export async function syncAccount(db: DatabaseSync, accountId: number, exec: Hos
     const insSite = db.prepare("INSERT INTO hosting_websites (account_id, domain, username, order_id, website_type, is_enabled, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)");
     for (const w of websites) insSite.run(accountId, String(w.domain), str(w.username), w.order_id == null ? null : Number(w.order_id), str(w.website_type), flag(w.is_enabled), str(w.created_at));
     const insDomain = db.prepare("INSERT INTO domains (account_id, external_id, domain, type, status, expires_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    for (const d of domains) insDomain.run(accountId, Number(d.id), String(d.domain), str(d.type), str(d.status), str(d.expires_at), str(d.created_at));
+    // 待设置的域名（status=pending_setup）Hostinger 返回 domain=null：存成空字符串，绝不能存成 "null"
+    for (const d of domains) insDomain.run(accountId, Number(d.id), str(d.domain) ?? "", str(d.type), str(d.status), str(d.expires_at), str(d.created_at));
     const insMail = db.prepare("INSERT INTO mail_orders (account_id, external_id, domain, plan, status, seats, is_trial, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     for (const m of mailOrders) {
       const plan = m.plan as Obj | undefined;
@@ -113,11 +114,12 @@ export function listAccounts(db: DatabaseSync): AccountSummary[] {
 export function listDomains(db: DatabaseSync, accountId: number): DomainSummary[] {
   const rows = db.prepare(`
     -- 网站和邮箱可能在别的 Hostinger 账号下（跨账号绑定），所以这里不限账号
-    SELECT d.domain, d.status, d.expires_at,
+    SELECT d.external_id, d.domain, d.status, d.expires_at,
       EXISTS (SELECT 1 FROM hosting_websites w WHERE w.domain = d.domain) AS has_website,
       EXISTS (SELECT 1 FROM mail_orders m WHERE m.domain = d.domain) AS has_mail
-    FROM domains d WHERE d.account_id = ? ORDER BY d.domain`).all(accountId) as Obj[];
+    FROM domains d WHERE d.account_id = ? ORDER BY d.domain = '', d.domain`).all(accountId) as Obj[];
   return rows.map((r) => ({
+    id: Number(r.external_id),
     domain: String(r.domain),
     status: str(r.status),
     expiresAt: str(r.expires_at),

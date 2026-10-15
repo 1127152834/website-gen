@@ -89,3 +89,31 @@ test("removeAccount deletes the account and its synced resources", async () => {
   assert.equal(listAccounts(db).length, 0);
   assert.equal((db.prepare("SELECT count(*) AS n FROM domains").get() as { n: number }).n, 0);
 });
+
+test("domains Hostinger returns without a name (pending setup) are kept as unnamed, each with its own id", async () => {
+  const db = fresh();
+  const id = await addAccount(db, key, { label: "账号二", token: "tok-85b0" }, fake({ hosting_orders_list: page([]) }));
+  const r = snapshot(["binessentials.com"]);
+  r.domains_portfolio_list.push(
+    { id: 7, domain: null as unknown as string, type: "domain", status: "pending_setup", expires_at: null as unknown as string, created_at: "2026-10-14T00:00:00Z" },
+    { id: 8, domain: null as unknown as string, type: "domain", status: "pending_setup", expires_at: null as unknown as string, created_at: "2026-10-14T00:00:00Z" },
+  );
+  await syncAccount(db, id, fake(r));
+  const domains = listDomains(db, id);
+  assert.deepEqual(domains.map((d) => [d.id, d.domain, d.status]), [[1, "binessentials.com", "active"], [7, "", "pending_setup"], [8, "", "pending_setup"]]);
+  assert.ok(!domains.some((d) => d.domain === "null"), 'never the string "null"');
+  assert.equal(new Set(domains.map((d) => d.id)).size, domains.length, "ids are unique, so the UI can key rows by them");
+
+  const { listFreeDomains } = await import("./batches.ts");
+  assert.ok(!listFreeDomains(db).some((d) => d.domain === "" || d.domain === "null"), "unnamed domains cannot be picked for a site");
+});
+
+test('domains already saved as the string "null" by older versions are cleaned up by the migration', async () => {
+  const { migrate } = await import("./db.ts");
+  const db = fresh();
+  const id = await addAccount(db, key, { label: "账号二", token: "tok-85b0" }, fake({ hosting_orders_list: page([]) }));
+  db.prepare("INSERT INTO domains VALUES (?, 7, 'null', 'domain', 'pending_setup', NULL, NULL)").run(id);
+  db.exec("PRAGMA user_version = 8"); // 回到修复前的版本
+  migrate(db);
+  assert.deepEqual(listDomains(db, id).map((d) => d.domain), [""]);
+});

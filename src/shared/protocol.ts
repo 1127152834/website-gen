@@ -24,6 +24,9 @@ export interface AccountSummary {
 }
 
 export interface DomainSummary {
+  /** Hostinger 的域名 ID（同一账号内唯一；待设置的域名没有名字，只能靠它区分） */
+  id: number;
+  /** 待设置的域名为空字符串 */
   domain: string;
   status: string | null;
   expiresAt: string | null;
