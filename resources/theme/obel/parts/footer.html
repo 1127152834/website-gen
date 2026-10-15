@@ -12,6 +12,10 @@
 			<!-- /wp:group -->
 
 			<!-- wp:site-tagline /-->
+
+			<!-- wp:shortcode -->
+[site_info key="email"]<br>[site_info key="phone"]<br>[site_info key="address"]
+			<!-- /wp:shortcode -->
 		</div>
 		<!-- /wp:column -->
 
@@ -23,7 +27,6 @@
 
 			<!-- wp:navigation {"overlayMenu":"never","layout":{"type":"flex","orientation":"vertical"},"style":{"spacing":{"blockGap":"var:preset|spacing|xs"},"typography":{"fontSize":"var(--wp--preset--font-size--sm)"}},"ariaLabel":"Shop"} -->
 				<!-- wp:navigation-link {"label":"All products","url":"/shop/","kind":"custom","isTopLevelLink":true} /-->
-				<!-- wp:navigation-link {"label":"Lookbook","url":"/lookbook/","kind":"custom","isTopLevelLink":true} /-->
 				<!-- wp:navigation-link {"label":"Cart","url":"/cart/","kind":"custom","isTopLevelLink":true} /-->
 				<!-- wp:navigation-link {"label":"My account","url":"/my-account/","kind":"custom","isTopLevelLink":true} /-->
 			<!-- /wp:navigation -->
@@ -32,13 +35,13 @@
 
 		<!-- wp:column -->
 		<div class="wp-block-column">
-			<!-- wp:heading {"level":3,"content":"Studio","style":{"typography":{"fontSize":"var(--wp--preset--font-size--xs)","textTransform":"uppercase","letterSpacing":"var(--wp--custom--letter-spacing--wider)"},"spacing":{"margin":{"top":"0","bottom":"var:preset|spacing|sm"}}}} -->
-			<h3 class="wp-block-heading" style="margin-top:0;margin-bottom:var(--wp--preset--spacing--sm);font-size:var(--wp--preset--font-size--xs);letter-spacing:var(--wp--custom--letter-spacing--wider);text-transform:uppercase">Studio</h3>
+			<!-- wp:heading {"level":3,"content":"Company","style":{"typography":{"fontSize":"var(--wp--preset--font-size--xs)","textTransform":"uppercase","letterSpacing":"var(--wp--custom--letter-spacing--wider)"},"spacing":{"margin":{"top":"0","bottom":"var:preset|spacing|sm"}}}} -->
+			<h3 class="wp-block-heading" style="margin-top:0;margin-bottom:var(--wp--preset--spacing--sm);font-size:var(--wp--preset--font-size--xs);letter-spacing:var(--wp--custom--letter-spacing--wider);text-transform:uppercase">Company</h3>
 			<!-- /wp:heading -->
 
-			<!-- wp:navigation {"overlayMenu":"never","layout":{"type":"flex","orientation":"vertical"},"style":{"spacing":{"blockGap":"var:preset|spacing|xs"},"typography":{"fontSize":"var(--wp--preset--font-size--sm)"}},"ariaLabel":"Studio"} -->
+			<!-- wp:navigation {"overlayMenu":"never","layout":{"type":"flex","orientation":"vertical"},"style":{"spacing":{"blockGap":"var:preset|spacing|xs"},"typography":{"fontSize":"var(--wp--preset--font-size--sm)"}},"ariaLabel":"Company"} -->
 				<!-- wp:navigation-link {"label":"About","url":"/about/","kind":"custom","isTopLevelLink":true} /-->
-				<!-- wp:navigation-link {"label":"Journal","url":"/journal/","kind":"custom","isTopLevelLink":true} /-->
+				<!-- wp:navigation-link {"label":"FAQ","url":"/faq/","kind":"custom","isTopLevelLink":true} /-->
 				<!-- wp:navigation-link {"label":"Contact","url":"/contact/","kind":"custom","isTopLevelLink":true} /-->
 			<!-- /wp:navigation -->
 		</div>
@@ -46,14 +49,15 @@
 
 		<!-- wp:column -->
 		<div class="wp-block-column">
-			<!-- wp:heading {"level":3,"content":"Service","style":{"typography":{"fontSize":"var(--wp--preset--font-size--xs)","textTransform":"uppercase","letterSpacing":"var(--wp--custom--letter-spacing--wider)"},"spacing":{"margin":{"top":"0","bottom":"var:preset|spacing|sm"}}}} -->
-			<h3 class="wp-block-heading" style="margin-top:0;margin-bottom:var(--wp--preset--spacing--sm);font-size:var(--wp--preset--font-size--xs);letter-spacing:var(--wp--custom--letter-spacing--wider);text-transform:uppercase">Service</h3>
+			<!-- wp:heading {"level":3,"content":"Policies","style":{"typography":{"fontSize":"var(--wp--preset--font-size--xs)","textTransform":"uppercase","letterSpacing":"var(--wp--custom--letter-spacing--wider)"},"spacing":{"margin":{"top":"0","bottom":"var:preset|spacing|sm"}}}} -->
+			<h3 class="wp-block-heading" style="margin-top:0;margin-bottom:var(--wp--preset--spacing--sm);font-size:var(--wp--preset--font-size--xs);letter-spacing:var(--wp--custom--letter-spacing--wider);text-transform:uppercase">Policies</h3>
 			<!-- /wp:heading -->
 
-			<!-- wp:navigation {"overlayMenu":"never","layout":{"type":"flex","orientation":"vertical"},"style":{"spacing":{"blockGap":"var:preset|spacing|xs"},"typography":{"fontSize":"var(--wp--preset--font-size--sm)"}},"ariaLabel":"Service"} -->
-				<!-- wp:navigation-link {"label":"FAQ","url":"/faq/","kind":"custom","isTopLevelLink":true} /-->
-				<!-- wp:navigation-link {"label":"Shipping & returns","url":"/shipping-returns/","kind":"custom","isTopLevelLink":true} /-->
+			<!-- wp:navigation {"overlayMenu":"never","layout":{"type":"flex","orientation":"vertical"},"style":{"spacing":{"blockGap":"var:preset|spacing|xs"},"typography":{"fontSize":"var(--wp--preset--font-size--sm)"}},"ariaLabel":"Policies"} -->
+				<!-- wp:navigation-link {"label":"Shipping","url":"/shipping/","kind":"custom","isTopLevelLink":true} /-->
+				<!-- wp:navigation-link {"label":"Returns & refunds","url":"/returns/","kind":"custom","isTopLevelLink":true} /-->
 				<!-- wp:navigation-link {"label":"Privacy policy","url":"/privacy-policy/","kind":"custom","isTopLevelLink":true} /-->
+				<!-- wp:navigation-link {"label":"Terms of service","url":"/terms/","kind":"custom","isTopLevelLink":true} /-->
 			<!-- /wp:navigation -->
 		</div>
 		<!-- /wp:column -->
@@ -67,7 +71,7 @@
 	<!-- wp:group {"align":"wide","layout":{"type":"flex","flexWrap":"wrap","justifyContent":"space-between","verticalAlignment":"center"},"style":{"spacing":{"blockGap":"var:preset|spacing|sm"}}} -->
 	<div class="wp-block-group alignwide">
 		<!-- wp:paragraph {"fontSize":"xs","textColor":"tertiary"} -->
-		<p class="has-tertiary-color has-text-color has-xs-font-size">© Site Title. All rights reserved.</p>
+		<p class="has-tertiary-color has-text-color has-xs-font-size">[site_info key="copyright"]</p>
 		<!-- /wp:paragraph -->
 
 	</div>

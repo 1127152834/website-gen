@@ -282,7 +282,7 @@ flowchart LR
 | 地址 | ★ | — | 在页脚和联系页公开显示；Google Merchant Center 和支付平台审核都会看；也作为默认退货地址 |
 | 客服邮箱 | ★ | 自动创建 support@域名 | 只有该域名已有 Hostinger 邮箱订单时才能自动创建（预检会查）；没有就改填一个已有邮箱 |
 | 客服电话 | ★ | — | |
-| 发货时效 | ★ | — | 处理时效 + 运输时效，例如「1–3 个工作日处理，5–10 天送达」。你们自己发货，只有你知道；写进商品页和运输政策（FTC 邮购规则要求有依据） |
+| 发货时效 | ★ | — | 处理时效 + 运输时效，各填「最少–最多」个工作日（例如处理 1–3、运输 5–10）。你们自己发货，只有你知道；原样写进运输政策和 FAQ，代码会核对 AI 写出的天数（FTC 邮购规则要求有依据） |
 
 表单字段由一份 zod schema 定义，同时用作 CSV 导入模板和 Site Spec 的输入。
 
@@ -354,6 +354,7 @@ flowchart TD
 - 域名和主机在同一账号：⑥ 直接带域名建站，不需要改 DNS。不在同一账号：先用临时域名建站，到 ⑫ 再做跨账号 DNS 绑定（流程见 4.5）
 - 需要你本人做的事会进入「待你操作」列表，**不会阻塞其他站**：
   - **支付账户授权**：Stripe / PayPal 必须你本人登录并完成验证。控制台提供一次性登录链接，直达该站的支付设置页
+- **P1 已实现的步骤**（`src/shared/protocol.ts` 的 `PROVISION_STEPS`）：预检 → 创建网站 → 安装 WordPress → SSL 与维护模式 → 安装 WooCommerce → 部署 Obel 主题 → 部署伴侣插件 → 注册伴侣插件 → 从 CJ 选品 → AI 撰写文案与政策 → 配置商店 → 创建页面 → 上架商品 → QA 验收。每一步可续跑；等 Hostinger 时不占并发名额；上架商品每 90 秒交还一次，界面能看到进度。合规预检落在「AI 撰写文案与政策」这一步（事实核对 + 禁用说法，不合格让 AI 重写一次），上线前由 QA 再查一遍已发布的页面。尚未实现：支付插件、邮箱与邮件 DNS、跨账号绑定、卸载 Hostinger 默认插件
 - 所有步骤都在维护模式下完成（Hostinger 新站默认就开着维护模式，访客看到 Coming Soon，REST API 和后台不受影响）。建站期间同时关闭 WordPress 的「允许搜索引擎索引」，因为 Coming Soon 页面没有 noindex。你检查后在控制台一键上线：关闭维护模式、打开搜索引擎索引
 - 新站默认带的 Hostinger AI Assistant、Easy Onboarding、Reach 三个插件按白名单卸载
 - **Hostinger 写操作返回 500 不等于失败**（POC 实测：维护模式、装插件都在约 10 秒时返回 500，但实际已完成）。每个写步骤都是「先查状态 → 执行 → 出错时再查状态确认」，绝不盲目重试；邮箱等资源已存在就复用
@@ -587,7 +588,7 @@ flowchart TD
 | `hosting_websites` | account_id, domain, username, order_id, website_type, is_enabled（同步快照） |
 | `batches` | id, entity_json（经营主体与联系信息）, concurrency, status, confirmed_at, created_at |
 | `entity_presets` | id, name, entity_json（保存的主体信息，下次一键带出） |
-| `sites` | id, batch_id, account_id, order_id, external_website_id, status, primary_domain, temp_domain, form_json（域名、类目、数量、售价区间、品牌名）, decisions_json（AI 按 4.2.2 做出的决策，含政策关键条款）, template_id, wp_credentials_ciphertext, woo_keys_ciphertext, cj_store_status |
+| `sites` | id, batch_id, domain（唯一）, form_json（域名、类目、数量、售价区间、品牌名）, status, account_id, order_id, hostinger_username, wp_software_id, wp_admin_ciphertext, enroll_ciphertext / enroll_generation（伴侣插件注册令牌与代数）, companion_ciphertext（应用密码）, picks_json（CJ 选品与上架状态）, spec_json（AI 文案与政策）, qa_json（QA 报告）, last_error |
 | `site_specs` | id, site_id, version, spec_json, created_by（you / pi 会话 id） |
 | `domains` | account_id, external_id, domain, type, status, expires_at（同步快照；锁定、隐私、NS 等按需再加） |
 | `domain_bindings` | domain_id, site_id, mode（same_account / cross_account / external）, status |
@@ -599,6 +600,7 @@ flowchart TD
 | `operations` | id, tool, risk_level, target, params_redacted, status, initiator, confirmed_at, result |
 | `changesets` | id, site_id, diff_json, snapshot_ref, status, revert_at |
 | `compliance_reports` | site_id, score, findings_json, checked_at |
+| `secrets` | name, ciphertext, hint —— 其他凭据（CJ API Key 和 accessToken 等），只存密文 |
 | `model_providers` | id, name, protocol（openai / anthropic）, base_url, api_key_ciphertext, api_key_hint, models_json（取自 pi-ai 模型目录，不含 api / provider / baseUrl，运行时由提供方补上） |
 | `model_roles` | role（agent / vision / bulk / review）, provider_id, model_id, thinking（off / low / high / max 等，必须是该模型支持的强度） |
 | `ai_usage` | session_id, site_id, role, provider_id, model, input_tokens, cached_tokens, output_tokens, cost |
@@ -836,6 +838,7 @@ website-gen/
 | 本机数据丢失或换电脑 | 应用内一键导出备份（SQLite 文件 + 用口令加密的主密钥）；大部分资源可从 Hostinger 重新同步 |
 | AI 生成内容出错或违规 | 结构化输出 + schema 校验 + 合规引擎 + `review` 角色审查；站点在维护模式下生成，你检查后才上线 |
 | AI 按惯例定的政策不合你的实际情况（例如退货期限） | 提交前确认弹窗列出关键承诺；默认规则集中在 4.2.2 一处，改一次对以后所有站生效；已建好的站在对话里让 pi 改 |
+| 店长角色改不了隐私政策页（需要 `manage_privacy_options`） | 伴侣插件提供只做这一件事的端点，在服务端发布 `/privacy-policy/` 并设为隐私政策页（实测发现） |
 | 插件更新把站搞坏 | 白名单 + 固定版本 + 快照 + 先更新 1 个站 + 失败自动停止 |
 
 ---

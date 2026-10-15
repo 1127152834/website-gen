@@ -47,7 +47,7 @@
 <!-- /wp:heading -->
 
 <!-- wp:paragraph {"align":"center","className":"wo-empty__lede","textColor":"secondary"} -->
-<p class="has-text-align-center has-secondary-color has-text-color wo-empty__lede"><?php esc_html_e( 'Browse the shop, or pick up a thread you left in the journal.', 'obel' ); ?></p>
+<p class="has-text-align-center has-secondary-color has-text-color wo-empty__lede"><?php esc_html_e( 'Browse the shop, or find answers in our FAQ.', 'obel' ); ?></p>
 <!-- /wp:paragraph -->
 
 <!-- wp:buttons {"layout":{"type":"flex","justifyContent":"center"},"style":{"spacing":{"margin":{"top":"var:preset|spacing|md"}}}} -->
@@ -56,7 +56,7 @@
 <!-- /wp:button -->
 
 <!-- wp:button {"className":"is-style-outline"} -->
-<div class="wp-block-button is-style-outline"><a class="wp-block-button__link wp-element-button" href="/journal/"><?php esc_html_e( 'Visit the journal', 'obel' ); ?></a></div>
+<div class="wp-block-button is-style-outline"><a class="wp-block-button__link wp-element-button" href="/faq/"><?php esc_html_e( 'Read the FAQ', 'obel' ); ?></a></div>
 <!-- /wp:button --></div>
 <!-- /wp:buttons --></div>
 <!-- /wp:woocommerce/empty-cart-block --></div>

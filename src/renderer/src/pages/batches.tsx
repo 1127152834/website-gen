@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
 const SITE_STATUS: Record<SiteStatus, { label: string; variant: "secondary" | "outline" | "destructive" | "default" }> = {
@@ -19,6 +20,15 @@ const STEP_TEXT: Record<StepState["status"], string> = {
   pending: "未开始", running: "进行中", waiting: "等待中", done: "完成", skipped: "已存在，跳过", failed: "失败",
 };
 const TOTAL = PROVISION_STEPS.length;
+
+interface QaView {
+  at: number;
+  checks: { id: string; name: string; level: "block" | "warn"; ok: boolean; detail: string }[];
+  shots: { name: string; src: string }[];
+}
+const SHOT_TEXT: Record<string, string> = {
+  home: "首页", shop: "商品列表", product: "商品页", contact: "联系页", cart: "购物车", checkout: "结账页", "home-mobile": "首页（手机）",
+};
 const time = (ts: number) => new Date(ts).toLocaleTimeString("zh-CN", { hour12: false });
 const dateTime = (ts: number) => new Date(ts).toLocaleString("zh-CN", { hour12: false, month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
 const seconds = (from: number | null, to: number | null) => (from != null && to != null ? `${Math.max(1, Math.round((to - from) / 1000))} 秒` : null);
@@ -41,6 +51,10 @@ function describe(e: RunEvent): { text: string; tone: "muted" | "normal" | "warn
   }
   if (e.kind === "mcp") return { text: `Hostinger ${p.op}，${p.ms} 毫秒${p.ok ? "" : `，出错：${p.error}`}`, tone: p.ok ? "muted" : "warn" };
   if (e.kind === "warn") return { text: String(p.message), tone: "warn" };
+  if (e.kind === "ai_text") {
+    const cost = typeof p.cost === "number" ? `，$${p.cost.toFixed(4)}` : "";
+    return { text: `AI ${p.task}${p.ok === false ? "（没通过检查）" : ""}${cost}：${String(p.preview ?? "").replace(/\s+/g, " ").slice(0, 160)}`, tone: p.ok === false ? "warn" : "muted" };
+  }
   if (e.kind === "error") return { text: `${p.name}出错：${p.message}`, tone: "error" };
   return { text: JSON.stringify(p), tone: "muted" };
 }
@@ -52,6 +66,8 @@ export function BatchesPage({ initialBatch, onNew }: { initialBatch: number | nu
   const [siteId, setSiteId] = useState<number | null>(null);
   const [steps, setSteps] = useState<StepState[]>([]);
   const [events, setEvents] = useState<RunEvent[]>([]);
+  const [qa, setQa] = useState<QaView | null>(null);
+  const [zoom, setZoom] = useState<QaView["shots"][number] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const logEnd = useRef<HTMLDivElement>(null);
   // 事件回调里要读到最新的选择，用 ref 避免反复重新订阅
@@ -69,6 +85,7 @@ export function BatchesPage({ initialBatch, onNew }: { initialBatch: number | nu
     if (id == null) return;
     call<StepState[]>("sites.steps", { siteId: id }).then(setSteps, fail);
     call<RunEvent[]>("sites.events", { siteId: id }).then(setEvents, fail);
+    call<QaView | null>("sites.qa", { siteId: id }).then(setQa, fail);
   }, []);
 
   useEffect(() => {
@@ -94,6 +111,7 @@ export function BatchesPage({ initialBatch, onNew }: { initialBatch: number | nu
         if (e.siteId !== String(sel.current.siteId)) return;
         setEvents((prev) => (prev.some((x) => x.seq === e.seq) ? prev : [...prev, e]));
         if (e.kind === "step") call<StepState[]>("sites.steps", { siteId: Number(e.siteId) }).then(setSteps, fail);
+        if (e.kind === "step" && e.payload.step === "qa") call<QaView | null>("sites.qa", { siteId: Number(e.siteId) }).then(setQa, fail);
       }),
     ];
     return () => {
@@ -117,6 +135,7 @@ export function BatchesPage({ initialBatch, onNew }: { initialBatch: number | nu
   useEffect(() => {
     setSteps([]);
     setEvents([]);
+    setQa(null);
     loadSite();
   }, [siteId, loadSite]);
 
@@ -210,7 +229,7 @@ export function BatchesPage({ initialBatch, onNew }: { initialBatch: number | nu
                       </div>
                     </TableCell>
                     <TableCell className="whitespace-normal">
-                      {s.status === "done" ? <span className="text-muted-foreground">前半段已完成</span> : (s.currentStep ?? "—")}
+                      {s.status === "done" ? <span className="text-muted-foreground">已完成，维护模式中，等你检查后上线</span> : (s.currentStep ?? "—")}
                       {s.lastError && s.status !== "done" && <span className="mt-1 block max-w-96 text-xs text-destructive">{s.lastError}</span>}
                     </TableCell>
                     <TableCell>
@@ -275,10 +294,52 @@ export function BatchesPage({ initialBatch, onNew }: { initialBatch: number | nu
                   <div ref={logEnd} />
                 </ScrollArea>
               </section>
+
+              {qa && (
+                <section aria-label="QA 报告" className="flex flex-col gap-3 lg:col-span-2">
+                  <h3 className="text-sm font-medium">
+                    QA 报告<span className="ml-2 font-normal text-muted-foreground tabular-nums">{new Date(qa.at).toLocaleString("zh-CN", { hour12: false })}</span>
+                  </h3>
+                  <ul className="grid gap-x-6 gap-y-2 text-sm md:grid-cols-2">
+                    {qa.checks.map((c) => (
+                      <li key={c.id} className="flex gap-2">
+                        {c.ok ? <CircleCheck className="mt-0.5 size-4 shrink-0 text-green-600" aria-label="通过" />
+                          : c.level === "block" ? <CircleAlert className="mt-0.5 size-4 shrink-0 text-destructive" aria-label="没通过" />
+                          : <CircleAlert className="mt-0.5 size-4 shrink-0 text-amber-600" aria-label="提醒" />}
+                        <div className="min-w-0">
+                          <p>{c.name}</p>
+                          <p className={cn("text-xs break-words", c.ok ? "text-muted-foreground" : c.level === "block" ? "text-destructive" : "text-amber-700")}>{c.detail}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                  {qa.shots.length > 0 && (
+                    <ul aria-label="页面截图" className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                      {qa.shots.map((shot) => (
+                        <li key={shot.name}>
+                          <button type="button" className="w-full overflow-hidden rounded-md border text-left outline-none focus-visible:ring-2 focus-visible:ring-ring" onClick={() => setZoom(shot)}>
+                            <img src={shot.src} alt={`${SHOT_TEXT[shot.name] ?? shot.name}截图`} className="aspect-[4/3] w-full object-cover object-top" />
+                            <span className="block px-2 py-1 text-xs">{SHOT_TEXT[shot.name] ?? shot.name}</span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </section>
+              )}
             </section>
           )}
         </div>
       </div>
+
+      <Dialog open={zoom !== null} onOpenChange={(open) => !open && setZoom(null)}>
+        <DialogContent className="max-h-[90vh] overflow-auto sm:max-w-5xl">
+          <DialogHeader>
+            <DialogTitle>{zoom && (SHOT_TEXT[zoom.name] ?? zoom.name)}</DialogTitle>
+          </DialogHeader>
+          {zoom && <img src={zoom.src} alt="" className="w-full rounded-md border" />}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

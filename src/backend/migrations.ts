@@ -127,4 +127,15 @@ export const MIGRATIONS: string[] = [
      updated_at   INTEGER NOT NULL
    );
    CREATE INDEX jobs_due ON jobs (status, run_at);`,
+
+  // 005：流水线后半段的产出（选品、AI 文案与政策、QA 报告）+ 加密保存的其他凭据（CJ API Key 等）
+  `ALTER TABLE sites ADD COLUMN picks_json TEXT CHECK (picks_json IS NULL OR json_valid(picks_json));
+   ALTER TABLE sites ADD COLUMN spec_json TEXT CHECK (spec_json IS NULL OR json_valid(spec_json));
+   ALTER TABLE sites ADD COLUMN qa_json TEXT CHECK (qa_json IS NULL OR json_valid(qa_json));
+   CREATE TABLE secrets (
+     name       TEXT PRIMARY KEY,
+     ciphertext BLOB NOT NULL,
+     hint       TEXT,
+     updated_at INTEGER NOT NULL
+   );`,
 ];

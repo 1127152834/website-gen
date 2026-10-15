@@ -13,7 +13,7 @@ function setup() {
   return db;
 }
 const form = (domains: string[]): BatchForm => ({
-  entity: { kind: "company", name: "X LLC", address: "1 Main St", supportEmail: "auto", phone: "+1 512 555 0100", shipping: "5–10 天" },
+  entity: { kind: "company", name: "X LLC", address: "1 Main St", supportEmail: "auto", phone: "+1 512 555 0100", processingDays: [1, 3], transitDays: [5, 10] },
   sites: domains.map((domain) => ({ domain, categories: "mugs", count: 10, priceMin: null, priceMax: null, brand: "" })),
 });
 

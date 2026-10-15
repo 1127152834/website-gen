@@ -1,6 +1,7 @@
 // 凭据加密：AES-256-GCM。主密钥由主进程用 safeStorage（Windows DPAPI）保护后交给后台，只在内存里。
 // 格式：版本(1) + IV(12) + 认证标签(16) + 密文。篡改或换了密钥都会在解密时报错。
 import { createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
+import type { DatabaseSync } from "node:sqlite";
 
 const VERSION = 1;
 
@@ -18,3 +19,18 @@ export function unseal(key: Buffer, blob: Uint8Array): string {
   decipher.setAuthTag(buf.subarray(13, 29));
   return Buffer.concat([decipher.update(buf.subarray(29)), decipher.final()]).toString("utf8");
 }
+
+/** secrets 表：按名字存一条加密的值（例如 CJ 的 API Key 和 accessToken）。 */
+export function getSecret(db: DatabaseSync, key: Buffer, name: string): string | null {
+  const row = db.prepare("SELECT ciphertext FROM secrets WHERE name = ?").get(name) as { ciphertext: Uint8Array } | undefined;
+  return row ? unseal(key, row.ciphertext) : null;
+}
+
+export function setSecret(db: DatabaseSync, key: Buffer, name: string, value: string, hint: string | null = null): void {
+  db.prepare(`INSERT INTO secrets (name, ciphertext, hint, updated_at) VALUES (?, ?, ?, ?)
+    ON CONFLICT (name) DO UPDATE SET ciphertext = excluded.ciphertext, hint = excluded.hint, updated_at = excluded.updated_at`)
+    .run(name, seal(key, value), hint, Date.now());
+}
+
+export const secretHint = (db: DatabaseSync, name: string): string | null =>
+  (db.prepare("SELECT hint FROM secrets WHERE name = ?").get(name) as { hint: string | null } | undefined)?.hint ?? null;

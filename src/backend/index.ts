@@ -1,16 +1,21 @@
 // 后台进程（utilityProcess）入口：所有业务逻辑都在这里。
 // 主进程每接入一个界面窗口（或后台重启后），就送来一个 MessagePort；事件广播给所有在连的窗口。
-import { join } from "node:path";
+import { readFileSync } from "node:fs";
+import { join, resolve, sep } from "node:path";
 import type { MessagePortMain } from "electron";
 import type { BackendMessage, ModelRole, Push, Request, RunEvent } from "../shared/protocol.ts";
 import type { BatchForm } from "../shared/forms.ts";
 import { accountToken, addAccount, listAccounts, listDomains, removeAccount, syncWithStoredToken } from "./accounts.ts";
 import { batchSites, createBatch, listBatches, listFreeDomains, PROVISION_JOB, retrySite, siteSteps } from "./batches.ts";
+import { createCj, setCjKey, type CjGet } from "./cj.ts";
 import { appendEvent, eventsForSite, eventsSince, migrate, openDb, schemaVersion } from "./db.ts";
 import { createHostingerPool } from "./hostinger.ts";
 import { createRunner, recoverStale } from "./jobs.ts";
 import { provisionSite } from "./pipeline.ts";
-import { buildRuntime, listProviders, listRoles, pingModel, seedModelDefaults, setProviderKey, setRole } from "./models.ts";
+import { buildRuntime, completeText, listProviders, listRoles, pingModel, seedModelDefaults, setProviderKey, setRole } from "./models.ts";
+import { browseWithEdge } from "./qa-browser.ts";
+import { secretHint } from "./secrets.ts";
+import type { QaReport } from "./store.ts";
 import { handleRequest, type Handlers } from "./rpc.ts";
 
 const [userData, resourcesDir] = process.argv.slice(2);
@@ -58,6 +63,10 @@ const syncAll = async () => {
 setTimeout(() => void syncAll(), 15_000);
 setInterval(() => void syncAll(), 30 * 60_000);
 
+// CJ 限速是整个账号每秒 1 次，所有建站任务共用一个客户端
+let cj: CjGet | null = null;
+const workDir = join(userData, "work");
+
 // ---- 建站任务队列：后台进程里只有这一个消费者，启动时上次没跑完的任务全部重新排队 ----
 recoverStale(db, Number.MAX_SAFE_INTEGER);
 const runner = createRunner({
@@ -70,8 +79,11 @@ const runner = createRunner({
         db, key, fetch, resourcesDir,
         hostinger: (accountId) => hostinger.forAccount(accountId, accountToken(db, key, accountId)),
         emit: (e) => emit({ batchId: String(e.batchId), siteId: String(e.siteId), kind: e.kind, payload: e.payload }),
-        workDir: join(userData, "work"),
+        workDir,
         now: Date.now,
+        ai: (role, prompt) => completeText(db, key, role, prompt),
+        cj: (path) => (cj ??= createCj(db, key))(path),
+        browse: browseWithEdge,
       }, job.siteId!);
     },
   },
@@ -151,6 +163,31 @@ const handlers: Handlers = {
   },
   "sites.steps": (p) => siteSteps(db, Number((p as { siteId: number }).siteId)),
   "sites.events": (p) => eventsForSite(db, String((p as { siteId: number }).siteId)),
+  // QA 报告；截图转成 data URL 给界面显示（只读 work/qa 目录下的文件）
+  "sites.qa": (p) => {
+    const row = db.prepare("SELECT qa_json FROM sites WHERE id = ?").get(Number((p as { siteId: number }).siteId)) as { qa_json: string | null } | undefined;
+    if (!row?.qa_json) return null;
+    const report = JSON.parse(row.qa_json) as QaReport;
+    const root = resolve(workDir, "qa") + sep;
+    return {
+      ...report,
+      shots: report.shots.flatMap((s) => {
+        const file = resolve(s.file);
+        if (!file.startsWith(root)) return [];
+        try {
+          return [{ name: s.name, src: `data:image/png;base64,${readFileSync(file).toString("base64")}` }];
+        } catch {
+          return [];
+        }
+      }),
+    };
+  },
+  "cj.status": () => ({ keyHint: secretHint(db, "cj.apiKey") }),
+  "cj.setKey": async (p) => {
+    await setCjKey(db, requireKey(), String((p as { apiKey: string }).apiKey ?? ""));
+    cj = null;
+    return { keyHint: secretHint(db, "cj.apiKey") };
+  },
   "sites.retry": (p) => {
     retrySite(db, Number((p as { siteId: number }).siteId), Date.now());
     push({ kind: "changed", topic: "batches" });

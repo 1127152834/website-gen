@@ -1,15 +1,20 @@
-// 建站流水线前半段：预检 → 建网站并装 WordPress → SSL 与维护模式 → WooCommerce → Obel 主题 → 伴侣插件部署与注册。
+// 建站流水线。前半段（本文件）：预检 → 建网站并装 WordPress → SSL 与维护模式 → WooCommerce → Obel 主题 → 伴侣插件部署与注册；
+// 后半段（store.ts）：选品 → AI 文案与政策 → 商店配置 → 页面 → 上架商品 → QA。
 // 每次调用从第一个没完成的步骤接着跑；要等 Hostinger 时返回 { waitMs }，由任务队列稍后再调。
 // Hostinger 的写操作可能 500 但实际已经成功（POC 实测），所以写完一律用只读接口确认，不信返回值。
 import type { DatabaseSync } from "node:sqlite";
 import { randomBytes } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { PROVISION_STEPS, type RunEventKind, type StepKey, type StepState } from "../shared/protocol.ts";
-import type { EntityForm } from "../shared/forms.ts";
+import { PROVISION_STEPS, type ModelRole, type RunEventKind, type StepKey, type StepState } from "../shared/protocol.ts";
+import type { EntityForm, SiteForm } from "../shared/forms.ts";
 import { HostingerError, listAll, type HostingerExec } from "./hostinger.ts";
 import { PermanentError } from "./jobs.ts";
 import { seal, unseal } from "./secrets.ts";
 import { companionHealth, EnrollRejected, enrollCompanion, prepareCompanion, type CompanionCreds } from "./companion.ts";
+import type { CjGet } from "./cj.ts";
+import type { Browse } from "./qa-browser.ts";
+import { storeSteps } from "./store.ts";
 
 export interface PipelineDeps {
   db: DatabaseSync;
@@ -25,9 +30,14 @@ export interface PipelineDeps {
   pollMs?: number;
   /** 单个步骤最多等多久 */
   maxWaitMs?: number;
+  /** 按用途调模型，返回纯文本和花费（美元） */
+  ai: (role: ModelRole, prompt: string) => Promise<{ text: string; cost: number }>;
+  cj: CjGet;
+  /** QA 截图用的浏览器；没有就跳过截图 */
+  browse?: Browse;
 }
 
-interface SiteRow {
+export interface SiteRow {
   id: number;
   batch_id: number;
   domain: string;
@@ -39,11 +49,33 @@ interface SiteRow {
   enroll_ciphertext: Uint8Array | null;
   enroll_generation: number | null;
   companion_ciphertext: Uint8Array | null;
+  form_json: string;
+  picks_json: string | null;
+  spec_json: string | null;
+  qa_json: string | null;
 }
 
-interface StepRow { status: StepState["status"]; detail: string | null; started_at: number }
+export interface StepRow { status: StepState["status"]; detail: string | null; started_at: number }
 
-type StepResult = { status: "done" | "skipped"; detail: string } | { wait: string };
+/** done/skipped：完成；wait：要等外部（不占并发名额）；progress：没做完但有进展，马上接着跑 */
+export type StepResult = { status: "done" | "skipped"; detail: string } | { wait: string } | { progress: string };
+
+const BACK_STEPS = ["products_pick", "content", "store_setup", "pages", "products", "qa"] as const;
+export type BackStepKey = (typeof BACK_STEPS)[number];
+
+/** 后半段步骤能用到的东西 */
+export interface StepCtx {
+  d: PipelineDeps;
+  site: SiteRow;
+  domain: string;
+  entity: EntityForm;
+  form: SiteForm;
+  save: (col: keyof SiteRow, value: SiteRow[keyof SiteRow]) => void;
+  emit: (kind: RunEventKind, payload: Record<string, unknown>) => void;
+  hx: HostingerExec;
+  /** 用伴侣插件的应用密码调站点 REST，path 不带 /wp-json/ 前缀 */
+  wp: (method: string, path: string, body?: unknown) => Promise<unknown>;
+}
 
 const UNKNOWN = Symbol("unknown");
 const INSTALL_WAIT = "已提交安装，等待 Hostinger 完成";
@@ -53,8 +85,9 @@ export async function provisionSite(d: PipelineDeps, siteId: number): Promise<{ 
   const { db, key } = d;
   const pollMs = d.pollMs ?? 15_000;
   const maxWaitMs = d.maxWaitMs ?? 20 * 60_000;
-  const site = db.prepare("SELECT * FROM sites WHERE id = ?").get(siteId) as unknown as SiteRow | undefined;
-  if (!site) throw new PermanentError(`站点 ${siteId} 不存在`);
+  const row = db.prepare("SELECT * FROM sites WHERE id = ?").get(siteId) as unknown as SiteRow | undefined;
+  if (!row) throw new PermanentError(`站点 ${siteId} 不存在`);
+  const site: SiteRow = row;
   const entity = JSON.parse((db.prepare("SELECT entity_json FROM batches WHERE id = ?").get(site.batch_id) as { entity_json: string }).entity_json) as EntityForm;
   const { domain } = site;
   const emit = (kind: RunEventKind, payload: Record<string, unknown>) => d.emit({ batchId: site.batch_id, siteId, kind, payload });
@@ -110,29 +143,59 @@ export async function provisionSite(d: PipelineDeps, siteId: number): Promise<{ 
       throw new PermanentError(`Hostinger 拒绝了 ${op}：${e.message}`);
     }
   }
-  const wp = () => ({ username: site.hostinger_username!, software: site.wp_software_id! });
+  const inst = () => ({ username: site.hostinger_username!, software: site.wp_software_id! });
   const setups = async () => (await hx("hosting_websites_list-setups", { domain })) as { username?: string; status?: string }[];
   const website = async () =>
     ((await listAll(hx, "hosting_websites_list", { domain })) as { domain: string; username?: string }[]).find((w) => w.domain === domain);
 
-  /** 插件或主题：没装就装，装了没启用就启用，最后以列表里的状态为准。 */
-  async function ensureActive(kind: "plugin" | "theme", slug: string, install: () => Promise<void>, prevDetail: string | null): Promise<StepResult> {
+  /** 插件或主题：没装（或版本不对）就装，装了没启用就启用，最后以列表里的状态为准。 */
+  async function ensureActive(
+    kind: "plugin" | "theme", slug: string, install: () => Promise<void>, prevDetail: string | null, isCurrent = (_version?: string) => true,
+  ): Promise<{ status: "done" | "skipped"; detail: string } | { wait: string }> {
     const find = async () =>
-      ((await hx(`wordpress_${kind}s_list-installed`, wp())) as { name: string; status: string; version?: string }[]).find((x) => x.name === slug);
+      ((await hx(`wordpress_${kind}s_list-installed`, inst())) as { name: string; status: string; version?: string }[]).find((x) => x.name === slug);
     let x = await find();
-    if (x?.status === "active") return { status: "skipped", detail: `${slug} ${x.version ?? ""} 已是启用状态`.trim() };
-    if (!x && prevDetail !== INSTALL_WAIT) {
+    if (x?.status === "active" && isCurrent(x.version)) return { status: "skipped", detail: `${slug} ${x.version ?? ""} 已是启用状态`.trim() };
+    if ((!x || !isCurrent(x.version)) && prevDetail !== INSTALL_WAIT) {
       await install();
       x = await find();
     }
     if (x && x.status !== "active") {
-      await act(`wordpress_${kind}s_activate`, { ...wp(), [kind]: slug });
+      await act(`wordpress_${kind}s_activate`, { ...inst(), [kind]: slug });
       x = await find();
     }
-    return x?.status === "active" ? { status: "done", detail: `${slug} ${x.version ?? ""} 已启用`.trim() } : { wait: INSTALL_WAIT };
+    return x?.status === "active" && isCurrent(x.version) ? { status: "done", detail: `${slug} ${x.version ?? ""} 已启用`.trim() } : { wait: INSTALL_WAIT };
   }
 
+  // ---- 站点 REST：伴侣插件注册得到的应用密码 ----
+  async function wp(method: string, path: string, body?: unknown): Promise<unknown> {
+    if (!site.companion_ciphertext) throw new Error("伴侣插件还没注册");
+    const creds = JSON.parse(unseal(key, site.companion_ciphertext)) as CompanionCreds;
+    const res = await d.fetch(`https://${domain}/wp-json/${path}`, {
+      method,
+      headers: { Authorization: "Basic " + Buffer.from(`${creds.username}:${creds.password}`).toString("base64"), ...(body === undefined ? {} : { "Content-Type": "application/json" }) },
+      body: body === undefined ? undefined : JSON.stringify(body),
+      signal: AbortSignal.timeout(120_000),
+    });
+    const text = await res.text();
+    let json: unknown = null;
+    try {
+      json = JSON.parse(text);
+    } catch {
+      // 非 JSON（例如 PHP 报错页面）
+    }
+    if (!res.ok) {
+      const msg = `${method} ${path.split("?")[0]} 返回 HTTP ${res.status}${(json as { message?: string } | null)?.message ? `：${(json as { message: string }).message}` : ""}`;
+      // 参数或权限问题，重试也没用
+      throw [400, 401, 403, 404].includes(res.status) ? new PermanentError(msg) : new Error(msg);
+    }
+    return json;
+  }
+  const themeVersion = /Version:\s*([\d.]+)/.exec(readFileSync(join(d.resourcesDir, "theme", "obel", "style.css"), "utf8"))?.[1];
+
+  const ctx: StepCtx = { d, site, domain, entity, form: JSON.parse(site.form_json) as SiteForm, save, emit, hx, wp };
   const steps: Record<StepKey, (prev: StepRow | undefined) => Promise<StepResult>> = {
+    ...storeSteps(ctx),
     async precheck() {
       if (site.account_id == null) {
         const owner = db.prepare("SELECT account_id FROM domains WHERE domain = ? ORDER BY account_id LIMIT 1").get(domain) as { account_id: number } | undefined;
@@ -181,10 +244,10 @@ export async function provisionSite(d: PipelineDeps, siteId: number): Promise<{ 
 
     async ssl_maintenance(prev) {
       // 先开维护模式：站点在装好内容之前不对外
-      let m = (await hx("wordpress_maintenance_show-status", wp())) as { status?: string };
+      let m = (await hx("wordpress_maintenance_show-status", inst())) as { status?: string };
       if (m.status !== "enabled") {
-        await act("wordpress_maintenance_toggle", { ...wp(), enabled: true });
-        m = (await hx("wordpress_maintenance_show-status", wp())) as { status?: string };
+        await act("wordpress_maintenance_toggle", { ...inst(), enabled: true });
+        m = (await hx("wordpress_maintenance_show-status", inst())) as { status?: string };
         if (m.status !== "enabled") return { wait: "等待维护模式生效" };
       }
       const ssl = (await hx("hosting_ssl_status", { username: site.hostinger_username, domain })) as { status?: string; expires_at?: string };
@@ -196,7 +259,7 @@ export async function provisionSite(d: PipelineDeps, siteId: number): Promise<{ 
     },
 
     async woocommerce(prev) {
-      return ensureActive("plugin", "woocommerce", async () => void (await act("wordpress_plugins_install", { ...wp(), plugins: ["woocommerce"] })), prev?.detail ?? null);
+      return ensureActive("plugin", "woocommerce", async () => void (await act("wordpress_plugins_install", { ...inst(), plugins: ["woocommerce"] })), prev?.detail ?? null);
     },
 
     async theme(prev) {
@@ -204,7 +267,7 @@ export async function provisionSite(d: PipelineDeps, siteId: number): Promise<{ 
         const r = (await act("hosting_deploy-wordpress-theme", { domain, slug: "obel", themePath: join(d.resourcesDir, "theme", "obel"), activate: true })) as
           typeof UNKNOWN | { status?: string; summary?: { failed?: number } };
         if (r !== UNKNOWN && r.status !== "success") throw new Error(`主题上传有 ${r.summary?.failed ?? "部分"} 个文件失败，稍后重试`);
-      }, prev?.detail ?? null);
+      }, prev?.detail ?? null, (v) => v === themeVersion);
     },
 
     async companion(prev) {
@@ -242,6 +305,10 @@ export async function provisionSite(d: PipelineDeps, siteId: number): Promise<{ 
     if (prev?.status !== "waiting") mark(step, "running", null);
     try {
       const r = await steps[step](prev);
+      if ("progress" in r) {
+        mark(step, "running", r.progress);
+        return { waitMs: 1000 };
+      }
       if ("wait" in r) {
         mark(step, "waiting", r.wait);
         if (d.now() - rows.get(step)!.started_at > maxWaitMs) throw new PermanentError(`${name}超过 ${Math.round(maxWaitMs / 60_000)} 分钟仍未完成`);

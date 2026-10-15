@@ -1008,10 +1008,10 @@ add_action(
 <div class="wo-empty wo-empty--cart">
 	<p class="wo-empty__eyebrow"><?php esc_html_e( 'Cart', 'obel' ); ?></p>
 	<h1 class="wo-empty__title"><?php esc_html_e( 'Your cart is rather empty.', 'obel' ); ?></h1>
-	<p class="wo-empty__lede"><?php esc_html_e( 'Browse the shop, or pick up a thread you left in the journal.', 'obel' ); ?></p>
+	<p class="wo-empty__lede"><?php esc_html_e( 'Browse the shop, or find answers in our FAQ.', 'obel' ); ?></p>
 	<p class="wo-empty__ctas">
 		<a class="wo-empty__cta wo-empty__cta--primary" href="<?php echo esc_url( '/shop/' ); ?>"><?php esc_html_e( 'Continue browsing', 'obel' ); ?></a>
-		<a class="wo-empty__cta wo-empty__cta--secondary" href="<?php echo esc_url( '/journal/' ); ?>"><?php esc_html_e( 'Visit the journal', 'obel' ); ?></a>
+		<a class="wo-empty__cta wo-empty__cta--secondary" href="<?php echo esc_url( '/faq/' ); ?>"><?php esc_html_e( 'Read the FAQ', 'obel' ); ?></a>
 	</p>
 </div>
 		<?php
@@ -1039,7 +1039,7 @@ add_action(
 	<p class="wo-empty__lede"><?php esc_html_e( 'Try a different category, or see everything currently in stock.', 'obel' ); ?></p>
 	<p class="wo-empty__ctas">
 		<a class="wo-empty__cta wo-empty__cta--primary" href="<?php echo esc_url( '/shop/' ); ?>"><?php esc_html_e( 'See everything', 'obel' ); ?></a>
-		<a class="wo-empty__cta wo-empty__cta--secondary" href="<?php echo esc_url( '/journal/' ); ?>"><?php esc_html_e( 'Visit the journal', 'obel' ); ?></a>
+		<a class="wo-empty__cta wo-empty__cta--secondary" href="<?php echo esc_url( '/faq/' ); ?>"><?php esc_html_e( 'Read the FAQ', 'obel' ); ?></a>
 	</p>
 </div>
 				<?php

@@ -55,7 +55,7 @@ export interface RoleSummary {
   problem: string | null;
 }
 
-/** 建站流水线前半段的步骤（顺序即执行顺序） */
+/** 建站流水线的步骤（顺序即执行顺序）：前 8 步在 Hostinger 上搭站，后 6 步填内容并验收 */
 export const PROVISION_STEPS = [
   { key: "precheck", name: "预检" },
   { key: "create_site", name: "创建网站" },
@@ -65,6 +65,12 @@ export const PROVISION_STEPS = [
   { key: "theme", name: "部署 Obel 主题" },
   { key: "companion", name: "部署伴侣插件" },
   { key: "enroll", name: "注册伴侣插件" },
+  { key: "products_pick", name: "从 CJ 选品" },
+  { key: "content", name: "AI 撰写文案与政策" },
+  { key: "store_setup", name: "配置商店" },
+  { key: "pages", name: "创建页面" },
+  { key: "products", name: "上架商品" },
+  { key: "qa", name: "QA 验收" },
 ] as const;
 export type StepKey = (typeof PROVISION_STEPS)[number]["key"];
 

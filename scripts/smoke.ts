@@ -78,6 +78,7 @@ try {
   await page.getByRole("button", { name: "批次" }).click();
   await page.getByRole("button", { name: "设置" }).click();
   await roles.getByRole("combobox", { name: "建站与对话的模型" }).filter({ hasText: "deepseek-flash" }).waitFor({ timeout: 10_000 });
+  await page.getByText("未设置，建站会停在「从 CJ 选品」这一步").waitFor({ timeout: 10_000 });
   await page.screenshot({ path: "poc/out/smoke-3-settings.png" });
   console.log("✔ changing a role's model is saved");
 

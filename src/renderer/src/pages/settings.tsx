@@ -71,7 +71,7 @@ export function SettingsPage() {
     <div className="flex max-w-5xl flex-col gap-8">
       <div>
         <h1 className="text-lg font-semibold">设置</h1>
-        <p className="mt-1 text-sm text-muted-foreground">模型服务的 Key，以及建站、写文案、看截图、合规审查分别用哪个模型。</p>
+        <p className="mt-1 text-sm text-muted-foreground">模型服务的 Key，建站、写文案、看截图、合规审查分别用哪个模型，以及商品资料来源。</p>
       </div>
 
       {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
@@ -184,8 +184,80 @@ export function SettingsPage() {
         </div>
       </section>
 
+      <CjSection />
+
       <KeyDialog provider={keyFor} onClose={() => setKeyFor(null)} onSaved={(list) => { setProviders(list); load(); }} />
     </div>
+  );
+}
+
+/** CJdropshipping 只当商品资料库：选品和上架时读商品资料，不授权店铺、不下单。 */
+function CjSection() {
+  const [hint, setHint] = useState<string | null | undefined>(undefined);
+  const [open, setOpen] = useState(false);
+  const [apiKey, setApiKey] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => onConnect(() => void call<{ keyHint: string | null }>("cj.status").then((r) => setHint(r.keyHint), () => setHint(null))), []);
+
+  const close = () => {
+    setApiKey("");
+    setError(null);
+    setOpen(false);
+  };
+  const submit = async (e: FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    try {
+      setHint((await call<{ keyHint: string | null }>("cj.setKey", { apiKey })).keyHint);
+      close();
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <section aria-label="商品资料" className="flex flex-col gap-3">
+      <div>
+        <h2 className="text-sm font-medium">商品资料</h2>
+        <p className="mt-0.5 text-sm text-muted-foreground">建站时从 CJdropshipping 读取商品的标题、图片、规格和成本价，只读，不授权店铺、不下单。</p>
+      </div>
+      <div className="flex items-center justify-between gap-4 rounded-lg border px-4 py-3 text-sm">
+        <div>
+          <p className="font-medium">CJdropshipping API Key</p>
+          <p className="text-muted-foreground">{hint === undefined ? "读取中…" : hint ? `已设置，尾号 ${hint}` : "未设置，建站会停在「从 CJ 选品」这一步"}</p>
+        </div>
+        <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
+          <KeyRound aria-hidden />
+          {hint ? "更换 Key" : "设置 Key"}
+        </Button>
+      </div>
+      <Dialog open={open} onOpenChange={(o) => !o && close()}>
+        <DialogContent>
+          <form onSubmit={submit} className="flex flex-col gap-4">
+            <DialogHeader>
+              <DialogTitle>设置 CJdropshipping 的 Key</DialogTitle>
+              <DialogDescription>在 CJ 后台的「Authorization → API」里生成。保存前会先向 CJ 验证，Key 加密保存在这台电脑上。</DialogDescription>
+            </DialogHeader>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="cj-key">API Key</Label>
+              <Input id="cj-key" type="password" autoComplete="off" spellCheck={false} value={apiKey} onChange={(e) => setApiKey(e.target.value)} autoFocus />
+            </div>
+            {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
+            <DialogFooter>
+              <Button type="submit" disabled={busy || !apiKey.trim()}>
+                {busy && <LoaderCircle className="motion-safe:animate-spin" aria-hidden />}
+                验证并保存
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </section>
   );
 }
 

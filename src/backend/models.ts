@@ -117,6 +117,19 @@ export async function pingModel(models: ReturnType<typeof createModels>, model: 
 }
 
 /** 用当前配置组装 pi-ai 的 Models；只注册已设置 Key 的提供方。配置改了就重新调用。 */
+/** 流水线用：按用途调一次模型，拿回纯文本和花费。 */
+export async function completeText(db: DatabaseSync, key: Buffer, role: ModelRole, prompt: string): Promise<{ text: string; cost: number }> {
+  const runtime = buildRuntime(db, key);
+  const { model, thinking } = runtime.resolve(role);
+  const msg = await runtime.models.completeSimple(
+    model,
+    { messages: [{ role: "user", content: prompt, timestamp: Date.now() }] },
+    { reasoning: thinking === "off" ? undefined : (thinking as Exclude<ModelThinkingLevel, "off">), maxTokens: 16_000, signal: AbortSignal.timeout(5 * 60_000) },
+  );
+  if (msg.stopReason === "error" || msg.stopReason === "aborted") throw new Error(`模型调用失败：${msg.errorMessage ?? msg.stopReason}`);
+  return { text: msg.content.filter((c) => c.type === "text").map((c) => c.text).join(""), cost: msg.usage.cost.total };
+}
+
 export function buildRuntime(db: DatabaseSync, key: Buffer) {
   const models = createModels();
   for (const row of providerRows(db)) {

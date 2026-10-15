@@ -8,8 +8,10 @@ export interface EntityForm {
   /** "auto" = 使用各站的 support@域名 */
   supportEmail: string;
   phone: string;
-  /** 处理 + 运输时效，你们自己发货的真实能力 */
-  shipping: string;
+  /** 处理时效（工作日，最少–最多）：你们自己发货的真实能力，写进运输政策（FTC 邮购规则） */
+  processingDays: [number, number];
+  /** 运输时效（工作日，最少–最多） */
+  transitDays: [number, number];
 }
 
 export interface SiteForm {
@@ -38,7 +40,8 @@ export function validateBatch(f: BatchForm): Record<string, string> {
   if (blank(entity.address)) e["entity.address"] = "请填写地址，会显示在页脚和联系页";
   if (entity.supportEmail !== "auto" && !EMAIL.test(entity.supportEmail.trim())) e["entity.supportEmail"] = "请填写有效的邮箱，或选择使用 support@各自域名";
   if (blank(entity.phone)) e["entity.phone"] = "请填写客服电话";
-  if (blank(entity.shipping)) e["entity.shipping"] = "请填写处理和运输时效，会写进运输政策";
+  const days = ([a, b]: [number, number], lo: number) => Number.isInteger(a) && Number.isInteger(b) && a >= lo && a <= b && b <= 60;
+  if (!days(entity.processingDays, 0) || !days(entity.transitDays, 1)) e["entity.shipping"] = "请填写处理和运输的天数范围（整数，前小后大，不超过 60 天）";
 
   if (f.sites.length === 0) e["sites"] = "至少添加一个站";
   const seen = new Set<string>();

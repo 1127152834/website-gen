@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import type { FreeDomain } from "../../../shared/protocol.ts";
 import { brandFromDomain, validateBatch, type BatchForm, type EntityForm } from "../../../shared/forms.ts";
+import { promises } from "../../../shared/rules.ts";
 import { call, onChanged, onConnect } from "@/lib/backend.ts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,8 +17,12 @@ import {
 // 输入框里的数字先按字符串存，提交时再转换，避免输入到一半就被改写
 interface SiteDraft { domain: string; categories: string; count: string; priceMin: string; priceMax: string; brand: string }
 const emptySite = (): SiteDraft => ({ domain: "", categories: "", count: "20", priceMin: "", priceMax: "", brand: "" });
-const emptyEntity = (): EntityForm => ({ kind: "company", name: "", address: "", supportEmail: "auto", phone: "", shipping: "" });
+type EntityDraft = Omit<EntityForm, "processingDays" | "transitDays">;
+const emptyEntity = (): EntityDraft => ({ kind: "company", name: "", address: "", supportEmail: "auto", phone: "" });
+// 发货时效：处理最少/最多、运输最少/最多（工作日）。不预填：必须是你们真实的发货能力
+const emptyDays = () => ({ p0: "", p1: "", t0: "", t1: "" });
 const num = (s: string) => (s.trim() === "" ? null : Number(s));
+const int = (s: string) => (s.trim() === "" ? Number.NaN : Number(s));
 
 function FieldError({ id, message }: { id: string; message?: string }) {
   return message ? <p id={id} className="text-xs text-destructive">{message}</p> : null;
@@ -25,7 +30,8 @@ function FieldError({ id, message }: { id: string; message?: string }) {
 
 export function NewBatchPage({ onCreated }: { onCreated: (batchId: number) => void }) {
   const [free, setFree] = useState<FreeDomain[] | null>(null);
-  const [entity, setEntity] = useState<EntityForm>(emptyEntity);
+  const [entity, setEntity] = useState<EntityDraft>(emptyEntity);
+  const [days, setDays] = useState(emptyDays);
   const [sites, setSites] = useState<SiteDraft[]>([emptySite()]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [confirming, setConfirming] = useState<BatchForm | null>(null);
@@ -40,13 +46,13 @@ export function NewBatchPage({ onCreated }: { onCreated: (batchId: number) => vo
     return () => offs.forEach((off) => off());
   }, [load]);
 
-  const setE = (patch: Partial<EntityForm>) => setEntity((e) => ({ ...e, ...patch }));
+  const setE = (patch: Partial<EntityDraft>) => setEntity((e) => ({ ...e, ...patch }));
   const setS = (i: number, patch: Partial<SiteDraft>) => setSites((list) => list.map((s, j) => (j === i ? { ...s, ...patch } : s)));
   const used = new Set(sites.map((s) => s.domain).filter(Boolean));
   const autoEmail = entity.supportEmail === "auto";
 
   const toForm = (): BatchForm => ({
-    entity,
+    entity: { ...entity, processingDays: [int(days.p0), int(days.p1)], transitDays: [int(days.t0), int(days.t1)] },
     sites: sites.map((s) => ({
       domain: s.domain, categories: s.categories, count: Number(s.count), priceMin: num(s.priceMin), priceMax: num(s.priceMax), brand: s.brand.trim(),
     })),
@@ -132,11 +138,22 @@ export function NewBatchPage({ onCreated }: { onCreated: (batchId: number) => vo
             )}
             <FieldError id="entity.supportEmail-error" message={err("entity.supportEmail")} />
           </div>
-          <div className="flex flex-col gap-2 sm:col-span-2">
-            <Label htmlFor="entity.shipping">处理与运输时效</Label>
-            <Input id="entity.shipping" value={entity.shipping} onChange={(e) => setE({ shipping: e.target.value })} placeholder="例如：1–3 个工作日处理，5–10 个工作日送达美国" {...aria("entity.shipping")} />
+          <fieldset className="flex flex-col gap-2 sm:col-span-2" {...aria("entity.shipping")}>
+            <legend className="mb-2 text-sm font-medium">发货时效（工作日）</legend>
+            <div className="flex flex-wrap items-center gap-2 text-sm">
+              处理
+              <Input aria-label="处理时效最少天数" type="number" min={0} max={60} className="w-20" value={days.p0} onChange={(e) => setDays((d) => ({ ...d, p0: e.target.value }))} placeholder="1" />
+              至
+              <Input aria-label="处理时效最多天数" type="number" min={0} max={60} className="w-20" value={days.p1} onChange={(e) => setDays((d) => ({ ...d, p1: e.target.value }))} placeholder="3" />
+              天，运输
+              <Input aria-label="运输时效最少天数" type="number" min={1} max={60} className="w-20" value={days.t0} onChange={(e) => setDays((d) => ({ ...d, t0: e.target.value }))} placeholder="5" />
+              至
+              <Input aria-label="运输时效最多天数" type="number" min={1} max={60} className="w-20" value={days.t1} onChange={(e) => setDays((d) => ({ ...d, t1: e.target.value }))} placeholder="10" />
+              天
+            </div>
+            <p className="text-xs text-muted-foreground">会原样写进运输政策和 FAQ（FTC 邮购规则要求有依据），请填你们实际能做到的。</p>
             <FieldError id="entity.shipping-error" message={err("entity.shipping")} />
-          </div>
+          </fieldset>
         </div>
       </section>
 
@@ -227,12 +244,20 @@ export function NewBatchPage({ onCreated }: { onCreated: (batchId: number) => vo
           <AlertDialogHeader>
             <AlertDialogTitle>为 {confirming?.sites.length} 个域名建站？</AlertDialogTitle>
             <AlertDialogDescription>
-              系统会在 Hostinger 上为下面的域名创建网站，安装 WordPress、WooCommerce 和 Obel 主题，并部署伴侣插件。新站默认开启维护模式，访客暂时看不到。
+              系统会在 Hostinger 上为下面的域名建站，从 CJ 选品上架，由 AI 撰写页面和政策，最后做 QA 验收。全程在维护模式下进行，访客看不到，你检查后再上线。
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <ul className="max-h-48 overflow-auto rounded-md border px-3 py-2 text-sm">
+          <ul className="max-h-32 overflow-auto rounded-md border px-3 py-2 text-sm">
             {confirming?.sites.map((s) => <li key={s.domain} className="py-0.5">{s.domain}</li>)}
           </ul>
+          {confirming && (
+            <section aria-label="对买家的承诺" className="text-sm">
+              <p className="font-medium">政策页会写明这些对买家的承诺：</p>
+              <ul className="mt-1 list-disc pl-5 text-muted-foreground">
+                {promises(confirming.entity).map((t) => <li key={t}>{t}</li>)}
+              </ul>
+            </section>
+          )}
           <AlertDialogFooter>
             <AlertDialogCancel disabled={busy}>取消</AlertDialogCancel>
             <AlertDialogAction disabled={busy} onClick={(e) => { e.preventDefault(); if (confirming) void create(confirming); }}>开始建站</AlertDialogAction>
