@@ -64,7 +64,7 @@ Reply with JSON only:
 {"tagline": string (max 60 chars),
  "style": one of ${JSON.stringify(STYLES)} (the visual style that fits these products best),
  "hero": {"heading": string (max 60 chars), "subheading": string (max 160 chars)},
- "about": string[] (2-4 short paragraphs for the About page: what the store sells and how it serves customers; mention who operates it),
+ "about": string[] (3-4 paragraphs of 2-4 sentences each for the About page, concrete and specific to this store, never generic filler: 1) who operates the store (the exact legal operator name) and where it is based (city and state from the address), and what it focuses on (the actual product categories); 2) what customers can expect when they order: the shipping area, processing and transit times, prices in USD; 3) customer care: the return window and refund timing, and how to reach support (the exact support email). Use only the facts given; do not invent a founding story, years in business, team members, warehouses, awards or reviews),
  "faq": [{"q": string, "a": string}] (exactly 8, about ordering, shipping, returns, refunds, payment and contact; answers must match the facts exactly)}`;
 }
 
@@ -181,7 +181,14 @@ export function checkCopy(c: SiteCopy, f: Facts): string[] {
   if (!c.tagline || c.tagline.length > 80) out.push("tagline is missing or too long");
   if (!STYLES.includes(c.style)) out.push(`style must be one of ${STYLES.join(", ")}`);
   if (!c.hero?.heading || !c.hero?.subheading) out.push("hero heading and subheading are required");
-  if (!Array.isArray(c.about) || c.about.length < 2) out.push("about needs 2-4 paragraphs");
+  if (!Array.isArray(c.about) || c.about.length < 3 || c.about.length > 4) out.push("about needs 3-4 paragraphs");
+  else {
+    // 支付网关审核会看「关于我们」是否像真实在经营的商家：不能只有一两句套话
+    const about = c.about.join("\n");
+    if (about.length < 450 || c.about.some((x) => x.length < 100)) out.push("about is too thin: write 3-4 paragraphs of 2-4 sentences each (at least 100 characters per paragraph)");
+    if (!about.includes(f.entity.name)) out.push(`about must name the operator exactly: ${f.entity.name}`);
+    if (!about.toLowerCase().includes(f.email.toLowerCase())) out.push(`about must give the support email ${f.email}`);
+  }
   if (!Array.isArray(c.faq) || c.faq.length < 6 || c.faq.some((x) => !x.q || !x.a)) out.push("faq needs 8 questions with answers");
   if (out.length) return out;
   const all = [c.tagline, c.hero.heading, c.hero.subheading, ...c.about, ...c.faq.flatMap((x) => [x.q, x.a])].join("\n");

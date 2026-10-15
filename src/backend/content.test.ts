@@ -89,7 +89,11 @@ test("unoffered Express and expedited shipping are rejected in policies and site
   assert.match(checkPolicies(p, facts).join("\n"), /remove unoffered shipping service/);
   const copy: SiteCopy = {
     tagline: "Beds for dogs", style: "default", hero: { heading: "Dog beds", subheading: "Browse dog beds." },
-    about: ["Nordic Paws sells dog beds.", "Nordic Paws LLC operates this store."],
+    about: [
+      "Nordic Paws is an online store operated by Nordic Paws LLC from 1 Main St. We focus on one thing: dog beds, chosen for everyday comfort at home.",
+      "Every order ships within the contiguous United States. Orders are processed in 1-3 business days and usually arrive in 5-10 business days after dispatch.",
+      "If something is not right, you can request a return within 30 days of delivery. Questions about an order? Email support@nordicpaws.com and our team will help.",
+    ],
     faq: Array.from({ length: 8 }, (_, i) => ({ q: `Question ${i + 1}`, a: i === 0 ? "Available payment methods are shown at checkout." : "Expedited delivery is available." })),
   };
   assert.match(checkCopy(copy, facts).join("\n"), /remove unoffered shipping service/);
@@ -126,4 +130,20 @@ test("CJ variant images are preserved for per-variation image assignment", () =>
 test("US addresses are split into Woo store fields", () => {
   assert.deepEqual(parseUsAddress("1 Main St, Suite 2, Austin, TX 78701, United States"), { street: "1 Main St, Suite 2", city: "Austin", state: "TX", zip: "78701" });
   assert.equal(parseUsAddress("Flat 3, 8 Queen's Road, Hong Kong").state, "");
+});
+
+// 实测 2026-10-15：「关于我们」只有一句套话；支付网关审核会看这一页是否像真实在经营的商家
+test("a one-line About page is rejected; a concrete one naming the operator and contact passes", () => {
+  const base: SiteCopy = {
+    tagline: "Beds for dogs", style: "default", hero: { heading: "Dog beds", subheading: "Browse dog beds." },
+    about: ["Nordic Paws sells dog beds.", "We ship to the US."],
+    faq: Array.from({ length: 8 }, (_, i) => ({ q: `Question ${i + 1}`, a: "Contact support for help." })),
+  };
+  assert.match(checkCopy(base, facts).join("\n"), /about/i);
+  const concrete: SiteCopy = { ...base, about: [
+    "Nordic Paws is an online store operated by Nordic Paws LLC from 1 Main St. We focus on one thing: dog beds, chosen for everyday comfort at home.",
+    "Every order ships within the contiguous United States. Orders are processed in 1-3 business days and usually arrive in 5-10 business days after dispatch.",
+    "If something is not right, you can request a return within 30 days of delivery. Questions about an order? Email support@nordicpaws.com and our team will help.",
+  ] };
+  assert.deepEqual(checkCopy(concrete, facts).filter((x) => /about/i.test(x)), []);
 });

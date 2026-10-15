@@ -413,7 +413,13 @@ export function fakeAi(log: string[]) {
       const faq = Array.from({ length: 8 }, (_, i) => ({ q: `Question ${i + 1}?`, a: i === 7 ? "Available payment methods are shown at checkout." : "Orders ship within 1-3 business days and arrive in 5-10 business days." }));
       text = JSON.stringify({
         tagline: "Cozy beds for happy dogs", style: "editorial", hero: { heading: "Rest easy, pup", subheading: "Soft beds and blankets for dogs." },
-        about: [copyCalls++ === 0 ? "Founded in 2015 by dog lovers." : "Nordic Paws sells dog beds and blankets.", "We are operated by Nordic Paws LLC."], faq,
+        about: [
+          copyCalls++ === 0
+            ? "Founded in 2015 by dog lovers, Nordic Paws is an online store operated by Nordic Paws LLC from Austin, TX, focused on dog beds and blankets."
+            : "Nordic Paws is an online store operated by Nordic Paws LLC from Austin, TX. We focus on dog beds and blankets chosen for everyday comfort at home.",
+          "Every order ships within the contiguous United States. Orders are processed in 1-3 business days and usually arrive in 5-10 business days after dispatch.",
+          "If something is not right, you can request a return within 30 days of delivery. Questions about an order? Email support@nordicpaws.com and we will help.",
+        ], faq,
       });
       log.push("copy");
     } else if (prompt.startsWith("You write the legal")) {
