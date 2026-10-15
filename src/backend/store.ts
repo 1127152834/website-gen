@@ -12,6 +12,7 @@ import {
 import { PermanentError } from "./jobs.ts";
 import type { BackStepKey, StepCtx, StepResult } from "./pipeline.ts";
 import { BrowserUnavailable } from "./qa-browser.ts";
+import { mailStatus } from "./mail.ts";
 
 export type Pick = Candidate & { status: "pending" | "done" | "skipped"; productId?: number; reason?: string };
 interface Spec { copy: SiteCopy; policies: Policies }
@@ -391,9 +392,16 @@ async function runQa(ctx: StepCtx): Promise<QaReport> {
     add("payments", "已连接支付方式", "warn", on.length > 0, on.length ? on.join(", ") : "待你操作：在 WooCommerce 里连接 Stripe 和 PayPal（需要你本人登录授权）");
   });
 
-  if (ctx.entity.supportEmail === "auto") {
-    const mail = ctx.d.db.prepare("SELECT 1 FROM mail_orders WHERE domain = ?").get(ctx.domain);
-    add("mailbox", "客服邮箱能收信", "warn", Boolean(mail), mail ? f.email : `${f.domain} 还没有邮箱订单，${f.email} 收不到邮件`);
+  // 客服邮箱和邮件 DNS 只提醒不阻断：站点能卖货，但邮件收发会出问题
+  const mail = await mailStatus(ctx);
+  if (mail.onDomain) {
+    add("mailbox", "客服邮箱能收信", "warn", mail.mailbox === "active",
+      !mail.hasOrder ? `${f.domain} 没有 Hostinger 邮箱订单，${f.email} 收不到邮件` : !mail.mailbox ? `${f.email} 还没有创建` : mail.mailbox === "active" ? f.email : `${f.email} 状态是 ${mail.mailbox}`);
+    if (mail.dns) {
+      const bad = mail.dns.checks.filter((c) => !c.ok);
+      add("mail_dns", "邮件 DNS（MX、SPF、DKIM、DMARC）", "warn", bad.length === 0,
+        bad.length ? bad.map((c) => `${c.key}：${c.detail}`).join("；") + "。到站点页点「检查并修复」" : "四项都正确");
+    }
   }
   add("images", "商品图片版权", "warn", false, "图片来自 CJ 商品资料，正式上线前建议换成供应商授权或自己拍摄的图片");
 

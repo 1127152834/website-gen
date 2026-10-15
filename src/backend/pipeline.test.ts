@@ -75,8 +75,21 @@ test("a new site goes through every step: built on Hostinger, filled from CJ and
   assert.equal(browsed!.loginUrl, `https://${DOMAIN}/create_autologin_abc.php`);
   assert.ok(browsed!.cart!.addPath.includes("add-to-cart="));
 
+  // 客服邮箱：建了 support@ 和 orders@ 别名，密码加密保存；邮件 DNS 补上了 DKIM 和 DMARC，原有 MX、SPF 没动
+  assert.deepEqual(st.mailboxes.map((m) => m.address), [EMAIL]);
+  assert.deepEqual(st.aliases.map((a) => a.address), [`orders@${DOMAIN}`]);
+  const mailbox = JSON.parse(unseal(key, site.mailbox_ciphertext)) as { address: string; password: string };
+  assert.equal(mailbox.address, EMAIL);
+  assert.match(mailbox.password, /^Aa1!/);
+  assert.deepEqual(st.zone.map((z) => `${z.type} ${z.name}`).sort(), [
+    "CNAME hostingermail-a._domainkey", "CNAME hostingermail-b._domainkey", "CNAME hostingermail-c._domainkey", "MX @", "TXT @", "TXT _dmarc",
+  ]);
+  assert.match(steps.find((s) => s.key === "mail_dns")!.detail!, /快照 #500/);
+  assert.ok(qa.checks.some((c) => c.id === "mail_dns" && c.ok), "QA sees the fixed records through public DNS");
+
   // 日志里有调用记录，但绝不能出现密码
   const log = JSON.stringify(events);
+  assert.ok(!log.includes(mailbox.password));
   assert.ok(log.includes("hosting_websites_start-setup"));
   assert.ok(!log.includes(JSON.parse(unseal(key, site.wp_admin_ciphertext)).password));
   assert.ok(!log.includes("app pass word 1234"));
@@ -131,4 +144,22 @@ test("QA failures stop the site with a report instead of finishing", async () =>
   assert.equal(render.ok, false);
   assert.match(render.detail, /PHP 错误/);
   assert.equal(siteSteps(db, siteId).find((s) => s.key === "qa")!.status, "failed");
+});
+
+test("a domain without a Hostinger mail order still gets built; the mailbox steps are skipped and QA reminds you", async () => {
+  const { db, siteId } = setup();
+  const { st, exec } = fakeHostinger();
+  st.mailOrders = [];
+  const events: { kind: string; payload: Record<string, unknown> }[] = [];
+  await runToEnd(deps(db, exec, fakeSite(st).fetchImpl, events), siteId);
+  const steps = siteSteps(db, siteId);
+  assert.equal(steps.find((s) => s.key === "mailbox")!.status, "skipped");
+  assert.match(steps.find((s) => s.key === "mailbox")!.detail!, /没有 Hostinger 邮箱订单/);
+  assert.equal(steps.find((s) => s.key === "mail_dns")!.status, "skipped");
+  assert.equal(st.dnsUpdates, 0);
+  const site = db.prepare("SELECT status, qa_json FROM sites WHERE id = ?").get(siteId) as { status: string; qa_json: string };
+  assert.equal(site.status, "done");
+  const mailboxCheck = (JSON.parse(site.qa_json) as { checks: { id: string; ok: boolean; level: string }[] }).checks.find((c) => c.id === "mailbox")!;
+  assert.deepEqual({ ok: mailboxCheck.ok, level: mailboxCheck.level }, { ok: false, level: "warn" });
+  assert.ok(events.some((e) => e.kind === "warn" && String(e.payload.message).includes("没有 Hostinger 邮箱订单")));
 });

@@ -157,4 +157,7 @@ export const MIGRATIONS: string[] = [
    );
    CREATE INDEX changesets_site ON changesets (site_id, id);
    CREATE INDEX changesets_due ON changesets (status, revert_at);`,
+
+  // 008：流水线新建的客服邮箱的地址和密码（加密）；复用已有邮箱时为空，密码在 hPanel 里管理
+  `ALTER TABLE sites ADD COLUMN mailbox_ciphertext BLOB;`,
 ];

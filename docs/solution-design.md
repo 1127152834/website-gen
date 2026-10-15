@@ -497,6 +497,13 @@ flowchart TD
 - **邮箱**：创建（随机强密码，只显示一次，加密保存）、改密、删除（L3）
 - **别名/转发/Catch-all/自动回复**：新站默认开 `support@`，`orders@` 作为别名
 - **DNS 认证**：检查 MX、SPF、DKIM、DMARC，缺失时生成修复计划（DMARC 先 `p=none`，稳定后收紧）
+- **P1 已实现**（`src/backend/mail.ts`）：流水线在「注册伴侣插件」之后多两步——「客服邮箱」用域名的 Hostinger 邮箱订单建 support@（已有就复用，随机强密码加密保存）并加 orders@ 别名；「邮件 DNS」对照 Hostinger Email 的标准记录检查并补齐。规则：
+  - 只补缺的；SPF 合并进原记录（保留其他发信来源，多条合成一条），不删其他 TXT；MX 指向其他邮件服务时只提醒、不改
+  - 写入前先 `dns_records_validate`，写完重读确认；记下 Hostinger 自动保存的改动前快照编号，需要时在 hPanel 恢复
+  - 域名的 DNS 不在 Hostinger（名称服务器不是 `*.dns-parking.com`）时不写，列出需要你去 DNS 服务商那里添加的记录
+  - 没有邮箱订单或席位用完时不让建站失败，记下原因；QA 和站点页提醒
+  - 公共 DNS 用 DoH 查询（本机代理的虚拟 DNS 查不了 TXT/NS）
+  - 站点页「客服邮箱」面板：现状、显示流水线建邮箱时保存的密码、修复（先列出要做的事，你确认后执行）
 - **WooCommerce 发信**：伴侣插件把交易邮件配置为用该域名邮箱的 SMTP 发出
 - **（P3）AI 客服邮箱**：读取客服邮件、摘要、起草回复，你确认后发送。邮件内容不可信，这个模式下的 pi 会话只有「读」和「起草」两个工具
 
@@ -601,7 +608,7 @@ flowchart TD
 | `domains` | account_id, external_id, domain, type, status, expires_at（同步快照；锁定、隐私、NS 等按需再加） |
 | `domain_bindings` | domain_id, site_id, mode（same_account / cross_account / external）, status |
 | `mail_orders` | account_id, external_id, domain, plan, status, seats, is_trial, expires_at（同步快照） |
-| `mailboxes` | id, account_id, domain, address, password_ciphertext |
+| `mailboxes` | id, account_id, domain, address, password_ciphertext |（P1 暂存为 `sites.mailbox_ciphertext`：只有流水线新建的客服邮箱）
 | `jobs` | id, type, payload, status, run_at, attempts, lease_until, idempotency_key, error |
 | `provision_steps` | site_id, step, status（pending / running / waiting / waiting_user / done / failed / skipped）, attempt, started_at, finished_at |
 | `run_events` | seq（自增）, batch_id, site_id, ts, kind（step / mcp / ai_text / ai_thinking / ai_tool / warn / error）, payload_json（已脱敏）—— 进度和 AI 日志的唯一来源，界面重新打开时按 seq 补发 |

@@ -15,6 +15,7 @@ import { companionHealth, EnrollRejected, enrollCompanion, prepareCompanion, typ
 import type { CjGet } from "./cj.ts";
 import type { Browse } from "./qa-browser.ts";
 import { storeSteps } from "./store.ts";
+import { ensureMailbox, mailDns, mailSetup } from "./mail.ts";
 
 export interface PipelineDeps {
   db: DatabaseSync;
@@ -55,6 +56,7 @@ export interface SiteRow {
   spec_json: string | null;
   qa_json: string | null;
   launched_at: number | null;
+  mailbox_ciphertext: Uint8Array | null;
 }
 
 export interface StepRow { status: StepState["status"]; detail: string | null; started_at: number }
@@ -309,6 +311,29 @@ export async function provisionSite(d: PipelineDeps, siteId: number): Promise<{ 
       }
       const r = await ensureActive("plugin", "site-companion", async () => {}, INSTALL_WAIT);
       return "wait" in r ? { wait: "等待伴侣插件启用" } : { status: "done", detail: r.detail };
+    },
+
+    async mailbox() {
+      // 邮箱有问题（没有邮箱订单、席位用完）不让建站失败：记下原因，QA 和站点页会提醒
+      const r = await ensureMailbox(ctx);
+      if (!r.ok) emit("warn", { message: r.detail });
+      return { status: r.ok ? "done" : "skipped", detail: r.detail };
+    },
+
+    async mail_dns() {
+      const { onDomain, order } = await mailSetup(ctx);
+      if (!onDomain || !order) return { status: "skipped", detail: "没有用这个域名的 Hostinger 邮箱，不需要邮件 DNS" };
+      const r = await mailDns(ctx, true);
+      if (!r.atHostinger) {
+        emit("warn", { message: `${domain} 的 DNS 不在 Hostinger，需要在 DNS 服务商那里添加：${r.manual.join("；")}` });
+        return { status: "skipped", detail: r.manual.length ? `DNS 不在 Hostinger，需要手动添加 ${r.manual.length} 条记录（见日志）` : "DNS 不在 Hostinger，记录已齐全" };
+      }
+      return {
+        status: "done",
+        detail: r.fixed.length
+          ? `已补上 ${r.fixed.length} 组记录（${[...new Set(r.fixed.map((f) => f.split(" ")[0]))].join("、")}）${r.snapshotId ? `，改动前的 DNS 快照 #${r.snapshotId}` : ""}`
+          : "MX、SPF、DKIM、DMARC 都已正确",
+      };
     },
 
     async enroll() {

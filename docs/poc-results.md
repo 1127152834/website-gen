@@ -143,6 +143,17 @@
 2. **Markdown**：回复里的 `**加粗**` 原样显示。提示词要求纯文本，界面也把 `**…**` 渲染成加粗
 3. **虚假折扣**：如果直接按要求写「全场 8 折」，而店里没有这个价格，就是误导性广告。系统提示词加了一条：店里没有的折扣、优惠券、赠品一律不写进公告
 
+## 第十轮：客服邮箱和邮件 DNS（2026-10-15）
+
+| 项 | 结论 |
+|---|---|
+| Hostinger Email 的标准 DNS | 在 shopunitycart.com 和 apexridegear.com 上核对一致：MX `5 mx1.hostinger.com.` / `10 mx2.hostinger.com.`；SPF `v=spf1 include:_spf.mail.hostinger.com ~all`；DKIM 是 3 条 CNAME `hostingermail-{a,b,c}._domainkey` → `hostingermail-{a,b,c}.dkim.mail.hostinger.com.`；DMARC `v=DMARC1; p=none`。Hostinger 没有单独返回这些记录的接口，所以写成常量 |
+| 邮箱接口 | `mail_mailboxes_create-mailbox` 用邮箱订单 ID + 前缀建邮箱；`mail_aliases_create-alias` 建别名。测试订单是试用套餐，1 个席位，每个邮箱最多 5 个别名 |
+| DNS 接口 | `dns_records_list` 读区域；`dns_records_update` 带 `overwrite` 按「名称 + 类型」整组替换；`dns_records_validate` 可先校验（TXT 带不带引号都接受）；Hostinger 每次改区域都自动拍快照（`dns_snapshots_list`） |
+| 公共 DNS | 本机代理用虚拟 DNS，Node 的 `dns` 查 NS/TXT 会卡住；改用 Cloudflare 的 DoH（HTTPS），6 个查询约 2 秒。Hostinger 的名称服务器是 `*.dns-parking.com` |
+| 实测 | 「客服邮箱」：support@ 已存在，复用，新建了别名 orders@（核对过，你原有的 sandra@ 别名没动）；「邮件 DNS」：四项都正确，没有写入；QA 两项邮件检查通过（13/15，剩没连支付和图片版权两个提醒） |
+| 没实测 | 线上「补 DNS 记录」的写入路径：测试域名的记录本来就齐全，没有为了测试去删记录。写入逻辑由单元测试覆盖（缺 DKIM/DMARC、合并 SPF、两条 SPF、MX 指向别家等），写入格式在线上用 validate 验证过 |
+
 ## POC 带来的设计修正（已同步进方案 v0.6）
 
 1. **批准后唤醒 pi 要用 `sendCustomMessage(..., { triggerTurn: true })`**。会话空闲时调用 `followUp()` 只会排队，不会开启新一轮（实测）。

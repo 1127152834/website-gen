@@ -55,7 +55,7 @@ export interface RoleSummary {
   problem: string | null;
 }
 
-/** 建站流水线的步骤（顺序即执行顺序）：前 9 步在 Hostinger 上搭站，后 6 步填内容并验收 */
+/** 建站流水线的步骤（顺序即执行顺序）：前 11 步在 Hostinger 上搭站（含邮箱），后 6 步填内容并验收 */
 export const PROVISION_STEPS = [
   { key: "precheck", name: "预检" },
   { key: "create_site", name: "创建网站" },
@@ -66,6 +66,8 @@ export const PROVISION_STEPS = [
   { key: "theme", name: "部署 Obel 主题" },
   { key: "companion", name: "部署伴侣插件" },
   { key: "enroll", name: "注册伴侣插件" },
+  { key: "mailbox", name: "客服邮箱" },
+  { key: "mail_dns", name: "邮件 DNS" },
   { key: "products_pick", name: "从 CJ 选品" },
   { key: "content", name: "AI 撰写文案与政策" },
   { key: "store_setup", name: "配置商店" },
@@ -153,6 +155,39 @@ export interface ChangeSummary {
   revertError: string | null;
   /** 改了哪些对象 */
   targets: string[];
+}
+
+/** 邮件 DNS 的一项检查 */
+export interface MailDnsCheck {
+  key: "MX" | "SPF" | "DKIM" | "DMARC";
+  ok: boolean;
+  detail: string;
+}
+
+export interface MailDnsResult {
+  /** 域名的 DNS 是否由 Hostinger 管理（只有这样才能自动修） */
+  atHostinger: boolean;
+  checks: MailDnsCheck[];
+  /** 自动修复写入了哪些记录 */
+  fixed: string[];
+  /** DNS 不在 Hostinger 时，需要你在 DNS 服务商那里添加的记录 */
+  manual: string[];
+  /** 只检查时：修复会写入哪些记录 */
+  planned: string[];
+  snapshotId: number | null;
+}
+
+export interface MailStatus {
+  email: string;
+  /** 客服邮箱在不在本站域名上（不在就不归我们管） */
+  onDomain: boolean;
+  hasOrder: boolean;
+  /** 邮箱状态（active 等），还没建为 null */
+  mailbox: string | null;
+  /** 流水线建邮箱时保存了密码 */
+  passwordSaved: boolean;
+  /** 有 Hostinger 邮箱订单时才检查 DNS */
+  dns: MailDnsResult | null;
 }
 
 export interface Request {

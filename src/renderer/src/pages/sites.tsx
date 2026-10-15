@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
-import { CircleAlert, Clock, ExternalLink, LoaderCircle, MessageSquarePlus, RotateCcw, Send, Square, Wrench } from "lucide-react";
-import type { ChangeSummary, ChatEvent, ChatItem, SiteListItem } from "../../../shared/protocol.ts";
+import { CircleAlert, CircleCheck, Clock, ExternalLink, LoaderCircle, MessageSquarePlus, RefreshCw, RotateCcw, Send, Square, Wrench } from "lucide-react";
+import type { ChangeSummary, ChatEvent, ChatItem, MailStatus, SiteListItem } from "../../../shared/protocol.ts";
 import { call, onChanged, onChat, onConnect } from "@/lib/backend.ts";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -286,7 +286,9 @@ export function SitesPage() {
           </form>
         </section>
 
-        <section aria-label="变更记录" className="col-span-2 flex min-w-0 flex-col gap-2 xl:col-span-1">
+        <div className="col-span-2 flex min-w-0 flex-col gap-6 xl:col-span-1">
+        {siteId != null && <MailPanel key={siteId} siteId={siteId} />}
+        <section aria-label="变更记录" className="flex min-w-0 flex-col gap-2">
           <h2 className="text-sm font-medium">变更记录</h2>
           {changes.length === 0 ? (
             <p className="text-sm text-muted-foreground">还没有修改过。pi 每次修改前都会给改动的内容拍快照，可以随时整体回滚。</p>
@@ -321,6 +323,7 @@ export function SitesPage() {
             </ul>
           )}
         </section>
+        </div>
       </div>
 
       <AlertDialog open={reverting !== null} onOpenChange={(open) => !open && setReverting(null)}>
@@ -338,5 +341,123 @@ export function SitesPage() {
         </AlertDialogContent>
       </AlertDialog>
     </div>
+  );
+}
+
+/** 客服邮箱和邮件 DNS：检查（只读）和修复（建邮箱、补 DNS 记录，先确认） */
+function MailPanel({ siteId }: { siteId: number }) {
+  const [status, setStatus] = useState<MailStatus | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [password, setPassword] = useState<string | null>(null);
+  const [confirming, setConfirming] = useState(false);
+  const [fixing, setFixing] = useState(false);
+  const [note, setNote] = useState<string | null>(null);
+
+  const load = useCallback(() => {
+    setLoading(true);
+    setError(null);
+    call<MailStatus>("mail.status", { siteId }).then(setStatus, (e: Error) => setError(e.message)).finally(() => setLoading(false));
+  }, [siteId]);
+  useEffect(() => onConnect(load), [load]);
+
+  const fix = async () => {
+    setFixing(true);
+    setError(null);
+    try {
+      const r = await call<{ mailbox: string; dns: { fixed: string[]; snapshotId: number | null } | null }>("mail.fix", { siteId });
+      setNote([r.mailbox, r.dns?.fixed.length ? `DNS 补上 ${r.dns.fixed.length} 组记录${r.dns.snapshotId ? `（改动前快照 #${r.dns.snapshotId}）` : ""}` : ""].filter(Boolean).join("；"));
+      load();
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setFixing(false);
+      setConfirming(false);
+    }
+  };
+  const showPassword = async () => {
+    try {
+      setPassword((await call<{ password: string } | null>("mail.password", { siteId }))?.password ?? null);
+    } catch (e) {
+      setError((e as Error).message);
+    }
+  };
+
+  const needMailbox = Boolean(status?.onDomain && status.hasOrder && !status.mailbox);
+  const planned = status?.dns?.atHostinger ? status.dns.planned : [];
+  const fixable = needMailbox || planned.length > 0;
+
+  return (
+    <section aria-label="客服邮箱" className="flex flex-col gap-2">
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-medium">客服邮箱</h2>
+        <Button variant="ghost" size="sm" onClick={load} disabled={loading || fixing}>
+          {loading ? <LoaderCircle className="motion-safe:animate-spin" aria-hidden /> : <RefreshCw aria-hidden />}
+          重新检查
+        </Button>
+      </div>
+      {error && <p role="alert" className="text-xs text-destructive">{error}</p>}
+      {!status ? (
+        <p className="text-sm text-muted-foreground">{loading ? "正在检查邮箱和公共 DNS…" : "还没有检查"}</p>
+      ) : (
+        <div className="flex flex-col gap-2 rounded-lg border p-3 text-sm">
+          <p className="font-medium break-all">{status.email}</p>
+          {!status.onDomain ? <p className="text-muted-foreground">不在本站域名上，由你自己管理。</p>
+            : !status.hasOrder ? <p className="text-amber-700">这个域名没有 Hostinger 邮箱订单，收不到邮件。先在 hPanel 开通邮箱，再点「重新检查」。</p>
+            : <p className={status.mailbox === "active" ? "text-green-700" : "text-amber-700"}>{status.mailbox === "active" ? "邮箱已开通" : status.mailbox ? `邮箱状态：${status.mailbox}` : "邮箱还没有创建"}</p>}
+          {status.passwordSaved && (
+            <p className="text-xs">
+              密码：{password ? <code className="rounded bg-muted px-1 select-all">{password}</code> : "已加密保存"}
+              <button type="button" className="ml-2 underline underline-offset-2" onClick={() => (password ? setPassword(null) : void showPassword())}>{password ? "隐藏" : "显示"}</button>
+            </p>
+          )}
+          {status.dns && (
+            <ul aria-label="邮件 DNS" className="flex flex-col gap-1">
+              {status.dns.checks.map((c) => (
+                <li key={c.key} className="flex gap-2 text-xs">
+                  {c.ok ? <CircleCheck className="size-3.5 shrink-0 text-green-600" aria-label="正确" /> : <CircleAlert className="size-3.5 shrink-0 text-amber-600" aria-label="有问题" />}
+                  <span className="w-11 shrink-0 font-medium">{c.key}</span>
+                  <span className="min-w-0 break-all text-muted-foreground">{c.detail}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          {status.dns && !status.dns.atHostinger && status.dns.manual.length > 0 && (
+            <div className="text-xs">
+              <p className="text-amber-700">这个域名的 DNS 不在 Hostinger，不能自动修，需要在 DNS 服务商那里添加：</p>
+              <ul className="mt-1 list-disc pl-4 font-mono break-all">{status.dns.manual.map((m) => <li key={m}>{m}</li>)}</ul>
+            </div>
+          )}
+          {fixable && (
+            <Button size="sm" className="self-start" onClick={() => setConfirming(true)} disabled={fixing}>
+              {fixing ? <LoaderCircle className="motion-safe:animate-spin" aria-hidden /> : <Wrench aria-hidden />}
+              修复
+            </Button>
+          )}
+          {note && <p role="status" className="text-xs text-green-700">{note}</p>}
+          {status.dns && <p className="text-xs text-muted-foreground">DNS 按公共解析结果显示，刚改的记录可能要几分钟才生效。</p>}
+        </div>
+      )}
+
+      <AlertDialog open={confirming} onOpenChange={(open) => !open && !fixing && setConfirming(false)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>修复客服邮箱和邮件 DNS？</AlertDialogTitle>
+            <AlertDialogDescription>只补缺少的东西：不改指向其他邮件服务的 MX，不删已有的 TXT 记录；Hostinger 会自动保存改动前的 DNS 快照，需要时可在 hPanel 恢复。</AlertDialogDescription>
+          </AlertDialogHeader>
+          <ul className="list-disc pl-5 text-sm">
+            {needMailbox && <li>创建 {status?.email}（随机强密码，加密保存在这台电脑上）和别名 orders@</li>}
+            {planned.map((p) => <li key={p} className="font-mono text-xs break-all">{p}</li>)}
+          </ul>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={fixing}>取消</AlertDialogCancel>
+            <AlertDialogAction disabled={fixing} onClick={(e) => { e.preventDefault(); void fix(); }}>
+              {fixing && <LoaderCircle className="motion-safe:animate-spin" aria-hidden />}
+              修复
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </section>
   );
 }

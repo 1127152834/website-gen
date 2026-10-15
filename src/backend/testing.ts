@@ -12,6 +12,7 @@ import { provisionSite, UNWANTED_PLUGINS, type PipelineDeps } from "./pipeline.t
 import { launchSite } from "./launch.ts";
 import { seal, unseal } from "./secrets.ts";
 import type { BrowseInput } from "./qa-browser.ts";
+import type { ZoneGroup } from "./mail.ts";
 import type { BatchForm } from "../shared/forms.ts";
 import { PROVISION_STEPS } from "../shared/protocol.ts";
 
@@ -45,6 +46,15 @@ export function fakeHostinger(opts: { websiteAlreadyThere?: boolean } = {}) {
     // Hostinger 新站默认装的插件；卸载是异步的，下一次列表才消失
     plugins: new Map<string, string>([["hostinger", "active"], ["hostinger-ai-assistant", "active"], ["hostinger-easy-onboarding", "active"], ["hostinger-reach", "active"]]),
     uninstallQueued: [] as string[],
+    // 邮箱：域名有一个邮箱订单，还没有邮箱；DNS 只有 Hostinger 的默认 MX 和 SPF，缺 DKIM 和 DMARC
+    mailOrders: [{ id: "OR1", status: "active", domain: { name: DOMAIN } }],
+    mailboxes: [] as { id: string; address: string; status: string }[],
+    aliases: [] as { address: string }[],
+    zone: [
+      { name: "@", type: "MX", ttl: 14400, records: [{ content: "5 mx1.hostinger.com.", is_disabled: false }, { content: "10 mx2.hostinger.com.", is_disabled: false }] },
+      { name: "@", type: "TXT", ttl: 3600, records: [{ content: '"v=spf1 include:_spf.mail.hostinger.com ~all"', is_disabled: false }] },
+    ] as ZoneGroup[],
+    dnsUpdates: 0,
     themes: new Map<string, { status: string; version: string }>([["twentytwentyfive", { status: "active", version: "1.5" }]]),
     pluginDeploys: [] as string[],
     calls: [] as string[],
@@ -103,6 +113,34 @@ export function fakeHostinger(opts: { websiteAlreadyThere?: boolean } = {}) {
         st.plugins.set(params.slug, "inactive");
         st.pluginDeploys.push(params.pluginPath);
         return { status: "success" };
+      case "mail_orders_list":
+        return { data: st.mailOrders, meta: { total: st.mailOrders.length } };
+      case "mail_mailboxes_list": {
+        const data = st.mailboxes.filter((m) => !params.search || m.address.includes(params.search));
+        return { data, meta: { total: data.length } };
+      }
+      case "mail_mailboxes_create-mailbox":
+        st.mailboxes.push({ id: `AC${st.mailboxes.length + 1}`, address: `${params.local_part}@${DOMAIN}`, status: "active" });
+        return {};
+      case "mail_aliases_list":
+        return { data: st.aliases, meta: { total: st.aliases.length } };
+      case "mail_aliases_create-alias":
+        st.aliases.push({ address: `${params.local_part}@${DOMAIN}` });
+        return {};
+      case "dns_records_list":
+        return structuredClone(st.zone);
+      case "dns_snapshots_list":
+        return [{ id: 500 + st.dnsUpdates, reason: "Zone records update request" }];
+      case "dns_records_validate":
+        return { message: "Request accepted" };
+      case "dns_records_update":
+        // overwrite：同名同类型整组替换
+        for (const g of params.zone as ZoneGroup[]) {
+          st.zone = st.zone.filter((z) => !(z.name === g.name && z.type === g.type));
+          st.zone.push({ ...g, records: g.records.map((r) => ({ ...r, is_disabled: false })) });
+        }
+        st.dnsUpdates++;
+        throw new HostingerError("HTTP 500: [Hosting:9999] Request failed", 500);
       case "wordpress_login_create-links":
         return { login: `${DOMAIN}/create_autologin_abc.php` };
       default:
@@ -141,6 +179,16 @@ export function fakeSite(st: ReturnType<typeof fakeHostinger>["st"], opts: { rej
     const path = u.pathname.replace(/^\/wp-json\//, "");
     const q = u.searchParams;
 
+    // 公共 DNS（DoH）：答案来自模拟的 Hostinger 区域，名称服务器是 Hostinger 的
+    if (u.hostname === "cloudflare-dns.com") {
+      const name = q.get("name")!;
+      const type = q.get("type")!;
+      const code = { NS: 2, CNAME: 5, MX: 15, TXT: 16 }[type]!;
+      const rel = name === DOMAIN ? "@" : name.slice(0, -(DOMAIN.length + 1));
+      const answers = type === "NS" ? ["ns1.dns-parking.com.", "ns2.dns-parking.com."]
+        : (st.zone.find((z) => z.name === rel && z.type === type)?.records ?? []).filter((r) => !r.is_disabled).map((r) => r.content);
+      return json({ Status: answers.length ? 0 : 3, Answer: answers.map((data) => ({ type: code, data })) });
+    }
     // 访客看到的前台：维护模式或 Woo「即将上线」时是维护页
     if (!u.pathname.startsWith("/wp-json/")) {
       const hidden = st.maintenance === "enabled" || wp.options.woocommerce_coming_soon === "yes";

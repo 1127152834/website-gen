@@ -21,7 +21,7 @@ const SITE_STATUS: Record<SiteStatus, { label: string; variant: "secondary" | "o
   failed: { label: "失败", variant: "destructive" },
 };
 const STEP_TEXT: Record<StepState["status"], string> = {
-  pending: "未开始", running: "进行中", waiting: "等待中", done: "完成", skipped: "已存在，跳过", failed: "失败",
+  pending: "未开始", running: "进行中", waiting: "等待中", done: "完成", skipped: "跳过", failed: "失败",
 };
 const TOTAL = PROVISION_STEPS.length;
 

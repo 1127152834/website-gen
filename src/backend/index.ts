@@ -14,10 +14,11 @@ import { createRunner, recoverStale } from "./jobs.ts";
 import { provisionSite, siteContext, type PipelineDeps } from "./pipeline.ts";
 import { createChats } from "./agent.ts";
 import { dueReverts, listChanges, revertChange, scheduleRevert } from "./changes.ts";
+import { ensureMailbox, mailDns, mailSetup, mailStatus } from "./mail.ts";
 import { launchSite } from "./launch.ts";
 import { buildRuntime, completeText, listProviders, listRoles, pingModel, seedModelDefaults, setProviderKey, setRole } from "./models.ts";
 import { browseWithEdge } from "./qa-browser.ts";
-import { secretHint } from "./secrets.ts";
+import { secretHint, unseal } from "./secrets.ts";
 import type { QaReport } from "./store.ts";
 import { handleRequest, type Handlers } from "./rpc.ts";
 
@@ -244,6 +245,22 @@ const handlers: Handlers = {
   "chat.reset": async (p) => {
     await chats.reset(siteIdOf(p));
     return { ok: true };
+  },
+  // 客服邮箱与邮件 DNS：检查（只读）、修复（建邮箱 + 补 DNS 记录，你在界面上确认后才调）、查看流水线建邮箱时保存的密码
+  "mail.status": (p) => mailStatus(siteContext(pipelineDeps(), siteIdOf(p))),
+  "mail.fix": async (p) => {
+    const ctx = siteContext(pipelineDeps(), siteIdOf(p));
+    const mailbox = await ensureMailbox(ctx);
+    const { order } = await mailSetup(ctx);
+    const dns = order ? await mailDns(ctx, true) : null;
+    const detail = `${mailbox.detail}${dns?.fixed.length ? `；DNS 补上 ${dns.fixed.join("；")}${dns.snapshotId ? `（改动前快照 #${dns.snapshotId}）` : ""}` : ""}`;
+    if (mailbox.ok) ctx.emit("step", { step: "mail_fix", name: "检查并修复邮箱", status: "done", detail });
+    else ctx.emit("error", { step: "mail_fix", name: "检查并修复邮箱", message: detail });
+    return { mailbox: mailbox.detail, dns };
+  },
+  "mail.password": (p) => {
+    const row = db.prepare("SELECT mailbox_ciphertext FROM sites WHERE id = ?").get(siteIdOf(p)) as { mailbox_ciphertext: Uint8Array | null } | undefined;
+    return row?.mailbox_ciphertext ? (JSON.parse(unseal(requireKey(), row.mailbox_ciphertext)) as { address: string; password: string }) : null;
   },
   "changes.list": (p) => listChanges(db, siteIdOf(p)),
   // 回滚由你在界面上点（不是 pi 的工具调用）
