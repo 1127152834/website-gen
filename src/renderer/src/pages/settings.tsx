@@ -186,6 +186,8 @@ export function SettingsPage() {
 
       <CjSection />
 
+      <MailboxPasswordSection />
+
       <KeyDialog provider={keyFor} onClose={() => setKeyFor(null)} onSaved={(list) => { setProviders(list); load(); }} />
     </div>
   );
@@ -312,5 +314,48 @@ function KeyDialog({ provider, onClose, onSaved }: { provider: ProviderSummary |
         </form>
       </DialogContent>
     </Dialog>
+  );
+}
+
+/** 新建邮箱的默认密码：建站时新建的 support@ 用它；复用已有邮箱时先用它登录试试 */
+function MailboxPasswordSection() {
+  const [set, setSet] = useState<boolean | null>(null);
+  const [password, setPassword] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => onConnect(() => void call<{ set: boolean }>("mail.defaultPassword.status").then((r) => setSet(r.set), () => setSet(null))), []);
+
+  const save = async (value: string | null) => {
+    setBusy(true);
+    setError(null);
+    try {
+      setSet((await call<{ set: boolean }>("mail.defaultPassword.set", { password: value })).set);
+      setPassword("");
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <section aria-label="新建邮箱" className="flex flex-col gap-3">
+      <div>
+        <h2 className="text-sm font-medium">新建邮箱的默认密码</h2>
+        <p className="mt-0.5 text-sm text-muted-foreground">
+          建站时新建的客服邮箱用这个密码；复用已有邮箱时，也会先用它登录一次试试。不设置就为每个邮箱生成随机强密码（更安全，可在站点页查看）。
+        </p>
+      </div>
+      <form onSubmit={(e) => { e.preventDefault(); void save(password); }} className="flex flex-wrap items-center gap-3 rounded-lg border px-4 py-3 text-sm">
+        <span className="text-muted-foreground">{set === null ? "读取中…" : set ? "已设置" : "未设置（用随机密码）"}</span>
+        <Label htmlFor="mailbox-default-password" className="sr-only">新建邮箱的默认密码</Label>
+        <Input id="mailbox-default-password" type="password" autoComplete="new-password" className="w-56" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={set ? "输入新密码可替换" : "至少 8 位，含大小写、数字、符号"} />
+        <Button type="submit" size="sm" disabled={busy || !password}>保存</Button>
+        {set && <Button type="button" size="sm" variant="ghost" disabled={busy} onClick={() => void save(null)}>清除</Button>}
+        {error && <p role="alert" className="basis-full text-destructive">{error}</p>}
+      </form>
+      <p className="text-xs text-muted-foreground">所有邮箱用同一个密码时，一个泄露就全部受影响；密码加密保存在这台电脑上，不会显示。</p>
+    </section>
   );
 }

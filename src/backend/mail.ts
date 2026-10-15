@@ -5,7 +5,8 @@ import { randomBytes } from "node:crypto";
 import { listAll } from "./hostinger.ts";
 import { PermanentError } from "./jobs.ts";
 import type { StepCtx } from "./pipeline.ts";
-import { seal } from "./secrets.ts";
+import type { DatabaseSync } from "node:sqlite";
+import { getSecret, seal, setSecret } from "./secrets.ts";
 import { facts } from "./store.ts";
 import type { MailDnsCheck, MailDnsResult, MailStatus } from "../shared/protocol.ts";
 
@@ -119,6 +120,25 @@ export async function publicMailZone(domain: string, fetchImpl: typeof fetch): P
 
 interface MailOrder { id: string; status: string; domain?: { name?: string } }
 
+// ---- 新建邮箱的默认密码（设置页填写，加密保存）：不设就为每个邮箱生成随机强密码 ----
+const DEFAULT_PASSWORD = "mail.defaultPassword";
+
+/** Hostinger 邮箱密码规则：至少 8 位，含大写、小写、数字和特殊字符 */
+export const mailboxPasswordProblem = (p: string): string | null =>
+  p.length >= 8 && /[A-Z]/.test(p) && /[a-z]/.test(p) && /\d/.test(p) && /[^A-Za-z0-9]/.test(p) ? null : "邮箱密码至少 8 位，要同时有大写字母、小写字母、数字和特殊字符";
+
+export function setDefaultMailboxPassword(db: DatabaseSync, key: Buffer, password: string | null): void {
+  if (password === null) {
+    db.prepare("DELETE FROM secrets WHERE name = ?").run(DEFAULT_PASSWORD);
+    return;
+  }
+  const problem = mailboxPasswordProblem(password);
+  if (problem) throw new Error(problem);
+  setSecret(db, key, DEFAULT_PASSWORD, password); // 不留末几位提示
+}
+
+export const hasDefaultMailboxPassword = (db: DatabaseSync) => Boolean(db.prepare("SELECT 1 FROM secrets WHERE name = ?").get(DEFAULT_PASSWORD));
+
 /** 客服邮箱地址、它是否在本站域名上、这个域名有没有有效的 Hostinger 邮箱订单 */
 export async function mailSetup(ctx: StepCtx): Promise<{ email: string; onDomain: boolean; order: MailOrder | null }> {
   const email = facts(ctx).email;
@@ -132,15 +152,19 @@ export async function mailSetup(ctx: StepCtx): Promise<{ email: string; onDomain
 export async function ensureMailbox(ctx: StepCtx): Promise<{ ok: boolean; detail: string }> {
   const { email, onDomain, order } = await mailSetup(ctx);
   if (!onDomain) return { ok: true, detail: `客服邮箱用的是 ${email}，不在这个域名上，不创建` };
-  if (!order) return { ok: false, detail: `${ctx.domain} 没有 Hostinger 邮箱订单，${email} 收不到邮件；在 hPanel 开通邮箱后，到站点页点「检查并修复」` };
+  // Hostinger 的 API 不能申请免费试用（目录里只有付费套餐），只能你在 hPanel 里开通
+  if (!order) return { ok: false, detail: `${ctx.domain} 没有 Hostinger 邮箱订单，${email} 收不到邮件：在 hPanel 的「邮箱」里给这个域名开通免费试用（1 个月），然后到站点页点「修复」` };
+  const defaultPassword = getSecret(ctx.d.db, ctx.d.key, DEFAULT_PASSWORD);
   const local = email.split("@")[0];
   const find = async () => ((await listAll(ctx.hx, "mail_mailboxes_list", { orderId: order.id, search: local })) as { id: string; address: string }[])
     .find((m) => m.address.toLowerCase() === email.toLowerCase());
   let box = await find();
   let created = false;
+  let passwordNote = "";
   if (!box) {
-    // 满足 Hostinger 的密码规则：大小写、数字、特殊字符
-    const password = `Aa1!${randomBytes(15).toString("base64url")}`;
+    // 设置页有默认密码就用它，否则生成随机强密码（满足 Hostinger 的规则：大小写、数字、特殊字符）
+    const password = defaultPassword ?? `Aa1!${randomBytes(15).toString("base64url")}`;
+    passwordNote = defaultPassword ? "，用设置页的默认密码" : "，随机密码已加密保存";
     try {
       await ctx.act("mail_mailboxes_create-mailbox", { orderId: order.id, local_part: local, password });
     } catch (e) {
@@ -151,6 +175,12 @@ export async function ensureMailbox(ctx: StepCtx): Promise<{ ok: boolean; detail
     if (!box) throw new Error(`创建 ${email} 的请求没有得到确认，稍后重试`);
     ctx.save("mailbox_ciphertext", seal(ctx.d.key, JSON.stringify({ address: email, password })));
     created = true;
+  } else if (!ctx.site.mailbox_ciphertext && defaultPassword && ctx.d.login) {
+    // 已有的邮箱：用默认密码登录一次试试（很多邮箱是在 hPanel 里用同一个密码建的），能登录才保存
+    const creds = { address: email, password: defaultPassword };
+    const ok = await ctx.d.login(creds).then(() => true, () => false);
+    if (ok) ctx.save("mailbox_ciphertext", seal(ctx.d.key, JSON.stringify(creds)));
+    passwordNote = ok ? "，默认密码能登录，已保存" : "，默认密码登录不了，密码在站点页填写";
   }
   const alias = `orders@${ctx.domain}`;
   const aliases = (await listAll(ctx.hx, "mail_aliases_list", { orderId: order.id })) as { address: string }[];
@@ -163,7 +193,7 @@ export async function ensureMailbox(ctx: StepCtx): Promise<{ ok: boolean; detail
       aliasNote = `别名 ${alias} 没建成（${e.message.slice(0, 100)}）`;
     }
   }
-  return { ok: true, detail: `${created ? "已创建" : "已有，复用"} ${email}，${aliasNote}` };
+  return { ok: true, detail: `${created ? "已创建" : "已有，复用"} ${email}${passwordNote}，${aliasNote}` };
 }
 
 const describe = (g: ZoneGroup) => `${g.type} ${g.name} → ${g.records.map((r) => r.content).join("，")}`;

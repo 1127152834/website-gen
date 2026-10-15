@@ -14,8 +14,8 @@ import { createRunner, recoverStale } from "./jobs.ts";
 import { provisionSite, siteContext, type PipelineDeps } from "./pipeline.ts";
 import { createChats } from "./agent.ts";
 import { dueReverts, listChanges, revertChange, scheduleRevert } from "./changes.ts";
-import { ensureMailbox, mailDns, mailSetup, mailStatus } from "./mail.ts";
-import { enableSmtp, imapHasSubject, resetMailboxPassword, saveMailboxPassword, sendTestEmail, smtpStatus } from "./smtp.ts";
+import { ensureMailbox, hasDefaultMailboxPassword, mailDns, mailSetup, mailStatus, setDefaultMailboxPassword } from "./mail.ts";
+import { enableSmtp, imapHasSubject, imapLogin, resetMailboxPassword, saveMailboxPassword, sendTestEmail, smtpStatus } from "./smtp.ts";
 import { launchSite } from "./launch.ts";
 import { buildRuntime, completeText, listProviders, listRoles, pingModel, seedModelDefaults, setProviderKey, setRole } from "./models.ts";
 import { browseWithEdge } from "./qa-browser.ts";
@@ -85,6 +85,7 @@ function pipelineDeps(): PipelineDeps {
     ai: (role, prompt) => completeText(db, key, role, prompt),
     cj: (path) => (cj ??= createCj(db, key))(path),
     browse: browseWithEdge,
+    login: imapLogin,
   };
 }
 
@@ -254,10 +255,18 @@ const handlers: Handlers = {
     const mailbox = await ensureMailbox(ctx);
     const { order } = await mailSetup(ctx);
     const dns = order ? await mailDns(ctx, true) : null;
-    const detail = `${mailbox.detail}${dns?.fixed.length ? `；DNS 补上 ${dns.fixed.join("；")}${dns.snapshotId ? `（改动前快照 #${dns.snapshotId}）` : ""}` : ""}`;
+    // 开通邮箱后点一次「修复」就够：有了密码顺带启用交易邮件
+    const smtp = mailbox.ok && order && ctx.site.mailbox_ciphertext && !(await smtpStatus(ctx)).enabled ? await enableSmtp(ctx, imapHasSubject) : null;
+    const detail = `${mailbox.detail}${dns?.fixed.length ? `；DNS 补上 ${dns.fixed.join("；")}${dns.snapshotId ? `（改动前快照 #${dns.snapshotId}）` : ""}` : ""}${smtp ? `；${smtp.detail}` : ""}`;
     if (mailbox.ok) ctx.emit("step", { step: "mail_fix", name: "检查并修复邮箱", status: "done", detail });
     else ctx.emit("error", { step: "mail_fix", name: "检查并修复邮箱", message: detail });
-    return { mailbox: mailbox.detail, dns };
+    return { mailbox: mailbox.detail, dns, smtp };
+  },
+  "mail.defaultPassword.status": () => ({ set: hasDefaultMailboxPassword(db) }),
+  "mail.defaultPassword.set": (p) => {
+    const password = (p as { password: string | null }).password;
+    setDefaultMailboxPassword(db, requireKey(), password ? String(password) : null);
+    return { set: hasDefaultMailboxPassword(db) };
   },
   "mail.password": (p) => {
     const row = db.prepare("SELECT mailbox_ciphertext FROM sites WHERE id = ?").get(siteIdOf(p)) as { mailbox_ciphertext: Uint8Array | null } | undefined;

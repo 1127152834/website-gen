@@ -16,7 +16,7 @@ import type { CjGet } from "./cj.ts";
 import type { Browse } from "./qa-browser.ts";
 import { storeSteps } from "./store.ts";
 import { ensureMailbox, mailDns, mailSetup } from "./mail.ts";
-import { enableSmtp, imapHasSubject, type InboxCheck } from "./smtp.ts";
+import { enableSmtp, imapHasSubject, type InboxCheck, type MailboxCreds } from "./smtp.ts";
 
 export interface PipelineDeps {
   db: DatabaseSync;
@@ -39,6 +39,8 @@ export interface PipelineDeps {
   browse?: Browse;
   /** 查客服邮箱收件箱（确认测试邮件送达）；默认用 IMAP */
   inbox?: InboxCheck;
+  /** 用 IMAP 登录邮箱验证密码；没有就不尝试（例如用默认密码登录已有邮箱） */
+  login?: (creds: MailboxCreds) => Promise<void>;
 }
 
 export interface SiteRow {
@@ -340,6 +342,9 @@ export async function provisionSite(d: PipelineDeps, siteId: number): Promise<{ 
     },
 
     async smtp() {
+      const { onDomain, order } = await mailSetup(ctx);
+      if (!onDomain) return { status: "skipped", detail: "客服邮箱不在这个域名上，交易邮件用主机默认发信" };
+      if (!order) return { status: "skipped", detail: "这个域名还没有 Hostinger 邮箱：在 hPanel 开通邮箱后，到站点页点「修复」，会一并启用交易邮件" };
       // 发不出去不让建站失败：退回主机默认发信，QA 和站点页提醒
       const r = await enableSmtp(ctx, d.inbox ?? imapHasSubject);
       if (!r.ok) emit("warn", { message: r.detail });
