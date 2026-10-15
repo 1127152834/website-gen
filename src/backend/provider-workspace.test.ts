@@ -12,7 +12,7 @@ test("new workspaces and deliberately emptied workspaces do not auto-seed DeepSe
   let workspace = createWorkspace({ userDir: dir, key });
   try {
     assert.deepEqual(await workspace.handlers["models.providers"](undefined), []);
-    const providers = await workspace.handlers["models.create"]({ name: "自建厂商", protocol: "openai", baseUrl: "https://models.example/v1", apiKey: "test-key", models: [] }) as { id: number }[];
+    const providers = await workspace.handlers["models.create"]({ name: "自建厂商", protocol: "openai", baseUrl: "https://203.0.113.10/v1" /* 公网形式的 IP，不依赖 DNS */, apiKey: "test-key", models: [] }) as { id: number }[];
     assert.equal(providers.length, 1);
     await workspace.handlers["models.delete"]({ providerId: providers[0].id });
     await workspace.close();

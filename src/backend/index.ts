@@ -29,6 +29,7 @@ import {
   updateProviderConfig,
   type ProviderModelInput,
 } from "./models.ts";
+import { assertPublicBaseUrl } from "./net-guard.ts";
 import { browseWithEdge } from "./qa-browser.ts";
 import { secretHint, unseal } from "./secrets.ts";
 import type { QaReport } from "./store.ts";
@@ -184,6 +185,11 @@ export function createWorkspace(opts: { userDir: string; key: Buffer; resourcesD
   }, 60_000);
 
   const siteIdOf = (p: unknown) => Number((p as { siteId: number }).siteId);
+  const providerBaseUrl = (providerId: number) => {
+    const provider = listProviders(db).find((item) => item.id === providerId);
+    if (!provider) throw new Error(`模型厂商 ${providerId} 不存在`);
+    return provider.baseUrl;
+  };
 
   const handlers: Handlers = {
     "overview.get": () => getOverview(db),
@@ -218,13 +224,15 @@ export function createWorkspace(opts: { userDir: string; key: Buffer; resourcesD
     "models.presets": () => MODEL_PROVIDER_PRESETS,
     "models.providers": () => listProviders(db),
     "models.roles": () => listRoles(db),
-    "models.create": (p) => {
+    "models.create": async (p) => {
       const input = p as { name: string; protocol: "openai" | "anthropic"; baseUrl: string; apiKey?: string; models?: ProviderModelInput[] };
+      await assertPublicBaseUrl(String(input.baseUrl ?? "").trim());
       createProviderConfig(db, requireKey(), input);
       return listProviders(db);
     },
-    "models.update": (p) => {
+    "models.update": async (p) => {
       const input = p as { providerId: number; name: string; protocol: "openai" | "anthropic"; baseUrl: string; apiKey?: string; models: ProviderModelInput[] };
+      await assertPublicBaseUrl(String(input.baseUrl ?? "").trim());
       updateProviderConfig(db, requireKey(), Number(input.providerId), input);
       return listProviders(db);
     },
@@ -232,7 +240,11 @@ export function createWorkspace(opts: { userDir: string; key: Buffer; resourcesD
       deleteProviderConfig(db, Number((p as { providerId: number }).providerId));
       return listProviders(db);
     },
-    "models.fetch": (p) => fetchProviderModels(db, requireKey(), Number((p as { providerId: number }).providerId)),
+    "models.fetch": async (p) => {
+      const providerId = Number((p as { providerId: number }).providerId);
+      await assertPublicBaseUrl(providerBaseUrl(providerId));
+      return fetchProviderModels(db, requireKey(), providerId);
+    },
     "models.setKey": (p) => {
       const { providerId, apiKey } = p as { providerId: number; apiKey: string };
       setProviderKey(db, requireKey(), Number(providerId), String(apiKey ?? ""));
@@ -246,6 +258,7 @@ export function createWorkspace(opts: { userDir: string; key: Buffer; resourcesD
     // 发一句极短的请求验证 Key 和地址：只回复 OK
     "models.test": async (p) => {
       const { providerId, modelId } = p as { providerId: number; modelId: string };
+      await assertPublicBaseUrl(providerBaseUrl(Number(providerId)));
       return testProviderModel(db, requireKey(), Number(providerId), String(modelId));
     },
 

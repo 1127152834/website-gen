@@ -87,7 +87,7 @@ try {
   server = spawn(process.execPath, ["src/server/index.ts"], {
     cwd: root,
     env: {
-      ...process.env, HOST: "127.0.0.1", PORT: String(port), DATA_DIR: dataDir, DIST_DIR: distDir,
+      ...process.env, HOST: "127.0.0.1", PORT: String(port), ALLOW_PRIVATE_MODEL_HOSTS: "1", DATA_DIR: dataDir, DIST_DIR: distDir,
       ADMIN_USERNAME: "admin", ADMIN_PASSWORD: initialAdminPassword,
     },
     stdio: ["ignore", "pipe", "pipe"], windowsHide: true,

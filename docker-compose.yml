@@ -10,6 +10,7 @@ services:
       ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
       TRUST_PROXY: ${TRUST_PROXY:-0}
+      ALLOW_PRIVATE_MODEL_HOSTS: ${ALLOW_PRIVATE_MODEL_HOSTS:-0}
     volumes:
       - website-gen-data:/app/data
     ports:
