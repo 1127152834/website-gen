@@ -5,3 +5,4 @@ data/
 *.sqlite-*
 poc/out/
 .playwright-mcp/
+out/

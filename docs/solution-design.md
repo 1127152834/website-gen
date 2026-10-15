@@ -709,7 +709,7 @@ DeepSeek 没有批处理接口，但**低谷时段价格减半**。高峰时段�
 | 表单 | shadcn/ui 表单组件 + react-hook-form + zod | zod schema 同时用于界面校验、CSV 导入模板、后台校验 |
 | 表格与选择器 | shadcn/ui Data Table（TanStack Table）用于批量录入和批次列表；Combobox 用于域名选择 | |
 | 构建与打包 | electron-vite（开发和构建）+ electron-builder（打成 Windows NSIS 安装包） | 主流组合；具体配置实现时用 Context7 查当前文档 |
-| 数据库 | **SQLite**：Electron 自带的 `node:sqlite`，数据文件放在 `app.getPath("userData")` 下 | 决策 J；不需要原生模块，打包零负担（POC 已验证）；不用 ORM，迁移是按序号命名的 `.sql` 文件，用 `PRAGMA user_version` 记录版本 |
+| 数据库 | **SQLite**：Electron 自带的 `node:sqlite`，数据文件放在 `app.getPath("userData")` 下 | 决策 J；不需要原生模块，打包零负担（POC 已验证）；不用 ORM，迁移是 `src/backend/migrations.ts` 里按顺序排列的 SQL，用 `PRAGMA user_version` 记录版本（同一份代码 Vite 打包和 Node 测试都能直接用） |
 | 任务队列 | `jobs` 表 + 后台进程内轮询（租约、重试、退避） | 不引入额外服务 |
 | Agent | `@earendil-works/pi-coding-agent`（SDK），运行在后台进程 | 决策 A；POC 已验证能在 Electron 自带的 Node 下加载 |
 | 模型调用 | `@earendil-works/pi-ai`（pi 自带） | 一套接口同时支持 OpenAI 格式和 Anthropic 格式 |
@@ -732,11 +732,13 @@ website-gen/
 │  │  ├─ cj/          # CJ MCP / REST 客户端
 │  │  ├─ wp/          # 伴侣插件 / Woo REST 客户端
 │  │  ├─ compliance/  # 美国合规规则
-│  │  └─ db/          # SQLite 连接、迁移（migrations/*.sql）
+│  │  ├─ db.ts        # SQLite 连接、迁移执行、run_events 读写
+│  │  └─ migrations.ts # 按顺序排列的 SQL 迁移（只追加）
 │  └─ shared/         # 界面和后台共用的 zod schema 与消息类型
 ├─ resources/         # 打包时以真实目录形式带上（不进 asar），供 MCP 从本机目录部署
 │  ├─ site-companion/ # 站点伴侣插件（PHP）
 │  └─ theme/          # Fifty/Obel fork + 模式库 + 风格预设
+├─ scripts/smoke.ts  # 冒烟测试：用 playwright-core 启动桌面应用走一遍主流程
 ├─ poc/
 └─ docs/
 ```
