@@ -58,3 +58,9 @@ export function eventsSince(db: DatabaseSync, afterSeq: number, limit = 1000): R
   const rows = db.prepare("SELECT * FROM run_events WHERE seq > ? ORDER BY seq LIMIT ?").all(afterSeq, limit);
   return (rows as unknown as EventRow[]).map(toEvent);
 }
+
+/** 某个站最近的事件（站点详情页的日志），按时间正序。 */
+export function eventsForSite(db: DatabaseSync, siteId: string, limit = 500): RunEvent[] {
+  const rows = db.prepare("SELECT * FROM (SELECT * FROM run_events WHERE site_id = ? ORDER BY seq DESC LIMIT ?) ORDER BY seq").all(siteId, limit);
+  return (rows as unknown as EventRow[]).map(toEvent);
+}

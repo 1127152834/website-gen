@@ -55,6 +55,60 @@ export interface RoleSummary {
   problem: string | null;
 }
 
+/** 建站流水线前半段的步骤（顺序即执行顺序） */
+export const PROVISION_STEPS = [
+  { key: "precheck", name: "预检" },
+  { key: "create_site", name: "创建网站" },
+  { key: "wait_wordpress", name: "安装 WordPress" },
+  { key: "ssl_maintenance", name: "SSL 与维护模式" },
+  { key: "woocommerce", name: "安装 WooCommerce" },
+  { key: "theme", name: "部署 Obel 主题" },
+  { key: "companion", name: "部署伴侣插件" },
+  { key: "enroll", name: "注册伴侣插件" },
+] as const;
+export type StepKey = (typeof PROVISION_STEPS)[number]["key"];
+
+export type SiteStatus = "queued" | "running" | "waiting" | "done" | "failed";
+
+export interface FreeDomain {
+  domain: string;
+  accountId: number;
+  accountLabel: string;
+  hasMail: boolean;
+  expiresAt: string | null;
+}
+
+export interface BatchSummary {
+  id: number;
+  createdAt: number;
+  total: number;
+  done: number;
+  failed: number;
+  active: number;
+}
+
+export interface SiteProgress {
+  id: number;
+  batchId: number;
+  domain: string;
+  status: SiteStatus;
+  /** 已完成的步骤数 */
+  completed: number;
+  /** 当前（或失败时停住的）步骤 */
+  currentStep: string | null;
+  lastError: string | null;
+  updatedAt: number;
+}
+
+export interface StepState {
+  key: StepKey;
+  name: string;
+  status: "pending" | "running" | "waiting" | "done" | "skipped" | "failed";
+  detail: string | null;
+  startedAt: number | null;
+  finishedAt: number | null;
+}
+
 export interface Request {
   kind: "req";
   id: number;
@@ -69,6 +123,6 @@ export type Response =
 export type Push =
   | { kind: "event"; event: RunEvent }
   // 某类数据在后台变了（例如定时同步完成），界面收到后重新拉取
-  | { kind: "changed"; topic: "accounts" };
+  | { kind: "changed"; topic: "accounts" | "batches" };
 
 export type BackendMessage = Response | Push;

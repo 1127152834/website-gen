@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Globe, KeyRound, Layers, LayoutDashboard, Settings, Store } from "lucide-react";
+import { Globe, KeyRound, Layers, Settings, Store } from "lucide-react";
 import { call, onConnect } from "@/lib/backend.ts";
 import { cn } from "@/lib/utils";
 import iconUrl from "../../../resources/icon.png";
-import { OverviewPage } from "./pages/overview.tsx";
+import { NewBatchPage } from "./pages/new-batch.tsx";
+import { BatchesPage } from "./pages/batches.tsx";
 import { AccountsPage } from "./pages/accounts.tsx";
 import { SettingsPage } from "./pages/settings.tsx";
 
@@ -15,11 +16,10 @@ interface SystemInfo {
   schemaVersion: number;
 }
 
-type Page = "overview" | "accounts" | "settings";
+type Page = "new" | "batches" | "accounts" | "settings";
 const NAV: { label: string; icon: typeof Store; page?: Page }[] = [
-  { label: "概览", icon: LayoutDashboard, page: "overview" },
-  { label: "建站", icon: Store },
-  { label: "批次", icon: Layers },
+  { label: "建站", icon: Store, page: "new" },
+  { label: "批次", icon: Layers, page: "batches" },
   { label: "站点", icon: Globe },
   { label: "账号", icon: KeyRound, page: "accounts" },
   { label: "设置", icon: Settings, page: "settings" },
@@ -28,7 +28,8 @@ const NAV: { label: string; icon: typeof Store; page?: Page }[] = [
 export default function App() {
   const [connected, setConnected] = useState(false);
   const [info, setInfo] = useState<SystemInfo | null>(null);
-  const [page, setPage] = useState<Page>("overview");
+  const [page, setPage] = useState<Page>("batches");
+  const [openBatch, setOpenBatch] = useState<number | null>(null);
 
   useEffect(
     () =>
@@ -86,7 +87,8 @@ export default function App() {
         </header>
 
         <div className="flex-1 overflow-auto p-6">
-          {page === "overview" && <OverviewPage connected={connected} />}
+          {page === "new" && <NewBatchPage onCreated={(id) => { setOpenBatch(id); setPage("batches"); }} />}
+          {page === "batches" && <BatchesPage key={openBatch} initialBatch={openBatch} onNew={() => setPage("new")} />}
           {page === "accounts" && <AccountsPage />}
           {page === "settings" && <SettingsPage />}
         </div>

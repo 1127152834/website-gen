@@ -79,4 +79,52 @@ export const MIGRATIONS: string[] = [
      model_id    TEXT NOT NULL,
      thinking    TEXT NOT NULL CHECK (thinking IN ('off','minimal','low','medium','high','max'))
    );`,
+
+  // 004：批次、站点、建站步骤进度、任务队列
+  `CREATE TABLE batches (
+     id          INTEGER PRIMARY KEY,
+     entity_json TEXT NOT NULL CHECK (json_valid(entity_json)),
+     created_at  INTEGER NOT NULL
+   );
+   CREATE TABLE sites (
+     id                   INTEGER PRIMARY KEY,
+     batch_id             INTEGER NOT NULL REFERENCES batches (id) ON DELETE CASCADE,
+     domain               TEXT NOT NULL UNIQUE,
+     form_json            TEXT NOT NULL CHECK (json_valid(form_json)),
+     status               TEXT NOT NULL DEFAULT 'queued' CHECK (status IN ('queued','running','waiting','done','failed')),
+     account_id           INTEGER REFERENCES hostinger_accounts (id) ON DELETE SET NULL,
+     order_id             INTEGER,
+     hostinger_username   TEXT,
+     wp_software_id       TEXT,
+     wp_admin_ciphertext  BLOB,
+     enroll_ciphertext    BLOB,
+     enroll_generation    INTEGER,
+     companion_ciphertext BLOB,
+     last_error           TEXT,
+     created_at           INTEGER NOT NULL,
+     updated_at           INTEGER NOT NULL
+   );
+   CREATE TABLE provision_steps (
+     site_id     INTEGER NOT NULL REFERENCES sites (id) ON DELETE CASCADE,
+     step        TEXT NOT NULL,
+     status      TEXT NOT NULL CHECK (status IN ('running','waiting','done','skipped','failed')),
+     detail      TEXT,
+     started_at  INTEGER NOT NULL,
+     finished_at INTEGER,
+     PRIMARY KEY (site_id, step)
+   );
+   CREATE TABLE jobs (
+     id           INTEGER PRIMARY KEY,
+     type         TEXT NOT NULL,
+     site_id      INTEGER REFERENCES sites (id) ON DELETE CASCADE,
+     status       TEXT NOT NULL DEFAULT 'queued' CHECK (status IN ('queued','running','done','failed')),
+     run_at       INTEGER NOT NULL,
+     attempts     INTEGER NOT NULL DEFAULT 0,
+     max_attempts INTEGER NOT NULL DEFAULT 3,
+     lease_until  INTEGER,
+     last_error   TEXT,
+     created_at   INTEGER NOT NULL,
+     updated_at   INTEGER NOT NULL
+   );
+   CREATE INDEX jobs_due ON jobs (status, run_at);`,
 ];

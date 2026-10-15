@@ -3,14 +3,18 @@
 import { join } from "node:path";
 import type { MessagePortMain } from "electron";
 import type { BackendMessage, ModelRole, Push, Request, RunEvent } from "../shared/protocol.ts";
-import { addAccount, listAccounts, listDomains, removeAccount, syncWithStoredToken } from "./accounts.ts";
-import { appendEvent, eventsSince, migrate, openDb, schemaVersion } from "./db.ts";
+import type { BatchForm } from "../shared/forms.ts";
+import { accountToken, addAccount, listAccounts, listDomains, removeAccount, syncWithStoredToken } from "./accounts.ts";
+import { batchSites, createBatch, listBatches, listFreeDomains, PROVISION_JOB, retrySite, siteSteps } from "./batches.ts";
+import { appendEvent, eventsForSite, eventsSince, migrate, openDb, schemaVersion } from "./db.ts";
 import { createHostingerPool } from "./hostinger.ts";
+import { createRunner, recoverStale } from "./jobs.ts";
+import { provisionSite } from "./pipeline.ts";
 import { buildRuntime, listProviders, listRoles, pingModel, seedModelDefaults, setProviderKey, setRole } from "./models.ts";
 import { handleRequest, type Handlers } from "./rpc.ts";
 
-const userData = process.argv[2];
-if (!userData) throw new Error("backend: missing userData path argument");
+const [userData, resourcesDir] = process.argv.slice(2);
+if (!userData || !resourcesDir) throw new Error("backend: missing userData / resources path arguments");
 const dbPath = join(userData, "website-gen.sqlite");
 const db = openDb(dbPath);
 migrate(db);
@@ -54,19 +58,40 @@ const syncAll = async () => {
 setTimeout(() => void syncAll(), 15_000);
 setInterval(() => void syncAll(), 30 * 60_000);
 
-// ponytail: 示例任务只用来演示事件流，P1 建站流水线落地后删除
-const DEMO_STEPS = ["预检", "创建网站", "安装 WordPress", "部署伴侣插件", "安装 WooCommerce", "导入商品", "QA 验收"];
-function startDemo() {
-  const siteId = `demo-${Date.now()}`;
-  DEMO_STEPS.forEach((name, i) =>
-    setTimeout(() => emit({
-      siteId,
-      kind: "step",
-      payload: { step: i + 1, total: DEMO_STEPS.length, name, status: i === DEMO_STEPS.length - 1 ? "done" : "running" },
-    }), (i + 1) * 500),
-  );
-  return { siteId };
-}
+// ---- 建站任务队列：后台进程里只有这一个消费者，启动时上次没跑完的任务全部重新排队 ----
+recoverStale(db, Number.MAX_SAFE_INTEGER);
+const runner = createRunner({
+  db,
+  concurrency: 3,
+  handlers: {
+    [PROVISION_JOB]: (job) => {
+      const key = requireKey();
+      return provisionSite({
+        db, key, fetch, resourcesDir,
+        hostinger: (accountId) => hostinger.forAccount(accountId, accountToken(db, key, accountId)),
+        emit: (e) => emit({ batchId: String(e.batchId), siteId: String(e.siteId), kind: e.kind, payload: e.payload }),
+        workDir: join(userData, "work"),
+        now: Date.now,
+      }, job.siteId!);
+    },
+  },
+  onSettled: (job, outcome, error) => {
+    if (outcome === "failed" || outcome === "retry") {
+      db.prepare("UPDATE sites SET status = ?, updated_at = ? WHERE id = ?").run(outcome === "failed" ? "failed" : "waiting", Date.now(), job.siteId);
+      if (outcome === "retry") emit({ siteId: String(job.siteId), kind: "warn", payload: { message: `第 ${job.attempts + 1} 次出错，${30 * (job.attempts + 1)} 秒后自动重试：${error}` } });
+    }
+    if (outcome === "done") {
+      // 新站建好了，刷新该账号的资源快照
+      const row = db.prepare("SELECT account_id FROM sites WHERE id = ?").get(job.siteId) as { account_id: number | null } | undefined;
+      if (row?.account_id != null) void sync(row.account_id).catch(() => {});
+    }
+    push({ kind: "changed", topic: "batches" });
+  },
+});
+const tick = () => {
+  if (masterKey) void runner.tick();
+};
+setInterval(tick, 2000);
 
 const handlers: Handlers = {
   "system.info": () => ({
@@ -77,7 +102,6 @@ const handlers: Handlers = {
     schemaVersion: schemaVersion(db),
   }),
   "events.since": (p) => eventsSince(db, Number((p as { afterSeq?: number } | undefined)?.afterSeq ?? 0)),
-  "demo.start": startDemo,
 
   "accounts.list": () => listAccounts(db),
   "accounts.domains": (p) => listDomains(db, Number((p as { id: number }).id)),
@@ -114,6 +138,24 @@ const handlers: Handlers = {
     const model = models.getModel(`p${Number(providerId)}`, String(modelId));
     if (!model) throw new Error("这个提供方还没有设置 Key");
     return pingModel(models, model as Parameters<typeof pingModel>[1]);
+  },
+
+  "domains.free": () => listFreeDomains(db),
+  "batches.list": () => listBatches(db),
+  "batches.sites": (p) => batchSites(db, Number((p as { batchId: number }).batchId)),
+  "batches.create": (p) => {
+    const r = createBatch(db, p as BatchForm, Date.now());
+    push({ kind: "changed", topic: "batches" });
+    tick();
+    return r;
+  },
+  "sites.steps": (p) => siteSteps(db, Number((p as { siteId: number }).siteId)),
+  "sites.events": (p) => eventsForSite(db, String((p as { siteId: number }).siteId)),
+  "sites.retry": (p) => {
+    retrySite(db, Number((p as { siteId: number }).siteId), Date.now());
+    push({ kind: "changed", topic: "batches" });
+    tick();
+    return { ok: true };
   },
 
   "accounts.sync": async (p) => sync(Number((p as { id: number }).id)),

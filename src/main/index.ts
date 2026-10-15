@@ -18,7 +18,7 @@ let quitting = false;
 let masterKey: Buffer | null = null;
 
 function startBackend() {
-  backend = utilityProcess.fork(backendPath, [app.getPath("userData")], { serviceName: "website-gen backend" });
+  backend = utilityProcess.fork(backendPath, [app.getPath("userData"), join(app.getAppPath(), "resources")], { serviceName: "website-gen backend" });
   // 第一条消息交付主密钥（不走命令行参数或环境变量，避免出现在进程列表里）
   backend.postMessage({ type: "init", masterKey: masterKey?.toString("base64") ?? null });
   backend.on("exit", (code) => {
