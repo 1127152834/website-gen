@@ -55,6 +55,7 @@ function describe(e: RunEvent): { text: string; tone: "muted" | "normal" | "warn
   }
   if (e.kind === "mcp") return { text: `Hostinger ${p.op}，${p.ms} 毫秒${p.ok ? "" : `，出错：${p.error}`}`, tone: p.ok ? "muted" : "warn" };
   if (e.kind === "warn") return { text: String(p.message), tone: "warn" };
+  if (e.kind === "ai_tool" && p.change) return { text: `变更 #${p.change}：${p.summary}`, tone: "normal" };
   if (e.kind === "ai_text") {
     const cost = typeof p.cost === "number" ? `，$${p.cost.toFixed(4)}` : "";
     return { text: `AI ${p.task}${p.ok === false ? "（没通过检查）" : ""}${cost}：${String(p.preview ?? "").replace(/\s+/g, " ").slice(0, 160)}`, tone: p.ok === false ? "warn" : "muted" };

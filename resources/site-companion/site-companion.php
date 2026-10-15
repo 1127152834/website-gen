@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Site Companion
  * Description:       Lets the website-gen desktop app manage this store over the REST API.
- * Version:           0.3.2
+ * Version:           0.3.3
  * Requires at least: 6.8
  * Requires PHP:      8.1
  * License:           GPLv2 or later
@@ -107,13 +107,32 @@ add_action(
 			'site-agent/v1',
 			'/privacy-page',
 			array(
-				'methods'             => 'POST',
-				'permission_callback' => fn() => current_user_can( 'manage_woocommerce' ),
-				'callback'            => 'site_companion_privacy_page',
+				array(
+					'methods'             => 'GET',
+					'permission_callback' => fn() => current_user_can( 'manage_woocommerce' ),
+					'callback'            => 'site_companion_get_privacy_page',
+				),
+				array(
+					'methods'             => 'POST',
+					'permission_callback' => fn() => current_user_can( 'manage_woocommerce' ),
+					'callback'            => 'site_companion_privacy_page',
+				),
 			)
 		);
 	}
 );
+// Raw title and content of the privacy policy page, so the app can snapshot it before an edit.
+function site_companion_get_privacy_page() {
+	$page = get_post( (int) get_option( 'wp_page_for_privacy_policy' ) );
+	if ( ! $page || 'page' !== $page->post_type ) {
+		return new WP_Error( 'site_companion_no_privacy_page', 'No privacy policy page is set.', array( 'status' => 404 ) );
+	}
+	return array(
+		'id'      => $page->ID,
+		'title'   => $page->post_title,
+		'content' => $page->post_content,
+	);
+}
 function site_companion_privacy_page( WP_REST_Request $request ) {
 	$existing = get_page_by_path( 'privacy-policy', OBJECT, 'page' );
 	$page     = array(

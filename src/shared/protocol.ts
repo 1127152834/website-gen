@@ -118,6 +118,43 @@ export interface StepState {
   finishedAt: number | null;
 }
 
+/** 站点页列出的站（流程已完成的） */
+export interface SiteListItem {
+  id: number;
+  domain: string;
+  launchedAt: number | null;
+}
+
+/** pi 对话的历史记录（来自 pi 的会话文件） */
+export type ChatItem =
+  | { role: "user"; text: string }
+  | { role: "assistant"; text: string; thinking: string; error?: string }
+  | { role: "tool"; id: string; name: string; args: unknown; ok: boolean | null; result: string };
+
+/** 回复进行中推给界面的流式事件；回合结束（settled）后界面重新拉历史 */
+export type ChatEvent =
+  | { type: "text"; delta: string }
+  | { type: "thinking"; delta: string }
+  | { type: "tool_start"; id: string; name: string; args: unknown }
+  | { type: "tool_end"; id: string; name: string; ok: boolean; result: string }
+  | { type: "settled"; aborted: boolean }
+  | { type: "error"; message: string };
+
+/** 一条内容变更集 */
+export interface ChangeSummary {
+  id: number;
+  summary: string;
+  initiator: "pi" | "you" | "schedule";
+  status: "applied" | "reverted";
+  createdAt: number;
+  revertAt: number | null;
+  revertedAt: number | null;
+  /** 定时恢复失败的原因 */
+  revertError: string | null;
+  /** 改了哪些对象 */
+  targets: string[];
+}
+
 export interface Request {
   kind: "req";
   id: number;
@@ -132,6 +169,8 @@ export type Response =
 export type Push =
   | { kind: "event"; event: RunEvent }
   // 某类数据在后台变了（例如定时同步完成），界面收到后重新拉取
-  | { kind: "changed"; topic: "accounts" | "batches" };
+  | { kind: "changed"; topic: "accounts" | "batches" | "changes" }
+  // pi 对话的流式输出，只推不存（历史在 pi 的会话文件里）
+  | { kind: "chat"; siteId: number; event: ChatEvent };
 
 export type BackendMessage = Response | Push;

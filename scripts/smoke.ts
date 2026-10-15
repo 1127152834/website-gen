@@ -30,7 +30,9 @@ try {
   await page.getByText("没有可用的域名").waitFor({ timeout: 10_000 });
   assert.ok(await page.getByRole("button", { name: "开始建站" }).isDisabled(), "cannot start without a free domain");
   await page.screenshot({ path: "poc/out/smoke-1-new-batch.png" });
-  console.log("✔ batches and new-site pages show their empty states");
+  await page.getByRole("button", { name: "站点" }).click();
+  await page.getByText("还没有建好的站").waitFor({ timeout: 10_000 });
+  console.log("✔ batches, new-site and sites pages show their empty states");
 
   // 关窗口 = 隐藏到托盘，进程还在
   await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].close());

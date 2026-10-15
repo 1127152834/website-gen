@@ -7,6 +7,7 @@ import { NewBatchPage } from "./pages/new-batch.tsx";
 import { BatchesPage } from "./pages/batches.tsx";
 import { AccountsPage } from "./pages/accounts.tsx";
 import { SettingsPage } from "./pages/settings.tsx";
+import { SitesPage } from "./pages/sites.tsx";
 
 interface SystemInfo {
   electron: string;
@@ -16,11 +17,11 @@ interface SystemInfo {
   schemaVersion: number;
 }
 
-type Page = "new" | "batches" | "accounts" | "settings";
+type Page = "new" | "batches" | "sites" | "accounts" | "settings";
 const NAV: { label: string; icon: typeof Store; page?: Page }[] = [
   { label: "建站", icon: Store, page: "new" },
   { label: "批次", icon: Layers, page: "batches" },
-  { label: "站点", icon: Globe },
+  { label: "站点", icon: Globe, page: "sites" },
   { label: "账号", icon: KeyRound, page: "accounts" },
   { label: "设置", icon: Settings, page: "settings" },
 ];
@@ -90,6 +91,7 @@ export default function App() {
           {page === "new" && <NewBatchPage onCreated={(id) => { setOpenBatch(id); setPage("batches"); }} />}
           {page === "batches" && <BatchesPage key={openBatch} initialBatch={openBatch} onNew={() => setPage("new")} />}
           {page === "accounts" && <AccountsPage />}
+          {page === "sites" && <SitesPage />}
           {page === "settings" && <SettingsPage />}
         </div>
       </main>

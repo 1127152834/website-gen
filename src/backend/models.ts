@@ -130,20 +130,28 @@ export async function completeText(db: DatabaseSync, key: Buffer, role: ModelRol
   return { text: msg.content.filter((c) => c.type === "text").map((c) => c.text).join(""), cost: msg.usage.cost.total };
 }
 
-export function buildRuntime(db: DatabaseSync, key: Buffer) {
-  const models = createModels();
-  for (const row of providerRows(db)) {
-    if (!row.api_key_ciphertext) continue;
-    const apiKey = unseal(key, row.api_key_ciphertext);
-    models.setProvider(createProvider({
+/** 设了 Key 的提供方，Key 只在内存里由 resolve 交给 pi-ai，不写盘。流水线（pi-ai Models）和 pi 对话（ModelRuntime）共用。 */
+export function providersFromDb(db: DatabaseSync, key: Buffer) {
+  return providerRows(db).filter((row) => row.api_key_ciphertext).map((row) => {
+    const apiKey = unseal(key, row.api_key_ciphertext!);
+    return createProvider({
       id: `p${row.id}`,
       name: row.name,
       baseUrl: row.base_url,
       auth: { apiKey: { name: `${row.name} API Key`, resolve: async () => ({ auth: { apiKey }, source: "website-gen" }) } },
       models: modelsOf(row),
       api: row.protocol === "openai" ? openAICompletionsApi() : anthropicMessagesApi(),
-    }));
-  }
+    });
+  });
+}
+
+/** 某个用途选的提供方、模型和思考强度 */
+export const roleChoice = (db: DatabaseSync, role: ModelRole) =>
+  db.prepare("SELECT provider_id, model_id, thinking FROM model_roles WHERE role = ?").get(role) as { provider_id: number; model_id: string; thinking: ModelThinkingLevel } | undefined;
+
+export function buildRuntime(db: DatabaseSync, key: Buffer) {
+  const models = createModels();
+  for (const provider of providersFromDb(db, key)) models.setProvider(provider);
   const roles = db.prepare("SELECT role, provider_id, model_id, thinking FROM model_roles").all() as { role: ModelRole; provider_id: number; model_id: string; thinking: string }[];
   return {
     models,

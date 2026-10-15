@@ -1,6 +1,6 @@
 // 界面侧的后台客户端：拿到预加载脚本转交的 MessagePort 后，提供 call()（请求/响应）和 onEvent()（事件推送）。
 // 后台重启时会收到新端口，旧端口上未完成的请求一律以错误结束。
-import type { BackendMessage, Request, RunEvent } from "../../../shared/protocol.ts";
+import type { BackendMessage, ChatEvent, Request, RunEvent } from "../../../shared/protocol.ts";
 
 type Pending = { resolve: (v: unknown) => void; reject: (e: Error) => void };
 
@@ -10,6 +10,7 @@ const pending = new Map<number, Pending>();
 const eventListeners = new Set<(e: RunEvent) => void>();
 const changedListeners = new Set<(topic: string) => void>();
 const connectListeners = new Set<() => void>();
+const chatListeners = new Set<(siteId: number, e: ChatEvent) => void>();
 
 window.addEventListener("message", (e) => {
   if (e.source !== window || e.data !== "backend-port" || !e.ports[0]) return;
@@ -24,6 +25,10 @@ window.addEventListener("message", (e) => {
     }
     if (msg.kind === "changed") {
       for (const l of changedListeners) l(msg.topic);
+      return;
+    }
+    if (msg.kind === "chat") {
+      for (const l of chatListeners) l(msg.siteId, msg.event);
       return;
     }
     const p = pending.get(msg.id);
@@ -57,6 +62,12 @@ export function onChanged(topic: string, listener: () => void): () => void {
   };
   changedListeners.add(l);
   return () => changedListeners.delete(l);
+}
+
+/** pi 对话的流式输出。 */
+export function onChat(listener: (siteId: number, e: ChatEvent) => void): () => void {
+  chatListeners.add(listener);
+  return () => chatListeners.delete(listener);
 }
 
 /** 每次（重新）连上后台都会触发；已连上时立即触发一次。 */

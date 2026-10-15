@@ -563,6 +563,14 @@ flowchart TD
 
 **边界**：pi 只能通过上述能力修改结构化内容；装插件、改主题文件、改 PHP 配置都是 L2。
 
+**P1 已实现**（`src/backend/agent.ts`、`site-tools.ts`、`changes.ts`）：「站点」页每个站一个 pi 对话，工具 13 个：
+- 只读：`get_site`、`get_copy`、`get_policy`、`list_products`、`get_product`、`list_changes`
+- 修改（自动执行 + 快照）：`update_copy`（标语、首页大标题、关于我们、FAQ）、`update_policy`、`update_announcement`、`update_style`（主题风格预设）、`update_product`（名称和描述，不含价格）、`revert_change`、`schedule_revert`
+- 文案和政策仍以 `spec_json` 为底稿，页面由代码重新渲染，所以修改和建站走同一套事实核对和禁用说法检查；运费、时效、退货、退款等店铺规则不能在对话里改
+- 每次修改：先读线上当前内容作为快照 → 写入 → 再读一遍作为「改之后」→ 记成一条变更集；中途出错立即还原已写入的部分。回滚前确认内容之后没被改过，否则拒绝（先回滚更晚的变更）
+- 定时恢复每分钟检查一次，关机期间错过的开机后补上；时间按本地时间由代码解析，不让模型换算时区
+- 尚未实现：改价格、改店铺规则、改菜单、换图片、修改前后截图对比、定时恢复失败时的系统通知
+
 ### 4.9 运维与监控（本机运行的取舍）
 
 - **站点看板**：状态（草稿 / 开站中 / 预发布 / 已上线 / 维护 / 停用）、域名、SSL 剩余天数、WP/Woo/PHP 版本、待更新插件、近 7 天订单与销售额、CJ 同步状态、合规分、最近变更
@@ -598,7 +606,7 @@ flowchart TD
 | `provision_steps` | site_id, step, status（pending / running / waiting / waiting_user / done / failed / skipped）, attempt, started_at, finished_at |
 | `run_events` | seq（自增）, batch_id, site_id, ts, kind（step / mcp / ai_text / ai_thinking / ai_tool / warn / error）, payload_json（已脱敏）—— 进度和 AI 日志的唯一来源，界面重新打开时按 seq 补发 |
 | `operations` | id, tool, risk_level, target, params_redacted, status, initiator, confirmed_at, result |
-| `changesets` | id, site_id, diff_json, snapshot_ref, status, revert_at |
+| `changesets` | id, site_id, summary, initiator（pi / you / schedule）, ops_json（每个对象的 target、before 快照、after）, status（applied / reverted）, created_at, revert_at, reverted_at, revert_error |
 | `compliance_reports` | site_id, score, findings_json, checked_at |
 | `secrets` | name, ciphertext, hint —— 其他凭据（CJ API Key 和 accessToken 等），只存密文 |
 | `model_providers` | id, name, protocol（openai / anthropic）, base_url, api_key_ciphertext, api_key_hint, models_json（取自 pi-ai 模型目录，不含 api / provider / baseUrl，运行时由提供方补上） |

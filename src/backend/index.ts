@@ -11,7 +11,9 @@ import { createCj, setCjKey, type CjGet } from "./cj.ts";
 import { appendEvent, eventsForSite, eventsSince, migrate, openDb, schemaVersion } from "./db.ts";
 import { createHostingerPool } from "./hostinger.ts";
 import { createRunner, recoverStale } from "./jobs.ts";
-import { provisionSite, type PipelineDeps } from "./pipeline.ts";
+import { provisionSite, siteContext, type PipelineDeps } from "./pipeline.ts";
+import { createChats } from "./agent.ts";
+import { dueReverts, listChanges, revertChange, scheduleRevert } from "./changes.ts";
 import { launchSite } from "./launch.ts";
 import { buildRuntime, completeText, listProviders, listRoles, pingModel, seedModelDefaults, setProviderKey, setRole } from "./models.ts";
 import { browseWithEdge } from "./qa-browser.ts";
@@ -110,6 +112,38 @@ const tick = () => {
 };
 setInterval(tick, 2000);
 
+// ---- pi 对话改内容 ----
+const chats = createChats({
+  dir: join(userData, "pi"),
+  db,
+  key: requireKey,
+  ctxFor: (siteId) => siteContext(pipelineDeps(), siteId),
+  onEvent: (siteId, event) => {
+    push({ kind: "chat", siteId, event });
+    // 工具可能改了内容，变更列表跟着刷新
+    if (event.type === "tool_end" || event.type === "settled") push({ kind: "changed", topic: "changes" });
+  },
+});
+
+// 定时恢复：每分钟看一次到期的；关机期间错过的，开机后第一次检查就补上
+async function runDueReverts() {
+  if (!masterKey) return;
+  for (const due of dueReverts(db, Date.now())) {
+    const ctx = siteContext(pipelineDeps(), due.site_id);
+    try {
+      await revertChange(ctx, due.id);
+      ctx.emit("warn", { message: `定时恢复：变更 #${due.id} 已按计划回滚` });
+    } catch (e) {
+      db.prepare("UPDATE changesets SET revert_error = ? WHERE id = ?").run((e as Error).message, due.id);
+      ctx.emit("error", { step: "revert", name: "定时恢复", message: `变更 #${due.id}：${(e as Error).message}` });
+    }
+    push({ kind: "changed", topic: "changes" });
+  }
+}
+setInterval(() => void runDueReverts(), 60_000);
+
+const siteIdOf = (p: unknown) => Number((p as { siteId: number }).siteId);
+
 const handlers: Handlers = {
   "system.info": () => ({
     electron: process.versions.electron,
@@ -194,6 +228,37 @@ const handlers: Handlers = {
     return { keyHint: secretHint(db, "cj.apiKey") };
   },
   // 一键上线：同一个站同时只跑一次，几十秒内完成，不进任务队列
+  // 站点页：流程跑完的站（可以和 pi 对话改内容）
+  "sites.list": () =>
+    (db.prepare("SELECT id, domain, launched_at FROM sites WHERE status = 'done' ORDER BY id DESC").all() as { id: number; domain: string; launched_at: number | null }[])
+      .map((s) => ({ id: s.id, domain: s.domain, launchedAt: s.launched_at })),
+  "chat.history": (p) => chats.history(siteIdOf(p)),
+  "chat.send": async (p) => {
+    await chats.send(siteIdOf(p), String((p as { text: string }).text ?? ""));
+    return { ok: true };
+  },
+  "chat.abort": async (p) => {
+    await chats.abort(siteIdOf(p));
+    return { ok: true };
+  },
+  "chat.reset": async (p) => {
+    await chats.reset(siteIdOf(p));
+    return { ok: true };
+  },
+  "changes.list": (p) => listChanges(db, siteIdOf(p)),
+  // 回滚由你在界面上点（不是 pi 的工具调用）
+  "changes.revert": async (p) => {
+    const { siteId, changeId } = p as { siteId: number; changeId: number };
+    await revertChange(siteContext(pipelineDeps(), Number(siteId)), Number(changeId));
+    push({ kind: "changed", topic: "changes" });
+    return { ok: true };
+  },
+  "changes.cancelSchedule": (p) => {
+    const { siteId, changeId } = p as { siteId: number; changeId: number };
+    scheduleRevert(db, Number(siteId), Number(changeId), null);
+    push({ kind: "changed", topic: "changes" });
+    return { ok: true };
+  },
   "sites.launch": async (p) => {
     const siteId = Number((p as { siteId: number }).siteId);
     if (launching.has(siteId)) throw new Error("正在上线，请稍候");

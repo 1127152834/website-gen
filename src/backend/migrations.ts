@@ -141,4 +141,20 @@ export const MIGRATIONS: string[] = [
 
   // 006：上线时间（为空 = 还在维护模式）
   `ALTER TABLE sites ADD COLUMN launched_at INTEGER;`,
+
+  // 007：内容变更集。每条记下改了哪些对象、改之前（快照）和改之后的实际内容，回滚时把快照写回去
+  `CREATE TABLE changesets (
+     id           INTEGER PRIMARY KEY,
+     site_id      INTEGER NOT NULL REFERENCES sites (id) ON DELETE CASCADE,
+     summary      TEXT NOT NULL,
+     initiator    TEXT NOT NULL CHECK (initiator IN ('pi','you','schedule')),
+     ops_json     TEXT NOT NULL CHECK (json_valid(ops_json)),
+     status       TEXT NOT NULL DEFAULT 'applied' CHECK (status IN ('applied','reverted')),
+     created_at   INTEGER NOT NULL,
+     revert_at    INTEGER,
+     reverted_at  INTEGER,
+     revert_error TEXT
+   );
+   CREATE INDEX changesets_site ON changesets (site_id, id);
+   CREATE INDEX changesets_due ON changesets (status, revert_at);`,
 ];
