@@ -8,12 +8,14 @@ const read = (path: string) => readFileSync(join(root, path), "utf8");
 const companion = read("resources/site-companion/site-companion.php");
 const theme = read("resources/theme/obel/functions.php");
 const stylesheet = read("resources/theme/obel/style.css");
+const themeReadme = read("resources/theme/obel/readme.txt");
+const header = read("resources/theme/obel/parts/header.html");
 const product = read("resources/theme/obel/templates/single-product.html");
 const shop = read("resources/theme/obel/templates/archive-product.html");
 const search = read("resources/theme/obel/templates/search.html");
 
-test("phase 3 resources ship the companion 0.5 contract behind the agent permission", () => {
-  assert.match(companion, /Version:\s+0\.5\.0/);
+test("phase 3 resources ship the companion 0.5.1 contract behind the agent permission", () => {
+  assert.match(companion, /Version:\s+0\.5\.1/);
   for (const route of ["/metadata", "/cleanup-defaults"]) {
     const at = companion.indexOf(`'${route}'`);
     assert.notEqual(at, -1, `${route} route exists`);
@@ -26,6 +28,37 @@ test("phase 3 resources ship the companion 0.5 contract behind the agent permiss
   assert.match(companion, /is_int\( \$value\['return_days'\] \)/);
   assert.match(companion, /array_is_list\( \$value\[ \$name \] \)/);
   assert.doesNotMatch(companion.slice(companion.indexOf("function site_companion_validate_rules"), companion.indexOf("function site_companion_set_site")), /absint/);
+});
+
+test("the site endpoint strictly validates logo and icon image attachment IDs before writes", () => {
+  assert.match(companion, /SITE_COMPANION_OPTIONS[\s\S]*'site_icon'/);
+  assert.match(companion, /SITE_COMPANION_THEME_MODS[\s\S]*'custom_logo'/);
+  assert.match(companion, /get_theme_mod\( \$name, 0 \)/);
+  assert.match(companion, /! is_int\( \$value \) \|\| \$value < 1/);
+  assert.match(companion, /'attachment' !== get_post_type\( \$value \)/);
+  assert.match(companion, /! wp_attachment_is_image\( \$value \)/);
+  assert.match(companion, /set_theme_mod\( 'custom_logo', \$value \)/);
+
+  const setter = companion.slice(
+    companion.indexOf("function site_companion_set_site"),
+    companion.indexOf("// ---- Transactional mail", companion.indexOf("function site_companion_set_site")),
+  );
+  assert.match(setter, /\$allowed = array_merge\( SITE_COMPANION_OPTIONS, SITE_COMPANION_THEME_MODS \)/);
+  assert.match(setter, /foreach \( array\( 'site_icon', 'custom_logo' \) as \$name \)[\s\S]*site_companion_validate_image_attachment/);
+  assert.match(setter, /'site_icon' === \$name[\s\S]*update_option\( \$name, \$value \)/);
+  const mediaValidation = setter.indexOf("site_companion_validate_image_attachment");
+  const firstOptionWrite = setter.indexOf("update_option(");
+  assert.ok(mediaValidation >= 0 && firstOptionWrite > mediaValidation, "image settings are validated before option writes");
+  assert.ok(setter.indexOf("set_theme_mod(") > mediaValidation, "image settings are validated before theme-mod writes");
+});
+
+test("Obel 1.2.1 renders the wordmark on desktop and mobile with the title as its no-logo fallback", () => {
+  assert.match(stylesheet, /Version:\s+1\.2\.1/);
+  assert.match(themeReadme, /Stable tag:\s+1\.2\.1/);
+  assert.match(header, /wp:site-logo[^\n]*"width":180[^\n]*obel-header__logo/);
+  assert.match(header, /wp:site-title/);
+  assert.match(stylesheet, /body\.wp-custom-logo[\s\S]*\.obel-header__brand[\s\S]*\.wp-block-site-title[\s\S]*display:\s*none/);
+  assert.match(stylesheet, /@media \(max-width:\s*781px\)[\s\S]*\.obel-header__logo/);
 });
 
 test("audit 01 and 05: product promises come from the shared-rule shortcode without Express or invented materials", () => {

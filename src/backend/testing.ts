@@ -176,6 +176,7 @@ export function fakeSite(st: ReturnType<typeof fakeHostinger>["st"], opts: { rej
     ]),
     settings: {} as Record<string, unknown>,
     styles: null as unknown,
+    media: new Map<number, { id: number; slug: string; media_type: string; mime_type: string; source_url: string }>(),
     failSiteWrites: false,
     // 伴侣插件的 SMTP：保存的设置、发出的测试邮件；failSmtp 模拟密码错误
     smtp: null as null | { host: string; port: number; username: string; password: string; from_email: string },
@@ -194,7 +195,7 @@ export function fakeSite(st: ReturnType<typeof fakeHostinger>["st"], opts: { rej
   const fetchImpl = (async (url: string | URL, init?: RequestInit) => {
     const u = new URL(String(url));
     const method = init?.method ?? "GET";
-    const body = init?.body ? JSON.parse(String(init.body)) : undefined;
+    const body = init?.body instanceof FormData ? Object.fromEntries(init.body.entries()) : init?.body ? JSON.parse(String(init.body)) : undefined;
     const path = u.pathname.replace(/^\/wp-json\//, "");
     const q = u.searchParams;
 
@@ -228,6 +229,15 @@ export function fakeSite(st: ReturnType<typeof fakeHostinger>["st"], opts: { rej
     if (new Headers(init?.headers).get("Authorization") !== "Basic " + Buffer.from("site-agent:app pass word 1234").toString("base64") && !path.startsWith("wc/store/")) return json({ message: "unauthorized" }, 401);
     if (path === "wp/v2/posts") return json([]);
     if (path === "site-agent/v1/health") return json({ wp: "7.1.3", woocommerce: "11.2.1", theme: `obel ${THEME_VERSION}` });
+    if (path === "wp/v2/media") {
+      if (method === "POST") {
+        if (!(body.file instanceof Blob) || body.file.type !== "image/png") return json({ message: "PNG media required" }, 400);
+        const media = { id: nextId++, slug: String(body.slug), media_type: "image", mime_type: "image/png", source_url: `https://${DOMAIN}/wp-content/uploads/${body.file.name}` };
+        wp.media.set(media.id, media);
+        return json(media, 201);
+      }
+      return json([...wp.media.values()].filter((m) => !q.has("slug") || m.slug === q.get("slug")));
+    }
     if (path === "site-agent/v1/site") {
       if (method === "POST" && wp.failSiteWrites) return json({ message: "boom" }, 500);
       if (method === "POST") {
@@ -429,6 +439,8 @@ export function fakeAi(log: string[]) {
       const pages = JSON.parse(prompt.split("PAGES: ")[1]);
       text = JSON.stringify({ metadata: pages.map((p: { key: string; title: string }) => ({ key: p.key, description: `${p.title}: information and options from Nordic Paws (${p.key}).`, ogDescription: `Explore ${p.title} at Nordic Paws (${p.key}).` })) });
       log.push("metadata");
+    } else if (prompt.startsWith("Design two simple, professional brand assets")) {
+      text = "{}"; log.push("branding"); // 无效两次会触发同一确定性保底路径。
     } else if (prompt.startsWith("You are the final compliance reviewer")) {
       text = '{"issues":[]}'; log.push("review");
     } else {
@@ -452,14 +464,67 @@ export function fakeBrowse(fetchImpl: typeof fetch): Browse {
     const headers = { Authorization: "Basic " + Buffer.from("site-agent:app pass word 1234").toString("base64") };
     const get = async (path: string) => (await fetchImpl(`https://${DOMAIN}/wp-json/${path}`, { headers })).json();
     const pages = await get("wp/v2/pages?per_page=100") as { slug: string; title: { rendered: string }; content: { rendered: string } }[];
-    const products = await get("wc/v3/products?status=publish&per_page=100") as { id: number; name: string; description: string; short_description: string }[];
-    const names = products.map((p) => p.name).join(" ");
+    const products = await get("wc/v3/products?status=publish&per_page=100") as { id: number; name: string; price?: string; variations?: { price: string }[]; description: string; short_description: string }[];
+    const site = await get("site-agent/v1/site") as { options: Record<string, unknown>; info: Record<string, string> };
+    const htmlText = (html: string | undefined) => (html ?? "")
+      .replace(/<\s*(?:br|\/p|\/div|\/li|\/h[1-6])\s*\/?>/gi, "\n")
+      .replace(/<[^>]*>/g, "")
+      .replace(/&nbsp;/gi, " ").replace(/&amp;/gi, "&").replace(/&lt;/gi, "<").replace(/&gt;/gi, ">")
+      .split("\n").map((line) => line.replace(/[ \t]+/g, " ").trim()).filter(Boolean).join("\n");
+    const displayPrice = (product: typeof products[number]) => product.price || product.variations?.[0]?.price || "";
+    const names = products.map((p) => `${p.name}${displayPrice(p) ? ` $${displayPrice(p)} USD` : ""}`).join("\n");
+    const pagePath = (slug: string) => slug === "home" ? "/" : `/${slug}/`;
+    const publishedPages = pages.filter((page) => ["about", "contact", "faq", "shipping", "returns", "privacy-policy", "terms"].includes(page.slug));
+    const footerLinks = publishedPages.map((page) => ({ url: new URL(pagePath(page.slug), input.origin).href, text: htmlText(page.title.rendered), location: "footer" as const }));
+    const footer = [site.info.entity, site.info.address, site.info.email, site.info.phone].filter(Boolean).join("\n");
+    const headerLinks = [
+      { url: new URL("/", input.origin).href, text: String(site.options.blogname ?? "Home"), location: "header" as const },
+      { url: new URL("/shop/", input.origin).href, text: "Shop", location: "header" as const },
+    ];
+    const knownStatus = (value: string) => {
+      const path = new URL(value, input.origin).pathname;
+      if (pages.some((page) => pagePath(page.slug) === path)) return 200;
+      if (products.some((product) => `/product/${product.id}/` === path)) return 200;
+      if (path.startsWith("/product-category/") || path === "/") return 200;
+      return 404;
+    };
+    const safeAuditUrl = (value: string) => {
+      const url = new URL(value, input.origin);
+      if (url.origin !== new URL(input.origin).origin || !/^https?:$/.test(url.protocol)) return undefined;
+      if (/(?:\/wp-admin(?:\/|$)|\/wp-login\.php(?:\/|$)|\/cart(?:\/|$)|\/checkout(?:\/|$)|\/my-account(?:\/|$))/i.test(url.pathname)
+        || /(?:logout|log-out|add-to-cart|remove_item|remove-item|wc-ajax)/i.test(url.pathname + url.search) || url.searchParams.has("_wpnonce")
+        || /\.(?:avif|bmp|css|csv|docx?|eot|gif|ico|jpe?g|js|json|mp3|mp4|pdf|png|pptx?|svg|tar|tiff?|ttf|txt|webm|webp|woff2?|xlsx?|xml|zip)$/i.test(url.pathname)) return undefined;
+      url.hash = "";
+      return url.href;
+    };
+    const auditKey = (value: string) => {
+      const url = new URL(value);
+      url.hash = "";
+      return url.href;
+    };
+    const auditCache = new Map<string, number>();
     const capture = (name: string, path: string) => {
       const page = pages.find((p) => (p.slug === "home" ? "/" : `/${p.slug}/`) === path);
       const product = products.find((p) => path === `/product/${p.id}/`);
-      const text = [page?.title.rendered, page?.content.rendered, product?.name, product?.description, product?.short_description,
-        path.startsWith("/shop/") || path.startsWith("/product-category/") || path === "/cart/" || path === "/checkout/" ? names : ""].filter(Boolean).join(" ").replace(/<[^>]*>/g, " ");
-      return { name, path, url: input.origin + path, text, shot: join(input.outDir, `${name}.png`) };
+      const body = [htmlText(page?.title.rendered), htmlText(page?.content.rendered), product?.name, htmlText(product?.description), htmlText(product?.short_description), product && displayPrice(product) ? `$${displayPrice(product)} USD` : "",
+        path.startsWith("/shop/") || path.startsWith("/product-category/") || path === "/cart/" || path === "/checkout/" ? names : ""].filter(Boolean).join("\n");
+      const bodyLinks = [...(page?.content.rendered.matchAll(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi) ?? [])]
+        .map((match) => ({ url: new URL(match[1], input.origin).href, text: htmlText(match[2]), location: "body" as const }));
+      if (path.startsWith("/shop/") || path.startsWith("/product-category/")) bodyLinks.push(...products.map((p) => ({ url: `${input.origin}/product/${p.id}/`, text: p.name, location: "body" as const })));
+      const links = [...headerLinks, ...bodyLinks, ...footerLinks];
+      const productLinks = links.map((link) => link.url);
+      const audited = new Map<string, string>();
+      if (input.auditInternalLinks) for (const link of links) {
+        const url = safeAuditUrl(link.url);
+        if (url && !audited.has(auditKey(url))) audited.set(auditKey(url), url);
+      }
+      const linkStatuses = input.auditInternalLinks ? [...audited].map(([key, url]) => {
+        const status = auditCache.get(key) ?? knownStatus(url);
+        auditCache.set(key, status);
+        return { url, status };
+      }) : undefined;
+      const sections = { header: headerLinks.map((link) => link.text).join("\n"), footer, body };
+      return { name, path, url: input.origin + path, text: [sections.header, body, footer].filter(Boolean).join("\n\n"), productLinks, sections, links, linkStatuses, status: knownStatus(path), shot: join(input.outDir, `${name}.png`) };
     };
     const captures = [...input.pages.map((p) => capture(p.name, p.path)), ...(input.cart ? [capture("cart", "/cart/"), capture("checkout", "/checkout/")] : []), capture("home-mobile", "/")];
     return { captures, shots: captures.map((p) => ({ name: p.name, file: p.shot })), problems: [] };
@@ -481,6 +546,7 @@ export function deps(db: PipelineDeps["db"], exec: HostingerExec, fetchImpl: typ
     cj: fakeCj,
     browse: fakeBrowse(fetchImpl),
     vision: fakeVision,
+    renderBranding: async (_svg, kind) => Buffer.from(`fake-png-${kind}`),
     inbox: async () => true,
     ...extra,
   };

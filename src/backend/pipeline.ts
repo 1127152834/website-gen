@@ -15,6 +15,7 @@ import { companionHealth, EnrollRejected, enrollCompanion, prepareCompanion, typ
 import type { CjGet } from "./cj.ts";
 import type { Browse } from "./qa-browser.ts";
 import type { VisionComplete } from "./vision.ts";
+import type { BrandRenderer } from "./branding.ts";
 import { storeSteps } from "./store.ts";
 import { ensureMailbox, mailDns, mailSetup } from "./mail.ts";
 import { enableSmtp, imapHasSubject, type InboxCheck, type MailboxCreds } from "./smtp.ts";
@@ -40,6 +41,8 @@ export interface PipelineDeps {
   vision?: VisionComplete;
   /** QA 文字抓取与截图；缺少浏览器时整站复核阻断，不视为完成。 */
   browse?: Browse;
+  /** 品牌 PNG 渲染；正式使用 Playwright，测试注入进程内替身。 */
+  renderBranding?: BrandRenderer;
   /** 查客服邮箱收件箱（确认测试邮件送达）；默认用 IMAP */
   inbox?: InboxCheck;
   /** 用 IMAP 登录邮箱验证密码；没有就不尝试（例如用默认密码登录已有邮箱） */
@@ -147,8 +150,9 @@ export function siteContext(d: PipelineDeps, siteId: number): StepCtx {
     const creds = JSON.parse(unseal(key, site.companion_ciphertext)) as CompanionCreds;
     const res = await d.fetch(`https://${domain}/wp-json/${path}`, {
       method,
-      headers: { Authorization: "Basic " + Buffer.from(`${creds.username}:${creds.password}`).toString("base64"), ...(body === undefined ? {} : { "Content-Type": "application/json" }) },
-      body: body === undefined ? undefined : JSON.stringify(body),
+      // 媒体上传交给 fetch 生成 multipart boundary，其余接口仍严格发送 JSON。
+      headers: { Authorization: "Basic " + Buffer.from(`${creds.username}:${creds.password}`).toString("base64"), ...(body === undefined || body instanceof FormData ? {} : { "Content-Type": "application/json" }) },
+      body: body === undefined ? undefined : body instanceof FormData ? body : JSON.stringify(body),
       signal: AbortSignal.timeout(120_000),
     });
     const text = await res.text();

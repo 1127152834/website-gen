@@ -76,7 +76,7 @@ ${factLines(f)}
 ${RULES_FOR_WRITING}
 - Write the exact numbers from the facts (for example "${range(f.entity.processingDays)} business days", "$${RULES.freeShippingOver}"). Do not add any other day counts or dollar amounts.
 - Use simple HTML only: <h2>, <h3>, <p>, <ul>, <li>, <strong>, <a>. No nested lists, no tables, no inline styles.
-- Include the support email in each document. Privacy and terms must name the operator (${f.entity.name}).
+- Include the support email, exact legal operator name (${f.entity.name}) and exact business address (${f.entity.address}) in each document.
 - The returns document must give the complete procedure: request within ${RULES.returnDays} days after delivery by contacting support; wait for approval/instructions; once approved, send the item back promptly to the stated return address; customer pays return postage except for damaged, defective or wrong items; after we receive and inspect the return, we initiate the refund to the original payment method within ${range(RULES.refundDays)} business days of receiving it. Say that the customer's bank may need additional time to post the credit, but do not promise a bank-processing day count.
 - The shipping document must explain: if shipment will be delayed, we notify the customer with a revised date and ask them to accept the delay or cancel for a full refund; cancellation requests are accepted before shipment; for a parcel that appears lost, contact support so tracking can be checked and a carrier investigation opened, then we communicate and resolve the result. Do not invent fixed response or investigation times.
 - State exactly "Available payment methods are shown at checkout." Do not name Stripe, PayPal, cards, wallets, or any other gateway.
@@ -354,9 +354,9 @@ ${p(d)}</div>
       ].join("\n\n"),
     },
     { slug: "faq", title: "Frequently asked questions", content: faq },
-    { slug: "shipping", title: "Shipping policy", content: htmlToBlocks(pol.shipping) },
-    { slug: "returns", title: "Returns & refunds", content: htmlToBlocks(pol.returns) },
-    { slug: "privacy-policy", title: "Privacy policy", content: htmlToBlocks(pol.privacy) },
-    { slug: "terms", title: "Terms of service", content: htmlToBlocks(pol.terms) },
+    { slug: "shipping", title: "Shipping policy", content: `${htmlToBlocks(pol.shipping)}\n\n${p(operator)}` },
+    { slug: "returns", title: "Returns & refunds", content: `${htmlToBlocks(pol.returns)}\n\n${p(operator)}` },
+    { slug: "privacy-policy", title: "Privacy policy", content: `${htmlToBlocks(pol.privacy)}\n\n${p(operator)}` },
+    { slug: "terms", title: "Terms of service", content: `${htmlToBlocks(pol.terms)}\n\n${p(operator)}` },
   ];
 }

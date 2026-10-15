@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Site Companion
  * Description:       Lets the website-gen desktop app manage this store over the REST API.
- * Version:           0.5.0
+ * Version:           0.5.1
  * Requires at least: 6.8
  * Requires PHP:      8.1
  * License:           GPLv2 or later
@@ -19,7 +19,8 @@ const SITE_COMPANION_RULES           = 'site_companion_store_rules';
 const SITE_COMPANION_METADATA        = 'site_companion_metadata';
 // Site options the app may set through /site. The service user is a shop manager without manage_options,
 // so this short allow-list is the only way it can change them.
-const SITE_COMPANION_OPTIONS         = array( 'blogname', 'blogdescription', 'blog_public', 'show_on_front', 'page_on_front', 'wp_page_for_privacy_policy', 'woocommerce_coming_soon' );
+const SITE_COMPANION_OPTIONS         = array( 'blogname', 'blogdescription', 'blog_public', 'show_on_front', 'page_on_front', 'wp_page_for_privacy_policy', 'woocommerce_coming_soon', 'site_icon' );
+const SITE_COMPANION_THEME_MODS      = array( 'custom_logo' );
 const SITE_COMPANION_INFO_KEYS       = array( 'entity', 'email', 'phone', 'address', 'announcement' );
 // Outgoing mail may only be routed through these providers, so the mail transport cannot be pointed at an arbitrary server.
 const SITE_COMPANION_SMTP_HOSTS      = array( 'smtp.hostinger.com' );
@@ -195,6 +196,9 @@ function site_companion_get_site(): array {
 	foreach ( SITE_COMPANION_OPTIONS as $name ) {
 		$options[ $name ] = get_option( $name );
 	}
+	foreach ( SITE_COMPANION_THEME_MODS as $name ) {
+		$options[ $name ] = get_theme_mod( $name, 0 );
+	}
 	return array(
 		'options' => $options,
 		'info'    => (array) get_option( SITE_COMPANION_INFO, array() ),
@@ -250,10 +254,22 @@ function site_companion_validate_rules( $value ) {
 	return $value;
 }
 
+/** Logo 和站点图标只能引用媒体库中的图片附件，且必须保留 JSON 整数类型。 */
+function site_companion_validate_image_attachment( string $name, $value ) {
+	if ( ! is_int( $value ) || $value < 1 ) {
+		return new WP_Error( 'site_companion_image', "{$name} must be a positive integer attachment ID.", array( 'status' => 400 ) );
+	}
+	if ( 'attachment' !== get_post_type( $value ) || ! wp_attachment_is_image( $value ) ) {
+		return new WP_Error( 'site_companion_image', "{$name} must reference an image attachment.", array( 'status' => 400 ) );
+	}
+	return $value;
+}
+
 function site_companion_set_site( WP_REST_Request $request ) {
 	$options = (array) $request->get_param( 'options' );
+	$allowed = array_merge( SITE_COMPANION_OPTIONS, SITE_COMPANION_THEME_MODS );
 	foreach ( array_keys( $options ) as $name ) {
-		if ( ! in_array( $name, SITE_COMPANION_OPTIONS, true ) ) {
+		if ( ! in_array( $name, $allowed, true ) ) {
 			return new WP_Error( 'site_companion_option', "Option {$name} cannot be changed here.", array( 'status' => 400 ) );
 		}
 	}
@@ -264,7 +280,25 @@ function site_companion_set_site( WP_REST_Request $request ) {
 			return $rules;
 		}
 	}
+	// 所有图片设置先完成校验，再写入任何选项，避免半套品牌资源落库。
+	foreach ( array( 'site_icon', 'custom_logo' ) as $name ) {
+		if ( array_key_exists( $name, $options ) ) {
+			$value = site_companion_validate_image_attachment( $name, $options[ $name ] );
+			if ( is_wp_error( $value ) ) {
+				return $value;
+			}
+			$options[ $name ] = $value;
+		}
+	}
 	foreach ( $options as $name => $value ) {
+		if ( 'custom_logo' === $name ) {
+			set_theme_mod( 'custom_logo', $value );
+			continue;
+		}
+		if ( 'site_icon' === $name ) {
+			update_option( $name, $value );
+			continue;
+		}
 		if ( in_array( $name, array( 'blog_public', 'page_on_front', 'wp_page_for_privacy_policy' ), true ) ) {
 			$value = absint( $value );
 		} elseif ( 'woocommerce_coming_soon' === $name ) {

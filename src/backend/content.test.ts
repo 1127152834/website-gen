@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { checkCopy, checkPolicies, claimProblems, htmlToBlocks, parsePolicies, type Facts, type Policies, type SiteCopy } from "./content.ts";
+import { buildPages, checkCopy, checkPolicies, claimProblems, htmlToBlocks, parsePolicies, type Facts, type Policies, type SiteCopy } from "./content.ts";
 import { costRange, parseDetail, splitVariants } from "./cj.ts";
 import { parseUsAddress } from "./store.ts";
 
@@ -21,6 +21,21 @@ test("policies that state every promised fact pass, also after WordPress typogra
   const rendered = good();
   rendered.returns = rendered.returns.replace("5–7", "5&#8211;7");
   assert.deepEqual(checkPolicies(rendered, facts), []);
+});
+
+test("every generated policy includes the exact legal operator name and address", () => {
+  const copy: SiteCopy = {
+    tagline: "Beds for dogs", style: "default", hero: { heading: "Dog beds", subheading: "Browse dog beds." },
+    about: ["Nordic Paws sells dog beds."],
+    faq: Array.from({ length: 8 }, (_, i) => ({ q: `Question ${i + 1}`, a: "Contact support for help." })),
+  };
+  const pages = buildPages(copy, good(), facts);
+  for (const slug of ["shipping", "returns", "privacy-policy", "terms"]) {
+    const page = pages.find((candidate) => candidate.slug === slug);
+    assert.ok(page, `${slug} page is generated`);
+    assert.match(page.content, new RegExp(`\\b${facts.entity.name.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")}\\b`));
+    assert.ok(page.content.includes(facts.entity.address), `${slug} contains the exact business address`);
+  }
 });
 
 test("policies with a missing fact or an invented number are rejected", () => {

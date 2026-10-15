@@ -34,3 +34,37 @@ test("overview is empty for a new isolated workspace", () => {
   const db = openDb(":memory:");
   try { migrate(db); const view = getOverview(db); assert.equal(view.counts.total, 0); assert.deepEqual(view.attention, []); assert.deepEqual(view.expiringDomains, []); } finally { db.close(); }
 });
+
+test("overview keeps a passed QA site with a payment needs_you review issue in attention", () => {
+  const db = openDb(":memory:");
+  try {
+    migrate(db);
+    db.exec("INSERT INTO batches VALUES (1,'{}',0)");
+    const qa = {
+      at: 0,
+      checks: [{ id: "payments", name: "Payment methods", level: "warn", ok: true, detail: "Configured" }],
+      shots: [],
+      review: {
+        at: 0,
+        rounds: 0,
+        passed: true,
+        issues: [{
+          id: "payment-gateway", level: "P2", kind: "config", page: "Site-wide", url: "https://shop.example/",
+          evidence: "No enabled card payment gateway was found.", why: "Customers cannot pay by card.",
+          fix: "Connect a payment gateway such as Stripe so credit cards are accepted.", status: "needs_you",
+        }],
+      },
+    };
+    db.prepare("INSERT INTO sites (id,batch_id,domain,form_json,status,created_at,updated_at,launched_at,qa_json) VALUES (1,1,?,'{}','done',0,0,1,?)")
+      .run("shop.example", JSON.stringify(qa));
+    db.exec("INSERT INTO provision_steps VALUES(1,'mailbox','done',NULL,0,0)");
+
+    const view = getOverview(db);
+
+    assert.equal(view.attention.length, 1);
+    assert.equal(view.attention[0]?.siteId, 1);
+    assert.equal(view.attention[0]?.tab, "qa");
+    assert.equal(view.attention[0]?.reasons.length, 1);
+    assert.match(view.attention[0]?.reasons[0] ?? "", /1/);
+  } finally { db.close(); }
+});

@@ -10,6 +10,16 @@ const SHOT_TEXT: Record<string, string> = {
 };
 
 const STATUS_TEXT: Record<ReviewIssue["status"], string> = { fixed: "已修复", open: "待处理", needs_you: "待你补充" };
+const KIND_ORDER: ReviewIssue["kind"][] = ["config", "policy", "product", "copy", "visual", "seo", "other"];
+const KIND_TEXT: Record<ReviewIssue["kind"], string> = {
+  config: "一致性与完整性",
+  policy: "政策与法律一致性",
+  product: "商品与合规",
+  copy: "业务真实性与声明",
+  visual: "品牌与视觉",
+  seo: "搜索与元数据",
+  other: "其他",
+};
 
 function safeHttpUrl(value: string): string | null {
   try {
@@ -62,7 +72,7 @@ export function QaReport({ qa }: { qa: QaView | null }) {
     return (
       <div className="rounded-lg border border-dashed p-8 text-center text-sm">
         <p className="font-medium">还没有复核报告</p>
-        <p className="mt-1 text-muted-foreground">建站流程运行到 QA 后，这里会显示规则检查、AI 整站复核和页面截图。</p>
+        <p className="mt-1 text-muted-foreground">建站流程运行到 QA 后，这里会显示商户网站规则检查、AI 复核和页面截图。</p>
       </div>
     );
   }
@@ -101,12 +111,27 @@ export function QaReport({ qa }: { qa: QaView | null }) {
 
       {qa.review ? (
         <section aria-labelledby="review-title">
-          <h3 id="review-title" className="text-sm font-medium">AI 整站复核</h3>
+          <h3 id="review-title" className="text-sm font-medium">商户网站审核（规则与 AI）</h3>
           <div className="mt-2 divide-y">
             {(["P1", "P2", "P3"] as const).map((level) => (
               <section key={level} aria-labelledby={`review-${level}`} className="py-4 first:pt-2">
                 <div className="flex items-center gap-2"><h4 id={`review-${level}`} className="font-semibold tabular-nums">{level}</h4><span className="text-xs text-muted-foreground">{level === "P1" ? "阻断上线" : level === "P2" ? "应该修复" : "优化建议"} · {groups[level].length}</span></div>
-                {groups[level].length === 0 ? <p className="mt-2 text-sm text-muted-foreground">没有 {level} 问题。</p> : <div className="mt-2 divide-y">{groups[level].map((issue) => <IssueCard key={issue.id} issue={issue} onZoom={(src, title) => setZoom({ src, title })} />)}</div>}
+                {groups[level].length === 0 ? <p className="mt-2 text-sm text-muted-foreground">没有 {level} 问题。</p> : (
+                  <div className="mt-3 space-y-4">
+                    {KIND_ORDER.map((kind) => {
+                      const issues = groups[level].filter((issue) => issue.kind === kind);
+                      return issues.length > 0 && (
+                        <section key={`${level}-${kind}`} aria-labelledby={`review-${level}-${kind}`} className="rounded-lg border px-4 py-3">
+                          <div className="flex items-center justify-between gap-2 border-b pb-2">
+                            <h5 id={`review-${level}-${kind}`} className="text-sm font-medium">{KIND_TEXT[kind]}</h5>
+                            <span className="text-xs text-muted-foreground tabular-nums">{issues.length}</span>
+                          </div>
+                          <div className="divide-y">{issues.map((issue) => <IssueCard key={issue.id} issue={issue} onZoom={(src, title) => setZoom({ src, title })} />)}</div>
+                        </section>
+                      );
+                    })}
+                  </div>
+                )}
               </section>
             ))}
           </div>

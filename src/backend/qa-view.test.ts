@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { randomBytes } from "node:crypto";
 import { createWorkspace } from "./index.ts";
@@ -47,4 +47,16 @@ test("QA view also renders a checkpoint containing only the in-progress review",
   const partial = qaView({ review: report.review } as QaReport, work);
   assert.equal(partial.at, 123); assert.deepEqual(partial.checks, []); assert.deepEqual(partial.shots, []);
   assert.equal(partial.review!.rounds, 2);
+});
+
+test("QA report presents underwriting results by severity and review theme", () => {
+  const source = readFileSync(join(import.meta.dirname, "../renderer/src/pages/qa-report.tsx"), "utf8");
+  assert.match(source, /商户网站审核（规则与 AI）/);
+  assert.match(source, /config: "一致性与完整性"/);
+  assert.match(source, /policy: "政策与法律一致性"/);
+  assert.match(source, /product: "商品与合规"/);
+  assert.match(source, /copy: "业务真实性与声明"/);
+  assert.match(source, /visual: "品牌与视觉"/);
+  assert.match(source, /\["P1", "P2", "P3"\]/);
+  assert.match(source, /KIND_ORDER\.map/);
 });

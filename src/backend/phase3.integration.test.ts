@@ -39,19 +39,30 @@ test("phase3 source pipeline uses shared rules, actual variant images, vision ma
     assert.deepEqual(product.variations.map((v) => (v as unknown as { image: { src: string } }).image.src), ["https://img/grey-s.jpg", "https://img/grey-m.jpg"]);
     assert.match(product.description, /Light Grey S.*Light Grey M/);
     assert.ok(wp.categories.some((c) => c.slug === "rest-at-home"));
+    const branding = JSON.parse(ctx.site.spec_json!).branding;
+    assert.equal(branding.generator, "website-gen");
+    assert.equal(branding.installed, true);
+    assert.equal(wp.options.custom_logo, branding.logoMediaId);
+    assert.equal(wp.options.site_icon, branding.iconMediaId);
+    assert(wp.media.has(branding.logoMediaId) && wp.media.has(branding.iconMediaId));
+    const beforeMedia = wp.media.size;
+    await storeSteps(ctx).products();
+    assert.equal(wp.media.size, beforeMedia, "completed branding is not generated or uploaded twice");
     const home = [...wp.pages.values()].find((p) => p.slug === "home")!;
     assert.ok(home.content.indexOf("wg-mobile-first-product") < home.content.indexOf("wg-home-intro"));
     assert.match(home.content, /https:\/\/img\/b\.jpg/);
     assert.match(home.content, /product-category\/rest-at-home/);
-    for (const p of wp.pages.values()) if (p.status === "publish") assert.ok(visited.has(p.slug === "home" ? "/" : `/${p.slug}/`), p.slug);
+    for (const slug of ["home", "about", "contact", "faq", "shipping", "returns", "privacy-policy", "terms", "shop"]) assert.ok(visited.has(slug === "home" ? "/" : `/${slug}/`), slug);
     for (const p of wp.products) { assert.ok(visited.has(`/product/${p.id}/`)); assert.ok(wp.metadata.has(`product:${p.id}`)); }
     assert.ok(wp.metadata.has("home:0") && wp.metadata.has("shop:0"));
     assert.ok(wp.categories.every((c) => wp.metadata.has(`product_cat:${c.id}`)));
     const review = JSON.parse(ctx.site.qa_json!).review as SiteReview;
     assert.equal(review.passed, true);
     assert.equal(review.rounds, 0);
+    assert.equal(review.issues.filter((i) => i.id.startsWith("config-") && /payment gateway/i.test(i.evidence)).length, 1);
+    assert.ok(review.issues.some((i) => i.status === "needs_you" && /Stripe.*credit cards/i.test(i.fix)));
     assert.match(JSON.parse(ctx.site.qa_json!).reviewFactsHash, /^[a-f0-9]{64}$/, "source fingerprint survives final QA serialization");
-    assert.ok(visualCalls > wp.pages.size + wp.products.length);
+    assert.equal(visualCalls, 9 + wp.products.length + wp.categories.length + wp.products.length + 1, "trust pages including terms, plus product photo choices and style");
   } finally { db.close(); }
 });
 
@@ -124,7 +135,7 @@ test("phase3 auto fixes are snapshotted, stop after two rounds across retries, a
       const url = /PAGE URL:\n(https:[^\s]+)\n/.exec(prompt)![1];
       targetUrl ??= url; if (url !== targetUrl) return ai(role, prompt);
       return { text: JSON.stringify({ issues: [
-        { key: "copy-summary", level: "P1", kind: "seo", page: "Product summary", url, evidence: "Summary still requires correction", why: "A persistent test finding", fix: "Correct the factual summary", needs_real_data: false, action: { tool: "update_meta", params: { summary: "Correct product summary", target_type: "product", target_id: Number(/\/product\/(\d+)\//.exec(url)![1]), description: `Current factual home page summary revision ${++revisions} for all real products.`, og_description: `Current factual sharing summary revision ${revisions} for all real products.` } } },
+        { key: "copy-summary", level: "P1", kind: "product", focus: "product_consistency", page: "Product summary", url, evidence: "Product description still contradicts the supplier's item", why: "A persistent source mismatch", fix: "Correct the factual summary", needs_real_data: false, action: { tool: "update_product", params: { summary: "Correct product summary", id: Number(/\/product\/(\d+)\//.exec(url)![1]), short_description: ++revisions % 2 ? "Soft cloth bed." : "Cloth bed." } } },
         { key: "material-proof", level: "P2", kind: "product", page: "Material proof", url, evidence: "Material proof needs real documentation", why: "AI cannot invent proof", fix: "Supply material evidence", needs_real_data: true },
       ] }), cost: 0 };
     }
@@ -158,11 +169,11 @@ test("phase3 policy auto-fix restores the complete procedure before deterministi
   const { db, siteId } = setup(); const { st, exec } = fakeHostinger(); const { fetchImpl, wp } = fakeSite(st); const ai = fakeAi([]); const d = deps(db, exec, fetchImpl, []);
   try {
     await runToEnd(d, siteId);
-    const shipping = [...wp.pages.values()].find((p) => p.slug === "shipping")!;
-    const broken = "<p>Shipping policy awaiting repair.</p>"; shipping.content = broken;
+    const returns = [...wp.pages.values()].find((p) => p.slug === "returns")!;
+    const broken = "<p>Returns policy awaiting repair.</p>"; returns.content = broken;
     d.ai = async (role, prompt) => {
-      if (prompt.startsWith("You are the final compliance reviewer") && prompt.includes(`PAGE URL:\nhttps://${DOMAIN}/shipping/\n`) && prompt.includes("Shipping policy awaiting repair")) {
-        return { text: JSON.stringify({ issues: [{ key: "shipping-procedure", level: "P1", kind: "policy", page: "Shipping policy", url: `https://${DOMAIN}/shipping/`, evidence: "Shipping policy awaiting repair", why: "The delay, cancellation and lost parcel procedures are absent", fix: "Restore the complete source-backed shipping policy", needs_real_data: false, action: { tool: "update_policy", params: { summary: "修复完整运输政策", name: "shipping", html: parsePolicies(POLICIES).shipping } } }] }), cost: 0 };
+      if (prompt.startsWith("You are the final compliance reviewer") && prompt.includes(`PAGE URL:\nhttps://${DOMAIN}/returns/\n`) && prompt.includes("Returns policy awaiting repair")) {
+        return { text: JSON.stringify({ issues: [{ key: "returns-procedure", level: "P1", kind: "policy", focus: "operator_policy", page: "Returns policy", url: `https://${DOMAIN}/returns/`, evidence: "Returns policy awaiting repair", why: "The return approval, address and refund timelines are absent", fix: "Restore the complete source-backed returns policy", needs_real_data: false, action: { tool: "update_policy", params: { summary: "修复完整退货政策", name: "returns", html: parsePolicies(POLICIES).returns } } }] }), cost: 0 };
       }
       return ai(role, prompt);
     };
@@ -175,5 +186,69 @@ test("phase3 policy auto-fix restores the complete procedure before deterministi
     assert.equal(listChanges(db, siteId).length, 1);
     const ops = JSON.parse((db.prepare("SELECT ops_json FROM changesets WHERE site_id = ?").get(siteId) as { ops_json: string }).ops_json);
     assert.equal(ops[0].before.content, broken);
+  } finally { db.close(); }
+});
+
+test("branding resumes partial rendering, reconciles prior media and repairs remote settings without regeneration", async () => {
+  const { db, siteId } = setup(); const { st, exec } = fakeHostinger(); const { fetchImpl, wp } = fakeSite(st);
+  let iconFails = true, styleCalls = 0;
+  const d = deps(db, exec, fetchImpl, [], {
+    renderBranding: async (_svg, kind) => { if (kind === "icon" && iconFails) throw new Error("simulated renderer interruption"); return Buffer.from(`fake-png-${kind}`); },
+    vision: async (prompt, images) => { if (prompt.startsWith("Design a restrained ecommerce")) styleCalls++; return fakeVision(prompt, images); },
+  });
+  try {
+    await assert.rejects(runToEnd(d, siteId), /simulated renderer interruption/);
+    const partial = JSON.parse(siteContext(d, siteId).site.spec_json!).branding;
+    assert(partial.logoMediaId); assert.equal(partial.iconMediaId, undefined); assert.equal(wp.media.size, 1);
+    iconFails = false; await runToEnd(d, siteId);
+    assert.equal(styleCalls, 1, "interrupted branding resumes with the chosen style"); assert.equal(wp.media.size, 2);
+    const ctx = siteContext(d, siteId); const stored = JSON.parse(ctx.site.spec_json!);
+    delete stored.branding.logoMediaId; delete stored.branding.iconMediaId; delete stored.branding.installed;
+    ctx.save("spec_json", JSON.stringify(stored));
+    d.ai = async () => { throw new Error("completed artwork must not call AI again"); };
+    await storeSteps(ctx).products();
+    assert.equal(wp.media.size, 2, "stable media slug reconciles uploads that succeeded before a lost checkpoint");
+    wp.options.custom_logo = 0; wp.options.site_icon = 0;
+    await storeSteps(ctx).products();
+    const final = JSON.parse(ctx.site.spec_json!).branding;
+    assert.equal(wp.options.custom_logo, final.logoMediaId); assert.equal(wp.options.site_icon, final.iconMediaId); assert.equal(wp.media.size, 2);
+  } finally { db.close(); }
+});
+
+test("underwriter models review terms, business/catalog authenticity and restricted-product evidence, never the shopping flow", async () => {
+  for (const scenario of [
+    { path: "/terms/", kind: "policy", evidence: "Terms make misleading legal claims about the operating business", why: "Legal consistency is unsupported" },
+    { path: "/about/", kind: "copy", evidence: "The About story describes a different business from this catalog", why: "The business story contradicts the products actually sold" },
+    { path: "/product/", kind: "product", evidence: "The product description uses a third-party trademark and advertises a restricted product", why: "Restricted products and third-party brand claims need underwriting attention" },
+  ]) {
+    const { db, siteId } = setup(); const { st, exec } = fakeHostinger(); const { fetchImpl } = fakeSite(st); const ai = fakeAi([]);
+    const prompts: string[] = [];
+    const d = deps(db, exec, fetchImpl, [], { ai: async (role, prompt) => {
+      if (!prompt.startsWith("You are the final compliance reviewer")) return ai(role, prompt);
+      prompts.push(prompt);
+      const url = /PAGE URL:\n(https:[^\s]+)\n/.exec(prompt)![1];
+      if (new URL(url).pathname.startsWith(scenario.path)) return { text: JSON.stringify({ issues: [{ key: "underwriting-evidence", focus: "underwriting", level: "P1", kind: scenario.kind, page: "Merchant underwriting", url, evidence: scenario.evidence, why: scenario.why, fix: "Correct the supported business/catalog discrepancy before submission", needs_real_data: false }] }), cost: 0 };
+      return ai(role, prompt);
+    } });
+    try {
+      await assert.rejects(runToEnd(d, siteId), /Correct the supported business\/catalog discrepancy/);
+      const report = JSON.parse(siteContext(d, siteId).site.qa_json!).review as SiteReview;
+      assert(report.issues.some((i) => i.evidence === scenario.evidence && i.kind === scenario.kind && i.level === "P1"));
+      assert(prompts.some((p) => p.includes(`PAGE URL:\nhttps://${DOMAIN}/terms/\n`)));
+      assert(prompts.every((p) => !/PAGE URL:\nhttps:[^\n]+\/(?:cart|checkout|my-account|search)\//.test(p)));
+      for (const phrase of [/strict payment-gateway merchant underwriter/, /authenticity, data consistency and completeness/, /third-party brand names or trademarks/, /prohibited or restricted products/, /at most 5 issues per page/]) assert.match(prompts[0], phrase);
+    } finally { db.close(); }
+  }
+});
+
+test("deterministic underwriting evidence survives an invalid model response", async () => {
+  const { db, siteId } = setup(); const { st, exec } = fakeHostinger(); const { fetchImpl, wp } = fakeSite(st); const d = deps(db, exec, fetchImpl, []);
+  try {
+    await runToEnd(d, siteId);
+    wp.info.entity = "Nordic Paw LLC";
+    d.ai = async () => ({ text: "not JSON", cost: 0 });
+    const qa = await runQa(siteContext(d, siteId));
+    assert.equal(qa.review?.passed, false);
+    assert(qa.review?.issues.some((i) => i.kind === "config" && i.level === "P1" && i.evidence.includes("Nordic Paw LLC")), "code-found identity evidence must not depend on model JSON success");
   } finally { db.close(); }
 });
