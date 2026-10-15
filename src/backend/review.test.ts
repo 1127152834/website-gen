@@ -659,3 +659,12 @@ test("the same site-wide problem on every page is reported once with the affecte
   assert.equal(rows.length, 1);
   assert.match(rows[0].issue.evidence, /7 pages/);
 });
+
+test("truncated product card titles on category pages are not read as addresses (live 2026-10-15)", () => {
+  const snapshot = underwritingSnapshot();
+  addToFooters(snapshot, " | 24 Inch Anti-Slip Round Fluffy Pl… | 1 Round Pl…");
+  assert.deepEqual(deterministicUnderwritingFindings(snapshot).filter((row) => row.semanticKey === "underwriting-address-mismatch"), []);
+  // 带州和邮编的另一个地址仍然要报
+  addToFooters(snapshot, " | 99 Other Road, Salem, OR 97301");
+  assert.equal(deterministicUnderwritingFindings(snapshot).filter((row) => row.semanticKey === "underwriting-address-mismatch").length, 1);
+});

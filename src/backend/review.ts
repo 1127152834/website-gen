@@ -676,8 +676,8 @@ function underwritingPhoneDigits(value: string): string {
 
 function underwritingAddresses(text: string): string[] {
   const suffix = "(?:Street|St\\.?|Road|Rd\\.?|Avenue|Ave\\.?|Boulevard|Blvd\\.?|Lane|Ln\\.?|Drive|Dr\\.?|Court|Ct\\.?|Way|Parkway|Pkwy\\.?|Highway|Hwy\\.?|Place|Pl\\.?)";
-  // 后缀后必须是词边界：「© 2026 Test Store」不能读成「2026 Test St」
-  const pattern = new RegExp(`\\b\\d{1,6}[ \\t]+(?:[A-Z0-9][A-Z0-9.'-]*[ \\t]+){1,8}${suffix}(?![A-Za-z])(?:[ \\t]+(?:Apt|Suite|Unit|#)[ \\t]*[A-Z0-9-]+)?(?:,[ \\t]*[A-Z][A-Z .'-]{1,40})?(?:,[ \\t]*[A-Z]{2}[ \\t]+\\d{5}(?:-\\d{4})?)?(?:,[ \\t]*(?:United States(?: of America)?|USA|US))?`, "gi");
+  // 后缀后必须是词边界，且必须带州缩写 + 邮编才算完整地址：「© 2026 Test Store」、截断的商品标题「…Round Fluffy Pl…」都不是地址
+  const pattern = new RegExp(`\\b\\d{1,6}[ \\t]+(?:[A-Z0-9][A-Z0-9.'-]*[ \\t]+){1,8}${suffix}(?![A-Za-z])(?:[ \\t]+(?:Apt|Suite|Unit|#)[ \\t]*[A-Z0-9-]+)?(?:,[ \\t]*[A-Z][A-Z .'-]{1,40})?(?:,[ \\t]*[A-Z]{2}[ \\t]+\\d{5}(?:-\\d{4})?)(?:,[ \\t]*(?:United States(?: of America)?|USA|US))?`, "gi");
   return [...new Set([...text.matchAll(pattern)].map((match) => underwritingEvidence(match[0]!)))];
 }
 
