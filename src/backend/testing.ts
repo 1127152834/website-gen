@@ -417,7 +417,7 @@ export function fakeAi(log: string[]) {
           copyCalls++ === 0
             ? "Founded in 2015 by dog lovers, Nordic Paws is an online store operated by Nordic Paws LLC from Austin, TX, focused on dog beds and blankets."
             : "Nordic Paws is an online store operated by Nordic Paws LLC from Austin, TX. We focus on dog beds and blankets chosen for everyday comfort at home.",
-          "Every order ships within the contiguous United States. Orders are processed in 1-3 business days and usually arrive in 5-10 business days after dispatch.",
+          "Every order ships within the contiguous United States, all 48 states plus Washington, D.C. Orders are processed in 1-3 business days and usually arrive in 5-10 business days after dispatch.",
           "If something is not right, you can request a return within 30 days of delivery. Questions about an order? Email support@nordicpaws.com and we will help.",
         ], faq,
       });

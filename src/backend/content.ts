@@ -182,15 +182,13 @@ export function checkCopy(c: SiteCopy, f: Facts): string[] {
   if (!STYLES.includes(c.style)) out.push(`style must be one of ${STYLES.join(", ")}`);
   if (!c.hero?.heading || !c.hero?.subheading) out.push("hero heading and subheading are required");
   if (!Array.isArray(c.about) || c.about.length < 3 || c.about.length > 4) out.push("about needs 3-4 paragraphs");
-  else {
-    // 支付网关审核会看「关于我们」是否像真实在经营的商家：不能只有一两句套话
-    const about = c.about.join("\n");
-    if (about.length < 450 || c.about.some((x) => x.length < 100)) out.push("about is too thin: write 3-4 paragraphs of 2-4 sentences each (at least 100 characters per paragraph)");
-    if (!about.includes(f.entity.name)) out.push(`about must name the operator exactly: ${f.entity.name}`);
-    if (!about.toLowerCase().includes(f.email.toLowerCase())) out.push(`about must give the support email ${f.email}`);
-  }
   if (!Array.isArray(c.faq) || c.faq.length < 6 || c.faq.some((x) => !x.q || !x.a)) out.push("faq needs 8 questions with answers");
   if (out.length) return out;
+  // 支付网关审核会看「关于我们」是否像真实在经营的商家：不能只有一两句套话（和虚假宣传一起报，AI 一次改全）
+  const aboutText = c.about.join("\n");
+  if (aboutText.length < 450 || c.about.some((x) => x.length < 100)) out.push("about is too thin: write 3-4 paragraphs of 2-4 sentences each (at least 100 characters per paragraph)");
+  if (!aboutText.includes(f.entity.name)) out.push(`about must name the operator exactly: ${f.entity.name}`);
+  if (!aboutText.toLowerCase().includes(f.email.toLowerCase())) out.push(`about must give the support email ${f.email}`);
   const all = [c.tagline, c.hero.heading, c.hero.subheading, ...c.about, ...c.faq.flatMap((x) => [x.q, x.a])].join("\n");
   const payment = c.faq.map((x) => x.a).join("\n");
   if (!payment.includes("Available payment methods are shown at checkout.")) out.push("faq must use the exact checkout payment wording");
