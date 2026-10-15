@@ -209,7 +209,8 @@ export function checkPolicies(p: Policies, f: Facts): string[] {
   const shipping = norm(p.shipping), returns = norm(p.returns);
   const requirePattern = (where: string, text: string, label: string, pattern: RegExp) => { if (!pattern.test(text)) out.push(`${where} policy must explain ${label}`); };
   requirePattern("returns", returns, "how to request a return", /\b(request|contact)\b[\s\S]*\breturn\b|\breturn\b[\s\S]*\b(request|contact)\b/);
-  requirePattern("returns", returns, `a return request within ${RULES.returnDays} days after delivery`, new RegExp(`\\b(?:request|contact)\\b[\\s\\S]{0,60}\\breturn\\b[\\s\\S]{0,80}\\bwithin\\s+${RULES.returnDays} days?\\b[\\s\\S]{0,40}\\b(?:after|of|from)\\s+(?:the\\s+)?delivery\\b`));
+  // 只看「30 天从签收起算」这一事实，不限定词序（怎么申请由上一条检查）
+  requirePattern("returns", returns, `a return request within ${RULES.returnDays} days after delivery`, new RegExp(`\\bwithin\\s+${RULES.returnDays} days?\\s+(?:after|of|from)\\s+(?:the\\s+)?(?:date\\s+of\\s+)?(?:delivery|receiving|receipt)\\b`));
   requirePattern("returns", returns, "approval or instructions before sending", /\b(approval|approved|authorization|instructions)\b/);
   requirePattern("returns", returns, "sending the item back", /\b(send|ship|mail)\b[\s\S]*\b(back|return)/);
   requirePattern("returns", returns, "inspection after receipt", /\binspect(?:ion|ed|ing)?\b/);
@@ -217,7 +218,7 @@ export function checkPolicies(p: Policies, f: Facts): string[] {
   const refundWindow = span(RULES.refundDays).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   requirePattern("returns", returns, `our ${span(RULES.refundDays)} business-day refund initiation measured from receiving the return`, new RegExp(`\\b(initiat\\w*|issu\\w*)\\b[\\s\\S]{0,120}\\bwithin\\s+${refundWindow} business days?\\b[\\s\\S]{0,100}\\b(receiv\\w*|receipt)\\b`));
   requirePattern("returns", returns, "variable additional bank posting time without a promised count", /\bbank\b[\s\S]{0,100}\b(additional|vary|varies|variable)\b[\s\S]{0,80}\b(time|timing|days?)\b/);
-  requirePattern("returns", returns, "who pays return shipping and damaged/defective/wrong exceptions", /customer[\s\S]*return shipping[\s\S]*(damaged|defective|wrong)/);
+  requirePattern("returns", returns, "who pays return shipping and damaged/defective/wrong exceptions", /\b(customers?|you|buyers?)\b[^.]{0,60}\breturn shipping\b[\s\S]*\b(damaged|defective|wrong)\b/);
   requirePattern("shipping", shipping, "delay notice and revised date", /\b(delay\w*|late)\b[\s\S]*\b(notif\w*|email|contact)\b[\s\S]*\b(revised|new|updated)\b[\s\S]*\bdate\b/);
   requirePattern("shipping", shipping, "accepting a delay or cancelling for a full refund", /\b(accept|consent|agree)\w*\b[\s\S]*\b(cancel)\w*\b[\s\S]*\b(full )?refund\b/);
   requirePattern("shipping", shipping, "cancellation before shipment", /\bcancel\w*\b[\s\S]*\bbefore\b[\s\S]*\b(ship|dispatch)/);
@@ -228,7 +229,9 @@ export function checkPolicies(p: Policies, f: Facts): string[] {
   const all = Object.values(p).join("\n");
   if (!all.includes("Available payment methods are shown at checkout.")) out.push("policies must use the exact checkout payment wording");
   if (/stripe|paypal|visa|mastercard|american express|apple pay|google pay/i.test(all)) out.push("policies must not promise a payment gateway");
-  if (!f.features?.orderAttribution && /order attribution|sourcebuster|sbjs_/i.test(p.privacy)) out.push("privacy must not describe disabled order attribution");
+  // 写明「已关闭、不使用」是对的；只拒绝把订单归因写成在用
+  const describesAttribution = stripTags(p.privacy).split(/(?<=[.!?])\s+/).some((x) => /order[- ]attribution|sourcebuster|sbjs_/i.test(x) && !/\b(disabled|not|never|no)\b|n't\b/i.test(x));
+  if (!f.features?.orderAttribution && describesAttribution) out.push("privacy must not describe disabled order attribution");
   return [
     ...out,
     ...claimProblems(Object.values(p).join("\n")),

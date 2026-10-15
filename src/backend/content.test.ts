@@ -51,6 +51,17 @@ test("the 30-day return-request window must start from delivery, not the order d
   assert.match(checkPolicies(p, facts).join("\n"), /return request within 30 days after delivery/);
 });
 
+test("correct policies phrased differently by the AI still pass (live wording, 2026-10-15)", () => {
+  const p = good();
+  p.returns = `<h2>Returns</h2><p>We accept returns within 30 days of delivery. Contact support at support@nordicpaws.com within 30 days of delivery to request a return. Wait for approval and instructions from support. Once approved, send the item back promptly to: 1 Main St. You pay return shipping unless the item arrived damaged, defective, or wrong. After we receive and inspect the return, we initiate the refund to the original payment method within 5–7 business days after we receive the return. Your bank may need additional time to post the credit.${pad}</p>`;
+  p.privacy += "<p>Analytics is disabled. Order attribution is disabled, and we do not use order-attribution cookies.</p>";
+  assert.deepEqual(checkPolicies(p, facts), []);
+  // 肯定地描述在用订单归因仍然拒绝
+  const q = good();
+  q.privacy += "<p>We use order attribution cookies (sbjs_) to understand where orders come from.</p>";
+  assert.match(checkPolicies(q, facts).join("\n"), /disabled order attribution/);
+});
+
 test("specific payment gateways are rejected until connected", () => {
   const p = good();
   p.terms += "<p>We accept Stripe and PayPal.</p>";
