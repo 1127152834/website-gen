@@ -78,6 +78,7 @@ export function createChats(opts: {
   onEvent: (siteId: number, e: ChatEvent) => void;
 }) {
   const sessions = new Map<number, Promise<AgentSession>>();
+  let closed = false;
 
   async function open(siteId: number, fresh: boolean): Promise<AgentSession> {
     const choice = roleChoice(opts.db, "agent");
@@ -144,6 +145,7 @@ export function createChats(opts: {
   }
 
   const get = (siteId: number, fresh = false): Promise<AgentSession> => {
+    if (closed) return Promise.reject(new Error("工作区已关闭"));
     let s = sessions.get(siteId);
     if (!s || fresh) {
       s = open(siteId, fresh);
@@ -171,6 +173,15 @@ export function createChats(opts: {
     async reset(siteId: number): Promise<void> {
       (await sessions.get(siteId)?.catch(() => null))?.dispose();
       await get(siteId, true);
+    },
+    async close(): Promise<void> {
+      closed = true;
+      await Promise.allSettled([...sessions.values()].map(async (pending) => {
+        const session = await pending;
+        await session.abort();
+        session.dispose();
+      }));
+      sessions.clear();
     },
   };
 }

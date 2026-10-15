@@ -11,22 +11,20 @@
     "poc:deepseek": "node --env-file=.env poc/deepseek.ts",
     "poc:pi": "node --env-file=.env poc/pi-agent.ts",
     "poc:cj": "node --env-file=.env poc/cj.ts",
-    "poc:electron-node": "node poc/run-electron-node.mjs",
-    "dev": "electron-vite dev",
-    "build": "electron-vite build",
-    "start": "electron-vite preview",
+    "dev": "node scripts/dev.ts",
+    "build": "vite build",
+    "start": "node src/server/index.ts",
     "test": "node --test \"src/**/*.test.ts\"",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "smoke": "node scripts/smoke.ts",
     "check:sync": "node --env-file=.env scripts/check-sync.ts",
-    "check:models": "node --env-file=.env scripts/check-models.ts",
-    "dist": "electron-vite build && electron-builder --win nsis"
+    "check:models": "node --env-file=.env scripts/check-models.ts"
   },
   "dependencies": {
-    "@earendil-works/pi-ai": "^1.2.0",
-    "@earendil-works/pi-coding-agent": "^1.2.0",
-    "@hostinger/mcp": "^2.16.0",
-    "@modelcontextprotocol/sdk": "^1.32.1",
+    "@earendil-works/pi-ai": "1.2.0",
+    "@earendil-works/pi-coding-agent": "1.2.0",
+    "@hostinger/mcp": "2.16.0",
+    "@modelcontextprotocol/sdk": "1.32.1",
     "playwright-core": "1.64.1"
   },
   "devDependencies": {
@@ -38,9 +36,6 @@
     "@vitejs/plugin-react": "6.1.2",
     "class-variance-authority": "0.7.1",
     "cn": "0.4.0",
-    "electron": "44.7.2",
-    "electron-builder": "26.15.3",
-    "electron-vite": "6.0.0",
     "lucide-react": "1.57.0",
     "radix-ui": "1.8.1",
     "react": "19.3.1",
@@ -51,8 +46,7 @@
     "typescript": "7.0.2",
     "vite": "8.3.4"
   },
-  "main": "./out/main/index.js",
   "productName": "独立站 AI 工厂",
-  "description": "独立站 AI 工厂：基于 Hostinger + WordPress + WooCommerce 的建站与运营桌面工具",
+  "description": "独立站 AI 工厂：基于 Hostinger + WordPress + WooCommerce 的建站与运营Web工具",
   "author": "chutlong821"
 }

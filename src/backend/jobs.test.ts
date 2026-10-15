@@ -83,3 +83,22 @@ test("the runner never runs more jobs at once than its concurrency", async () =>
   await Promise.all([runner.tick(), runner.tick(), runner.tick()]);
   assert.equal(peak, 2);
 });
+
+test("stopping a runner waits for active jobs and never claims another job", async () => {
+  const db = fresh();
+  enqueue(db, "t", null, 0);
+  const pending = enqueue(db, "t", null, 0);
+  let finish!: () => void;
+  const gate = new Promise<void>((resolve) => { finish = resolve; });
+  const runner = createRunner({ db, concurrency: 1, now: () => 0, handlers: { t: () => gate } });
+  const tick = runner.tick();
+  let stopped = false;
+  const stop = runner.stop().then(() => { stopped = true; });
+  await Promise.resolve();
+  assert.equal(stopped, false);
+  finish();
+  await Promise.all([tick, stop]);
+  await runner.tick();
+  assert.equal(status(db, pending).status, "queued");
+  db.close();
+});

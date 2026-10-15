@@ -1,4 +1,4 @@
-// 凭据加密：AES-256-GCM。主密钥由主进程用 safeStorage（Windows DPAPI）保护后交给后台，只在内存里。
+// 凭据加密：AES-256-GCM。每个工作区使用服务端主密钥派生的用户密钥，密文格式与桌面版兼容。
 // 格式：版本(1) + IV(12) + 认证标签(16) + 密文。篡改或换了密钥都会在解密时报错。
 import { createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
 import type { DatabaseSync } from "node:sqlite";

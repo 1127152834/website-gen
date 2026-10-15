@@ -55,7 +55,8 @@ export function createRunner(opts: {
   onSettled?: (job: Job, outcome: "done" | "waiting" | "retry" | "failed", error?: string) => void;
 }) {
   const { db, handlers, concurrency = 3, leaseMs = 10 * 60_000, now = Date.now, onSettled } = opts;
-  const running = new Set<number>();
+  const running = new Map<number, Promise<void>>();
+  let stopped = false;
 
   async function run(job: Job) {
     const handler = handlers[job.type];
@@ -82,9 +83,19 @@ export function createRunner(opts: {
   return {
     /** 认领空闲名额数量的到期任务并等它们跑完；周期性调用即可（重叠调用安全）。 */
     async tick(): Promise<void> {
+      if (stopped) return;
       const jobs = claimDue(db, now(), concurrency - running.size, leaseMs);
-      for (const j of jobs) running.add(j.id);
-      await Promise.all(jobs.map((j) => run(j).finally(() => running.delete(j.id))));
+      const tasks = jobs.map((j) => {
+        const task = run(j).finally(() => running.delete(j.id));
+        running.set(j.id, task);
+        return task;
+      });
+      await Promise.all(tasks);
+    },
+    /** 停用工作区时不再认领新任务；当前步骤落盘后才能关数据库。 */
+    async stop(): Promise<void> {
+      stopped = true;
+      await Promise.allSettled(running.values());
     },
   };
 }

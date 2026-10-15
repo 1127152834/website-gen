@@ -48,10 +48,9 @@ export function createHostingerPool(idleMs = 5 * 60_000) {
   async function connect(token: string): Promise<Client> {
     const client = new Client({ name: "website-gen", version: "0.1.0" });
     await client.connect(new StdioClientTransport({
-      // 在 Electron 里 execPath 是 Electron 本身，ELECTRON_RUN_AS_NODE 让它以 Node 模式运行 MCP 服务
       command: process.execPath,
       args: [SERVER],
-      env: { HOSTINGER_API_TOKEN: token, ELECTRON_RUN_AS_NODE: "1", PATH: process.env.PATH ?? "", SystemRoot: process.env.SystemRoot ?? "" },
+      env: { HOSTINGER_API_TOKEN: token, PATH: process.env.PATH ?? "", SystemRoot: process.env.SystemRoot ?? "" },
       stderr: "ignore",
     }));
     return client;

@@ -1,7 +1,8 @@
-// QA 用的浏览器：用本机的 Edge（Windows 自带）无界面打开站点。先用 Hostinger 的一次性登录链接登录管理员，
+// QA 用的浏览器：Windows 优先 Edge，其余用 Playwright Chromium。先用 Hostinger 的一次性登录链接登录管理员，
 // 这样维护模式下也能看到真实页面；逐页截图、检查 PHP 报错，再把一个商品加入购物车走到结账页。
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
+import type { LaunchOptions } from "playwright-core";
 
 export interface BrowseInput {
   loginUrl: string;
@@ -14,15 +15,26 @@ export interface BrowseInput {
 }
 export type Browse = (input: BrowseInput) => Promise<{ shots: { name: string; file: string }[]; problems: string[] }>;
 
-/** 这台电脑上启动不了 Edge：QA 记一条提醒并跳过截图，而不是让整个站失败。 */
+/** 启动不了浏览器：QA 记一条提醒并跳过截图，而不是让整个站失败。 */
 export class BrowserUnavailable extends Error {}
+
+export function browserLaunchOptions(platform: string = process.platform, path: string | undefined = process.env.QA_CHROMIUM_PATH): LaunchOptions[] {
+  return [
+    ...(path ? [{ headless: true, executablePath: path }] : []),
+    ...(platform === "win32" ? [{ headless: true, channel: "msedge" }] : []),
+    { headless: true },
+  ];
+}
 
 export const browseWithEdge: Browse = async ({ loginUrl, origin, outDir, pages, cart }) => {
   const { chromium } = await import("playwright-core");
   mkdirSync(outDir, { recursive: true });
-  const browser = await chromium.launch({ channel: "msedge", headless: true }).catch((e: Error) => {
-    throw new BrowserUnavailable(`启动 Edge 失败：${e.message.split("\n")[0]}`);
-  });
+  let browser;
+  for (const options of browserLaunchOptions()) {
+    browser = await chromium.launch(options).catch(() => undefined);
+    if (browser) break;
+  }
+  if (!browser) throw new BrowserUnavailable("无法启动 Edge 或 Playwright Chromium，请安装 Chromium 或设置 QA_CHROMIUM_PATH");
   const shots: { name: string; file: string }[] = [];
   const problems: string[] = [];
   try {

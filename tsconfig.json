@@ -9,12 +9,12 @@
     "noEmit": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    // 后台代码既被 Vite 打包，也直接用 Node 跑测试：相对导入写 .ts 扩展名，只用可擦除的 TS 语法
+    // 服务端直接用 Node 跑 .ts：相对导入写 .ts 扩展名，只用可擦除的 TS 语法
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "erasableSyntaxOnly": true,
-    "types": ["node", "electron-vite/node"],
+    "types": ["node", "vite/client"],
     "paths": { "@/*": ["./src/renderer/src/*"] }
   },
-  "include": ["src", "electron.vite.config.ts"]
+  "include": ["src", "scripts", "vite.config.ts"]
 }

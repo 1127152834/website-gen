@@ -1,4 +1,4 @@
-// 界面进程 ↔ 后台进程之间经 MessagePort 传递的消息。
+// 界面 ↔ 用户工作区：HTTP RPC 请求/响应，SSE 推送；事件 seq 仍用于日志补发。
 
 export type RunEventKind = "step" | "mcp" | "ai_text" | "ai_thinking" | "ai_tool" | "warn" | "error";
 

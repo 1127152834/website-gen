@@ -6,4 +6,5 @@ data/
 poc/out/
 .playwright-mcp/
 out/
+dist/
 release/

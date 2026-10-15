@@ -1,0 +1,14 @@
+.git
+.github
+.omx
+.env
+.env.*
+!.env.example
+node_modules
+dist
+out
+release
+data
+poc/out
+*.log
+coverage
