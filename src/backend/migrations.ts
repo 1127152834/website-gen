@@ -163,4 +163,14 @@ export const MIGRATIONS: string[] = [
 
   // 009：旧版同步把待设置域名（Hostinger 返回 domain=null）存成了字符串 "null"，改为空字符串
   `UPDATE domains SET domain = '' WHERE domain = 'null';`,
+
+  // 010：旧模型表的结构已经能承载用户自建厂商，原样保留提供方、Key、模型和用途路由；经营主体模板在本阶段落库。
+  `UPDATE model_providers SET models_json = models_json WHERE json_valid(models_json);
+   CREATE TABLE IF NOT EXISTS entity_templates (
+     id           INTEGER PRIMARY KEY,
+     name         TEXT NOT NULL,
+     payload_json TEXT NOT NULL CHECK (json_valid(payload_json)),
+     created_at   INTEGER NOT NULL,
+     updated_at   INTEGER NOT NULL
+   );`,
 ];

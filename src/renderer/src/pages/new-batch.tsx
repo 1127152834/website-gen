@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState, type FormEvent } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import { Plus, Trash2, Upload, Save } from "lucide-react";
 import type { FreeDomain } from "../../../shared/protocol.ts";
 import { brandFromDomain, validateBatch, type BatchForm, type EntityForm } from "../../../shared/forms.ts";
 import { promises } from "../../../shared/rules.ts";
@@ -9,14 +9,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
-  AlertDialogHeader, AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { useConfirm, toast } from "@/components/feedback";
+import { Skeleton } from "@/components/page-state";
+import { parseSiteCsv } from "@/lib/site-csv.ts";
 
 // 输入框里的数字先按字符串存，提交时再转换，避免输入到一半就被改写
-interface SiteDraft { domain: string; categories: string; count: string; priceMin: string; priceMax: string; brand: string }
-const emptySite = (): SiteDraft => ({ domain: "", categories: "", count: "20", priceMin: "", priceMax: "", brand: "" });
+interface SiteDraft { rowId: string; domain: string; categories: string; count: string; priceMin: string; priceMax: string; brand: string }
+let nextRow = 0;
+const rowId = () => String(++nextRow);
+const emptySite = (): SiteDraft => ({ rowId: rowId(), domain: "", categories: "", count: "20", priceMin: "", priceMax: "", brand: "" });
 type EntityDraft = Omit<EntityForm, "processingDays" | "transitDays">;
 const emptyEntity = (): EntityDraft => ({ kind: "company", name: "", address: "", supportEmail: "auto", phone: "" });
 // 发货时效：处理最少/最多、运输最少/最多（工作日）。不预填：必须是你们真实的发货能力
@@ -28,17 +29,23 @@ function FieldError({ id, message }: { id: string; message?: string }) {
   return message ? <p id={id} className="text-xs text-destructive">{message}</p> : null;
 }
 
-export function NewBatchPage({ onCreated }: { onCreated: (batchId: number) => void }) {
+export function NewBatchPage({ onCreated }: { onCreated: (batchId: number) => void; userId?: number }) {
   const [free, setFree] = useState<FreeDomain[] | null>(null);
   const [entity, setEntity] = useState<EntityDraft>(emptyEntity);
   const [days, setDays] = useState(emptyDays);
   const [sites, setSites] = useState<SiteDraft[]>([emptySite()]);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [confirming, setConfirming] = useState<BatchForm | null>(null);
+  const [step, setStep] = useState(0);
+  const confirm = useConfirm();
+  const [templates, setTemplates] = useState<{ id: number; name: string; entity: EntityForm }[]>([]);
+  const [templateName, setTemplateName] = useState("");
+  const [templateBusy, setTemplateBusy] = useState(false);
+  const csvInput = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(() => {
+    void call<typeof templates>("templates.list").then(setTemplates, (e: Error) => setError(e.message));
     call<FreeDomain[]>("domains.free").then(setFree, (e: Error) => setError(e.message));
   }, []);
   useEffect(() => {
@@ -58,14 +65,37 @@ export function NewBatchPage({ onCreated }: { onCreated: (batchId: number) => vo
     })),
   });
 
-  const submit = (e: FormEvent) => {
+  const submit = async (e: FormEvent) => {
     e.preventDefault();
     const form = toForm();
     const found = validateBatch(form);
-    setErrors(found);
-    if (Object.keys(found).length === 0) setConfirming(form);
+    const relevant = step === 0 ? Object.fromEntries(Object.entries(found).filter(([key]) => key.startsWith("entity."))) : found;
+    setErrors(relevant);
+    if (Object.keys(relevant).length) { toast("请先修正标记的字段", "error"); return; }
+    if (step < 2) { setStep(step + 1); return; }
+    if (await confirm({ title: `为 ${form.sites.length} 个域名建站？`, description: "将调用 Hostinger 创建网站、读取 CJ 商品并调用模型生成内容，可能产生模型费用。全程保持维护模式，验收后由你上线。", confirmText: "开始建站" })) await create(form);
   };
-
+  const saveEntity = async () => {
+    const value = toForm().entity;
+    const found = Object.fromEntries(Object.entries(validateBatch({ entity: value, sites: [] })).filter(([key]) => key.startsWith("entity.")));
+    setErrors(found);
+    if (Object.keys(found).length) return;
+    setTemplateBusy(true);
+    try { setTemplates(await call<typeof templates>("templates.save", { name: templateName || value.name, entity: value })); setTemplateName(""); toast("经营主体已保存为模板"); }
+    catch (reason) { toast((reason as Error).message, "error"); } finally { setTemplateBusy(false); }
+  };
+  const importCsv = async (file?: File) => {
+    if (!file) return;
+    try {
+      if (file.size > 1_000_000) throw new Error("CSV 不能超过 1 MB");
+      const imported = parseSiteCsv(await file.text());
+      const unavailable = imported.filter((site) => !free?.some((domain) => domain.domain === site.domain));
+      if (unavailable.length) throw new Error(`以下域名未同步或已占用：${unavailable.map((site) => site.domain).join("、")}`);
+      if (sites.some((site) => site.domain || site.categories) && !await confirm({ title: "替换当前站点行？", description: "CSV 将替换尚未提交的站点行；经营主体不会改变。", confirmText: "替换站点行" })) return;
+      setSites(imported.map((site) => ({ rowId: rowId(), domain: site.domain, categories: site.categories, brand: site.brand, count: String(site.count), priceMin: site.priceMin == null ? "" : String(site.priceMin), priceMax: site.priceMax == null ? "" : String(site.priceMax) })));
+      setErrors({}); toast(`已导入 ${imported.length} 个站点`);
+    } catch (reason) { toast((reason as Error).message, "error"); }
+  };
   const create = async (form: BatchForm) => {
     setBusy(true);
     setError(null);
@@ -73,12 +103,13 @@ export function NewBatchPage({ onCreated }: { onCreated: (batchId: number) => vo
       const { batchId } = await call<{ batchId: number }>("batches.create", form);
       setSites([emptySite()]);
       setErrors({});
+      toast("建站批次已创建");
       onCreated(batchId);
     } catch (err) {
       setError((err as Error).message);
     } finally {
       setBusy(false);
-      setConfirming(null);
+
     }
   };
 
@@ -94,7 +125,17 @@ export function NewBatchPage({ onCreated }: { onCreated: (batchId: number) => vo
         </p>
       </div>
 
+      <ol aria-label="建站步骤" className="flex gap-1 border-b text-sm">{["经营主体", "站点", "确认"].map((label, index) => <li key={label} className="flex-1"><button type="button" className={`w-full border-b-2 px-3 py-3 text-left ${step === index ? "border-primary font-semibold text-primary" : "border-transparent text-muted-foreground"}`} aria-current={step === index ? "step" : undefined} disabled={index > step || busy} onClick={() => setStep(index)}>{label}</button></li>)}</ol>
       {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
+      {free === null && !error && <Skeleton label="正在读取可用域名" />}
+      {free?.length === 0 && <div className="rounded-lg border border-dashed p-6 text-sm"><p className="font-medium">没有可用的域名</p><p className="mt-1 text-muted-foreground">先在「账号」页接入 Hostinger 账号并完成同步；已建站或在其他批次里的域名不会列出。</p></div>}
+      {step === 0 && <>
+      <section aria-label="主体模板" className="flex flex-wrap items-end gap-3 rounded-lg bg-muted/50 p-4">
+        <div className="min-w-40 flex-1"><Label htmlFor="entity-template">复用经营主体模板</Label><select id="entity-template" className="mt-2 h-9 w-full rounded-md border bg-background px-3 text-sm" defaultValue="" onChange={(event) => { const template = templates.find((item) => item.id === Number(event.target.value)); if (template) { const value = template.entity; setEntity(value); setDays({ p0: String(value.processingDays[0]), p1: String(value.processingDays[1]), t0: String(value.transitDays[0]), t1: String(value.transitDays[1]) }); setErrors({}); } }}><option value="">选择模板</option>{templates.map((template) => <option key={template.id} value={template.id}>{template.name}</option>)}</select></div>
+        <div className="min-w-40 flex-1"><Label htmlFor="template-name">模板名称</Label><Input id="template-name" className="mt-2" value={templateName} maxLength={100} onChange={(event) => setTemplateName(event.target.value)} placeholder="默认使用主体名称" /></div>
+        <Button type="button" variant="outline" disabled={templateBusy} onClick={() => void saveEntity()}><Save aria-hidden />保存为模板</Button>
+        {templates.length > 0 && <details className="basis-full text-sm"><summary className="cursor-pointer text-muted-foreground">管理已保存的模板</summary><ul className="mt-2 divide-y">{templates.map((template) => <li key={template.id} className="flex items-center justify-between py-2"><span>{template.name}</span><Button type="button" variant="ghost" size="sm" onClick={async () => { if (!await confirm({ title: `删除模板「${template.name}」？`, description: "只删除模板，不影响已有站点和批次。", destructive: true })) return; try { setTemplates(await call<typeof templates>("templates.remove", { id: template.id })); toast("模板已删除"); } catch (reason) { toast((reason as Error).message, "error"); } }}>删除</Button></li>)}</ul></details>}
+      </section>
 
       <section aria-labelledby="entity-title" className="flex flex-col gap-4">
         <div>
@@ -157,18 +198,20 @@ export function NewBatchPage({ onCreated }: { onCreated: (batchId: number) => vo
         </div>
       </section>
 
-      <section aria-labelledby="sites-title" className="flex flex-col gap-4">
+      </>}
+      {step === 1 && <section aria-labelledby="sites-title" className="flex flex-col gap-4">
         <div className="flex items-end justify-between gap-4">
           <div>
             <h2 id="sites-title" className="text-sm font-medium">站点</h2>
             <p className="mt-0.5 text-sm text-muted-foreground">每行一个站。只列出已同步、还没有网站的域名。</p>
           </div>
-          <Button type="button" variant="outline" size="sm" onClick={() => setSites((l) => [...l, emptySite()])} disabled={!free || sites.length >= free.length}>
+          <div className="flex flex-wrap gap-2"><input ref={csvInput} className="hidden" type="file" accept=".csv,text/csv" aria-label="导入站点 CSV" onChange={(event) => { void importCsv(event.target.files?.[0]); event.target.value = ""; }} /><Button type="button" variant="outline" size="sm" onClick={() => csvInput.current?.click()}><Upload aria-hidden />导入 CSV</Button><Button type="button" variant="outline" size="sm" onClick={() => setSites((l) => [...l, emptySite()])} disabled={!free || sites.length >= free.length}>
             <Plus aria-hidden />
             添加一个站
-          </Button>
+          </Button></div>
         </div>
 
+        <p className="text-xs text-muted-foreground">CSV 表头：domain,brand,niche,count,price_min,price_max；支持引号内逗号。导入时校验域名、数量与售价。</p>
         {free && free.length === 0 ? (
           <div className="rounded-lg border border-dashed p-8 text-sm">
             <p className="font-medium">没有可用的域名</p>
@@ -189,7 +232,7 @@ export function NewBatchPage({ onCreated }: { onCreated: (batchId: number) => vo
               </TableHeader>
               <TableBody>
                 {sites.map((s, i) => (
-                  <TableRow key={i} className="align-top">
+                  <TableRow key={s.rowId} className="align-top">
                     <TableCell className="whitespace-normal">
                       <Select value={s.domain} onValueChange={(v) => setS(i, { domain: v })}>
                         <SelectTrigger className="w-full" aria-label={`第 ${i + 1} 个站的域名`} {...aria(`sites.${i}.domain`)}><SelectValue placeholder="选择域名" /></SelectTrigger>
@@ -234,36 +277,15 @@ export function NewBatchPage({ onCreated }: { onCreated: (batchId: number) => vo
         <FieldError id="sites-error" message={err("sites")} />
       </section>
 
-      <div className="flex items-center justify-end gap-4 border-t pt-4">
+      }
+      {step === 2 && <section aria-label="确认建站" className="space-y-5"><div><h2 className="section-title">核对经营主体</h2><p className="font-medium">{entity.name}</p><p className="text-sm text-muted-foreground">{entity.address} · {entity.phone}</p></div><div><h2 className="section-title">本批次的站点</h2><ul className="divide-y">{toForm().sites.map((site) => <li key={site.domain} className="flex flex-wrap justify-between gap-2 py-3 text-sm"><span className="font-medium">{site.domain}</span><span>{site.categories} · {site.count} 件商品{site.priceMin != null ? ` · $${site.priceMin}–$${site.priceMax ?? "不限"}` : ""}</span></li>)}</ul></div><div className="rounded-lg bg-muted/50 p-4 text-sm"><h2 className="font-medium">对买家的真实承诺</h2><ul className="mt-2 list-disc space-y-1 pl-5 text-muted-foreground">{promises(toForm().entity).map((text) => <li key={text}>{text}</li>)}</ul></div></section>}
+      <div className="flex flex-wrap items-center justify-end gap-4 border-t pt-4">
+        {step > 0 && <Button type="button" variant="outline" disabled={busy} onClick={() => setStep(step - 1)}>上一步</Button>}
         {Object.keys(errors).length > 0 && <p className="text-sm text-destructive">有 {Object.keys(errors).length} 处需要修改</p>}
-        <Button type="submit" disabled={busy || !free || free.length === 0}>开始建站</Button>
+        <Button type="submit" disabled={busy || !free || free.length === 0}>{busy ? "正在创建…" : step === 2 ? "开始建站" : "下一步"}</Button>
       </div>
 
-      <AlertDialog open={confirming !== null} onOpenChange={(open) => !open && setConfirming(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>为 {confirming?.sites.length} 个域名建站？</AlertDialogTitle>
-            <AlertDialogDescription>
-              系统会在 Hostinger 上为下面的域名建站，从 CJ 选品上架，由 AI 撰写页面和政策，最后做 QA 验收。全程在维护模式下进行，访客看不到，你检查后再上线。
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <ul className="max-h-32 overflow-auto rounded-md border px-3 py-2 text-sm">
-            {confirming?.sites.map((s) => <li key={s.domain} className="py-0.5">{s.domain}</li>)}
-          </ul>
-          {confirming && (
-            <section aria-label="对买家的承诺" className="text-sm">
-              <p className="font-medium">政策页会写明这些对买家的承诺：</p>
-              <ul className="mt-1 list-disc pl-5 text-muted-foreground">
-                {promises(confirming.entity).map((t) => <li key={t}>{t}</li>)}
-              </ul>
-            </section>
-          )}
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={busy}>取消</AlertDialogCancel>
-            <AlertDialogAction disabled={busy} onClick={(e) => { e.preventDefault(); if (confirming) void create(confirming); }}>开始建站</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+
     </form>
   );
 }

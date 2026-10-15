@@ -8,10 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
-  AlertDialogHeader, AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { useConfirm, toast } from "@/components/feedback";
+import { Skeleton } from "@/components/page-state";
 import { cn } from "@/lib/utils";
 
 const STATUS: Record<AccountSummary["status"], { label: string; variant: "secondary" | "outline" | "destructive" }> = {
@@ -40,7 +38,7 @@ export function AccountsPage() {
   const [syncingIds, setSyncingIds] = useState<ReadonlySet<number>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
-  const [removing, setRemoving] = useState<AccountSummary | null>(null);
+  const confirm = useConfirm();
 
   const load = useCallback(() => {
     call<AccountSummary[]>("accounts.list").then(setAccounts, (e: Error) => setError(e.message));
@@ -74,6 +72,7 @@ export function AccountsPage() {
     setSyncingIds((s) => new Set(s).add(id));
     try {
       await call("accounts.sync", { id });
+      toast("账号资源已同步");
     } catch (e) {
       setError(`同步没有完成：${(e as Error).message}`);
     } finally {
@@ -87,8 +86,10 @@ export function AccountsPage() {
   };
 
   const remove = async (account: AccountSummary) => {
+    if (!await confirm({ title: `删除账号「${account.label}」？`, description: "只删除当前工作区的 Token 和同步快照，不影响 Hostinger 上的网站、域名和邮箱。", confirmText: "删除账号", destructive: true })) return;
     try {
       await call("accounts.remove", { id: account.id });
+      toast("账号已移除");
       load();
     } catch (e) {
       setError(`删除没有完成：${(e as Error).message}`);
@@ -101,9 +102,9 @@ export function AccountsPage() {
     <div className="flex max-w-5xl flex-col gap-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-lg font-semibold">Hostinger 账号</h1>
+          <h1 className="text-2xl font-semibold">Hostinger 账号</h1>
           <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-            每个账号用一个 API Token 接入。Token 加密保存在这台电脑上，系统会同步账号下的主机订单、网站、域名和邮箱，每 30 分钟自动更新一次。
+            每个账号用一个 API Token 接入。Token 加密保存在你的工作区，系统会同步账号下的主机订单、网站、域名和邮箱，每 30 分钟自动更新一次。
           </p>
         </div>
         <Button onClick={() => setAdding(true)}>
@@ -114,6 +115,7 @@ export function AccountsPage() {
 
       {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
 
+      {accounts === null && !error && <Skeleton label="正在读取账号" />}
       {accounts && accounts.length === 0 && (
         <div className="rounded-lg border border-dashed p-8 text-sm">
           <p className="font-medium">还没有接入账号</p>
@@ -161,11 +163,11 @@ export function AccountsPage() {
                     <TableCell className="text-muted-foreground">{ago(a.lastSyncedAt)}</TableCell>
                     <TableCell>
                       <div className="flex justify-end gap-1">
-                        <Button variant="ghost" size="sm" onClick={() => void syncNow(a.id)} disabled={syncing}>
+                        <Button variant="ghost" size="sm" onClick={(event) => { event.stopPropagation(); void syncNow(a.id); }} disabled={syncing}>
                           {syncing ? <LoaderCircle className="motion-safe:animate-spin" aria-hidden /> : <RefreshCw aria-hidden />}
                           同步
                         </Button>
-                        <Button variant="ghost" size="icon" aria-label={`删除账号 ${a.label}`} onClick={() => setRemoving(a)}>
+                        <Button variant="ghost" size="icon" aria-label={`删除账号 ${a.label}`} onClick={(event) => { event.stopPropagation(); void remove(a); }}>
                           <Trash2 aria-hidden />
                         </Button>
                       </div>
@@ -223,20 +225,7 @@ export function AccountsPage() {
 
       <AddAccountDialog open={adding} onOpenChange={setAdding} onAdded={load} />
 
-      <AlertDialog open={removing !== null} onOpenChange={(open) => !open && setRemoving(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>删除账号「{removing?.label}」？</AlertDialogTitle>
-            <AlertDialogDescription>
-              只会删除这台电脑上保存的 Token 和同步记录，Hostinger 上的网站、域名、邮箱都不受影响。以后可以用 Token 重新添加。
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>取消</AlertDialogCancel>
-            <AlertDialogAction variant="destructive" onClick={() => removing && void remove(removing)}>删除账号</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+
     </div>
   );
 }
@@ -264,6 +253,7 @@ function AddAccountDialog({ open, onOpenChange, onAdded }: { open: boolean; onOp
     try {
       await call("accounts.add", { label, token });
       close(false);
+      toast("Hostinger 账号已接入，正在同步资源");
       onAdded();
     } catch (err) {
       setError((err as Error).message);
@@ -278,7 +268,7 @@ function AddAccountDialog({ open, onOpenChange, onAdded }: { open: boolean; onOp
         <form onSubmit={submit} className="flex flex-col gap-4">
           <DialogHeader>
             <DialogTitle>添加 Hostinger 账号</DialogTitle>
-            <DialogDescription>在 hPanel 的「账户 → API」里生成 Token。Token 加密保存在这台电脑上，添加后不会再显示。</DialogDescription>
+            <DialogDescription>在 hPanel 的「账户 → API」里生成 Token。Token 加密保存在你的工作区，添加后不会再显示。</DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-2">
             <Label htmlFor="account-label">名称</Label>

@@ -45,7 +45,7 @@ export function ChangePasswordForm({ forced = false, onChanged, onCancel }: Prop
     <form className="flex flex-col gap-4" onSubmit={(event) => void submit(event)}>
       <div className="grid gap-2">
         <Label htmlFor={forced ? "forced-old-password" : "old-password"}>当前密码</Label>
-        <Input id={forced ? "forced-old-password" : "old-password"} type="password" autoComplete="current-password" autoFocus required value={oldPassword} onChange={(event) => setOldPassword(event.target.value)} />
+        <Input id={forced ? "forced-old-password" : "old-password"} type="password" autoComplete="current-password" autoFocus={forced} required value={oldPassword} onChange={(event) => setOldPassword(event.target.value)} />
       </div>
       <div className="grid gap-2">
         <Label htmlFor={forced ? "forced-new-password" : "new-password"}>新密码</Label>

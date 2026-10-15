@@ -108,12 +108,28 @@ function openEvents(currentGeneration: number): void {
   };
 }
 
+// 页面组件的 effect 比外层启动传输的 effect 先跑：深链接直接打开时，首批请求在这里等传输启动
+let startWaiters: (() => void)[] = [];
+function waitForStart(ms = 5000): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const done = () => { clearTimeout(timer); resolve(); };
+    const timer = window.setTimeout(() => {
+      startWaiters = startWaiters.filter((waiter) => waiter !== done);
+      reject(new Error("后台还没连上"));
+    }, ms);
+    startWaiters.push(done);
+  });
+}
+
 /** 登录成功后启动；resetSeq 确保新会话绝不会收到上个用户的补发游标。 */
 export function startBackendTransport(userId: number, resetSeq = false): void {
   stopBackendTransport(resetSeq);
   expectedUserId = userId;
   const currentGeneration = generation;
   openEvents(currentGeneration);
+  const waiters = startWaiters;
+  startWaiters = [];
+  for (const waiter of waiters) waiter();
 }
 
 /** 注销或会话失效时立即切断推送，并清空用户相关传输状态。 */
@@ -133,7 +149,7 @@ export function stopBackendTransport(resetSeq = true): void {
 }
 
 export async function call<T>(method: string, params?: unknown): Promise<T> {
-  if (expectedUserId == null) throw new Error("后台还没连上");
+  if (expectedUserId == null) await waitForStart();
   const requestGeneration = generation;
   const requestUserId = expectedUserId;
   const id = nextId++;

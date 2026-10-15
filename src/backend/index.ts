@@ -15,11 +15,26 @@ import { dueReverts, listChanges, revertChange, scheduleRevert } from "./changes
 import { ensureMailbox, hasDefaultMailboxPassword, mailDns, mailSetup, mailStatus, setDefaultMailboxPassword } from "./mail.ts";
 import { enableSmtp, imapHasSubject, imapLogin, resetMailboxPassword, saveMailboxPassword, sendTestEmail, smtpStatus } from "./smtp.ts";
 import { launchSite } from "./launch.ts";
-import { buildRuntime, completeText, listProviders, listRoles, pingModel, seedModelDefaults, setProviderKey, setRole } from "./models.ts";
+import {
+  completeText,
+  createProviderConfig,
+  deleteProviderConfig,
+  fetchProviderModels,
+  listProviders,
+  listRoles,
+  MODEL_PROVIDER_PRESETS,
+  setProviderKey,
+  setRole,
+  testProviderModel,
+  updateProviderConfig,
+  type ProviderModelInput,
+} from "./models.ts";
 import { browseWithEdge } from "./qa-browser.ts";
 import { secretHint, unseal } from "./secrets.ts";
 import type { QaReport } from "./store.ts";
 import type { Handlers } from "./rpc.ts";
+import { allSites, getOverview } from "./overview.ts";
+import { listTemplates, removeTemplate, saveTemplate } from "./entity-templates.ts";
 
 export interface Workspace {
   handlers: Handlers;
@@ -44,7 +59,6 @@ export function createWorkspace(opts: { userDir: string; key: Buffer; resourcesD
   const dbPath = join(userData, "website-gen.sqlite");
   const db = openDb(dbPath);
   migrate(db);
-  seedModelDefaults(db);
 
   const listeners = new Set<(msg: Push) => void>();
   const push = (msg: Push) => {
@@ -171,6 +185,12 @@ export function createWorkspace(opts: { userDir: string; key: Buffer; resourcesD
   const siteIdOf = (p: unknown) => Number((p as { siteId: number }).siteId);
 
   const handlers: Handlers = {
+    "overview.get": () => getOverview(db),
+    "templates.list": () => listTemplates(db),
+    "templates.save": (p) => saveTemplate(db, p),
+    "templates.remove": (p) => removeTemplate(db, Number((p as { id: number }).id)),
+    "sites.all": () => allSites(db),
+    "sites.get": (p) => allSites(db).find((site) => site.id === siteIdOf(p)) ?? null,
     "system.info": () => ({
       node: process.versions.node,
       sqlite: process.versions.sqlite,
@@ -194,8 +214,24 @@ export function createWorkspace(opts: { userDir: string; key: Buffer; resourcesD
       void sync(id).catch(() => {}); // 首次同步在后台跑，完成后推送 changed
       return { id };
     },
+    "models.presets": () => MODEL_PROVIDER_PRESETS,
     "models.providers": () => listProviders(db),
     "models.roles": () => listRoles(db),
+    "models.create": (p) => {
+      const input = p as { name: string; protocol: "openai" | "anthropic"; baseUrl: string; apiKey?: string; models?: ProviderModelInput[] };
+      createProviderConfig(db, requireKey(), input);
+      return listProviders(db);
+    },
+    "models.update": (p) => {
+      const input = p as { providerId: number; name: string; protocol: "openai" | "anthropic"; baseUrl: string; apiKey?: string; models: ProviderModelInput[] };
+      updateProviderConfig(db, requireKey(), Number(input.providerId), input);
+      return listProviders(db);
+    },
+    "models.delete": (p) => {
+      deleteProviderConfig(db, Number((p as { providerId: number }).providerId));
+      return listProviders(db);
+    },
+    "models.fetch": (p) => fetchProviderModels(db, requireKey(), Number((p as { providerId: number }).providerId)),
     "models.setKey": (p) => {
       const { providerId, apiKey } = p as { providerId: number; apiKey: string };
       setProviderKey(db, requireKey(), Number(providerId), String(apiKey ?? ""));
@@ -209,10 +245,7 @@ export function createWorkspace(opts: { userDir: string; key: Buffer; resourcesD
     // 发一句极短的请求验证 Key 和地址：只回复 OK
     "models.test": async (p) => {
       const { providerId, modelId } = p as { providerId: number; modelId: string };
-      const { models } = buildRuntime(db, requireKey());
-      const model = models.getModel(`p${Number(providerId)}`, String(modelId));
-      if (!model) throw new Error("这个提供方还没有设置 Key");
-      return pingModel(models, model as Parameters<typeof pingModel>[1]);
+      return testProviderModel(db, requireKey(), Number(providerId), String(modelId));
     },
 
     "domains.free": () => listFreeDomains(db),

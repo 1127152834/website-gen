@@ -1,586 +1,261 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
-import { CircleAlert, CircleCheck, Clock, ExternalLink, LoaderCircle, MessageSquarePlus, RefreshCw, RotateCcw, Send, Square, Wrench } from "lucide-react";
-import type { ChangeSummary, ChatEvent, ChatItem, MailStatus, SiteListItem, SmtpStatus } from "../../../shared/protocol.ts";
-import { call, onChanged, onChat, onConnect } from "@/lib/backend.ts";
-import { Button } from "@/components/ui/button";
+import { CircleAlert, CircleCheck, Clock, ExternalLink, LoaderCircle, MessageSquarePlus, RefreshCw, Rocket, RotateCcw, Send, Square, Wrench } from "lucide-react";
+import { PROVISION_STEPS, type ChangeSummary, type ChatEvent, type ChatItem, type MailStatus, type QaView, type RunEvent, type SiteProgress, type SiteStatus, type SmtpStatus, type StepState } from "../../../shared/protocol.ts";
+import { toast, useConfirm } from "@/components/feedback";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
-  AlertDialogHeader, AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { call, onChanged, onChat, onConnect, onEvent } from "@/lib/backend.ts";
 import { cn } from "@/lib/utils";
+import { LogViewer, StepTimeline } from "./site-operations.tsx";
+import { QaReport } from "./qa-report.tsx";
 
 const TOOL_TEXT: Record<string, string> = {
-  get_site: "查看站点概况", get_copy: "读取文案", get_policy: "读取政策页", list_products: "查看商品列表", get_product: "读取商品",
-  list_changes: "查看变更记录", update_copy: "修改文案", update_policy: "修改政策页", update_announcement: "修改公告栏",
-  update_style: "切换风格", update_product: "修改商品", revert_change: "回滚变更", schedule_revert: "设置定时恢复",
+  get_site: "查看站点概况", get_copy: "读取文案", get_policy: "读取政策页", list_products: "查看商品列表", get_product: "读取商品", list_changes: "查看变更记录",
+  update_copy: "修改文案", update_policy: "修改政策页", update_announcement: "修改公告栏", update_style: "切换风格", update_product: "修改商品", revert_change: "回滚变更", schedule_revert: "设置定时恢复",
 };
 const INITIATOR = { pi: "pi", you: "你", schedule: "定时恢复" } as const;
 const SUGGESTIONS = ["把顶部公告改成冬季上新的提示，12 月 1 日恢复", "首页大标题写得更有温度一点", "把 FAQ 里关于退货的回答写得更清楚"];
-const dateTime = (ts: number) => new Date(ts).toLocaleString("zh-CN", { hour12: false, month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
+const TABS = [{ key: "overview", label: "概况" }, { key: "chat", label: "对话" }, { key: "mail", label: "邮箱" }, { key: "changes", label: "变更记录" }, { key: "qa", label: "复核报告" }] as const;
+type SiteTab = (typeof TABS)[number]["key"];
+const dateTime = (timestamp: number) => new Date(timestamp).toLocaleString("zh-CN", { hour12: false, month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
+const TOTAL = PROVISION_STEPS.length;
+const STATUS: Record<SiteStatus, { text: string; variant: "default" | "secondary" | "outline" | "destructive"; className?: string }> = {
+  queued: { text: "排队中", variant: "outline" }, running: { text: "进行中", variant: "default", className: "status-running" },
+  waiting: { text: "待外部服务", variant: "outline", className: "status-waiting" }, done: { text: "已完成", variant: "secondary", className: "status-done" }, failed: { text: "失败", variant: "destructive", className: "status-failed" },
+};
 
-/** 工具结果里给人看的那句话：成功的说明，或没通过的原因 */
-function toolOutcome(result: string): string {
-  try {
-    const r = JSON.parse(result) as { ok?: boolean; note?: string; problems?: string[]; error?: string };
-    if (r.ok === false) return r.error ?? (r.problems ?? []).join("; ");
-    return r.note ?? "";
-  } catch {
-    return "";
-  }
+function unresolvedQa(qa: QaView | null): string[] {
+  if (!qa) return ["未找到 QA 报告"];
+  return [
+    ...qa.checks.filter((check) => !check.ok).map((check) => `${check.name}：${check.detail}`),
+    ...(qa.review?.issues.filter((issue) => issue.status !== "fixed").map((issue) => `${issue.level} ${issue.page}：${issue.status === "needs_you" ? "待你补充" : "待处理"}`) ?? []),
+  ];
 }
 
-/** 模型偶尔还是会用 **加粗**：渲染成加粗，其余 Markdown 原样显示 */
-const rich = (text: string) =>
-  text.split(/(\*\*[^*\n]+\*\*)/g).map((part, i) => (part.startsWith("**") && part.endsWith("**") && part.length > 4 ? <strong key={i}>{part.slice(2, -2)}</strong> : part));
+function siteBadge(site: SiteProgress) {
+  if (site.launchedAt) return <Badge variant="secondary" className="status-launched">已上线</Badge>;
+  const value = STATUS[site.status];
+  return <Badge variant={value.variant} className={value.className}>{value.text}</Badge>;
+}
 
+function toolOutcome(result: string): string {
+  try { const value = JSON.parse(result) as { ok?: boolean; note?: string; problems?: string[]; error?: string }; return value.ok === false ? value.error ?? (value.problems ?? []).join("; ") : value.note ?? ""; }
+  catch { return ""; }
+}
+const rich = (text: string) => text.split(/(\*\*[^*\n]+\*\*)/g).map((part, index) => part.startsWith("**") && part.endsWith("**") && part.length > 4 ? <strong key={index}>{part.slice(2, -2)}</strong> : part);
 type Live = { text: string; thinking: string; tools: Extract<ChatItem, { role: "tool" }>[] };
 const emptyLive = (): Live => ({ text: "", thinking: "", tools: [] });
 
 function ToolLine({ item }: { item: Extract<ChatItem, { role: "tool" }> }) {
   const outcome = item.ok === null ? "" : toolOutcome(item.result);
-  return (
-    <div className="flex items-start gap-2 text-xs text-muted-foreground">
-      {item.ok === null ? <LoaderCircle className="mt-0.5 size-3.5 shrink-0 motion-safe:animate-spin" aria-hidden />
-        : item.ok ? <Wrench className="mt-0.5 size-3.5 shrink-0" aria-hidden />
-        : <CircleAlert className="mt-0.5 size-3.5 shrink-0 text-amber-600" aria-hidden />}
-      <span>
-        {TOOL_TEXT[item.name] ?? item.name}
-        {outcome && <span className={cn("ml-1", item.ok === false && "text-amber-700")}>：{outcome}</span>}
-      </span>
-    </div>
-  );
+  return <div className="flex items-start gap-2 text-xs text-muted-foreground">{item.ok === null ? <LoaderCircle className="mt-0.5 size-3.5 shrink-0 motion-safe:animate-spin" aria-hidden /> : item.ok ? <Wrench className="mt-0.5 size-3.5 shrink-0" aria-hidden /> : <CircleAlert className="mt-0.5 size-3.5 shrink-0 text-amber-600" aria-hidden />}<span>{TOOL_TEXT[item.name] ?? item.name}{outcome && <span className={cn("ml-1", item.ok === false && "text-amber-700 dark:text-amber-400")}>：{outcome}</span>}</span></div>;
 }
-
 function Message({ item }: { item: ChatItem }) {
-  if (item.role === "user") {
-    return <div className="ml-auto max-w-[85%] rounded-lg bg-primary px-3 py-2 text-sm whitespace-pre-wrap text-primary-foreground">{item.text}</div>;
-  }
+  if (item.role === "user") return <div className="ml-auto max-w-[88%] rounded-lg bg-primary px-3 py-2 text-sm whitespace-pre-wrap text-primary-foreground">{item.text}</div>;
   if (item.role === "tool") return <ToolLine item={item} />;
+  return <div className="max-w-[94%] text-sm">{item.thinking && <details className="mb-1 text-xs text-muted-foreground"><summary className="cursor-pointer select-none">思考过程</summary><p className="mt-1 whitespace-pre-wrap">{item.thinking}</p></details>}{item.text && <p className="whitespace-pre-wrap">{rich(item.text)}</p>}{item.error && <p role="alert" className="text-destructive">模型出错：{item.error}</p>}</div>;
+}
+
+type SitesPageProps = { siteId?: number; tab?: string; onNavigate?: (path: string) => void };
+
+export function SitesPage({ siteId, tab, onNavigate }: SitesPageProps) {
+  const [sites, setSites] = useState<SiteProgress[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const load = useCallback(() => void call<SiteProgress[]>("sites.all").then(setSites, (reason: Error) => setError(reason.message)), []);
+  useEffect(() => { const off = [onConnect(load), onChanged("batches", load)]; return () => off.forEach((dispose) => dispose()); }, [load]);
+
+  const navigate = (path: string) => {
+    if (onNavigate) onNavigate(path);
+    else { window.history.pushState(null, "", path); window.dispatchEvent(new PopStateEvent("popstate")); }
+  };
+  if (siteId != null) return <SiteDetail key={siteId} siteId={siteId} tab={(TABS.some((item) => item.key === tab) ? tab : "overview") as SiteTab} onNavigate={navigate} />;
+  if (sites === null) return <div className="space-y-6"><header><h1 className="text-2xl font-semibold tracking-tight">站点</h1><p className="mt-1 text-sm text-muted-foreground">管理全部站点，包括进行中、失败和已上线的站点。</p></header>{error && <div role="alert" className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive"><p>{error}</p><Button variant="outline" size="sm" className="mt-3" onClick={load}>重新加载</Button></div>}<div className="h-64 animate-pulse rounded-lg bg-muted" /></div>;
   return (
-    <div className="max-w-[92%] text-sm">
-      {item.thinking && (
-        <details className="mb-1 text-xs text-muted-foreground">
-          <summary className="cursor-pointer select-none">思考过程</summary>
-          <p className="mt-1 whitespace-pre-wrap">{item.thinking}</p>
-        </details>
-      )}
-      {item.text && <p className="whitespace-pre-wrap">{rich(item.text)}</p>}
-      {item.error && <p role="alert" className="text-destructive">模型出错：{item.error}</p>}
+    <div className="space-y-6">
+      <header><h1 className="text-2xl font-semibold tracking-tight">站点</h1><p className="mt-1 text-sm text-muted-foreground">管理全部站点，包括进行中、失败和已上线的站点。</p></header>
+      {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
+      {sites.length === 0 ? <div className="rounded-lg border border-dashed p-8 text-center text-sm"><p className="font-medium">还没有站点</p><p className="mt-1 text-muted-foreground">先从「建站」创建一个批次。站点进入队列后就会出现在这里。</p></div> : <div className="overflow-x-auto rounded-lg border bg-card"><Table aria-label="全部站点"><TableHeader><TableRow><TableHead>域名</TableHead><TableHead>状态</TableHead><TableHead className="min-w-48">进度</TableHead><TableHead className="min-w-56">当前步骤</TableHead><TableHead>最近更新</TableHead></TableRow></TableHeader><TableBody>{sites.map((site) => <TableRow key={site.id} className="cursor-pointer" tabIndex={0} onClick={() => navigate(`/sites/${site.id}/overview`)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); navigate(`/sites/${site.id}/overview`); } }}><TableCell className="font-medium">{site.domain}</TableCell><TableCell>{siteBadge(site)}</TableCell><TableCell><div className="flex items-center gap-2"><div className="h-1.5 flex-1 rounded-full bg-muted"><div className={cn("h-full rounded-full", site.status === "failed" ? "bg-destructive" : site.status === "waiting" ? "bg-amber-500" : "bg-primary")} style={{ width: `${Math.min(100, (site.completed / TOTAL) * 100)}%` }} /></div><span className="text-xs text-muted-foreground tabular-nums">{site.completed}/{TOTAL}</span></div></TableCell><TableCell className="whitespace-normal">{site.launchedAt ? "站点已上线" : site.status === "done" ? "等待检查并上线" : site.currentStep ?? "—"}{site.lastError && <span className="mt-1 block max-w-md text-xs text-destructive">{site.lastError}</span>}</TableCell><TableCell className="text-muted-foreground tabular-nums">{dateTime(site.updatedAt)}</TableCell></TableRow>)}</TableBody></Table></div>}
     </div>
   );
 }
 
-export function SitesPage() {
-  const [sites, setSites] = useState<SiteListItem[] | null>(null);
-  const [siteId, setSiteId] = useState<number | null>(null);
+function SiteDetail({ siteId, tab, onNavigate }: { siteId: number; tab: SiteTab; onNavigate: (path: string) => void }) {
+  const confirm = useConfirm();
+  const [site, setSite] = useState<SiteProgress | null | undefined>(undefined);
+  const [steps, setSteps] = useState<StepState[]>([]);
+  const [events, setEvents] = useState<RunEvent[]>([]);
+  const [qa, setQa] = useState<QaView | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const fail = useCallback((reason: Error) => setError(reason.message), []);
+  const load = useCallback(() => {
+    void call<SiteProgress | null>("sites.get", { siteId }).then(setSite, fail);
+    void call<StepState[]>("sites.steps", { siteId }).then(setSteps, fail);
+    void call<RunEvent[]>("sites.events", { siteId }).then(setEvents, fail);
+    void call<QaView | null>("sites.qa", { siteId }).then(setQa, fail);
+  }, [fail, siteId]);
+  useEffect(() => {
+    const off = [onConnect(load), onChanged("batches", load), onEvent((event) => {
+      if (event.siteId !== String(siteId)) return;
+      setEvents((current) => current.some((item) => item.seq === event.seq) ? current : [...current, event]);
+      if (event.kind === "step") load();
+    })];
+    return () => off.forEach((dispose) => dispose());
+  }, [load, siteId]);
+
+  const retry = async () => {
+    if (!site || !await confirm({ title: `重试 ${site.domain}？`, description: "将从失败步骤继续执行并再次调用外部服务。", confirmText: "重试" })) return;
+    setBusy(true); setError(null);
+    try { await call("sites.retry", { siteId }); toast("已重新加入执行队列", "success"); load(); }
+    catch (reason) { fail(reason as Error); toast((reason as Error).message, "error"); }
+    finally { setBusy(false); }
+  };
+  const launch = async () => {
+    if (!site) return;
+    let warnings: string[] = [];
+    try { warnings = unresolvedQa(await call<QaView | null>("sites.qa", { siteId })); }
+    catch (reason) { fail(reason as Error); toast("无法读取最新 QA 报告，已取消上线", "error"); return; }
+    const warningText = warnings.length > 0 ? ` 尚有 ${warnings.length} 项未解决：${warnings.slice(0, 3).join("；")}${warnings.length > 3 ? "；…" : ""}。` : " 当前 QA 没有未解决项。";
+    if (!await confirm({ title: `上线 ${site.domain}？`, description: `将关闭维护模式和“即将上线”页面，并允许搜索引擎收录。访客之后可以浏览和下单。${warningText}`, confirmText: warnings.length > 0 ? "仍然上线" : "确认上线" })) return;
+    setBusy(true); setError(null);
+    try { const result = await call<{ detail: string }>("sites.launch", { siteId }); toast(result.detail, "success"); load(); }
+    catch (reason) { fail(reason as Error); toast((reason as Error).message, "error"); }
+    finally { setBusy(false); }
+  };
+
+  if (site === undefined) return <div className="space-y-5">{error ? <div role="alert" className="space-y-3 text-sm text-destructive"><p>{error}</p><Button variant="outline" onClick={load}>重新加载</Button></div> : <><div className="h-16 motion-safe:animate-pulse rounded-lg bg-muted" /><div className="h-80 motion-safe:animate-pulse rounded-lg bg-muted" /></>}</div>;
+  if (site === null) return <div className="rounded-lg border border-dashed p-8 text-center text-sm"><p className="font-medium">找不到这个站点</p><p className="mt-1 text-muted-foreground">它可能已被移除，或当前账户没有权限查看。</p><Button variant="outline" className="mt-4" onClick={() => onNavigate("/sites")}>返回站点列表</Button></div>;
+  return (
+    <div className="space-y-6">
+      <nav aria-label="面包屑" className="text-sm text-muted-foreground"><button type="button" className="outline-none hover:text-foreground focus-visible:underline" onClick={() => onNavigate("/sites")}>站点</button><span className="mx-2">/</span><span className="text-foreground">{site.domain}</span></nav>
+      <header className="flex flex-wrap items-start justify-between gap-4"><div><div className="flex flex-wrap items-center gap-2"><h1 className="text-2xl font-semibold tracking-tight">{site.domain}</h1>{siteBadge(site)}</div><p className="mt-1 text-sm text-muted-foreground tabular-nums">批次 {site.batchId} · 最近更新 {dateTime(site.updatedAt)}</p></div><div className="flex flex-wrap gap-2">{site.status === "failed" && <Button variant="outline" disabled={busy} onClick={() => void retry()}>{busy ? <LoaderCircle className="motion-safe:animate-spin" aria-hidden /> : <RotateCcw aria-hidden />}重试</Button>}{site.status === "done" && !site.launchedAt && <Button disabled={busy} onClick={() => void launch()}><Rocket aria-hidden />上线</Button>}<Button variant="outline" asChild><a href={`https://${site.domain}/`} target="_blank" rel="noreferrer">打开网站<ExternalLink aria-hidden /></a></Button></div></header>
+      {error && <p role="alert" className="rounded-md border border-destructive/40 bg-destructive/5 px-3 py-2 text-sm text-destructive">{error}</p>}
+      <nav aria-label="站点详情" className="-mx-1 flex overflow-x-auto border-b px-1">{TABS.map((item) => <button key={item.key} type="button" aria-current={tab === item.key ? "page" : undefined} onClick={() => onNavigate(`/sites/${siteId}/${item.key}`)} className={cn("shrink-0 border-b-2 px-4 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset", tab === item.key ? "border-primary font-medium text-foreground" : "border-transparent text-muted-foreground hover:text-foreground")}>{item.label}</button>)}</nav>
+      {tab === "overview" && <div className="grid gap-6 xl:grid-cols-[20rem_minmax(0,1fr)]"><section><h2 className="mb-3 text-sm font-medium">步骤时间线</h2><StepTimeline steps={steps} /></section><LogViewer events={events} /></div>}
+      {tab === "chat" && <ChatPanel siteId={siteId} domain={site.domain} />}
+      {tab === "mail" && <MailPanel siteId={siteId} />}
+      {tab === "changes" && <ChangesPanel siteId={siteId} />}
+      {tab === "qa" && <QaReport qa={qa} />}
+    </div>
+  );
+}
+
+function ChatPanel({ siteId, domain }: { siteId: number; domain: string }) {
+  const confirm = useConfirm();
   const [items, setItems] = useState<ChatItem[]>([]);
   const [live, setLive] = useState<Live | null>(null);
-  const [changes, setChanges] = useState<ChangeSummary[]>([]);
   const [draft, setDraft] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [reverting, setReverting] = useState<ChangeSummary | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
-  const current = useRef<number | null>(null);
-  current.current = siteId;
-
-  const fail = (e: Error) => setError(e.message);
-  const loadSites = useCallback(() => void call<SiteListItem[]>("sites.list").then(setSites, fail), []);
-  const loadChat = useCallback(() => {
-    const id = current.current;
-    if (id == null) return;
-    call<{ items: ChatItem[]; busy: boolean }>("chat.history", { siteId: id }).then((h) => {
-      setItems(h.items);
-      setLive((l) => (h.busy ? (l ?? emptyLive()) : null));
-    }, fail);
-  }, []);
-  const loadChanges = useCallback(() => {
-    const id = current.current;
-    if (id != null) call<ChangeSummary[]>("changes.list", { siteId: id }).then(setChanges, fail);
-  }, []);
-
+  const load = useCallback(() => void call<{ items: ChatItem[]; busy: boolean }>("chat.history", { siteId }).then((history) => { setItems(history.items); setLive((current) => history.busy ? current ?? emptyLive() : null); }, (reason: Error) => setError(reason.message)), [siteId]);
   useEffect(() => {
-    const offs = [
-      onConnect(() => {
-        loadSites();
-        loadChat();
-        loadChanges();
-      }),
-      onChanged("batches", loadSites),
-      onChanged("changes", loadChanges),
-      onChat((id, e: ChatEvent) => {
-        if (id !== current.current) return;
-        if (e.type === "settled") {
-          loadChat();
-          return;
-        }
-        if (e.type === "error") {
-          setError(`pi 出错：${e.message}`);
-          return;
-        }
-        setLive((l) => {
-          const next = { ...(l ?? emptyLive()) };
-          if (e.type === "text") next.text += e.delta;
-          else if (e.type === "thinking") next.thinking += e.delta;
-          else if (e.type === "tool_start") next.tools = [...next.tools, { role: "tool", id: e.id, name: e.name, args: e.args, ok: null, result: "" }];
-          else if (e.type === "tool_end") next.tools = next.tools.map((t) => (t.id === e.id ? { ...t, ok: e.ok, result: e.result } : t));
-          return next;
-        });
-      }),
-    ];
-    return () => offs.forEach((off) => off());
-  }, [loadSites, loadChat, loadChanges]);
-
-  useEffect(() => {
-    if (sites && !sites.some((s) => s.id === siteId)) setSiteId(sites[0]?.id ?? null);
-  }, [sites, siteId]);
-  useEffect(() => {
-    setItems([]);
-    setLive(null);
-    setChanges([]);
-    setError(null);
-    loadChat();
-    loadChanges();
-  }, [siteId, loadChat, loadChanges]);
-  // 花括号不能省：新版 Chromium 的 scrollIntoView 返回 Promise
-  useEffect(() => {
-    void endRef.current?.scrollIntoView({ block: "end" });
-  }, [items.length, live?.text.length, live?.tools.length]);
-
-  const busy = live !== null;
+    const off = [onConnect(load), onChat((id, event: ChatEvent) => {
+      if (id !== siteId) return;
+      if (event.type === "settled") { load(); return; }
+      if (event.type === "error") { setError(`pi 出错：${event.message}`); return; }
+      setLive((current) => {
+        const next = { ...(current ?? emptyLive()) };
+        if (event.type === "text") next.text += event.delta;
+        else if (event.type === "thinking") next.thinking += event.delta;
+        else if (event.type === "tool_start") next.tools = [...next.tools, { role: "tool", id: event.id, name: event.name, args: event.args, ok: null, result: "" }];
+        else if (event.type === "tool_end") next.tools = next.tools.map((tool) => tool.id === event.id ? { ...tool, ok: event.ok, result: event.result } : tool);
+        return next;
+      });
+    })];
+    return () => off.forEach((dispose) => dispose());
+  }, [load, siteId]);
+  useEffect(() => { void endRef.current?.scrollIntoView({ block: "end" }); }, [items.length, live?.text.length, live?.tools.length]);
   const send = async (text: string) => {
-    if (siteId == null || !text.trim() || busy) return;
-    setError(null);
-    setItems((list) => [...list, { role: "user", text: text.trim() }]);
-    setLive(emptyLive());
-    setDraft("");
-    try {
-      await call("chat.send", { siteId, text });
-    } catch (e) {
-      setLive(null);
-      fail(e as Error);
-      loadChat();
-    }
+    if (!text.trim() || live) return;
+    setError(null); setItems((current) => [...current, { role: "user", text: text.trim() }]); setLive(emptyLive()); setDraft("");
+    try { await call("chat.send", { siteId, text }); }
+    catch (reason) { setLive(null); setError((reason as Error).message); toast((reason as Error).message, "error"); load(); }
   };
-  const submit = (e: FormEvent) => {
-    e.preventDefault();
-    void send(draft);
+  const reset = async () => {
+    if (!await confirm({ title: "开始新对话？", description: "当前对话上下文会被清空，但已经应用到站点的变更不会撤销。", confirmText: "开始新对话", destructive: true })) return;
+    try { await call("chat.reset", { siteId }); toast("已开始新对话", "success"); load(); }
+    catch (reason) { setError((reason as Error).message); toast((reason as Error).message, "error"); }
   };
-  const onKey = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
-      e.preventDefault();
-      void send(draft);
-    }
-  };
-  const revert = async (c: ChangeSummary) => {
-    setError(null);
-    try {
-      await call("changes.revert", { siteId, changeId: c.id });
-    } catch (e) {
-      fail(e as Error);
-    } finally {
-      setReverting(null);
-      loadChanges();
-    }
-  };
-  const site = sites?.find((s) => s.id === siteId) ?? null;
-
-  if (sites && sites.length === 0) {
-    return (
-      <div className="flex max-w-5xl flex-col gap-6">
-        <h1 className="text-lg font-semibold">站点</h1>
-        <div className="rounded-lg border border-dashed p-8 text-sm">
-          <p className="font-medium">还没有建好的站</p>
-          <p className="mt-1 text-muted-foreground">建站流程（含 QA）全部完成的站会出现在这里，可以和 pi 对话修改文案、政策、公告、风格和商品描述，每次修改都能回滚。</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex h-full flex-col gap-4">
-      <h1 className="text-lg font-semibold">站点</h1>
-      {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
-      <div className="grid min-h-0 flex-1 grid-cols-[12rem_minmax(0,1fr)] gap-6 xl:grid-cols-[12rem_minmax(0,1fr)_20rem]">
-        <nav aria-label="站点列表" className="flex flex-col gap-1">
-          {sites?.map((s) => (
-            <button
-              key={s.id}
-              type="button"
-              aria-current={s.id === siteId ? "true" : undefined}
-              onClick={() => setSiteId(s.id)}
-              className={cn(
-                "rounded-md border px-3 py-2 text-left text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                s.id === siteId ? "border-primary/40 bg-accent" : "border-transparent hover:bg-accent/60",
-              )}
-            >
-              <span className="block truncate font-medium">{s.domain}</span>
-              <span className="text-xs text-muted-foreground">{s.launchedAt ? "已上线" : "维护模式中"}</span>
-            </button>
-          ))}
-        </nav>
-
-        <section aria-label="和 pi 对话" className="flex min-h-[28rem] min-w-0 flex-col rounded-lg border">
-          <div className="flex items-center justify-between gap-2 border-b px-3 py-2">
-            <div className="flex items-center gap-2 text-sm">
-              <span className="font-medium">和 pi 对话</span>
-              {site && (
-                <a href={`https://${site.domain}/`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-2 hover:underline">
-                  {site.domain}<ExternalLink className="size-3" aria-hidden />
-                </a>
-              )}
-            </div>
-            <Button variant="ghost" size="sm" disabled={busy || siteId == null} onClick={() => void call("chat.reset", { siteId }).then(loadChat, fail)}>
-              <MessageSquarePlus aria-hidden />
-              新对话
-            </Button>
-          </div>
-          <ScrollArea className="min-h-0 flex-1">
-            <div className="flex flex-col gap-3 p-4">
-              {items.length === 0 && !live && (
-                <div className="text-sm text-muted-foreground">
-                  <p>告诉 pi 你想怎么改这个站。修改会马上生效（站点在维护模式下访客看不到），每次修改都记在右边，可以回滚。</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {SUGGESTIONS.map((s) => (
-                      <Button key={s} variant="outline" size="sm" className="h-auto py-1 whitespace-normal text-left" onClick={() => setDraft(s)}>{s}</Button>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {items.map((item, i) => <Message key={i} item={item} />)}
-              {live && (
-                <div className="flex flex-col gap-2" aria-live="polite">
-                  {live.thinking && !live.text && <p className="text-xs text-muted-foreground">正在思考…</p>}
-                  {live.tools.map((t) => <ToolLine key={t.id} item={t} />)}
-                  {live.text ? <p className="max-w-[92%] text-sm whitespace-pre-wrap">{rich(live.text)}</p>
-                    : !live.thinking && live.tools.length === 0 && <LoaderCircle className="size-4 text-muted-foreground motion-safe:animate-spin" aria-label="pi 正在回复" />}
-                </div>
-              )}
-              <div ref={endRef} />
-            </div>
-          </ScrollArea>
-          <form onSubmit={submit} className="flex items-end gap-2 border-t p-3">
-            <label htmlFor="chat-input" className="sr-only">给 pi 的消息</label>
-            <textarea
-              id="chat-input"
-              rows={2}
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              onKeyDown={onKey}
-              placeholder="例如：把公告栏改成冬季上新的提示（Enter 发送，Shift+Enter 换行）"
-              disabled={siteId == null}
-              className="min-h-14 flex-1 resize-none rounded-lg border border-input bg-transparent px-2.5 py-1.5 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50"
-            />
-            {busy ? (
-              <Button type="button" variant="outline" onClick={() => void call("chat.abort", { siteId }).catch(fail)}>
-                <Square aria-hidden />
-                停止
-              </Button>
-            ) : (
-              <Button type="submit" disabled={!draft.trim() || siteId == null}>
-                <Send aria-hidden />
-                发送
-              </Button>
-            )}
-          </form>
-        </section>
-
-        <div className="col-span-2 flex min-w-0 flex-col gap-6 xl:col-span-1">
-        {siteId != null && <MailPanel key={siteId} siteId={siteId} />}
-        <section aria-label="变更记录" className="flex min-w-0 flex-col gap-2">
-          <h2 className="text-sm font-medium">变更记录</h2>
-          {changes.length === 0 ? (
-            <p className="text-sm text-muted-foreground">还没有修改过。pi 每次修改前都会给改动的内容拍快照，可以随时整体回滚。</p>
-          ) : (
-            <ul className="flex flex-col gap-2">
-              {changes.map((c) => (
-                <li key={c.id} className="rounded-lg border p-3 text-sm">
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="font-medium">#{c.id} {c.summary}</p>
-                    {c.status === "applied" ? <Badge variant="secondary">已生效</Badge> : <Badge variant="outline">已回滚</Badge>}
-                  </div>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {dateTime(c.createdAt)}，由{INITIATOR[c.initiator]}修改：{c.targets.join("、")}
-                  </p>
-                  {c.revertedAt && <p className="text-xs text-muted-foreground">{dateTime(c.revertedAt)} 已回滚</p>}
-                  {c.status === "applied" && c.revertAt && (
-                    <p className="mt-1 flex items-center gap-1 text-xs text-amber-700">
-                      <Clock className="size-3" aria-hidden />
-                      将于 {dateTime(c.revertAt)} 自动回滚
-                      <button type="button" className="ml-1 underline underline-offset-2" onClick={() => void call("changes.cancelSchedule", { siteId, changeId: c.id }).then(loadChanges, fail)}>取消</button>
-                    </p>
-                  )}
-                  {c.revertError && <p className="mt-1 text-xs text-destructive">定时恢复失败：{c.revertError}</p>}
-                  {c.status === "applied" && (
-                    <Button variant="outline" size="sm" className="mt-2" onClick={() => setReverting(c)}>
-                      <RotateCcw aria-hidden />
-                      回滚
-                    </Button>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-        </div>
-      </div>
-
-      <AlertDialog open={reverting !== null} onOpenChange={(open) => !open && setReverting(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>回滚变更 #{reverting?.id}？</AlertDialogTitle>
-            <AlertDialogDescription>
-              「{reverting?.summary}」改动的内容会恢复成修改前的快照：{reverting?.targets.join("、")}。如果这些内容之后又被改过，会拒绝回滚，需要先回滚更晚的变更。
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>取消</AlertDialogCancel>
-            <AlertDialogAction onClick={() => reverting && void revert(reverting)}>回滚</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
-  );
+  const onKey = (event: KeyboardEvent<HTMLTextAreaElement>) => { if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); void send(draft); } };
+  return <section aria-label={`和 pi 对话：${domain}`} className="flex min-h-[34rem] min-w-0 flex-col overflow-hidden rounded-lg border bg-card"><header className="flex items-center justify-between gap-2 border-b px-4 py-3"><div><h2 className="text-sm font-medium">和 pi 对话</h2><p className="mt-0.5 text-xs text-muted-foreground">修改会直接应用到 {domain}，并记录为可回滚的变更集。</p></div><Button variant="ghost" size="sm" disabled={live !== null} onClick={() => void reset()}><MessageSquarePlus aria-hidden />新对话</Button></header>{error && <p role="alert" className="border-b bg-destructive/5 px-4 py-2 text-sm text-destructive">{error}</p>}<ScrollArea className="min-h-0 flex-1"><div className="flex flex-col gap-4 p-4">{items.length === 0 && !live && <div className="py-8 text-center text-sm text-muted-foreground"><p className="font-medium text-foreground">告诉 pi 你想怎么改这个站</p><p className="mt-1">每次修改都会保存快照，可以在「变更记录」里回滚。</p><div className="mt-4 flex flex-wrap justify-center gap-2">{SUGGESTIONS.map((suggestion) => <Button key={suggestion} variant="outline" size="sm" className="h-auto max-w-sm py-1.5 whitespace-normal text-left" onClick={() => setDraft(suggestion)}>{suggestion}</Button>)}</div></div>}{items.map((item, index) => <Message key={index} item={item} />)}{live && <div className="flex flex-col gap-2" aria-live="polite">{live.thinking && !live.text && <p className="text-xs text-muted-foreground">正在思考…</p>}{live.tools.map((tool) => <ToolLine key={tool.id} item={tool} />)}{live.text ? <p className="max-w-[94%] text-sm whitespace-pre-wrap">{rich(live.text)}</p> : !live.thinking && live.tools.length === 0 && <LoaderCircle className="size-4 text-muted-foreground motion-safe:animate-spin" aria-label="pi 正在回复" />}</div>}<div ref={endRef} /></div></ScrollArea><form onSubmit={(event) => { event.preventDefault(); void send(draft); }} className="flex items-end gap-2 border-t p-3"><label htmlFor={`chat-${siteId}`} className="sr-only">给 pi 的消息</label><textarea id={`chat-${siteId}`} rows={2} value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={onKey} placeholder="描述你想修改的内容（Enter 发送，Shift+Enter 换行）" className="min-h-14 flex-1 resize-none rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring" />{live ? <Button type="button" variant="outline" onClick={() => void call("chat.abort", { siteId }).catch((reason: Error) => setError(reason.message))}><Square aria-hidden />停止</Button> : <Button type="submit" disabled={!draft.trim()}><Send aria-hidden />发送</Button>}</form></section>;
 }
 
-/** 客服邮箱和邮件 DNS：检查（只读）和修复（建邮箱、补 DNS 记录，先确认） */
+function ChangesPanel({ siteId }: { siteId: number }) {
+  const confirm = useConfirm();
+  const [changes, setChanges] = useState<ChangeSummary[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const load = useCallback(() => void call<ChangeSummary[]>("changes.list", { siteId }).then(setChanges, (reason: Error) => setError(reason.message)), [siteId]);
+  useEffect(() => { const off = [onConnect(load), onChanged("changes", load)]; return () => off.forEach((dispose) => dispose()); }, [load]);
+  const revert = async (change: ChangeSummary) => {
+    if (!await confirm({ title: `回滚变更 #${change.id}？`, description: `“${change.summary}”涉及 ${change.targets.join("、")}。如果这些内容之后又被修改过，后台会拒绝回滚。`, confirmText: "确认回滚", destructive: true })) return;
+    try { await call("changes.revert", { siteId, changeId: change.id }); toast("变更已回滚", "success"); load(); }
+    catch (reason) { setError((reason as Error).message); toast((reason as Error).message, "error"); }
+  };
+  const cancelSchedule = async (change: ChangeSummary) => {
+    if (!await confirm({ title: "取消定时恢复？", description: `变更 #${change.id} 将继续保持生效，不会在原定时间自动回滚。`, confirmText: "取消定时恢复" })) return;
+    try { await call("changes.cancelSchedule", { siteId, changeId: change.id }); toast("已取消定时恢复", "success"); load(); }
+    catch (reason) { setError((reason as Error).message); toast((reason as Error).message, "error"); }
+  };
+  if (changes === null) return error ? <div role="alert" className="space-y-3 text-sm text-destructive"><p>{error}</p><Button variant="outline" onClick={load}>重新加载变更记录</Button></div> : <div className="h-52 motion-safe:animate-pulse rounded-lg bg-muted" />;
+  return <section aria-labelledby="changes-title"><header><h2 id="changes-title" className="font-semibold">变更记录</h2><p className="mt-1 text-sm text-muted-foreground">pi 每次修改前都会保存快照，可以整体回滚；定时恢复由对话中的指令创建。</p></header>{error && <p role="alert" className="mt-3 text-sm text-destructive">{error}</p>}{changes.length === 0 ? <div className="mt-5 rounded-lg border border-dashed p-8 text-center text-sm"><p className="font-medium">还没有变更记录</p><p className="mt-1 text-muted-foreground">去「对话」告诉 pi 你想修改的内容。</p></div> : <ol className="mt-5 divide-y border-y">{changes.map((change) => <li key={change.id} className="py-4"><div className="flex flex-wrap items-start justify-between gap-3"><div><p className="font-medium">#{change.id} {change.summary}</p><p className="mt-1 text-xs text-muted-foreground tabular-nums">{dateTime(change.createdAt)} · 由{INITIATOR[change.initiator]}修改 · {change.targets.join("、")}</p></div>{change.status === "applied" ? <Badge variant="secondary">已生效</Badge> : <Badge variant="outline">已回滚</Badge>}</div>{change.revertedAt && <p className="mt-2 text-xs text-muted-foreground">{dateTime(change.revertedAt)} 已回滚</p>}{change.status === "applied" && change.revertAt && <p className="mt-2 flex flex-wrap items-center gap-1 text-xs text-amber-700 dark:text-amber-400"><Clock className="size-3" aria-hidden />将于 {dateTime(change.revertAt)} 自动回滚<button type="button" className="ml-1 underline underline-offset-2 focus-visible:ring-2 focus-visible:ring-ring" onClick={() => void cancelSchedule(change)}>取消</button></p>}{change.revertError && <p className="mt-2 text-xs text-destructive">定时恢复失败：{change.revertError}</p>}{change.status === "applied" && <Button variant="outline" size="sm" className="mt-3" onClick={() => void revert(change)}><RotateCcw aria-hidden />回滚</Button>}</li>)}</ol>}</section>;
+}
+
 function MailPanel({ siteId }: { siteId: number }) {
+  const confirm = useConfirm();
   const [status, setStatus] = useState<MailStatus | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
-  const [confirming, setConfirming] = useState(false);
   const [fixing, setFixing] = useState(false);
-  const [note, setNote] = useState<string | null>(null);
-
-  const load = useCallback(() => {
-    setLoading(true);
-    setError(null);
-    call<MailStatus>("mail.status", { siteId }).then(setStatus, (e: Error) => setError(e.message)).finally(() => setLoading(false));
-  }, [siteId]);
+  const load = useCallback(() => { setLoading(true); setError(null); void call<MailStatus>("mail.status", { siteId }).then(setStatus, (reason: Error) => setError(reason.message)).finally(() => setLoading(false)); }, [siteId]);
   useEffect(() => onConnect(load), [load]);
-
-  const fix = async () => {
-    setFixing(true);
-    setError(null);
-    try {
-      const r = await call<{ mailbox: string; dns: { fixed: string[]; snapshotId: number | null } | null }>("mail.fix", { siteId });
-      setNote([r.mailbox, r.dns?.fixed.length ? `DNS 补上 ${r.dns.fixed.length} 组记录${r.dns.snapshotId ? `（改动前快照 #${r.dns.snapshotId}）` : ""}` : ""].filter(Boolean).join("；"));
-      load();
-    } catch (e) {
-      setError((e as Error).message);
-    } finally {
-      setFixing(false);
-      setConfirming(false);
-    }
-  };
-  const showPassword = async () => {
-    try {
-      setPassword((await call<{ password: string } | null>("mail.password", { siteId }))?.password ?? null);
-    } catch (e) {
-      setError((e as Error).message);
-    }
-  };
-
   const needMailbox = Boolean(status?.onDomain && status.hasOrder && !status.mailbox);
   const planned = status?.dns?.atHostinger ? status.dns.planned : [];
-  const fixable = needMailbox || planned.length > 0;
-
-  return (
-    <section aria-label="客服邮箱" className="flex flex-col gap-2">
-      <div className="flex items-center justify-between">
-        <h2 className="text-sm font-medium">客服邮箱</h2>
-        <Button variant="ghost" size="sm" onClick={load} disabled={loading || fixing}>
-          {loading ? <LoaderCircle className="motion-safe:animate-spin" aria-hidden /> : <RefreshCw aria-hidden />}
-          重新检查
-        </Button>
-      </div>
-      {error && <p role="alert" className="text-xs text-destructive">{error}</p>}
-      {!status ? (
-        <p className="text-sm text-muted-foreground">{loading ? "正在检查邮箱和公共 DNS…" : "还没有检查"}</p>
-      ) : (
-        <div className="flex flex-col gap-2 rounded-lg border p-3 text-sm">
-          <p className="font-medium break-all">{status.email}</p>
-          {!status.onDomain ? <p className="text-muted-foreground">不在本站域名上，由你自己管理。</p>
-            : !status.hasOrder ? <p className="text-amber-700">这个域名没有 Hostinger 邮箱订单，收不到邮件。先在 hPanel 开通邮箱，再点「重新检查」。</p>
-            : <p className={status.mailbox === "active" ? "text-green-700" : "text-amber-700"}>{status.mailbox === "active" ? "邮箱已开通" : status.mailbox ? `邮箱状态：${status.mailbox}` : "邮箱还没有创建"}</p>}
-          {status.passwordSaved && (
-            <p className="text-xs">
-              密码：{password ? <code className="rounded bg-muted px-1 select-all">{password}</code> : "已加密保存"}
-              <button type="button" className="ml-2 underline underline-offset-2" onClick={() => (password ? setPassword(null) : void showPassword())}>{password ? "隐藏" : "显示"}</button>
-            </p>
-          )}
-          {status.dns && (
-            <ul aria-label="邮件 DNS" className="flex flex-col gap-1">
-              {status.dns.checks.map((c) => (
-                <li key={c.key} className="flex gap-2 text-xs">
-                  {c.ok ? <CircleCheck className="size-3.5 shrink-0 text-green-600" aria-label="正确" /> : <CircleAlert className="size-3.5 shrink-0 text-amber-600" aria-label="有问题" />}
-                  <span className="w-11 shrink-0 font-medium">{c.key}</span>
-                  <span className="min-w-0 break-all text-muted-foreground">{c.detail}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-          {status.onDomain && status.mailbox === "active" && <SmtpSection siteId={siteId} email={status.email} />}
-          {status.dns && !status.dns.atHostinger && status.dns.manual.length > 0 && (
-            <div className="text-xs">
-              <p className="text-amber-700">这个域名的 DNS 不在 Hostinger，不能自动修，需要在 DNS 服务商那里添加：</p>
-              <ul className="mt-1 list-disc pl-4 font-mono break-all">{status.dns.manual.map((m) => <li key={m}>{m}</li>)}</ul>
-            </div>
-          )}
-          {fixable && (
-            <Button size="sm" className="self-start" onClick={() => setConfirming(true)} disabled={fixing}>
-              {fixing ? <LoaderCircle className="motion-safe:animate-spin" aria-hidden /> : <Wrench aria-hidden />}
-              修复
-            </Button>
-          )}
-          {note && <p role="status" className="text-xs text-green-700">{note}</p>}
-          {status.dns && <p className="text-xs text-muted-foreground">DNS 按公共解析结果显示，刚改的记录可能要几分钟才生效。</p>}
-        </div>
-      )}
-
-      <AlertDialog open={confirming} onOpenChange={(open) => !open && !fixing && setConfirming(false)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>修复客服邮箱和邮件 DNS？</AlertDialogTitle>
-            <AlertDialogDescription>只补缺少的东西：不改指向其他邮件服务的 MX，不删已有的 TXT 记录；Hostinger 会自动保存改动前的 DNS 快照，需要时可在 hPanel 恢复。</AlertDialogDescription>
-          </AlertDialogHeader>
-          <ul className="list-disc pl-5 text-sm">
-            {needMailbox && <li>创建 {status?.email}（随机强密码，加密保存在这台电脑上）和别名 orders@</li>}
-            {planned.map((p) => <li key={p} className="font-mono text-xs break-all">{p}</li>)}
-          </ul>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={fixing}>取消</AlertDialogCancel>
-            <AlertDialogAction disabled={fixing} onClick={(e) => { e.preventDefault(); void fix(); }}>
-              {fixing && <LoaderCircle className="motion-safe:animate-spin" aria-hidden />}
-              修复
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </section>
-  );
+  const fix = async () => {
+    const actions = [needMailbox ? `创建 ${status?.email}` : "", ...planned].filter(Boolean).join("；");
+    if (!await confirm({ title: "修复客服邮箱和邮件 DNS？", description: `只补缺少的项目，不删除已有记录。${actions ? `计划：${actions}` : ""}`, confirmText: "确认修复" })) return;
+    setFixing(true); setError(null);
+    try { const result = await call<{ mailbox: string; dns: { fixed: string[] } | null }>("mail.fix", { siteId }); toast(`${result.mailbox}${result.dns?.fixed.length ? `；补上 ${result.dns.fixed.length} 组 DNS 记录` : ""}`, "success"); load(); }
+    catch (reason) { setError((reason as Error).message); toast((reason as Error).message, "error"); }
+    finally { setFixing(false); }
+  };
+  const showPassword = async () => { try { setPassword((await call<{ password: string } | null>("mail.password", { siteId }))?.password ?? null); } catch (reason) { setError((reason as Error).message); } };
+  return <section aria-labelledby="mail-title" className="max-w-4xl"><header className="flex items-start justify-between gap-3"><div><h2 id="mail-title" className="font-semibold">客服邮箱</h2><p className="mt-1 text-sm text-muted-foreground">检查邮箱、公共 DNS 和 WooCommerce 交易邮件。</p></div><Button variant="outline" size="sm" onClick={load} disabled={loading || fixing}>{loading ? <LoaderCircle className="motion-safe:animate-spin" aria-hidden /> : <RefreshCw aria-hidden />}重新检查</Button></header>{error && <p role="alert" className="mt-3 text-sm text-destructive">{error}</p>}{!status ? <div className="mt-5 h-48 animate-pulse rounded-lg bg-muted" /> : <div className="mt-5 space-y-5"><section className="rounded-lg border bg-card p-4"><div className="flex flex-wrap items-center justify-between gap-2"><p className="font-medium break-all">{status.email}</p>{!status.onDomain ? <Badge variant="outline">外部管理</Badge> : status.mailbox === "active" ? <Badge variant="secondary">邮箱已开通</Badge> : <Badge variant="outline" className="status-waiting">待开通</Badge>}</div>{!status.onDomain ? <p className="mt-2 text-sm text-muted-foreground">不在本站域名上，由你自己管理。</p> : !status.hasOrder ? <p className="mt-2 text-sm text-amber-700 dark:text-amber-400">这个域名没有 Hostinger 邮箱订单。先在 hPanel 开通邮箱，再重新检查。</p> : status.mailbox !== "active" && <p className="mt-2 text-sm text-amber-700 dark:text-amber-400">邮箱状态：{status.mailbox ?? "尚未创建"}</p>}{status.passwordSaved && <p className="mt-3 text-sm">密码：{password ? <code className="rounded bg-muted px-1.5 py-0.5 select-all">{password}</code> : "已加密保存"}<button type="button" className="ml-2 text-xs underline underline-offset-2" onClick={() => password ? setPassword(null) : void showPassword()}>{password ? "隐藏" : "显示"}</button></p>}{status.dns && <div className="mt-4 border-t pt-4"><h3 className="text-sm font-medium">邮件 DNS</h3><ul className="mt-3 grid gap-2 sm:grid-cols-2">{status.dns.checks.map((check) => <li key={check.key} className="flex gap-2 text-xs">{check.ok ? <CircleCheck className="size-4 shrink-0 text-emerald-600" aria-label="正确" /> : <CircleAlert className="size-4 shrink-0 text-amber-600" aria-label="有问题" />}<span className="w-12 shrink-0 font-medium">{check.key}</span><span className="min-w-0 break-all text-muted-foreground">{check.detail}</span></li>)}</ul>{!status.dns.atHostinger && status.dns.manual.length > 0 && <div className="mt-4 text-xs"><p className="text-amber-700 dark:text-amber-400">DNS 不在 Hostinger，请在当前 DNS 服务商添加：</p><ul className="mt-2 list-disc space-y-1 pl-5 font-mono break-all">{status.dns.manual.map((item) => <li key={item}>{item}</li>)}</ul></div>}</div>}{(needMailbox || planned.length > 0) && <Button className="mt-4" size="sm" disabled={fixing} onClick={() => void fix()}>{fixing ? <LoaderCircle className="motion-safe:animate-spin" aria-hidden /> : <Wrench aria-hidden />}修复缺少项目</Button>}</section>{status.onDomain && status.mailbox === "active" && <SmtpSection siteId={siteId} email={status.email} />}</div>}</section>;
 }
 
-/** 交易邮件发信：WooCommerce 订单邮件经客服邮箱的 SMTP 发出；发测试邮件并确认送达 */
 function SmtpSection({ siteId, email }: { siteId: number; email: string }) {
+  const confirm = useConfirm();
   const [smtp, setSmtp] = useState<SmtpStatus | null>(null);
   const [password, setPassword] = useState("");
   const [to, setTo] = useState(email);
   const [busy, setBusy] = useState<"enable" | "test" | null>(null);
-  const [result, setResult] = useState<{ ok: boolean; text: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  const load = useCallback(() => {
-    call<SmtpStatus>("smtp.status", { siteId }).then(setSmtp, (e: Error) => setError(/HTTP 404/.test(e.message) ? "站点上的伴侣插件版本太旧，重新部署后才能设置发信" : e.message));
-  }, [siteId]);
+  const load = useCallback(() => void call<SmtpStatus>("smtp.status", { siteId }).then(setSmtp, (reason: Error) => setError(/HTTP 404/.test(reason.message) ? "站点上的伴侣插件版本太旧，重新部署后才能设置发信" : reason.message)), [siteId]);
   useEffect(() => onConnect(load), [load]);
-
-  const enable = async (e?: FormEvent) => {
-    e?.preventDefault();
-    setBusy("enable");
-    setError(null);
-    setResult(null);
-    try {
-      const r = await call<{ ok: boolean; detail: string }>("smtp.enable", { siteId, password: password || undefined });
-      setResult({ ok: r.ok, text: r.detail });
-      setPassword("");
-      load();
-    } catch (err) {
-      setError((err as Error).message);
-    } finally {
-      setBusy(null);
-    }
+  const enable = async (event?: FormEvent) => {
+    event?.preventDefault();
+    if (!await confirm({ title: "启用交易邮件？", description: `将验证 ${email} 的凭据，更新站点 SMTP 配置，并发送一封测试邮件。`, confirmText: "验证并启用" })) return;
+    setBusy("enable"); setError(null);
+    try { const result = await call<{ ok: boolean; detail: string }>("smtp.enable", { siteId, password: password || undefined }); result.ok ? toast(result.detail, "success") : toast(result.detail, "error"); setPassword(""); load(); }
+    catch (reason) { setError((reason as Error).message); toast((reason as Error).message, "error"); }
+    finally { setBusy(null); }
   };
-  const [confirmReset, setConfirmReset] = useState(false);
   const resetPassword = async () => {
-    setBusy("enable");
-    setError(null);
-    setResult(null);
-    try {
-      const r = await call<{ ok: boolean; detail: string }>("smtp.resetPassword", { siteId });
-      setResult({ ok: r.ok, text: r.detail });
-      load();
-    } catch (err) {
-      setError((err as Error).message);
-    } finally {
-      setBusy(null);
-      setConfirmReset(false);
-    }
+    if (!await confirm({ title: `给 ${email} 生成新密码？`, description: "旧密码会立即失效，其他邮件客户端和网页邮箱也必须改用新密码。", confirmText: "生成新密码并启用", destructive: true })) return;
+    setBusy("enable"); setError(null);
+    try { const result = await call<{ ok: boolean; detail: string }>("smtp.resetPassword", { siteId }); result.ok ? toast(result.detail, "success") : toast(result.detail, "error"); load(); }
+    catch (reason) { setError((reason as Error).message); toast((reason as Error).message, "error"); }
+    finally { setBusy(null); }
   };
-  const sendTest = async (e: FormEvent) => {
-    e.preventDefault();
-    setBusy("test");
-    setError(null);
-    setResult(null);
-    try {
-      const r = await call<{ sent: boolean; delivered: boolean | null; detail: string }>("smtp.test", { siteId, to });
-      setResult({ ok: r.sent && r.delivered !== false, text: r.detail });
-    } catch (err) {
-      setError((err as Error).message);
-    } finally {
-      setBusy(null);
-    }
+  const sendTest = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!await confirm({ title: "发送测试邮件？", description: `将向 ${to} 发送一封真实测试邮件。`, confirmText: "发送" })) return;
+    setBusy("test"); setError(null);
+    try { const result = await call<{ sent: boolean; delivered: boolean | null; detail: string }>("smtp.test", { siteId, to }); result.sent && result.delivered !== false ? toast(result.detail, "success") : toast(result.detail, "error"); }
+    catch (reason) { setError((reason as Error).message); toast((reason as Error).message, "error"); }
+    finally { setBusy(null); }
   };
-
-  return (
-    <div aria-label="交易邮件" className="flex flex-col gap-2 border-t pt-2">
-      <p className="text-xs font-medium">交易邮件</p>
-      {error && <p role="alert" className="text-xs text-destructive">{error}</p>}
-      {smtp && (smtp.enabled ? (
-        <>
-          <p className="flex gap-2 text-xs"><CircleCheck className="size-3.5 shrink-0 text-green-600" aria-hidden />订单邮件经 {smtp.host} 用 {smtp.username} 发出</p>
-          <form onSubmit={sendTest} className="flex gap-2">
-            <label htmlFor={`smtp-to-${siteId}`} className="sr-only">测试邮件收件人</label>
-            <input id={`smtp-to-${siteId}`} type="email" value={to} onChange={(e) => setTo(e.target.value)} className="h-7 min-w-0 flex-1 rounded-md border border-input bg-transparent px-2 text-xs outline-none focus-visible:ring-2 focus-visible:ring-ring" />
-            <Button type="submit" size="sm" variant="outline" disabled={busy !== null || !to.trim()}>
-              {busy === "test" && <LoaderCircle className="motion-safe:animate-spin" aria-hidden />}
-              发测试邮件
-            </Button>
-          </form>
-          {busy === "test" && to.trim().toLowerCase() === email.toLowerCase() && <p className="text-xs text-muted-foreground">发出后会登录 {email} 的收件箱确认送达，最多等 90 秒。</p>}
-        </>
-      ) : smtp.passwordSaved ? (
-        <>
-          <p className="text-xs text-amber-700">还没启用：订单邮件用的是主机默认发信，容易进垃圾箱。</p>
-          <Button size="sm" className="self-start" onClick={() => void enable()} disabled={busy !== null}>
-            {busy === "enable" && <LoaderCircle className="motion-safe:animate-spin" aria-hidden />}
-            启用并发测试邮件
-          </Button>
-        </>
-      ) : (
-        <form onSubmit={enable} className="flex flex-col gap-2">
-          <p className="text-xs text-amber-700">{email} 是之前就有的邮箱，这里没有它的密码。填上后会先登录验证，再启用发信并发一封测试邮件。</p>
-          <label htmlFor={`smtp-pass-${siteId}`} className="sr-only">{email} 的密码</label>
-          <input id={`smtp-pass-${siteId}`} type="password" autoComplete="off" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={`${email} 的密码`} className="h-7 rounded-md border border-input bg-transparent px-2 text-xs outline-none focus-visible:ring-2 focus-visible:ring-ring" />
-          <Button type="submit" size="sm" className="self-start" disabled={busy !== null || !password}>
-            {busy === "enable" && <LoaderCircle className="motion-safe:animate-spin" aria-hidden />}
-            验证并启用
-          </Button>
-          <p className="text-xs text-muted-foreground">密码加密保存在这台电脑上，同时写到站点上供发信用（用站点自己的密钥加密）。</p>
-          <button type="button" className="self-start text-xs underline underline-offset-2" disabled={busy !== null} onClick={() => setConfirmReset(true)}>不知道密码？生成新密码</button>
-        </form>
-      ))}
-      <AlertDialog open={confirmReset} onOpenChange={(open) => !open && busy === null && setConfirmReset(false)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>给 {email} 生成新密码？</AlertDialogTitle>
-            <AlertDialogDescription>
-              应用会生成一个随机强密码替换现在的密码，加密保存在这台电脑上，可以在上面「显示」查看。之后在其他地方（邮件客户端、手机、网页邮箱）登录这个邮箱都要用新密码，旧密码立即失效。
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={busy !== null}>取消</AlertDialogCancel>
-            <AlertDialogAction disabled={busy !== null} onClick={(e) => { e.preventDefault(); void resetPassword(); }}>
-              {busy === "enable" && <LoaderCircle className="motion-safe:animate-spin" aria-hidden />}
-              生成新密码并启用发信
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-      {busy === "enable" && <p className="text-xs text-muted-foreground">正在启用并发送测试邮件，确认送达最多要 90 秒…</p>}
-      {result && <p role="status" className={cn("text-xs", result.ok ? "text-green-700" : "text-amber-700")}>{result.text}</p>}
-    </div>
-  );
+  return <section aria-labelledby="smtp-title" className="rounded-lg border bg-card p-4"><div className="flex flex-wrap items-center justify-between gap-2"><h3 id="smtp-title" className="font-medium">交易邮件</h3>{smtp?.enabled ? <Badge variant="secondary">已启用</Badge> : <Badge variant="outline" className="status-waiting">待启用</Badge>}</div>{error && <p role="alert" className="mt-3 text-sm text-destructive">{error}</p>}{smtp && (smtp.enabled ? <><p className="mt-3 flex gap-2 text-sm"><CircleCheck className="size-4 shrink-0 text-emerald-600" aria-hidden />订单邮件经 {smtp.host} 用 {smtp.username} 发出</p><form onSubmit={sendTest} className="mt-4 flex flex-col gap-2 sm:flex-row"><label htmlFor={`smtp-to-${siteId}`} className="sr-only">测试邮件收件人</label><input id={`smtp-to-${siteId}`} type="email" value={to} onChange={(event) => setTo(event.target.value)} className="h-9 min-w-0 flex-1 rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring" /><Button type="submit" variant="outline" disabled={busy !== null || !to.trim()}>{busy === "test" && <LoaderCircle className="motion-safe:animate-spin" aria-hidden />}发测试邮件</Button></form></> : smtp.passwordSaved ? <><p className="mt-3 text-sm text-amber-700 dark:text-amber-400">订单邮件仍使用主机默认发信，容易进入垃圾箱。</p><Button className="mt-3" size="sm" disabled={busy !== null} onClick={() => void enable()}>{busy === "enable" && <LoaderCircle className="motion-safe:animate-spin" aria-hidden />}启用并发测试邮件</Button></> : <form onSubmit={enable} className="mt-3 space-y-3"><p className="text-sm text-amber-700 dark:text-amber-400">这是已有邮箱，本应用没有它的密码。填入后会先验证，再启用发信。</p><label htmlFor={`smtp-pass-${siteId}`} className="sr-only">{email} 的密码</label><input id={`smtp-pass-${siteId}`} type="password" autoComplete="off" value={password} onChange={(event) => setPassword(event.target.value)} placeholder={`${email} 的密码`} className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring" /><div className="flex flex-wrap gap-2"><Button type="submit" size="sm" disabled={busy !== null || !password}>{busy === "enable" && <LoaderCircle className="motion-safe:animate-spin" aria-hidden />}验证并启用</Button><Button type="button" variant="ghost" size="sm" disabled={busy !== null} onClick={() => void resetPassword()}>不知道密码？生成新密码</Button></div></form>)}</section>;
 }

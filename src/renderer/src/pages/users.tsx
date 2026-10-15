@@ -10,6 +10,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
+import { useConfirm, toast } from "@/components/feedback";
+import { Skeleton } from "@/components/page-state";
+
 function dateTime(timestamp: number | null): string {
   if (timestamp == null) return "从未";
   const milliseconds = timestamp < 10_000_000_000 ? timestamp * 1000 : timestamp;
@@ -18,6 +21,7 @@ function dateTime(timestamp: number | null): string {
 
 export function UsersPage({ currentUser }: { currentUser: AuthUser }) {
   const [users, setUsers] = useState<AdminUser[] | null>(null);
+  const confirm = useConfirm();
   const [adding, setAdding] = useState(false);
   const [resetting, setResetting] = useState<AdminUser | null>(null);
   const [busyId, setBusyId] = useState<number | null>(null);
@@ -34,10 +38,12 @@ export function UsersPage({ currentUser }: { currentUser: AuthUser }) {
   useEffect(() => { void load(); }, [load]);
 
   const toggle = async (user: AdminUser) => {
+    if (!await confirm({ title: `${user.disabled ? "启用" : "停用"}用户「${user.username}」？`, description: user.disabled ? "启用后该用户可以重新登录并继续使用自己的工作区。" : "该用户会立即退出登录，后台工作区将关闭；数据会保留。", destructive: !user.disabled })) return;
     setBusyId(user.id);
     setError(null);
     try {
       await setUserDisabled(user.id, !user.disabled);
+      toast(user.disabled ? "用户已启用" : "用户已停用");
       await load();
     } catch (reason) {
       setError((reason as Error).message);
@@ -50,14 +56,14 @@ export function UsersPage({ currentUser }: { currentUser: AuthUser }) {
     <div className="flex max-w-5xl flex-col gap-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-lg font-semibold">用户管理</h1>
+          <h1 className="text-2xl font-semibold">用户管理</h1>
           <p className="mt-1 text-sm text-muted-foreground">创建登录账号、重置初始密码和停用账号。管理员不能查看其他用户的业务数据。</p>
         </div>
         <Button onClick={() => setAdding(true)}><Plus aria-hidden />添加用户</Button>
       </div>
 
       {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
-      {users === null && <p className="text-sm text-muted-foreground">读取中…</p>}
+      {users === null && !error && <Skeleton label="正在读取用户" />}
       {users && (
         <div className="rounded-lg border">
           <Table>
@@ -108,7 +114,7 @@ function AddUserDialog({ open, onClose, onSaved }: { open: boolean; onClose: () 
     event.preventDefault(); setBusy(true); setError(null);
     try {
       await addUser(username.trim(), password, role);
-      close(); onSaved();
+      toast("用户信息已保存"); close(); onSaved();
     } catch (reason) {
       setError((reason as Error).message);
     } finally {
@@ -143,7 +149,7 @@ function ResetPasswordDialog({ user, onClose, onSaved }: { user: AdminUser | nul
     event.preventDefault(); if (!user) return; setBusy(true); setError(null);
     try {
       await resetUserPassword(user.id, password);
-      close(); onSaved();
+      toast("用户信息已保存"); close(); onSaved();
     } catch (reason) {
       setError((reason as Error).message);
     } finally {
