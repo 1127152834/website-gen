@@ -881,7 +881,7 @@ website-gen/
 - [ ] Hostinger 限流行为与 `Retry-After`（只读调用已通过，每次 0.5–0.8 秒；限流要在批量建站时实测）
 - [x] Electron 44：自带的 Node（24.21）下 `node:sqlite`、Hostinger MCP 子进程、pi 都能正常运行
 - [x] Electron 开发模式和构建版本：`safeStorage` 主密钥、后台进程里拉起 Hostinger MCP 子进程都可用（冒烟测试覆盖）
-- [ ] Electron 打包成安装包后：MCP 子进程、`resources/` 目录部署、`safeStorage` 加解密都可用
+- [x] Electron 打包成安装包后：MCP 子进程、`resources/` 目录部署、`safeStorage` 加解密都可用（不打 asar；安装版冒烟 9 项 + 真实部署伴侣插件，见 poc-results 第十二轮）
 - [x] DeepSeek：两种格式下多轮工具调用（含思考模式）和 `deepseek-flash` 看截图都通过。单站生成的实际用量待完整流水线跑通后再测
 
 ---

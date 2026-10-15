@@ -1,6 +1,6 @@
 {
   "name": "website-gen",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -19,7 +19,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "smoke": "node scripts/smoke.ts",
     "check:sync": "node --env-file=.env scripts/check-sync.ts",
-    "check:models": "node --env-file=.env scripts/check-models.ts"
+    "check:models": "node --env-file=.env scripts/check-models.ts",
+    "dist": "electron-vite build && electron-builder --win nsis"
   },
   "dependencies": {
     "@earendil-works/pi-ai": "^1.2.0",
@@ -38,6 +39,7 @@
     "class-variance-authority": "0.7.1",
     "cn": "0.4.0",
     "electron": "44.7.2",
+    "electron-builder": "26.15.3",
     "electron-vite": "6.0.0",
     "lucide-react": "1.57.0",
     "radix-ui": "1.8.1",
@@ -49,5 +51,8 @@
     "typescript": "7.0.2",
     "vite": "8.3.4"
   },
-  "main": "./out/main/index.js"
+  "main": "./out/main/index.js",
+  "productName": "独立站 AI 工厂",
+  "description": "独立站 AI 工厂：基于 Hostinger + WordPress + WooCommerce 的建站与运营桌面工具",
+  "author": "chutlong821"
 }

@@ -165,6 +165,19 @@
 | 安全修正（0.4.1） | 提交后的安全审查指出：店长权限就能改发信服务器，可能被用来截获管理员的重置密码邮件。改为伴侣插件的写接口和 SMTP 接口只认应用的服务账号 site-agent（其他店长 403）；SMTP 主机限定 `smtp.hostinger.com`、端口 465/587、必须加密。重新部署后再测一次，7 秒送达 |
 | 注意 | support@shopunitycart.com 的旧密码已失效。新密码只在实测用的临时库里（加密），可以自己运行 `node poc/out/show-mailbox-password.ts` 查看，或在 hPanel 里再改一个 |
 
+## 第十二轮：Windows 安装包（2026-10-15）
+
+`npm run dist` → `release/website-gen-setup-0.1.0.exe`（约 140 MB，electron-builder 26.15.3，NSIS，按用户安装、不需要管理员权限、未签名）。静默安装到 `release/installed-test` 后验证：
+
+| 项 | 结论 |
+|---|---|
+| 打包内容 | 不打 asar（MCP 子进程、主题/插件目录、playwright 都要真实路径）；`resources/app` 下有 out、resources（主题和伴侣插件模板）、生产依赖；`.env`、临时库、src、poc、docs 都没有进包 |
+| 冒烟测试（安装版） | `SMOKE_EXE=<安装版 exe> npm run smoke` 9 项全过：后台进程从安装目录启动、safeStorage 生成主密钥、假 Token 被 Hostinger 拒绝（说明安装版拉起了 MCP 子进程并真实调用了 API）、DeepSeek 连接测试 |
+| 真实部署（安装版） | 把临时库复制给安装版（凭据仍是加密的），重排「部署伴侣插件 → 注册」：安装版用 safeStorage 解开主密钥、解开 Hostinger Token，从安装目录的 `resources/site-companion` 复制模板，经安装目录里的 `@hostinger/mcp` 子进程部署到 shopunitycart.com，27 秒完成，健康检查通过 |
+| 安装结果 | 开始菜单和桌面有「独立站 AI 工厂」快捷方式；「已安装的应用」里有「独立站 AI 工厂 0.1.0」，可正常卸载 |
+| 数据目录 | 固定为 `%APPDATA%\website-gen`，开发模式和安装版用同一份数据（加了中文产品名后默认目录会变，所以写死） |
+| 没覆盖 | 主题上传（MCP 直接读安装目录的 `resources/theme`）这次没触发：测试站已经是当前版本的主题。它和插件部署一样是读真实路径。安装包没有代码签名，首次运行 Windows SmartScreen 会提示「未知发布者」 |
+
 ## POC 带来的设计修正（已同步进方案 v0.6）
 
 1. **批准后唤醒 pi 要用 `sendCustomMessage(..., { triggerTurn: true })`**。会话空闲时调用 `followUp()` 只会排队，不会开启新一轮（实测）。

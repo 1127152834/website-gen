@@ -1,5 +1,5 @@
 // 冒烟测试：启动构建好的桌面应用（先 npm run build），走一遍「连后台 → 批次和建站页的空状态 → 关窗进托盘 → 账号页 → 设置页 → 退出」。
-// 用法：npm run smoke    截图写到 poc/out/（已被 git 忽略）
+// 用法：npm run smoke（测开发构建）；SMOKE_EXE=<安装版 exe> npm run smoke（测安装版）。截图写到 poc/out/（已被 git 忽略）
 import { existsSync, mkdtempSync, mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -9,9 +9,11 @@ import { _electron } from "playwright-core";
 
 const userData = mkdtempSync(join(tmpdir(), "website-gen-smoke-"));
 mkdirSync("poc/out", { recursive: true });
+// SMOKE_EXE=<安装目录里的 exe>：测安装版（应用已打包在 exe 旁边，不再传项目目录）
+const installed = process.env.SMOKE_EXE;
 const app = await _electron.launch({
-  executablePath: electronPath as unknown as string,
-  args: ["."],
+  executablePath: installed ?? (electronPath as unknown as string),
+  args: installed ? [] : ["."],
   env: { ...process.env, WEBSITE_GEN_USER_DATA: userData } as Record<string, string>,
 });
 

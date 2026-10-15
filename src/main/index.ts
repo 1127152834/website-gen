@@ -9,7 +9,8 @@ import iconPath from "../../resources/icon.png?asset";
 import { loadMasterKey } from "./master-key.ts";
 
 // 冒烟测试用临时数据目录，不碰真实的应用数据
-if (process.env.WEBSITE_GEN_USER_DATA) app.setPath("userData", process.env.WEBSITE_GEN_USER_DATA);
+// 数据目录固定为 %APPDATA%\website-gen：默认目录跟着产品名走，固定下来后开发模式和安装版用同一份数据
+app.setPath("userData", process.env.WEBSITE_GEN_USER_DATA || join(app.getPath("appData"), "website-gen"));
 
 let win: BrowserWindow | null = null;
 let tray: Tray | null = null;
