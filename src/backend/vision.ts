@@ -5,6 +5,7 @@ import { extname } from "node:path";
 import type { DatabaseSync } from "node:sqlite";
 import type { ImageContent, ModelThinkingLevel, TextContent } from "@earendil-works/pi-ai";
 import { buildRuntime, roleChoice } from "./models.ts";
+import { assertPublicBaseUrl } from "./net-guard.ts";
 
 const MAX_IMAGE_BYTES = 12 * 1024 * 1024;
 
@@ -32,7 +33,10 @@ async function loadImage(image: VisionImage, fetchImpl: typeof fetch): Promise<I
     mimeType ??= mimeFromName(image.file);
   } else {
     const url = image.url;
-    const response = await fetchImpl(url, { signal: AbortSignal.timeout(30_000) });
+    // 图片地址来自 CJ 资料等第三方数据：只走 https、不跟随重定向，真实请求前拒绝本机/内网地址（防 SSRF）
+    if (new URL(url).protocol !== "https:") throw new Error(`候选图片 ${image.name} 不是 https 地址`);
+    if (fetchImpl === globalThis.fetch) await assertPublicBaseUrl(url);
+    const response = await fetchImpl(url, { signal: AbortSignal.timeout(30_000), redirect: "error" });
     if (!response.ok) throw new Error(`候选图片 ${image.name} 返回 HTTP ${response.status}`);
     const declared = response.headers.get("content-length");
     if (declared && Number(declared) > MAX_IMAGE_BYTES) throw new Error(`候选图片 ${image.name} 超过 12 MB`);
