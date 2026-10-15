@@ -2,7 +2,7 @@
 Theme Name:        Obel
 Theme URI:         https://github.com/obel
 Description:       An editorial WooCommerce block theme: hairline borders, generous whitespace, and a warm cream palette for quiet, measured storefronts.
-Version:           1.1.0
+Version:           1.2.0
 Requires at least: 6.8
 Tested up to:      6.9
 Requires PHP:      8.2
@@ -17,3 +17,95 @@ Domain Path:       /languages
 Update URI:        false
 Tags:              block-styles, full-site-editing, wide-blocks, e-commerce, one-column, two-columns, custom-colors, featured-images, threaded-comments, translation-ready
 */
+
+/* AI 生成首页：商品先于营销文案出现，移动端首屏保持紧凑。 */
+.wg-mobile-first-product {
+	margin-block: 0 var(--wp--preset--spacing--md);
+	text-align: center;
+}
+
+.wg-mobile-first-product .wp-block-image {
+	margin: 0;
+}
+
+.wg-mobile-first-product .wp-block-image img {
+	display: block;
+	width: 100%;
+	max-height: 420px;
+	object-fit: contain;
+}
+
+.wg-mobile-first-product > p {
+	margin: var(--wp--preset--spacing--xs) 0 0;
+}
+
+.wg-home-intro {
+	max-width: 720px;
+	margin-block: var(--wp--preset--spacing--lg);
+}
+
+.wg-home-intro > * {
+	margin-block: 0;
+}
+
+.wg-home-intro > * + * {
+	margin-top: var(--wp--preset--spacing--sm);
+}
+
+.wg-category-grid,
+.wg-product-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--wp--preset--spacing--md);
+	margin-block: var(--wp--preset--spacing--xl);
+}
+
+.wg-category-grid > .wp-block-column,
+.wg-product-grid > .wp-block-column {
+	min-width: 0;
+	width: auto;
+}
+
+.wg-category-grid .wp-block-image,
+.wg-product-grid .wp-block-image {
+	margin: 0 0 var(--wp--preset--spacing--sm);
+	overflow: hidden;
+	border-radius: var(--wp--custom--radius--md);
+}
+
+.wg-category-grid .wp-block-image img,
+.wg-product-grid .wp-block-image img {
+	display: block;
+	width: 100%;
+	aspect-ratio: 4 / 3;
+	object-fit: cover;
+}
+
+footer a[href^="mailto:"] {
+	overflow-wrap: anywhere;
+	word-break: break-word;
+}
+
+@media (min-width: 782px) {
+	.wg-category-grid,
+	.wg-product-grid {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: var(--wp--preset--spacing--lg);
+	}
+}
+
+@media (max-width: 781px) {
+	.wg-mobile-first-product .wp-block-image img {
+		max-height: min(320px, 42vh);
+	}
+
+	.wg-home-intro {
+		margin-block: var(--wp--preset--spacing--md);
+	}
+
+	.wg-category-grid,
+	.wg-product-grid {
+		gap: var(--wp--preset--spacing--sm);
+		margin-block: var(--wp--preset--spacing--lg);
+	}
+}

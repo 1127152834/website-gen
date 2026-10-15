@@ -13,6 +13,23 @@ export const RULES = {
   markup: 2.5,
 };
 
+/** 免邮以折后商品小计计算，包含恰好 $49；不把税费和运费计入门槛。 */
+export const PAYMENT_WORDING = "Available payment methods are shown at checkout.";
+export const CONTIGUOUS_STATES = "AL AZ AR CA CO CT DE DC FL GA ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY".split(" ");
+
+/** 伴侣插件的短代码和政策提示词共用此处规则，不能让主题再声明另一套承诺。 */
+export function companionRules(entity: Pick<EntityForm, "processingDays" | "transitDays">) {
+  return {
+    free_shipping_over: RULES.freeShippingOver,
+    flat_rate: RULES.flatRate,
+    return_days: RULES.returnDays,
+    refund_days: RULES.refundDays,
+    processing_days: entity.processingDays,
+    transit_days: entity.transitDays,
+    region: RULES.region,
+  };
+}
+
 /** 由代码定价，AI 不参与：成本 × 2.5 取整再加 .99（毛利约 60%）。 */
 export const retailPrice = (cost: number): number => Math.floor(cost * RULES.markup) + 0.99;
 

@@ -8,6 +8,8 @@ export interface Facts {
   email: string;
   categories: string[];
   entity: EntityForm;
+  /** 隐私政策只能描述实际启用的功能；未提供时按当前建站基线处理。 */
+  features?: { analytics?: boolean; advertising?: boolean; newsletter?: boolean; orderAttribution?: boolean };
 }
 
 export interface SiteCopy {
@@ -40,8 +42,8 @@ const factLines = (f: Facts) => [
   `Shipping cost: free on orders of $${RULES.freeShippingOver} or more; otherwise a flat rate of $${RULES.flatRate}.`,
   `Returns: accepted within ${RULES.returnDays} days of delivery. The customer pays return shipping unless the item arrived damaged, defective or wrong, in which case we pay. Return address: ${f.entity.address}.`,
   `Refunds: issued to the original payment method within ${range(RULES.refundDays)} business days after we receive the return. No exchanges.`,
-  "Payments: processed by Stripe and PayPal; we never see or store full card numbers.",
-  "Platform: WordPress with WooCommerce, hosted by Hostinger. Only essential cookies for the cart, checkout and login. No analytics, no advertising pixels, no newsletter.",
+  'Payments: "Available payment methods are shown at checkout." No payment gateway is promised until it is actually connected.',
+  `Platform: WordPress with WooCommerce, hosted by Hostinger. Order attribution is ${f.features?.orderAttribution ? "enabled" : "disabled"}. Analytics: ${f.features?.analytics ? "enabled" : "disabled"}. Advertising pixels: ${f.features?.advertising ? "enabled" : "disabled"}. Newsletter: ${f.features?.newsletter ? "enabled" : "disabled"}.`,
   "We do not sell or share personal information.",
 ].map((l) => `- ${l}`).join("\n");
 
@@ -75,6 +77,10 @@ ${RULES_FOR_WRITING}
 - Write the exact numbers from the facts (for example "${range(f.entity.processingDays)} business days", "$${RULES.freeShippingOver}"). Do not add any other day counts or dollar amounts.
 - Use simple HTML only: <h2>, <h3>, <p>, <ul>, <li>, <strong>, <a>. No nested lists, no tables, no inline styles.
 - Include the support email in each document. Privacy and terms must name the operator (${f.entity.name}).
+- The returns document must give the complete procedure: request within ${RULES.returnDays} days after delivery by contacting support; wait for approval/instructions; once approved, send the item back promptly to the stated return address; customer pays return postage except for damaged, defective or wrong items; after we receive and inspect the return, we initiate the refund to the original payment method within ${range(RULES.refundDays)} business days of receiving it. Say that the customer's bank may need additional time to post the credit, but do not promise a bank-processing day count.
+- The shipping document must explain: if shipment will be delayed, we notify the customer with a revised date and ask them to accept the delay or cancel for a full refund; cancellation requests are accepted before shipment; for a parcel that appears lost, contact support so tracking can be checked and a carrier investigation opened, then we communicate and resolve the result. Do not invent fixed response or investigation times.
+- State exactly "Available payment methods are shown at checkout." Do not name Stripe, PayPal, cards, wallets, or any other gateway.
+- The privacy document must match the enabled/disabled features in FACTS. Do not describe order-attribution cookies when order attribution is disabled.
 
 Write four documents in this exact format, nothing else:
 === SHIPPING ===
@@ -141,6 +147,11 @@ export function claimProblems(text: string): string[] {
   return FORBIDDEN.filter(([re]) => re.test(plain)).map(([re, what]) => `remove ${what} ("${re.exec(plain)![0]}")`);
 }
 
+const unofferedShippingProblems = (text: string, where: string) => {
+  const match = /\b(?:express|expedited|overnight|same[- ]day|next[- ]day)\s+(?:shipping|delivery)\b|\b(?:shipping|delivery)\s+(?:by\s+)?(?:express|expedited|overnight|same[- ]day|next[- ]day)\b/i.exec(stripTags(text));
+  return match ? [`${where}: remove unoffered shipping service ("${match[0]}")`] : [];
+};
+
 /** 去标签并解开实体（WordPress 输出时会把 1-3 排版成 1&#8211;3） */
 const stripTags = (html: string) =>
   html.replace(/<[^>]+>/g, " ").replace(/&#(\d+);/g, (_m, n: string) => String.fromCharCode(Number(n))).replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/\s+/g, " ");
@@ -174,7 +185,10 @@ export function checkCopy(c: SiteCopy, f: Facts): string[] {
   if (!Array.isArray(c.faq) || c.faq.length < 6 || c.faq.some((x) => !x.q || !x.a)) out.push("faq needs 8 questions with answers");
   if (out.length) return out;
   const all = [c.tagline, c.hero.heading, c.hero.subheading, ...c.about, ...c.faq.flatMap((x) => [x.q, x.a])].join("\n");
-  return [...claimProblems(all), ...numberProblems(c.faq.map((x) => x.a).join("\n"), f, "faq")];
+  const payment = c.faq.map((x) => x.a).join("\n");
+  if (!payment.includes("Available payment methods are shown at checkout.")) out.push("faq must use the exact checkout payment wording");
+  if (/stripe|paypal|visa|mastercard|american express|apple pay|google pay/i.test(payment)) out.push("faq must not promise a payment gateway");
+  return [...out, ...claimProblems(all), ...unofferedShippingProblems(all, "site copy"), ...numberProblems(payment, f, "faq")];
 }
 
 export function checkPolicies(p: Policies, f: Facts): string[] {
@@ -192,11 +206,33 @@ export function checkPolicies(p: Policies, f: Facts): string[] {
   need("returns", "the return window", `${RULES.returnDays} day`);
   need("returns", "the refund time", `${span(RULES.refundDays)} business day`);
   need("returns", "the support email", f.email);
+  const shipping = norm(p.shipping), returns = norm(p.returns);
+  const requirePattern = (where: string, text: string, label: string, pattern: RegExp) => { if (!pattern.test(text)) out.push(`${where} policy must explain ${label}`); };
+  requirePattern("returns", returns, "how to request a return", /\b(request|contact)\b[\s\S]*\breturn\b|\breturn\b[\s\S]*\b(request|contact)\b/);
+  requirePattern("returns", returns, `a return request within ${RULES.returnDays} days after delivery`, new RegExp(`\\b(?:request|contact)\\b[\\s\\S]{0,60}\\breturn\\b[\\s\\S]{0,80}\\bwithin\\s+${RULES.returnDays} days?\\b[\\s\\S]{0,40}\\b(?:after|of|from)\\s+(?:the\\s+)?delivery\\b`));
+  requirePattern("returns", returns, "approval or instructions before sending", /\b(approval|approved|authorization|instructions)\b/);
+  requirePattern("returns", returns, "sending the item back", /\b(send|ship|mail)\b[\s\S]*\b(back|return)/);
+  requirePattern("returns", returns, "inspection after receipt", /\binspect(?:ion|ed|ing)?\b/);
+  requirePattern("returns", returns, "refund initiation to the original payment method", /\b(initiat\w*|issu\w*)\b[\s\S]*\boriginal payment method\b/);
+  const refundWindow = span(RULES.refundDays).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  requirePattern("returns", returns, `our ${span(RULES.refundDays)} business-day refund initiation measured from receiving the return`, new RegExp(`\\b(initiat\\w*|issu\\w*)\\b[\\s\\S]{0,120}\\bwithin\\s+${refundWindow} business days?\\b[\\s\\S]{0,100}\\b(receiv\\w*|receipt)\\b`));
+  requirePattern("returns", returns, "variable additional bank posting time without a promised count", /\bbank\b[\s\S]{0,100}\b(additional|vary|varies|variable)\b[\s\S]{0,80}\b(time|timing|days?)\b/);
+  requirePattern("returns", returns, "who pays return shipping and damaged/defective/wrong exceptions", /customer[\s\S]*return shipping[\s\S]*(damaged|defective|wrong)/);
+  requirePattern("shipping", shipping, "delay notice and revised date", /\b(delay\w*|late)\b[\s\S]*\b(notif\w*|email|contact)\b[\s\S]*\b(revised|new|updated)\b[\s\S]*\bdate\b/);
+  requirePattern("shipping", shipping, "accepting a delay or cancelling for a full refund", /\b(accept|consent|agree)\w*\b[\s\S]*\b(cancel)\w*\b[\s\S]*\b(full )?refund\b/);
+  requirePattern("shipping", shipping, "cancellation before shipment", /\bcancel\w*\b[\s\S]*\bbefore\b[\s\S]*\b(ship|dispatch)/);
+  requirePattern("shipping", shipping, "lost parcel tracking and carrier investigation", /\b(lost|missing)\b[\s\S]*\btrack\w*\b[\s\S]*\b(carrier|shipping provider)\b[\s\S]*\binvestigat\w*\b/);
+  requirePattern("shipping", shipping, "lost parcel resolution", /\b(lost|missing)\b[\s\S]*\b(resolve|resolution|outcome|refund|replacement)\b/);
   need("privacy", "the operator and email", f.entity.name, f.email);
   need("terms", "the operator and email", f.entity.name, f.email);
+  const all = Object.values(p).join("\n");
+  if (!all.includes("Available payment methods are shown at checkout.")) out.push("policies must use the exact checkout payment wording");
+  if (/stripe|paypal|visa|mastercard|american express|apple pay|google pay/i.test(all)) out.push("policies must not promise a payment gateway");
+  if (!f.features?.orderAttribution && /order attribution|sourcebuster|sbjs_/i.test(p.privacy)) out.push("privacy must not describe disabled order attribution");
   return [
     ...out,
     ...claimProblems(Object.values(p).join("\n")),
+    ...unofferedShippingProblems(Object.values(p).join("\n"), "policies"),
     ...numberProblems(p.shipping, f, "shipping"),
     ...numberProblems(p.returns, f, "returns"),
   ];

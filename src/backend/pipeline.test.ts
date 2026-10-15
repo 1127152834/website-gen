@@ -7,8 +7,9 @@ import { provisionSite, UNWANTED_PLUGINS } from "./pipeline.ts";
 import { launchSite } from "./launch.ts";
 import { unseal } from "./secrets.ts";
 import type { BrowseInput } from "./qa-browser.ts";
+import { FALLBACK_STYLE, toObelGlobalStyles } from "./style.ts";
 import { PROVISION_STEPS } from "../shared/protocol.ts";
-import { deps, DOMAIN, EMAIL, fakeAi, fakeHostinger, fakeSite, key, runToEnd, setup, THEME_VERSION } from "./testing.ts";
+import { deps, DOMAIN, EMAIL, fakeAi, fakeBrowse, fakeHostinger, fakeSite, key, runToEnd, setup, THEME_VERSION } from "./testing.ts";
 
 test("a new site goes through every step: built on Hostinger, filled from CJ and AI, then checked by QA", async () => {
   const { db, siteId } = setup();
@@ -21,7 +22,7 @@ test("a new site goes through every step: built on Hostinger, filled from CJ and
     ai: fakeAi(aiLog),
     browse: async (input) => {
       browsed = input;
-      return { shots: [{ name: "home", file: "home.png" }], problems: [] };
+      return { ...await fakeBrowse(fetchImpl)(input), shots: [{ name: "home", file: "home.png" }] };
     },
   }), siteId);
 
@@ -52,7 +53,7 @@ test("a new site goes through every step: built on Hostinger, filled from CJ and
   assert.equal(wp.settings.woocommerce_default_country, "US:TX");
   assert.deepEqual(wp.zones[0].methods.map((m) => m.method_id).sort(), ["flat_rate", "free_shipping"]);
   assert.equal((wp.zones[0].locations as unknown[]).length, 49, "48 states + DC");
-  assert.deepEqual(wp.styles, { styles: { typography: { fontFamily: "serif" } }, settings: {} });
+  assert.deepEqual(wp.styles, toObelGlobalStyles(FALLBACK_STYLE));
   const pages = [...wp.pages.values()];
   const home = pages.find((p) => p.slug === "home")!;
   assert.equal(wp.options.page_on_front, home.id);
@@ -66,7 +67,8 @@ test("a new site goes through every step: built on Hostinger, filled from CJ and
   assert.ok(wp.products.every((p) => p.status === "publish"));
   const bed = wp.products.find((p) => p.type === "variable")!;
   assert.deepEqual(bed.variations.map((v) => v.price), ["14.99", "18.99"]);
-  assert.equal(bed.description, "<p>Soft cloth bed.</p>", "attributes stripped from AI html");
+  assert.match(bed.description, /^<p>Soft cloth bed\.<\/p>/, "attributes stripped from AI html");
+  assert.match(bed.description, /Light Grey S.*Light Grey M/, "copy covers every listed variant");
   assert.equal(wp.products.find((p) => p.type === "simple")!.price, "10.99");
 
   // QA：通过，阻断项没有失败；截图走的是一次性登录链接

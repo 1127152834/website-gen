@@ -6,6 +6,11 @@ import { siteContext, type PipelineDeps } from "./pipeline.ts";
 export async function launchSite(d: PipelineDeps, siteId: number, pause = (ms: number) => sleep(ms)): Promise<string> {
   const { site, domain, hx, act, inst, wp, emit, save } = siteContext(d, siteId);
   if (site.status !== "done") throw new Error("建站流程（含 QA）全部完成后才能上线");
+  // 历史状态或手工修改不能绕过复核中的阻断问题。
+  const qa = site.qa_json ? JSON.parse(site.qa_json) as { review?: { passed: boolean; issues: { level: string; status: string; page: string; fix: string }[] } } : null;
+  if (qa?.review && (!qa.review.passed || qa.review.issues.some((i) => i.level === "P1" && i.status !== "fixed"))) {
+    throw new Error(`整站 AI 复核仍有阻断项：${qa.review.issues.filter((i) => i.level === "P1" && i.status !== "fixed").map((i) => `${i.page}：${i.fix}`).join("；")}`);
+  }
   const log = (status: string, detail: string | null) => emit("step", { step: "launch", name: "上线", status, detail });
   log("running", null);
   try {
@@ -21,10 +26,9 @@ export async function launchSite(d: PipelineDeps, siteId: number, pause = (ms: n
     const res = await d.fetch(`https://${domain}/`, { signal: AbortSignal.timeout(30_000) });
     const html = await res.text();
     const stillHidden = !res.ok || /coming soon|launching soon|under maintenance/i.test(html);
+    if (stillHidden) throw new Error("访客首页仍不可用或仍是维护页；未记录上线成功，请确认缓存/维护状态后重试");
     save("launched_at", d.now());
-    const detail = stillHidden
-      ? "已关闭维护模式并允许搜索引擎收录；访客暂时还看到维护页，可能是缓存，几分钟后再看"
-      : "访客已经能看到网站，搜索引擎可以收录";
+    const detail = "访客已经能看到网站，搜索引擎可以收录";
     log("done", detail);
     return detail;
   } catch (e) {

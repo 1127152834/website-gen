@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { dueReverts, listChanges, revertChange } from "./changes.ts";
+import { applyChange, dueReverts, listChanges, revertChange } from "./changes.ts";
 import { siteContext } from "./pipeline.ts";
 import { localTime, siteTools } from "./site-tools.ts";
 import { deps, fakeHostinger, fakeSite, runToEnd, setup } from "./testing.ts";
@@ -64,8 +64,31 @@ test("a failure halfway through restores what was already written and records no
   assert.equal(listChanges(db, siteId).length, 0);
 });
 
+test("post-write verification failure and changeset insert failure both restore the product", async () => {
+  const { db, siteId, wp, d } = await builtSite();
+  const product = wp.products[0], original = product.name;
+  const ctx = siteContext(d, siteId);
+  const baseWp = ctx.wp;
+  let productReads = 0;
+  ctx.wp = async (method, path, body) => {
+    if (method === "GET" && path === `wc/v3/products/${product.id}` && ++productReads === 2) throw new Error("verification read failed");
+    return baseWp(method, path, body);
+  };
+  await assert.rejects(applyChange(ctx, "verify", [{ target: { kind: "product", id: product.id }, patch: { name: "Temporary" } }]), /verification read failed/);
+  assert.equal(product.name, original);
+  assert.equal(listChanges(db, siteId).length, 0);
+
+  const cleanCtx = siteContext(d, siteId);
+  db.exec("CREATE TRIGGER fail_changeset_insert BEFORE INSERT ON changesets BEGIN SELECT RAISE(ABORT, 'changeset blocked'); END");
+  await assert.rejects(applyChange(cleanCtx, "db failure", [{ target: { kind: "product", id: product.id }, patch: { name: "Temporary" } }]), /changeset blocked/);
+  assert.equal(product.name, original);
+  assert.equal(listChanges(db, siteId).length, 0);
+  db.exec("DROP TRIGGER fail_changeset_insert");
+});
+
 test("policies must keep the store's promises; announcement, product text and style changes are revertible", async () => {
   const { db, siteId, wp, tools, d } = await builtSite();
+  const generatedStyle = structuredClone(wp.styles);
   const policy = await tools().update_policy({ summary: "改运费", name: "shipping", html: "<p>Shipping costs $9.99. Orders ship in 2 business days.</p>" });
   assert.equal(policy.ok, false);
 
@@ -74,19 +97,55 @@ test("policies must keep the store's promises; announcement, product text and st
   assert.equal((wp.info as Record<string, string>).email, "support@nordicpaws.com", "other footer details are kept");
 
   const product = wp.products[0];
-  const r = await tools().update_product({ summary: "改商品名", id: product.id, name: "Plush Donut Dog Bed", description_html: "<p class=\"x\">Soft and round.</p>" });
+  const r = await tools().update_product({ summary: "改商品名", id: product.id, name: "Cozy Dog Bed", description_html: "<p class=\"x\">Soft cloth bed.</p><p>Options: Light Grey S, Light Grey M.</p>" });
   assert.equal(r.ok, true);
-  assert.equal(product.name, "Plush Donut Dog Bed");
-  assert.equal(product.description, "<p>Soft and round.</p>");
+  assert.equal(product.name, "Cozy Dog Bed");
+  assert.equal(product.description, "<p>Soft cloth bed.</p><p>Options: Light Grey S, Light Grey M.</p>");
+  assert.equal((await tools().update_product({ summary: "invent", id: product.id, description_html: "<p>Premium leather bed.</p>" })).ok, false);
+  assert.equal((await tools().update_product({ summary: "bad unit", id: product.id, description_html: "<p>Soft cloth bed, 27m long.</p>" })).ok, false);
 
   assert.equal((await tools().update_style({ summary: "换成默认风格", style: "default" })).ok, true);
   assert.deepEqual(wp.styles, { styles: {}, settings: {} });
 
   // 三条变更互不相干，可以任意顺序回滚
   for (const c of listChanges(db, siteId)) await revertChange(siteContext(d, siteId), c.id);
-  assert.equal((wp.info as Record<string, string>).announcement, "Free US shipping on orders over $49");
+  assert.equal((wp.info as Record<string, string>).announcement, "Free US shipping on orders of $49 or more");
   assert.equal(product.name, "Cozy Dog Bed");
-  assert.deepEqual(wp.styles, { styles: { typography: { fontFamily: "serif" } }, settings: {} });
+  assert.deepEqual(wp.styles, generatedStyle);
+});
+
+test("AI product image, categories and metadata use real fake-site snapshots and revert exactly", async () => {
+  const { db, siteId, wp, tools, d, page } = await builtSite();
+  const product = wp.products[0];
+  assert(product.images.length >= 2);
+  product.images = product.images.map((image, index) => ({ ...(image as object), id: index + 1 }));
+  const beforeImages = structuredClone(product.images);
+  const beforeHome = page("home").content;
+  const beforeCategories = structuredClone(product.categories ?? []);
+  const alternative = { id: 999, name: "Travel", slug: "travel", description: "Travel use" };
+  wp.categories.push(alternative);
+  const metaKey = `product:${product.id}`;
+  const beforeMeta = structuredClone(wp.metadata.get(metaKey)!);
+
+  const imageId = Number((product.images[1] as { id: number }).id);
+  assert.equal((await tools().update_product_main_image({ summary: "选择完整商品主图", id: product.id, image_id: imageId })).ok, true);
+  assert.equal((product.images[0] as { id: number }).id, imageId);
+  assert.match(page("home").content, new RegExp(String((product.images[0] as { src: string }).src).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  assert.equal((await tools().update_product_categories({ summary: "按用途调整分类", id: product.id, category_ids: [alternative.id] })).ok, true);
+  assert.deepEqual(product.categories, [{ id: alternative.id }]);
+  assert.equal((await tools().update_meta({
+    summary: "修正商品摘要", target_type: "product", target_id: product.id,
+    description: "Explore this factual product page with the listed options and source-backed details.",
+    og_description: "Review the product's listed options and source-backed details before choosing at checkout.",
+  })).ok, true);
+
+  const newChanges = listChanges(db, siteId).slice(0, 3);
+  assert.deepEqual(newChanges.map((c) => c.targets[0]).sort(), [`SEO product #${product.id}`, `商品 #${product.id}`, `商品 #${product.id}`].sort());
+  for (const change of newChanges) await revertChange(siteContext(d, siteId), change.id);
+  assert.deepEqual(product.images, beforeImages);
+  assert.equal(page("home").content, beforeHome);
+  assert.deepEqual(product.categories, beforeCategories);
+  assert.deepEqual(wp.metadata.get(metaKey), beforeMeta);
 });
 
 test("a scheduled revert becomes due at its time", async () => {

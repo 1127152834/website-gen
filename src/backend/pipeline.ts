@@ -14,6 +14,7 @@ import { seal, unseal } from "./secrets.ts";
 import { companionHealth, EnrollRejected, enrollCompanion, prepareCompanion, type CompanionCreds } from "./companion.ts";
 import type { CjGet } from "./cj.ts";
 import type { Browse } from "./qa-browser.ts";
+import type { VisionComplete } from "./vision.ts";
 import { storeSteps } from "./store.ts";
 import { ensureMailbox, mailDns, mailSetup } from "./mail.ts";
 import { enableSmtp, imapHasSubject, type InboxCheck, type MailboxCreds } from "./smtp.ts";
@@ -35,7 +36,9 @@ export interface PipelineDeps {
   /** 按用途调模型，返回纯文本和花费（美元） */
   ai: (role: ModelRole, prompt: string) => Promise<{ text: string; cost: number }>;
   cj: CjGet;
-  /** QA 截图用的浏览器；没有就跳过截图 */
+  /** 看图用途单独接收图片，不能用仅文本的 ai() 冒充视觉判断。 */
+  vision?: VisionComplete;
+  /** QA 文字抓取与截图；缺少浏览器时整站复核阻断，不视为完成。 */
   browse?: Browse;
   /** 查客服邮箱收件箱（确认测试邮件送达）；默认用 IMAP */
   inbox?: InboxCheck;
