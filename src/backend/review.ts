@@ -83,11 +83,9 @@ export function parseReviewIssues(text: string, shot?: string): ReviewFinding[] 
     if (!kinds.has(value.kind as string)) throw new Error(`复核问题 #${index + 1} 的 kind 无效`);
     if (typeof value.needs_real_data !== "boolean") throw new Error(`复核问题 #${index + 1} 缺少 needs_real_data`);
     let action: ReviewAction | undefined;
-    if (value.action != null) {
-      if (!object(value.action) || !ACTIONS.includes(value.action.tool as ActionName) || !object(value.action.params)
-        || !validActionParams(value.action.tool as ActionName, value.action.params)) {
-        throw new Error(`复核问题 #${index + 1} 的 action 不在允许列表`);
-      }
+    // 动作不在允许列表或参数不全：丢掉动作，问题保留为未修（不自动改站），不让整份复核作废
+    if (object(value.action) && ACTIONS.includes(value.action.tool as ActionName) && object(value.action.params)
+      && validActionParams(value.action.tool as ActionName, value.action.params)) {
       action = { tool: value.action.tool as ActionName, params: value.action.params };
     }
     const raw = value as unknown as RawIssue;
@@ -233,17 +231,19 @@ export function splitReviewText(text: string): string[] {
   return text.length ? Array.from({ length: Math.ceil(text.length / MAX_TEXT) }, (_, i) => text.slice(i * MAX_TEXT, (i + 1) * MAX_TEXT)) : [""];
 }
 
+const PRELAUNCH = "The store is intentionally hidden in maintenance / coming-soon mode until the owner launches it, and pages are captured while logged in as an administrator. Do not report coming-soon or maintenance banners, the admin toolbar, or other admin-only notices.";
+
 function textPrompt(snapshot: ReviewSnapshot, capture: BrowseCapture, pageText: string, chunk: number, totalChunks: number) {
   const context = reviewContext(snapshot, capture);
   const productJson = JSON.stringify(context.products), sourceJson = JSON.stringify(context.source), configJson = JSON.stringify(snapshot.config);
   if (productJson.length > 160_000 || sourceJson.length > 160_000 || configJson.length > 80_000) {
     throw new Error(`Page ${capture.name} facts exceed the safe review context; refusing a partial review`);
   }
-  return `You are the final compliance reviewer for a US English WooCommerce store. Review ONLY the supplied page, against the fixed store rules, actual WooCommerce/site configuration and source product facts. Check policy/product/checkout shipping consistency, titles versus every variant, units and dimensions, unsupported materials/certifications/discounts, WordPress sample/default content, result counts, payment claims, metadata and missing procedures. Never guess missing dimensions, set contents or materials.\n\nReturn strict JSON only: {"issues":[{"key":"stable semantic key scoped to URL","level":"P1|P2|P3","kind":"copy|policy|product|visual|seo|config|other","page":"buyer-readable page name","url":"absolute URL","evidence":"exact visible text or precise observed fact","why":"why it conflicts","fix":"specific correction","needs_real_data":true|false,"action":{"tool":"update_copy|update_policy|update_product|update_product_main_image|update_product_categories|update_meta","params":{}}}]}. Omit action when no allowlisted tool can safely fix it. An empty issues array is valid. Any actual dimensions, set contents or material proof missing from source facts MUST use needs_real_data=true and no action. Tool params must be complete and include summary.\n\nSTORE RULES:\n${JSON.stringify(reviewRules())}\nACTUAL CONFIGURATION:\n${configJson}\nSOURCE FACTS:\n${sourceJson}\nPRODUCT RECORDS:\n${productJson}\nPAGE URL:\n${capture.url}\nPAGE TEXT CHUNK ${chunk}/${totalChunks}:\n${redactSecrets(pageText)}`;
+  return `You are the final compliance reviewer for a US English WooCommerce store. ${PRELAUNCH} Review ONLY the supplied page, against the fixed store rules, actual WooCommerce/site configuration and source product facts. Check policy/product/checkout shipping consistency, titles versus every variant, units and dimensions, unsupported materials/certifications/discounts, WordPress sample/default content, result counts, payment claims, metadata and missing procedures. Never guess missing dimensions, set contents or materials.\n\nReturn strict JSON only: {"issues":[{"key":"stable semantic key scoped to URL","level":"P1|P2|P3","kind":"copy|policy|product|visual|seo|config|other","page":"buyer-readable page name","url":"absolute URL","evidence":"exact visible text or precise observed fact","why":"why it conflicts","fix":"specific correction","needs_real_data":true|false,"action":{"tool":"update_copy|update_policy|update_product|update_product_main_image|update_product_categories|update_meta","params":{}}}]}. Omit action when no allowlisted tool can safely fix it. An empty issues array is valid. Any actual dimensions, set contents or material proof missing from source facts MUST use needs_real_data=true and no action. Tool params must be complete and include summary.\n\nSTORE RULES:\n${JSON.stringify(reviewRules())}\nACTUAL CONFIGURATION:\n${configJson}\nSOURCE FACTS:\n${sourceJson}\nPRODUCT RECORDS:\n${productJson}\nPAGE URL:\n${capture.url}\nPAGE TEXT CHUNK ${chunk}/${totalChunks}:\n${redactSecrets(pageText)}`;
 }
 
 function visualPrompt(capture: BrowseCapture) {
-  return `Review this full-page screenshot of ${capture.url}. Check whether the main product image clearly shows the complete item, whether there are blank areas, horizontal overflow, broken galleries, template leftovers, "0 items" with visible products, blog-style product search results, misleading payment logos, and whether real products/category entry points are visible above the fold on mobile. Return strict JSON: {"issues":[{"key":"stable semantic key","level":"P1|P2|P3","kind":"visual|product|seo|other","page":"name","url":"${capture.url}","evidence":"precise visible fact","why":"impact","fix":"specific fix","needs_real_data":true|false}]}. Visual review must not propose actions because screenshots do not carry trusted object IDs. Empty issues is valid.`;
+  return `Review this full-page screenshot of ${capture.url}. ${PRELAUNCH} Check whether the main product image clearly shows the complete item, whether there are blank areas, horizontal overflow, broken galleries, template leftovers, "0 items" with visible products, blog-style product search results, misleading payment logos, and whether real products/category entry points are visible above the fold on mobile. Return strict JSON: {"issues":[{"key":"stable semantic key","level":"P1|P2|P3","kind":"visual|product|seo|other","page":"name","url":"${capture.url}","evidence":"precise visible fact","why":"impact","fix":"specific fix","needs_real_data":true|false}]}. Visual review must not propose actions because screenshots do not carry trusted object IDs. Empty issues is valid.`;
 }
 
 function actionMatchesTarget(action: ReviewAction, target: ReviewTarget | undefined, path: string): boolean {

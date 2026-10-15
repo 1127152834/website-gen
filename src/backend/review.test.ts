@@ -27,10 +27,13 @@ test("review issue parsing is strict and creates stable ids from semantic keys",
   assert.throws(() => parseReviewIssues(JSON.stringify({ issues: [{
     key: "x", level: "P0", kind: "product", page: "x", url: "x", evidence: "x", why: "x", fix: "x", needs_real_data: false,
   }] })), /level/);
-  assert.throws(() => parseReviewIssues(JSON.stringify({ issues: [{
+  // 不在允许列表的动作只丢掉动作，问题保留为未修；不能让一条坏建议作废整份复核（实测 2026-10-15）
+  const unsafe = parseReviewIssues(JSON.stringify({ issues: [{
     key: "x", level: "P2", kind: "copy", page: "x", url: "x", evidence: "x", why: "x", fix: "x", needs_real_data: false,
     action: { tool: "delete_everything", params: {} },
-  }] })), /action/);
+  }] }))[0];
+  assert.equal(unsafe.action, undefined);
+  assert.equal(unsafe.issue.status, "open");
 
   const guarded = parseReviewIssues(JSON.stringify({ issues: [{
     key: "dimension:x", level: "P1", kind: "product", page: "x", url: "https://shop.test/x/",
