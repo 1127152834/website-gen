@@ -1,0 +1,25 @@
+{
+  "name": "website-gen",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "poc:hostinger": "node --env-file=.env poc/hostinger.ts",
+    "poc:deepseek": "node --env-file=.env poc/deepseek.ts",
+    "poc:pi": "node --env-file=.env poc/pi-agent.ts",
+    "poc:cj": "node --env-file=.env poc/cj.ts",
+    "poc:electron-node": "node poc/run-electron-node.mjs"
+  },
+  "dependencies": {
+    "@earendil-works/pi-ai": "^1.2.0",
+    "@earendil-works/pi-coding-agent": "^1.2.0",
+    "@hostinger/mcp": "^2.16.0",
+    "@modelcontextprotocol/sdk": "^1.32.1"
+  },
+  "devDependencies": {
+    "electron": "^44.7.2"
+  }
+}
