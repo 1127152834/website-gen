@@ -211,7 +211,7 @@ const redactSecrets = (text: string) => text.replace(/\b(password|api[_ -]?key|a
 
 const PRELAUNCH = "The store is intentionally hidden in maintenance / coming-soon mode until the owner launches it, and pages are captured while logged in as an administrator. Do not report coming-soon or maintenance banners, the admin toolbar, or other admin-only notices.";
 
-const FOCUS = `Apply the perspective of a strict payment-gateway merchant underwriter (Stripe, PayPal or similar): authenticity, data consistency and completeness. This is a website evidence review, not a guarantee of gateway approval. Review ONLY whether this looks like a real, trustworthy operating independent business, not a demo or template. Report at most 5 issues per page, most important first. Only these focus areas may produce P1 or P2 (and do not report anything else):
+const FOCUS = `Apply the perspective of a strict payment-gateway merchant underwriter (Stripe, PayPal or similar): authenticity, data consistency and completeness. Exact matching of the legal business name, email, phone and address across pages, footer links, and placeholder/demo text are checked separately by code: do not report those. This is a website evidence review, not a guarantee of gateway approval. Review ONLY whether this looks like a real, trustworthy operating independent business, not a demo or template. Report at most 5 issues per page, most important first. Only these focus areas may produce P1 or P2 (and do not report anything else):
 (a) Returns/refund policy, About us, Contact, shipping, privacy and terms: concrete, believable, store-specific operator name, address, email, phone, legal identity, return steps and timelines consistent with the supplied shared rules. The About story must describe the business that actually sells the supplied catalog, not an unrelated business. Never invent real operator/contact facts.
 (b) Product pages: title, description, variant names and images must agree with each other and the CJ source facts. Flag a different item pictured, unsupported features, or variant/title mismatches; never guess missing measurements, materials or set contents.
 (c) Real-store trust: brand logo visible in the header, site icon (favicon), accepted payment methods consistent with enabled checkout gateways (including whether credit cards are actually accepted), contact details, no placeholder/demo leftovers such as Test Store, Lorem ipsum, Sample Page, example.com or 1 Main St, and no WordPress default content.
@@ -665,7 +665,8 @@ function underwritingEmails(text: string): string[] {
 }
 
 function underwritingPhones(text: string): string[] {
-  return [...new Set((text.match(/(?<![\d+])(?:\+\d(?:[ \t().-]*\d){7,14}|(?:1[ \t.-]*)?(?:\(\d{3}\)|\d{3})[ \t.-]*\d{3}[ \t.-]*\d{4})(?!\d)/g) ?? []).map(underwritingEvidence))];
+  // 不带任何分隔符的一串数字多半是商品编号/SKU，不当电话
+  return [...new Set((text.match(/(?<![\d+])(?:\+\d(?:[ \t().-]*\d){7,14}|(?:1[ \t.-]*)?(?:\(\d{3}\)|\d{3})[ \t.-]*\d{3}[ \t.-]*\d{4})(?!\d)/g) ?? []).filter((raw) => !/^\d+$/.test(raw)).map(underwritingEvidence))];
 }
 
 function underwritingPhoneDigits(value: string): string {
@@ -675,7 +676,8 @@ function underwritingPhoneDigits(value: string): string {
 
 function underwritingAddresses(text: string): string[] {
   const suffix = "(?:Street|St\\.?|Road|Rd\\.?|Avenue|Ave\\.?|Boulevard|Blvd\\.?|Lane|Ln\\.?|Drive|Dr\\.?|Court|Ct\\.?|Way|Parkway|Pkwy\\.?|Highway|Hwy\\.?|Place|Pl\\.?)";
-  const pattern = new RegExp(`\\b\\d{1,6}[ \\t]+(?:[A-Z0-9][A-Z0-9.'-]*[ \\t]+){1,8}${suffix}(?:[ \\t]+(?:Apt|Suite|Unit|#)[ \\t]*[A-Z0-9-]+)?(?:,[ \\t]*[A-Z][A-Z .'-]{1,40})?(?:,[ \\t]*[A-Z]{2}[ \\t]+\\d{5}(?:-\\d{4})?)?(?:,[ \\t]*(?:United States(?: of America)?|USA|US))?`, "gi");
+  // 后缀后必须是词边界：「© 2026 Test Store」不能读成「2026 Test St」
+  const pattern = new RegExp(`\\b\\d{1,6}[ \\t]+(?:[A-Z0-9][A-Z0-9.'-]*[ \\t]+){1,8}${suffix}(?![A-Za-z])(?:[ \\t]+(?:Apt|Suite|Unit|#)[ \\t]*[A-Z0-9-]+)?(?:,[ \\t]*[A-Z][A-Z .'-]{1,40})?(?:,[ \\t]*[A-Z]{2}[ \\t]+\\d{5}(?:-\\d{4})?)?(?:,[ \\t]*(?:United States(?: of America)?|USA|US))?`, "gi");
   return [...new Set([...text.matchAll(pattern)].map((match) => underwritingEvidence(match[0]!)))];
 }
 
@@ -802,5 +804,26 @@ export function deterministicUnderwritingFindings(snapshot: ReviewSnapshot): Rev
     const foreign = underwritingText(capture).match(/(?:€|£|¥)\s*\d[\d,.]*|\b(?:EUR|GBP|CAD|AUD|JPY|CNY)\s*\$?\s*\d[\d,.]*|(?:\$?\s*\d[\d,.]*)\s*(?:EUR|GBP|CAD|AUD|JPY|CNY)\b/i)?.[0];
     if (foreign) underwritingAdd(capture, "foreign-currency-price", `Non-USD price shown: ${underwritingEvidence(foreign)}`, "[Completeness] All displayed prices must be in USD.", "Convert and display this price in USD only.");
   }
-  return findings;
+  return mergeSiteWide(findings);
+}
+
+// 页脚等全站共用的问题会在每一页都命中：同一检查只报一条，证据里列出受影响的页面
+const SITE_WIDE = new Set(["underwriting-placeholder-content", "underwriting-footer-legal-name-missing", "underwriting-footer-links-missing", "underwriting-contact-details-missing", "underwriting-legal-name-mismatch", "underwriting-email-mismatch", "underwriting-phone-mismatch", "underwriting-address-mismatch"]);
+function mergeSiteWide(findings: ReviewFinding[]): ReviewFinding[] {
+  const groups = new Map<string, ReviewFinding[]>();
+  const out: ReviewFinding[] = [];
+  for (const finding of findings) {
+    if (!SITE_WIDE.has(finding.semanticKey ?? "")) { out.push(finding); continue; }
+    const group = groups.get(finding.semanticKey!);
+    if (group) group.push(finding);
+    else { groups.set(finding.semanticKey!, [finding]); out.push(finding); }
+  }
+  for (const group of groups.values()) {
+    if (group.length < 2) continue;
+    const first = group[0];
+    const pages = [...new Set(group.map((x) => x.issue.url))];
+    first.issue.evidence = `${first.issue.evidence} (on ${pages.length} pages: ${pages.slice(0, 5).join(", ")}${pages.length > 5 ? ", …" : ""})`;
+    first.issue.page = "Site-wide";
+  }
+  return out;
 }

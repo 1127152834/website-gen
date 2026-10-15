@@ -630,3 +630,32 @@ test("product names containing policy words are not mistaken for policy pages", 
   snapshot.captures.push({ ...snapshot.captures[0], name: "product-7-shipping-tote", path: "/product/shipping-tote/", url: "https://shop.test/product/shipping-tote/", sections: { ...snapshot.captures[0].sections!, body: "Shipping Tote $19.99 USD" } });
   assert(!deterministicUnderwritingFindings(snapshot).some((f) => f.issue.url.endsWith("/shipping-tote/") && /legal-name-missing/.test(f.semanticKey ?? "")));
 });
+
+// 实测 2026-10-15：页脚「© 2026 … Store」被当成地址「2026 … St」，商品页上的 10 位商品编号被当成电话；同一问题在每页各报一遍
+const addToFooters = (snapshot: ReviewSnapshot, extra: string) => {
+  for (const capture of snapshot.captures as (ReviewSnapshot["captures"][number] & { sections: { footer: string } })[]) {
+    capture.sections.footer += extra;
+    capture.text += extra;
+  }
+};
+
+test("a copyright year before a name ending in Store is not read as a street address", () => {
+  const snapshot = underwritingSnapshot();
+  addToFooters(snapshot, " | © 2026 Harbor Goods Store");
+  assert.deepEqual(deterministicUnderwritingFindings(snapshot).filter((row) => row.semanticKey === "underwriting-address-mismatch"), []);
+});
+
+test("a bare 10-digit product code is not read as a phone number", () => {
+  const snapshot = underwritingSnapshot();
+  const home = snapshot.captures[0] as ReviewSnapshot["captures"][number] & { sections: { body: string } };
+  home.sections.body += "\nSKU 5321488384"; home.text += "\nSKU 5321488384";
+  assert.deepEqual(deterministicUnderwritingFindings(snapshot).filter((row) => row.semanticKey === "underwriting-phone-mismatch"), []);
+});
+
+test("the same site-wide problem on every page is reported once with the affected pages", () => {
+  const snapshot = underwritingSnapshot();
+  addToFooters(snapshot, " | Demo Store");
+  const rows = deterministicUnderwritingFindings(snapshot).filter((row) => row.semanticKey === "underwriting-placeholder-content");
+  assert.equal(rows.length, 1);
+  assert.match(rows[0].issue.evidence, /7 pages/);
+});
