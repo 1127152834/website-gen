@@ -13,7 +13,9 @@ export function homepageDesignPrompt(products: DesignProduct[], categories: Cate
   return `Design a compact ecommerce homepage using only these real products and categories. On mobile a real product image and product link must appear before long marketing copy. No testimonials, history, discounts or unsupported claims. Reply JSON only: {"heading":string,"subheading":string,"heroProductId":number,"categorySlugs":string[],"featuredProductIds":number[]}. DATA: ${JSON.stringify({ products, categories })}`;
 }
 export function metadataPrompt(pages: { key: string; title: string; facts: string }[]): string {
-  return `Write a unique factual search description and a separate social sharing description for every page. No unsupported claims or repeated boilerplate. Reply JSON only: {"metadata":[{"key":string,"description":string,"ogDescription":string}]}. PAGES: ${JSON.stringify(pages)}`;
+  // 商品的 CJ 原始资料可能很长：提示词里只给前 2000 字，校验仍对照完整资料
+  const bounded = pages.map((p) => ({ ...p, facts: p.facts.slice(0, 2000) }));
+  return `Write a unique factual search description and a separate social sharing description for every page. description: at most 150 characters. ogDescription: at most 190 characters. No unsupported claims or repeated boilerplate. Reply JSON only: {"metadata":[{"key":string,"description":string,"ogDescription":string}]}. PAGES: ${JSON.stringify(bounded)}`;
 }
 export function parseCategoryDesign(text: string): CategoryDesign[] { return json(text).categories as CategoryDesign[]; }
 export function parseHomepageDesign(text: string): HomepageDesign { return json(text) as unknown as HomepageDesign; }

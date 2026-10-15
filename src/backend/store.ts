@@ -243,8 +243,8 @@ export function storeSteps(ctx: StepCtx): Record<BackStepKey, () => Promise<Step
       ...categories.map((c) => ({ key: `product_cat:${ids.get(c.slug)!}`, title: c.name, facts: c.description })),
     ];
     const descriptions = new Set<string>(), socialDescriptions = new Set<string>();
-    for (let start = 0; start < targets.length; start += 20) {
-      const batch = targets.slice(start, start + 20);
+    for (let start = 0; start < targets.length; start += 8) {
+      const batch = targets.slice(start, start + 8);
       const metadata = await ask(ctx, "为每页生成独立搜索和分享摘要", metadataPrompt(batch), parsePageMetadata, (v) => [...checkPageMetadata(v, batch.map((p) => p.key), batch), ...v.flatMap((m) => [descriptions.has(m.description) ? `${m.key}: meta description repeats a previous page` : "", socialDescriptions.has(m.ogDescription) ? `${m.key}: OG description repeats a previous page` : ""].filter(Boolean))]);
       for (const m of metadata) {
         descriptions.add(m.description); socialDescriptions.add(m.ogDescription);

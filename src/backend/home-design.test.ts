@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { buildAiHomepage, checkCategoryDesign, checkHomepageDesign, checkPageMetadata, type CategoryDesign, type DesignProduct, type HomepageDesign } from "./home-design.ts";
+import { buildAiHomepage, checkCategoryDesign, checkHomepageDesign, checkPageMetadata, metadataPrompt, type CategoryDesign, type DesignProduct, type HomepageDesign } from "./home-design.ts";
 
 const products: DesignProduct[] = [
   { id: 1, name: "Black Commuter Bag", permalink: "/product/commuter/", image: "https://img/1.jpg", sourceCategory: "bag", facts: "Black shoulder bag" },
@@ -42,4 +42,11 @@ test("every page receives unique meta and OG descriptions", () => {
     { key: "product-1", description: "See the Black Commuter Bag.", ogDescription: "A closer look at the Black Commuter Bag." },
   ], ["home", "product-1"]), []);
   assert.match(checkPageMetadata([{ key: "home", description: "Same", ogDescription: "One" }], ["home", "product-1"]).join("\n"), /missing metadata for product-1/);
+});
+
+test("metadata prompt states the length limits and keeps huge source facts bounded (live failure 2026-10-15)", () => {
+  const prompt = metadataPrompt([{ key: "product:1", title: "Bed", facts: "x".repeat(20_000) }]);
+  assert.match(prompt, /at most 150 characters/);
+  assert.match(prompt, /at most 190 characters/);
+  assert.ok(prompt.length < 4_000, `prompt too long: ${prompt.length}`);
 });
