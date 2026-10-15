@@ -124,6 +124,44 @@ export interface StepState {
   finishedAt: number | null;
 }
 
+/** sites.qa 返回给界面的 QA 报告：规则检查 + 截图（已转成 data URL）+ 整站 AI 复核 */
+export interface QaView {
+  at: number;
+  checks: { id: string; name: string; level: "block" | "warn"; ok: boolean; detail: string }[];
+  shots: { name: string; src: string }[];
+  /** 阶段三的整站 AI 复核；旧站或复核没跑时为空 */
+  review?: SiteReview;
+}
+
+/** 整站 AI 复核：逐页对照店铺规则和商品资料找问题，能修的自动修（最多 2 轮），修不了的留给你 */
+export interface SiteReview {
+  at: number;
+  /** 自动修复实际跑了几轮（0–2） */
+  rounds: number;
+  /** 没有未解决的 P1 才算通过 */
+  passed: boolean;
+  issues: ReviewIssue[];
+}
+
+export interface ReviewIssue {
+  /** 跨轮次稳定，用来对照同一个问题修没修好 */
+  id: string;
+  /** P1 阻断上线；P2 应该改；P3 建议 */
+  level: "P1" | "P2" | "P3";
+  kind: "copy" | "policy" | "product" | "visual" | "seo" | "config" | "other";
+  /** 页面名，如「商品：Travel Duffel」「退货政策」 */
+  page: string;
+  url: string;
+  /** 页面原文或截图里看到的情况 */
+  evidence: string;
+  why: string;
+  fix: string;
+  /** fixed = AI 已修并复核通过；open = 还没修好；needs_you = 需要你补真实资料（尺寸、套装组件、材质等） */
+  status: "fixed" | "open" | "needs_you";
+  /** 相关截图（data URL），可选 */
+  shot?: string;
+}
+
 /** 站点页列出的站（流程已完成的） */
 export interface SiteListItem {
   id: number;
