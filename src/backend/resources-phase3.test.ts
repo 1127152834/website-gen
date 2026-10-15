@@ -52,10 +52,10 @@ test("the site endpoint strictly validates logo and icon image attachment IDs be
   assert.ok(setter.indexOf("set_theme_mod(") > mediaValidation, "image settings are validated before theme-mod writes");
 });
 
-test("Obel 1.2.1 renders the wordmark on desktop and mobile with the title as its no-logo fallback", () => {
-  assert.match(stylesheet, /Version:\s+1\.2\.1/);
-  assert.match(themeReadme, /Stable tag:\s+1\.2\.1/);
-  assert.match(header, /wp:site-logo[^\n]*"width":180[^\n]*obel-header__logo/);
+test("Obel 1.2.2 renders the wordmark on desktop and mobile with the title as its no-logo fallback", () => {
+  assert.match(stylesheet, /Version:\s+1\.2\.2/);
+  assert.match(themeReadme, /Stable tag:\s+1\.2\.2/);
+  assert.match(header, /wp:site-logo[^\n]*"width":240[^\n]*obel-header__logo/);
   assert.match(header, /wp:site-title/);
   assert.match(stylesheet, /body\.wp-custom-logo[\s\S]*\.obel-header__brand[\s\S]*\.wp-block-site-title[\s\S]*display:\s*none/);
   assert.match(stylesheet, /@media \(max-width:\s*781px\)[\s\S]*\.obel-header__logo/);
@@ -149,3 +149,11 @@ test("audit 14: AI homepage stays product-first and responsive without breaking 
   assert.match(stylesheet, /footer a\[href\^="mailto:"\][\s\S]*?overflow-wrap:\s*anywhere/);
 });
 
+
+// 实测 2026-10-15：块主题不会自动在前台加载 style.css，Logo 尺寸、隐藏店名等规则在线上都没生效
+test("the Obel stylesheet is enqueued on the front end and the footer shows a readable wordmark", () => {
+  assert.match(theme, /wp_enqueue_scripts[\s\S]{0,300}wp_enqueue_style\(\s*'obel-style',\s*get_stylesheet_uri\(\)/);
+  const footer = read("resources/theme/obel/parts/footer.html");
+  assert.doesNotMatch(footer, /wp:site-logo \{"width":36\}/);
+  assert.match(stylesheet, /:has\(\.wp-block-site-logo img\)[^{]*\.wp-block-site-title/);
+});

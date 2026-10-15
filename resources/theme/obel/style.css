@@ -2,7 +2,7 @@
 Theme Name:        Obel
 Theme URI:         https://github.com/obel
 Description:       An editorial WooCommerce block theme: hairline borders, generous whitespace, and a warm cream palette for quiet, measured storefronts.
-Version:           1.2.1
+Version:           1.2.2
 Requires at least: 6.8
 Tested up to:      6.9
 Requires PHP:      8.2
@@ -20,21 +20,33 @@ Tags:              block-styles, full-site-editing, wide-blocks, e-commerce, one
 
 /* 品牌字标优先显示；尚未配置自定义 Logo 时保留站点标题作为回退。 */
 .obel-header__logo {
-	flex: 0 1 180px;
-	max-width: min(180px, 45vw);
+	flex: 0 1 240px;
+	max-width: min(240px, 50vw);
 }
 
 .obel-header__logo img {
 	display: block;
 	width: 100%;
 	height: auto;
-	max-height: 48px;
+	max-height: 64px;
 	object-fit: contain;
 	object-position: left center;
 }
 
-body.wp-custom-logo .obel-header__brand .wp-block-site-title {
+/* 有 Logo 时不再重复显示文字店名（不依赖 body class，块主题下它不一定存在） */
+body.wp-custom-logo .obel-header__brand .wp-block-site-title,
+.obel-header__brand:has(.wp-block-site-logo img) .wp-block-site-title,
+.obel-footer__brand:has(.wp-block-site-logo img) .wp-block-site-title {
 	display: none;
+}
+
+.obel-footer__logo img {
+	display: block;
+	width: 100%;
+	height: auto;
+	max-height: 56px;
+	object-fit: contain;
+	object-position: left center;
 }
 
 /* AI 生成首页：商品先于营销文案出现，移动端首屏保持紧凑。 */

@@ -149,3 +149,12 @@ test("partial generated branding resumes from the missing upload", async () => {
   assert.deepEqual(uploaded, ["icon"]);
   assert.equal(result.installed, true);
 });
+
+// 实测 2026-10-15：按「每字 1 个字号宽」估算，AI 给的 70px 居中店名被判超出画布，保底 Logo 只有 41px 字，页面上几乎看不清
+test("a normal centred wordmark is accepted and the fallback wordmark is large enough to read", () => {
+  const style = FALLBACK_STYLE;
+  const ai = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="160" viewBox="0 0 600 160"><text x="300" y="104" text-anchor="middle" font-family="${style.fonts.heading}" font-size="70" fill="${style.palette.primary}">Shopunitycart</text></svg>`;
+  assert.doesNotThrow(() => sanitizeBrandSvg(ai, { brand: "Shopunitycart", style, kind: "logo" }));
+  const size = Number(/font-size="([\d.]+)"/.exec(fallbackBrandSvgs("Shopunitycart", style).logoSvg)![1]);
+  assert.ok(size >= 60, `fallback logo text too small: ${size}`);
+});

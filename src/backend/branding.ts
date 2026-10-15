@@ -241,7 +241,7 @@ export function sanitizeBrandSvg(svg: string, input: ValidateSvgInput): string {
       if (!Number.isFinite(x) || !Number.isFinite(y) || x < 0 || x > expectedSize.width || y < 0 || y > expectedSize.height) throw new Error("SVG text anchor must be inside the canvas");
       if (name === "text") {
         if (frame.dominantBaseline && !["auto", "alphabetic", "middle", "central"].includes(frame.dominantBaseline)) throw new Error("SVG dominant-baseline value is not allowed");
-        const estimatedWidth = Array.from(input.kind === "logo" ? input.brand.trim() : monogram(input.brand)).length * fontSize;
+        const estimatedWidth = Array.from(input.kind === "logo" ? input.brand.trim() : monogram(input.brand)).length * fontSize * GLYPH_EM;
         const left = frame.textAnchor === "middle" ? x - estimatedWidth / 2 : frame.textAnchor === "end" ? x - estimatedWidth : x;
         if (left < 0 || left + estimatedWidth > expectedSize.width) throw new Error("SVG brand text must fit inside the canvas");
         const centered = frame.dominantBaseline === "middle" || frame.dominantBaseline === "central";
@@ -272,6 +272,9 @@ function safeBrandColor(style: AiStyleProposal, background: string): string {
   return [style.palette.primary, style.palette.heading, style.palette.text].find((color) => contrastRatio(color, background) >= 4.5) ?? style.palette.text;
 }
 
+// 估算文字宽度用的平均字宽（字号的倍数）。粗体衬线体的平均字宽约 0.55–0.6em，取 0.62 留余量
+const GLYPH_EM = 0.62;
+
 export function fallbackBrandSvgs(brand: string, style: AiStyleProposal): { logoSvg: string; iconSvg: string } {
   const label = escapeXml(brand.trim() || "Store");
   const initials = escapeXml(monogram(brand));
@@ -279,9 +282,9 @@ export function fallbackBrandSvgs(brand: string, style: AiStyleProposal): { logo
   const logoColor = style.palette.primary;
   const iconColor = safeBrandColor(style, style.palette.surface);
   const length = Math.max(Array.from(brand.trim() || "Store").length, 1);
-  const logoFontSize = Math.min(64, Math.max(0.001, Math.floor((540 / length) * 1000) / 1000));
+  const logoFontSize = Math.min(96, Math.max(0.001, Math.floor((552 / (length * GLYPH_EM)) * 1000) / 1000));
   return {
-    logoSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="160" viewBox="0 0 600 160"><text x="24" y="101" fill="${logoColor}" font-family="${font}" font-size="${logoFontSize}" font-weight="700">${label}</text></svg>`,
+    logoSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="160" viewBox="0 0 600 160"><text x="24" y="${Math.round(80 + logoFontSize * 0.35)}" fill="${logoColor}" font-family="${font}" font-size="${logoFontSize}" font-weight="700">${label}</text></svg>`,
     iconSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><rect x="0" y="0" width="512" height="512" rx="96" fill="${style.palette.surface}"/><text x="256" y="278" fill="${iconColor}" font-family="${font}" font-size="184" font-weight="700" text-anchor="middle" dominant-baseline="middle">${initials}</text></svg>`,
   };
 }

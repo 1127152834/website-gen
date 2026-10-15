@@ -1214,3 +1214,14 @@ add_action(
 	99
 );
 // === END payment-icons ===
+
+// === BEGIN stylesheet ===
+//
+// 块主题不会自动在前台加载 style.css；这里的 Logo、首页和移动端规则要显式加载才生效。
+add_action(
+	'wp_enqueue_scripts',
+	static function (): void {
+		wp_enqueue_style( 'obel-style', get_stylesheet_uri(), array(), wp_get_theme()->get( 'Version' ) );
+	}
+);
+// === END stylesheet ===
