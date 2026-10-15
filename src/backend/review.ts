@@ -298,18 +298,49 @@ export function deterministicSourceFindings(snapshot: ReviewSnapshot): ReviewFin
   return out;
 }
 
+/** 模型偶尔回坏 JSON：带上解析错误重试一次；还不行就失败（复核不能跳过）。 */
+export async function reviewWithRetry(call: (extra: string) => Promise<{ text: string; cost: number }>, shot?: string): Promise<ReviewFinding[]> {
+  let extra = "";
+  for (let attempt = 0; ; attempt++) {
+    const { text } = await call(extra);
+    try {
+      return parseReviewIssues(text, shot);
+    } catch (error) {
+      if (attempt >= 1) throw error;
+      extra = `\n\nYour previous reply was not valid: ${(error as Error).message}. Reply again with the strict JSON object only.`;
+    }
+  }
+}
+
 async function inspectSnapshot(ctx: StepCtx, snapshot: ReviewSnapshot, vision: VisionComplete): Promise<ReviewFinding[]> {
+  // 逐页复核彼此独立：3 个并发，结果按页面顺序合并
+  const perPage: ReviewFinding[][] = new Array(snapshot.captures.length);
+  let next = 0;
+  const worker = async () => {
+    for (let index = next++; index < snapshot.captures.length; index = next++) perPage[index] = await inspectCapture(ctx, snapshot, snapshot.captures[index], vision);
+  };
+  await Promise.all([worker(), worker(), worker()]);
+  const all = perPage.flat();
+  all.push(...deterministicSourceFindings(snapshot));
+  return [...new Map(all.map((x) => [x.issue.id, x])).values()];
+}
+
+async function inspectCapture(ctx: StepCtx, snapshot: ReviewSnapshot, capture: BrowseCapture, vision: VisionComplete): Promise<ReviewFinding[]> {
   const all: ReviewFinding[] = [];
-  for (const capture of snapshot.captures) {
+  {
     if (!capture.shot) throw new Error(`页面 ${capture.name} 没有截图，视觉复核不能跳过`);
     const chunks = splitReviewText(capture.text);
-    const visualResult = await vision(visualPrompt(capture), [{ name: capture.name, file: capture.shot }]);
-    ctx.emit("ai_text", { task: `整站视觉复核：${capture.name}`, cost: visualResult.cost, preview: visualResult.text.slice(0, 400) });
-    const pageFindings = [...parseReviewIssues(visualResult.text, capture.shot)];
+    const pageFindings = await reviewWithRetry(async (extra) => {
+      const r = await vision(visualPrompt(capture) + extra, [{ name: capture.name, file: capture.shot! }]);
+      ctx.emit("ai_text", { task: `整站视觉复核：${capture.name}`, cost: r.cost, preview: r.text.slice(0, 400) });
+      return r;
+    }, capture.shot);
     for (let i = 0; i < chunks.length; i++) {
-      const textResult = await ctx.d.ai("review", textPrompt(snapshot, capture, chunks[i], i + 1, chunks.length));
-      ctx.emit("ai_text", { task: `整站文本复核：${capture.name} ${i + 1}/${chunks.length}`, cost: textResult.cost, preview: textResult.text.slice(0, 400) });
-      pageFindings.push(...parseReviewIssues(textResult.text, capture.shot));
+      pageFindings.push(...await reviewWithRetry(async (extra) => {
+        const r = await ctx.d.ai("review", textPrompt(snapshot, capture, chunks[i], i + 1, chunks.length) + extra);
+        ctx.emit("ai_text", { task: `整站文本复核：${capture.name} ${i + 1}/${chunks.length}`, cost: r.cost, preview: r.text.slice(0, 400) });
+        return r;
+      }, capture.shot));
     }
     for (const finding of pageFindings) {
       finding.issue.url = capture.url;
@@ -320,8 +351,7 @@ async function inspectSnapshot(ctx: StepCtx, snapshot: ReviewSnapshot, vision: V
       all.push(finding);
     }
   }
-  all.push(...deterministicSourceFindings(snapshot));
-  return [...new Map(all.map((x) => [x.issue.id, x])).values()];
+  return all;
 }
 
 export interface ReviewLoopDeps {

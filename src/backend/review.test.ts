@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import type { ReviewIssue } from "../shared/protocol.ts";
 import type { StepCtx } from "./pipeline.ts";
-import { collectReviewSnapshot, crawlReviewTargets, deterministicSourceFindings, parseReviewIssues, runFullSiteReview, runReviewLoop, splitReviewText, type ReviewFinding, type ReviewSnapshot } from "./review.ts";
+import { collectReviewSnapshot, crawlReviewTargets, deterministicSourceFindings, parseReviewIssues, reviewWithRetry, runFullSiteReview, runReviewLoop, splitReviewText, type ReviewFinding, type ReviewSnapshot } from "./review.ts";
 
 const issue = (id: string, level: ReviewIssue["level"] = "P1", status: ReviewIssue["status"] = "open"): ReviewIssue => ({
   id, level, kind: "product", page: "Product", url: "https://shop.test/product/bag/",
@@ -207,4 +207,15 @@ test("fix rounds are reserved before writes so a partial failure cannot reset th
   assert.equal(first.rounds, 1);
   const retry = await runReviewLoop({ now: () => 2, collect: async () => snapshot, inspect: async () => [finding("c")], previous: first, maxRounds: 2, apply: async () => true });
   assert.equal(retry.rounds, 2);
+});
+
+test("a malformed review reply is retried once with the parse error, then fails closed (live failure 2026-10-15)", async () => {
+  const good = JSON.stringify({ issues: [] });
+  const prompts: string[] = [];
+  const replies = ["{\"issues\":[{\"key\":\"x\" \"level\":\"P1\"}]}", good];
+  const findings = await reviewWithRetry(async (extra) => { prompts.push(extra); return { text: replies.shift()!, cost: 0 }; });
+  assert.deepEqual(findings, []);
+  assert.equal(prompts.length, 2);
+  assert.match(prompts[1], /not valid/);
+  await assert.rejects(reviewWithRetry(async () => ({ text: "not json", cost: 0 })));
 });
