@@ -2,10 +2,11 @@
 // 主进程每接入一个界面窗口（或后台重启后），就送来一个 MessagePort；事件广播给所有在连的窗口。
 import { join } from "node:path";
 import type { MessagePortMain } from "electron";
-import type { BackendMessage, Push, Request, RunEvent } from "../shared/protocol.ts";
+import type { BackendMessage, ModelRole, Push, Request, RunEvent } from "../shared/protocol.ts";
 import { addAccount, listAccounts, listDomains, removeAccount, syncWithStoredToken } from "./accounts.ts";
 import { appendEvent, eventsSince, migrate, openDb, schemaVersion } from "./db.ts";
 import { createHostingerPool } from "./hostinger.ts";
+import { buildRuntime, listProviders, listRoles, pingModel, seedModelDefaults, setProviderKey, setRole } from "./models.ts";
 import { handleRequest, type Handlers } from "./rpc.ts";
 
 const userData = process.argv[2];
@@ -13,6 +14,7 @@ if (!userData) throw new Error("backend: missing userData path argument");
 const dbPath = join(userData, "website-gen.sqlite");
 const db = openDb(dbPath);
 migrate(db);
+seedModelDefaults(db);
 
 const ports = new Set<MessagePortMain>();
 const send = (port: MessagePortMain, msg: BackendMessage) => port.postMessage(msg);
@@ -93,6 +95,27 @@ const handlers: Handlers = {
     void sync(id).catch(() => {}); // 首次同步在后台跑，完成后推送 changed
     return { id };
   },
+  "models.providers": () => listProviders(db),
+  "models.roles": () => listRoles(db),
+  "models.setKey": (p) => {
+    const { providerId, apiKey } = p as { providerId: number; apiKey: string };
+    setProviderKey(db, requireKey(), Number(providerId), String(apiKey ?? ""));
+    return listProviders(db);
+  },
+  "models.setRole": (p) => {
+    const { role, providerId, modelId, thinking } = p as { role: ModelRole; providerId: number; modelId: string; thinking: string };
+    setRole(db, role, { providerId: Number(providerId), modelId: String(modelId), thinking: String(thinking) });
+    return listRoles(db);
+  },
+  // 发一句极短的请求验证 Key 和地址：只回复 OK
+  "models.test": async (p) => {
+    const { providerId, modelId } = p as { providerId: number; modelId: string };
+    const { models } = buildRuntime(db, requireKey());
+    const model = models.getModel(`p${Number(providerId)}`, String(modelId));
+    if (!model) throw new Error("这个提供方还没有设置 Key");
+    return pingModel(models, model as Parameters<typeof pingModel>[1]);
+  },
+
   "accounts.sync": async (p) => sync(Number((p as { id: number }).id)),
   "accounts.remove": async (p) => {
     const id = Number((p as { id: number }).id);

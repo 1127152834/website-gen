@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import iconUrl from "../../../resources/icon.png";
 import { OverviewPage } from "./pages/overview.tsx";
 import { AccountsPage } from "./pages/accounts.tsx";
+import { SettingsPage } from "./pages/settings.tsx";
 
 interface SystemInfo {
   electron: string;
@@ -14,14 +15,14 @@ interface SystemInfo {
   schemaVersion: number;
 }
 
-type Page = "overview" | "accounts";
+type Page = "overview" | "accounts" | "settings";
 const NAV: { label: string; icon: typeof Store; page?: Page }[] = [
   { label: "概览", icon: LayoutDashboard, page: "overview" },
   { label: "建站", icon: Store },
   { label: "批次", icon: Layers },
   { label: "站点", icon: Globe },
   { label: "账号", icon: KeyRound, page: "accounts" },
-  { label: "设置", icon: Settings },
+  { label: "设置", icon: Settings, page: "settings" },
 ];
 
 export default function App() {
@@ -87,6 +88,7 @@ export default function App() {
         <div className="flex-1 overflow-auto p-6">
           {page === "overview" && <OverviewPage connected={connected} />}
           {page === "accounts" && <AccountsPage />}
+          {page === "settings" && <SettingsPage />}
         </div>
       </main>
     </div>

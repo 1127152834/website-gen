@@ -31,6 +31,30 @@ export interface DomainSummary {
   hasMail: boolean;
 }
 
+/** 模型用途：agent 对话与建站，vision 看截图，bulk 批量文案，review 合规审查 */
+export type ModelRole = "agent" | "vision" | "bulk" | "review";
+
+export interface ProviderSummary {
+  id: number;
+  name: string;
+  protocol: "openai" | "anthropic";
+  baseUrl: string;
+  hasKey: boolean;
+  /** Key 末 4 位 */
+  keyHint: string | null;
+  models: { id: string; name: string; vision: boolean; thinkingLevels: string[] }[];
+}
+
+export interface RoleSummary {
+  role: ModelRole;
+  providerId: number;
+  modelId: string;
+  thinking: string;
+  ready: boolean;
+  /** 不可用的原因，可用时为 null */
+  problem: string | null;
+}
+
 export interface Request {
   kind: "req";
   id: number;

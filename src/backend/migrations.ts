@@ -61,4 +61,22 @@ export const MIGRATIONS: string[] = [
      expires_at  TEXT,
      PRIMARY KEY (account_id, external_id)
    );`,
+
+  // 003：模型提供方（Key 只存密文）+ 用途到模型的路由
+  `CREATE TABLE model_providers (
+     id                 INTEGER PRIMARY KEY,
+     name               TEXT NOT NULL UNIQUE,
+     protocol           TEXT NOT NULL CHECK (protocol IN ('openai','anthropic')),
+     base_url           TEXT NOT NULL,
+     api_key_ciphertext BLOB,
+     api_key_hint       TEXT,
+     models_json        TEXT NOT NULL CHECK (json_valid(models_json)),
+     created_at         INTEGER NOT NULL
+   );
+   CREATE TABLE model_roles (
+     role        TEXT PRIMARY KEY CHECK (role IN ('agent','vision','bulk','review')),
+     provider_id INTEGER NOT NULL REFERENCES model_providers (id) ON DELETE RESTRICT,
+     model_id    TEXT NOT NULL,
+     thinking    TEXT NOT NULL CHECK (thinking IN ('off','minimal','low','medium','high','max'))
+   );`,
 ];

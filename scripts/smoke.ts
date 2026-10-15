@@ -62,6 +62,31 @@ try {
   await page.getByText("还没有接入账号").waitFor({ timeout: 10_000 });
   console.log("✔ an invalid token is rejected by Hostinger and nothing is saved");
 
+  // 设置页：两个 DeepSeek 提供方共用 Key；假 Key 测试必须被拒；改用途模型能保存
+  await page.getByRole("button", { name: "设置" }).click();
+  const providers = page.locator('section[aria-label="模型提供方"]');
+  const roles = page.locator('section[aria-label="用途"]');
+  await providers.getByText("DeepSeek（Anthropic 格式）").waitFor({ timeout: 10_000 });
+  assert.equal(await providers.getByText("未设置").count(), 2, "both providers start without a key");
+  assert.equal(await roles.getByText("还没有设置 Key").count(), 4, "all four roles need a key");
+  await providers.getByRole("button", { name: "设置 Key" }).first().click();
+  await page.getByLabel("API Key").fill("sk-smoke-test-0000");
+  await page.getByRole("button", { name: "保存" }).click();
+  await providers.getByText("已设置，尾号 0000").nth(1).waitFor({ timeout: 10_000 });
+  assert.equal(await roles.getByText("可用").count(), 4, "all roles ready once the shared key is set");
+  console.log("✔ one key is shared by both DeepSeek providers and all roles become ready");
+  await providers.getByRole("button", { name: "测试 DeepSeek（OpenAI 格式）" }).click();
+  await providers.getByRole("status").filter({ hasText: "Key 无效" }).waitFor({ timeout: 40_000 });
+  console.log("✔ an invalid key is reported by the connection test");
+  await roles.getByRole("combobox", { name: "建站与对话的模型" }).click();
+  await page.getByRole("option", { name: "deepseek-flash" }).click();
+  await roles.getByRole("combobox", { name: "建站与对话的模型" }).filter({ hasText: "deepseek-flash" }).waitFor();
+  await page.getByRole("button", { name: "概览" }).click();
+  await page.getByRole("button", { name: "设置" }).click();
+  await roles.getByRole("combobox", { name: "建站与对话的模型" }).filter({ hasText: "deepseek-flash" }).waitFor({ timeout: 10_000 });
+  await page.screenshot({ path: "poc/out/smoke-3-settings.png" });
+  console.log("✔ changing a role's model is saved");
+
   assert.deepEqual(errors, [], "no console errors");
   console.log("✔ no console errors");
 } catch (e) {

@@ -599,8 +599,8 @@ flowchart TD
 | `operations` | id, tool, risk_level, target, params_redacted, status, initiator, confirmed_at, result |
 | `changesets` | id, site_id, diff_json, snapshot_ref, status, revert_at |
 | `compliance_reports` | site_id, score, findings_json, checked_at |
-| `model_providers` | id, name, protocol（openai / anthropic）, base_url, api_key_ciphertext, models_json（ID、能否看图、思考、上下文、单价） |
-| `model_roles` | role（agent / vision / bulk / review）, provider_id, model_id, thinking_level |
+| `model_providers` | id, name, protocol（openai / anthropic）, base_url, api_key_ciphertext, api_key_hint, models_json（取自 pi-ai 模型目录，不含 api / provider / baseUrl，运行时由提供方补上） |
+| `model_roles` | role（agent / vision / bulk / review）, provider_id, model_id, thinking（off / low / high / max 等，必须是该模型支持的强度） |
 | `ai_usage` | session_id, site_id, role, provider_id, model, input_tokens, cached_tokens, output_tokens, cost |
 | `templates` | id, name, category, style_preset, spec_skeleton |
 
@@ -624,7 +624,7 @@ flowchart TD
 | API Key | 和 Hostinger Token 一样加密存储 |
 | 模型列表 | 模型 ID、能否看图、是否支持思考、上下文长度、单价（成本看板用） |
 
-启动时用 pi-ai 的 `createProvider()` 按配置注册提供方，配置修改后热加载。预置两条 DeepSeek 记录（OpenAI 格式、Anthropic 格式），填上同一个 Key 即可用。
+启动时用 pi-ai 的 `createProvider()` 按配置注册提供方，配置修改后热加载。预置两条 DeepSeek 记录（OpenAI 格式、Anthropic 格式）；**给一个提供方设置 Key 时，同一域名下的其他提供方会一起更新**，所以只需填一次（已实现）。
 
 **按角色路由**：代码里只引用角色，不写模型 ID，换模型只改配置。
 
