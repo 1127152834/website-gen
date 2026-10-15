@@ -2,20 +2,28 @@
 // 都通过伴侣插件注册得到的应用密码调站点 REST（wp/v2、wc/v3、site-agent/v1），不经过 Hostinger。
 // AI 只写文字；定价、运费、规格拆分、事实核对都由代码完成。
 import { join } from "node:path";
+import { createHash } from "node:crypto";
 import { brandFromDomain } from "../shared/forms.ts";
-import { retailPrice, RULES } from "../shared/rules.ts";
-import { parseCandidates, parseDetail, splitVariants, type Candidate } from "./cj.ts";
+import { companionRules, CONTIGUOUS_STATES, retailPrice, RULES } from "../shared/rules.ts";
+import { parseCandidates, parseDetail, splitVariants, type Candidate, type CjProduct } from "./cj.ts";
 import {
-  buildPages, checkCopy, checkPolicies, checkProductCopy, claimProblems, cleanHtml, copyPrompt, PAGE_SLUGS, parseJsonReply,
-  parsePolicies, policyPrompt, productPrompt, screenPrompt, type Facts, type Policies, type SiteCopy, type Style,
+  buildPages, checkCopy, checkPolicies, claimProblems, cleanHtml, copyPrompt, PAGE_SLUGS, parseJsonReply,
+  parsePolicies, policyPrompt, screenPrompt, type Facts, type Policies, type SiteCopy,
 } from "./content.ts";
 import { PermanentError } from "./jobs.ts";
 import type { BackStepKey, StepCtx, StepResult } from "./pipeline.ts";
 import { BrowserUnavailable } from "./qa-browser.ts";
 import { mailStatus } from "./mail.ts";
+import type { ModelRole, SiteReview } from "../shared/protocol.ts";
+import { buildPublishableVariants, checkProductAnalysis, checkUnitReview, parseProductAnalysis, parseUnitReview, productAnalysisPrompt, productCopyFromAnalysis, unitReviewPrompt, unitReviewCopyProblems, type ProductAnalysis, type UnitReview } from "./product-content.ts";
+import { FALLBACK_STYLE, parseStyleProposal, safeStyleProposal, stylePrompt, toObelGlobalStyles } from "./style.ts";
+import { buildAiHomepage, categoryDesignPrompt, checkCategoryDesign, checkHomepageDesign, checkPageMetadata, homepageDesignPrompt, metadataPrompt, parseCategoryDesign, parseHomepageDesign, parsePageMetadata, type CategoryDesign, type DesignProduct, type HomepageDesign } from "./home-design.ts";
+import { completeVision } from "./vision.ts";
+import { runFullSiteReview } from "./review.ts";
 
-export type Pick = Candidate & { status: "pending" | "done" | "skipped"; productId?: number; reason?: string };
-interface Spec { copy: SiteCopy; policies: Policies }
+export interface ProductSource { product: CjProduct; analysis: ProductAnalysis; unitReview: UnitReview }
+export type Pick = Candidate & { status: "pending" | "done" | "skipped"; productId?: number; reason?: string; source?: ProductSource };
+interface Spec { copy: SiteCopy; policies: Policies; design?: { completed: boolean; categories: CategoryDesign[]; home: HomepageDesign; products: DesignProduct[]; fingerprint: string } }
 
 export interface QaCheck {
   id: string;
@@ -28,6 +36,9 @@ export interface QaReport {
   at: number;
   checks: QaCheck[];
   shots: { name: string; file: string }[];
+  review?: SiteReview;
+  /** 仅后端保存，用于区分真实资料补齐与模型暂时漏报；不发给界面。 */
+  reviewFactsHash?: string;
 }
 
 /** 商品不能上架（资料不全、价格不在区间、AI 两次都没写对等）：跳过它，换下一个候选。 */
@@ -37,7 +48,7 @@ class Skip extends Error {}
 const EXCLUDE = /\b(batter(y|ies)|rechargeable|lithium|liquid|essential oil|lotion|serum|shampoo|perfume|cosmetic|food|snack|supplement|vitamin|medical|baby|babies|infant|toddler|kids?|child(ren)?|knife|knives|gun|adult|sexy|lingerie)\b/i;
 const ZONE = "Contiguous US";
 // 本土 48 州 + DC
-const CONTIGUOUS = "AL AZ AR CA CO CT DE DC FL GA ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY".split(" ");
+const CONTIGUOUS = CONTIGUOUS_STATES;
 
 export const splitCategories = (s: string) => s.split(/[,，、;；\n]/).map((x) => x.trim()).filter(Boolean).slice(0, 5);
 const titleCase = (s: string) => s.replace(/\b\w/g, (c) => c.toUpperCase());
@@ -50,6 +61,7 @@ export function facts(ctx: StepCtx): Facts {
     email: ctx.entity.supportEmail === "auto" ? `support@${ctx.domain}` : ctx.entity.supportEmail.trim(),
     categories: splitCategories(ctx.form.categories),
     entity: ctx.entity,
+    features: { orderAttribution: false, analytics: false, advertising: false, newsletter: false },
   };
 }
 
@@ -59,12 +71,29 @@ export function parseUsAddress(address: string): { street: string; city: string;
   return m ? { street: m[1], city: m[2], state: m[3].toUpperCase(), zip: m[4] } : { street: address.trim(), city: "", state: "", zip: "" };
 }
 
+/** WordPress/WooCommerce 的集合接口都要翻页，不能把 per_page=100 当作全部数据。 */
+async function allWp<T>(ctx: StepCtx, path: string): Promise<T[]> {
+  const rows: T[] = [];
+  for (let page = 1; page <= 100; page++) {
+    let batch: T[];
+    try { batch = await ctx.wp("GET", `${path}${path.includes("?") ? "&" : "?"}per_page=100&page=${page}`) as T[]; }
+    catch (e) {
+      if (page > 1 && e instanceof PermanentError && /page number requested is larger than the number of pages available/i.test(e.message)) return rows;
+      throw e;
+    }
+    if (!Array.isArray(batch)) throw new Error(`集合接口没有返回列表：${path}`);
+    rows.push(...batch);
+    if (batch.length < 100) return rows;
+  }
+  throw new Error(`集合接口超过可安全复核的分页数量：${path}`);
+}
+
 /** 调模型并校验；不合格时把问题告诉模型重写一次，还不行就报错。 */
-async function ask<T>(ctx: StepCtx, task: string, prompt: string, parse: (text: string) => T, check: (v: T) => string[]): Promise<T> {
+async function ask<T>(ctx: StepCtx, task: string, prompt: string, parse: (text: string) => T, check: (v: T) => string[], role: ModelRole = "bulk"): Promise<T> {
   let problems: string[] = [];
   let extra = "";
   for (let attempt = 0; attempt < 2; attempt++) {
-    const { text, cost } = await ctx.d.ai("bulk", prompt + extra);
+    const { text, cost } = await ctx.d.ai(role, prompt + extra);
     let value: T | undefined;
     try {
       value = parse(text);
@@ -91,11 +120,11 @@ export function storeSteps(ctx: StepCtx): Record<BackStepKey, () => Promise<Step
   const inRange = (price: number) => (lo == null || price >= lo) && (hi == null || price <= hi);
   const categoryIds = new Map<string, number>();
 
-  async function ensureCategory(keyword: string): Promise<number> {
+  async function ensureCategory(keyword: string, description?: string): Promise<number> {
     const slug = slugify(keyword);
     if (!categoryIds.has(slug)) {
       const found = (await wp("GET", `wc/v3/products/categories?slug=${slug}`)) as { id: number }[];
-      categoryIds.set(slug, found[0]?.id ?? ((await wp("POST", "wc/v3/products/categories", { name: titleCase(keyword), slug })) as { id: number }).id);
+      categoryIds.set(slug, found[0]?.id ?? ((await wp("POST", "wc/v3/products/categories", { name: titleCase(keyword), slug, ...(description ? { description } : {}) })) as { id: number }).id);
     }
     return categoryIds.get(slug)!;
   }
@@ -106,50 +135,71 @@ export function storeSteps(ctx: StepCtx): Record<BackStepKey, () => Promise<Step
     return ((await wp("POST", found[0] ? `wp/v2/pages/${found[0].id}` : "wp/v2/pages", body)) as { id: number }).id;
   }
 
-  async function applyStyle(style: Style) {
-    const [theme] = (await wp("GET", "wp/v2/themes?status=active")) as { stylesheet: string; _links?: Record<string, { href: string }[]> }[];
+  const see = ctx.d.vision ?? ((prompt, images) => completeVision(ctx.d.db, ctx.d.key, prompt, images, ctx.d.fetch));
+
+  async function applyGlobalStyles(body: ReturnType<typeof toObelGlobalStyles>) {
+    const [theme] = await wp("GET", "wp/v2/themes?status=active") as { _links?: Record<string, { href: string }[]> }[];
     const id = /global-styles\/(\d+)/.exec(theme?._links?.["wp:user-global-styles"]?.[0]?.href ?? "")?.[1];
     if (!id) throw new Error("找不到全局样式");
-    let body: { styles: unknown; settings: unknown } = { styles: {}, settings: {} };
-    if (style !== "default") {
-      const variations = (await wp("GET", `wp/v2/global-styles/themes/${theme.stylesheet}/variations`)) as { title?: string; styles?: unknown; settings?: unknown }[];
-      const v = variations.find((x) => x.title?.toLowerCase() === style);
-      if (v) body = { styles: v.styles ?? {}, settings: v.settings ?? {} };
-    }
     await wp("POST", `wp/v2/global-styles/${id}`, body);
   }
 
   async function listProduct(pick: Pick, featured: boolean): Promise<number> {
     const sku = `WG-${pick.pid.slice(-10)}`;
     const [existing] = (await wp("GET", `wc/v3/products?sku=${sku}&status=any`)) as { id: number; status: string }[];
-    if (existing?.status === "publish") return existing.id;
+    if (existing?.status === "publish") {
+      const saved = await wp("GET", `wc/v3/products/${existing.id}`) as { meta_data?: { key: string; value: ProductSource }[] };
+      const source = saved.meta_data?.find((m) => m.key === "_source_cj_facts")?.value;
+      if (source?.product && source.analysis && source.unitReview) {
+        pick.source = source;
+        await wp("POST", "site-agent/v1/metadata", { target_type: "product", target_id: existing.id, description: source.analysis.metaDescription, og_description: source.analysis.ogDescription });
+        return existing.id;
+      }
+      // 没有可追溯资料的半成品不能靠“已发布”跳过本阶段校验。
+    }
     // 上次建到一半（草稿）就中断了：删掉重建，保证规格完整
     if (existing) await wp("DELETE", `wc/v3/products/${existing.id}?force=true`);
 
     const cj = parseDetail(await ctx.d.cj(`/product/query?pid=${pick.pid}`));
+    cj.images = [...new Set([...cj.images, ...cj.variants.flatMap((v) => v.image ? [v.image] : [])])];
     if (cj.images.length === 0) throw new Skip("CJ 资料里没有图片");
     const options = splitVariants(cj.keyNames, cj.variants.map((v) => v.key));
-    const variants = cj.variants.map((v, i) => ({ ...v, attrs: options[i], price: retailPrice(v.cost) })).filter((v) => inRange(v.price));
-    if (variants.length === 0) throw new Skip("没有售价落在区间内的规格");
-
-    const copy = await ask(ctx, `改写商品 ${pick.pid}`, productPrompt(facts(ctx), {
-      name: cj.name, category: cj.category, materials: cj.materials, description: cj.description,
-      options: [...new Set(variants.flatMap((v) => Object.values(v.attrs)))],
-    }), (t) => parseJsonReply(t) as { title: string; short_description: string; description_html: string; image_alt: string }, checkProductCopy)
-      .catch((e: Error) => {
-        throw new Skip(e.message);
-      });
+    const inputs = cj.variants.map((v, i) => ({ ...v, attrs: options[i], price: retailPrice(v.cost) })).filter((v) => inRange(v.price));
+    if (inputs.length === 0) throw new Skip("没有售价落在区间内的规格");
+    const analysis = await ask(ctx, `分析商品与所有变体 ${pick.pid}`, productAnalysisPrompt(facts(ctx), cj, inputs), parseProductAnalysis,
+      (value) => checkProductAnalysis(value, cj, inputs)).catch((e: Error) => { throw new Skip(e.message); });
+    const unitReview = await ask(ctx, `复核商品尺寸单位 ${pick.pid}`, unitReviewPrompt(cj, analysis, inputs), parseUnitReview,
+      (value) => checkUnitReview(value, inputs), "review");
+    const unitProblems = unitReviewCopyProblems(unitReview, analysis, inputs);
+    if (unitProblems.length) throw new Skip(`文案仍包含可疑尺寸：${unitProblems.join("；")}`);
+    const variants = buildPublishableVariants(cj, analysis, unitReview, inputs).map((v) => ({ ...v, price: retailPrice(v.cost), attrs: { Option: v.buyerName } as Record<string, string> }));
+    if (!variants.length) throw new Skip("没有交付内容清楚的规格");
+    // 多规格不能退回全部共用主图；没有对应规格图的供应资料不足以上架。
+    if (variants.length > 1 && variants.some((v) => !v.image)) throw new Skip("CJ 缺少变体对应图片，需要真实规格图");
+    const candidates = [...new Set([...cj.images, ...variants.flatMap((v) => v.image ? [v.image] : [])])].slice(0, 12);
+    let selected: { mainImage: string; reason: string; completeProductVisible: boolean } | undefined;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const selection = await see(`Choose the clearest main photo of the complete sold product from these candidate images. Reject detail-only photos, misleading accessories and collages when a complete view exists. Do not infer set contents from images. Reply JSON only: {"mainImage": "exact candidate URL", "reason": "visible whole-product evidence", "completeProductVisible": true}. If no complete sold item can be identified, return completeProductVisible:false. CJ facts: ${JSON.stringify({ name: cj.name, variants: analysis.variants.filter((v) => v.clear), candidates })}`, candidates.map((url, i) => ({ name: `candidate-${i + 1}: ${url}`, url })));
+      try {
+        const value = parseJsonReply(selection.text) as typeof selected;
+        if (value && candidates.includes(value.mainImage) && value.reason?.trim() && value.completeProductVisible === true) { selected = value; break; }
+      } catch { /* 格式不合格只重试一次，不替换成第一张图。 */ }
+      ctx.emit("warn", { message: `商品 ${pick.pid} 主图视觉判断不合格，重试 ${attempt + 1}/2` });
+    }
+    if (!selected) throw new Skip("看图模型无法从候选图确认完整商品，需要补充主图");
+    analysis.mainImage = selected.mainImage;
+    pick.source = { product: cj, analysis, unitReview };
+    const copy = productCopyFromAnalysis(analysis);
     const size = (v: (typeof variants)[number]) => ({
-      weight: (v.weight / 1000).toFixed(3), // CJ 是克，Woo 默认千克
-      dimensions: { length: (v.length / 10).toFixed(1), width: (v.width / 10).toFixed(1), height: (v.height / 10).toFixed(1) }, // 毫米 → 厘米
+      ...(Number.isFinite(v.weight) && v.weight > 0 && v.weight < 100_000 ? { weight: (v.weight / 1000).toFixed(3) } : {}),
+      ...(v.safeDimensions ? { dimensions: { length: (v.safeDimensions.length / 10).toFixed(1), width: (v.safeDimensions.width / 10).toFixed(1), height: (v.safeDimensions.height / 10).toFixed(1) } } : {}),
     });
+    const imageOrder = [selected.mainImage, ...candidates.filter((src) => src !== selected.mainImage)].slice(0, 12);
     const base = {
       name: copy.title, status: "draft", sku, featured,
       short_description: cleanHtml(copy.short_description), description: cleanHtml(copy.description_html),
-      images: cj.images.slice(0, 4).map((src, i) => ({ src, alt: i ? `${copy.image_alt} (${i + 1})` : copy.image_alt })),
-      categories: [{ id: await ensureCategory(pick.keyword) }],
-      // 只在后台留 CJ 商品 ID 方便追溯，前台不显示
-      meta_data: [{ key: "_source_cj_pid", value: pick.pid }],
+      images: imageOrder.map((src, i) => ({ src, alt: i ? `${copy.image_alt} (${i + 1})` : copy.image_alt })),
+      meta_data: [{ key: "_source_cj_pid", value: pick.pid }, { key: "_source_cj_facts", value: pick.source }],
     };
     let id: number;
     if (variants.length === 1) {
@@ -163,14 +213,71 @@ export function storeSteps(ctx: StepCtx): Record<BackStepKey, () => Promise<Step
       const batch = (await wp("POST", `wc/v3/products/${id}/variations/batch`, {
         create: variants.map((v, i) => ({
           sku: `${sku}-${i + 1}`, regular_price: v.price.toFixed(2), manage_stock: false, stock_status: "instock",
-          attributes: Object.entries(v.attrs).map(([name, option]) => ({ name, option })), ...size(v),
+          attributes: Object.entries(v.attrs).map(([name, option]) => ({ name, option })),
+          image: { src: v.image! }, ...size(v),
         })),
       })) as { create: { id?: number; error?: { message?: string } }[] };
       const failed = batch.create.filter((x) => !x.id);
       if (failed.length) throw new Error(`${failed.length} 个规格没建成：${failed[0].error?.message ?? "未知原因"}`);
     }
     await wp("PUT", `wc/v3/products/${id}`, { status: "publish" });
+    await wp("POST", "site-agent/v1/metadata", { target_type: "product", target_id: id, description: copy.metaDescription, og_description: copy.ogDescription });
     return id;
+  }
+
+  async function finishPresentation(current: Spec, catalog: DesignProduct[], categories: CategoryDesign[], ids: Map<string, number>, home: HomepageDesign, fingerprint: string) {
+    // 视觉模型看到实际商品图；不合格的建议只能回落到高对比度保底。
+    const images = [...new Set(catalog.slice(0, 4).map((p) => p.image))];
+    const proposal = await see(stylePrompt(facts(ctx).categories, images), images.map((url, i) => ({ name: `product-${i + 1}`, url })));
+    let style = FALLBACK_STYLE;
+    try {
+      const checked = safeStyleProposal(parseStyleProposal(proposal.text));
+      style = checked.style;
+      if (checked.fallbackUsed) ctx.emit("warn", { message: `AI 样式未通过对比度/结构检查，采用安全保底：${checked.problems.join("；")}` });
+    } catch { ctx.emit("warn", { message: "AI 样式格式无效，采用安全保底" }); }
+    await applyGlobalStyles(toObelGlobalStyles(style));
+    const pages = await allWp<{ id: number; slug: string; title: { rendered: string }; content: { rendered: string } }>(ctx, "wp/v2/pages?_fields=id,slug,title,content");
+    const targets = [
+      ...pages.map((p) => ({ key: p.slug === "home" ? "home:0" : p.slug === "shop" ? "shop:0" : `page:${p.id}`, title: p.title.rendered, facts: p.content.rendered || ({ shop: "Browse the current product catalog and prices.", cart: "Review selected items, quantities and totals before checkout.", checkout: "Enter delivery details; available payment methods are shown at checkout.", "my-account": "Sign in to manage your account and view order details." } as Record<string, string>)[p.slug] || p.title.rendered })),
+      ...catalog.map((p) => ({ key: `product:${p.id}`, title: p.name, facts: p.facts })),
+      ...categories.map((c) => ({ key: `product_cat:${ids.get(c.slug)!}`, title: c.name, facts: c.description })),
+    ];
+    const descriptions = new Set<string>(), socialDescriptions = new Set<string>();
+    for (let start = 0; start < targets.length; start += 20) {
+      const batch = targets.slice(start, start + 20);
+      const metadata = await ask(ctx, "为每页生成独立搜索和分享摘要", metadataPrompt(batch), parsePageMetadata, (v) => [...checkPageMetadata(v, batch.map((p) => p.key), batch), ...v.flatMap((m) => [descriptions.has(m.description) ? `${m.key}: meta description repeats a previous page` : "", socialDescriptions.has(m.ogDescription) ? `${m.key}: OG description repeats a previous page` : ""].filter(Boolean))]);
+      for (const m of metadata) {
+        descriptions.add(m.description); socialDescriptions.add(m.ogDescription);
+        const [target_type, targetId] = m.key.split(":");
+        await wp("POST", "site-agent/v1/metadata", { target_type, target_id: Number(targetId), description: m.description, og_description: m.ogDescription });
+      }
+    }
+    ctx.save("spec_json", JSON.stringify({ ...current, copy: { ...current.copy, hero: { heading: home.heading, subheading: home.subheading } }, design: { completed: true, categories, home, products: catalog, fingerprint }, aiStyle: style }));
+  }
+
+  async function finishDesign() {
+    const current = spec(ctx);
+    const picks = JSON.parse(ctx.site.picks_json ?? "[]") as Pick[];
+    const catalog: DesignProduct[] = [];
+    const published = await allWp<{ id: number; name: string; permalink?: string; images: { src: string }[]; description: string }>(ctx, "wc/v3/products?status=publish");
+    for (const product of published) {
+      const pick = picks.find((x) => x.productId === product.id);
+      catalog.push({ id: product.id, name: product.name, permalink: product.permalink || `https://${ctx.domain}/product/${product.id}/`, image: product.images[0]?.src ?? "", sourceCategory: pick?.source?.product.category ?? pick?.keyword ?? "", facts: JSON.stringify(pick?.source ?? { description: product.description }) });
+    }
+    if (!catalog.length || catalog.some((p) => !p.image)) throw new Error("真实商品及图片未就绪，不能设计首页");
+    const fingerprint = createHash("sha256").update(JSON.stringify(catalog)).digest("hex");
+    if (current.design?.completed && current.design.fingerprint === fingerprint) return;
+    const categories = await ask(ctx, "按真实用途设计分类", categoryDesignPrompt(catalog), parseCategoryDesign, (v) => checkCategoryDesign(v, catalog));
+    const ids = new Map<string, number>();
+    for (const category of categories) {
+      const id = await ensureCategory(category.slug, category.description);
+      await wp("PUT", `wc/v3/products/categories/${id}`, { name: category.name, description: category.description });
+      ids.set(category.slug, id);
+    }
+    for (const product of catalog) await wp("PUT", `wc/v3/products/${product.id}`, { categories: categories.filter((c) => c.productIds.includes(product.id)).map((c) => ({ id: ids.get(c.slug)! })) });
+    const home = await ask(ctx, "用真实商品设计紧凑首页", homepageDesignPrompt(catalog, categories), parseHomepageDesign, (v) => checkHomepageDesign(v, catalog, categories));
+    await upsertPage("home", "Home", buildAiHomepage(home, catalog, categories));
+    await finishPresentation(current, catalog, categories, ids, home, fingerprint);
   }
 
   return {
@@ -209,7 +316,10 @@ export function storeSteps(ctx: StepCtx): Record<BackStepKey, () => Promise<Step
     },
 
     async content() {
-      if (ctx.site.spec_json) return { status: "done", detail: "沿用已生成的文案" };
+      if (ctx.site.spec_json) {
+        const current = spec(ctx);
+        if (checkCopy(current.copy, facts(ctx)).length === 0 && checkPolicies(current.policies, facts(ctx)).length === 0) return { status: "done", detail: "已按本阶段规则重新校验并沿用文案" };
+      }
       const f = facts(ctx);
       const copy = await ask(ctx, "站点文案", copyPrompt(f), (t) => parseJsonReply(t) as SiteCopy, (c) => checkCopy(c, f));
       const policies = await ask(ctx, "政策页", policyPrompt(f), parsePolicies, (p) => checkPolicies(p, f));
@@ -223,8 +333,10 @@ export function storeSteps(ctx: StepCtx): Record<BackStepKey, () => Promise<Step
       await wp("POST", "site-agent/v1/site", {
         // 建站期间不让搜索引擎收录（维护页没有 noindex），上线时再打开
         options: { blogname: f.brand, blogdescription: copy.tagline, blog_public: 0 },
-        info: { entity: f.entity.name, email: f.email, phone: f.entity.phone, address: f.entity.address, announcement: `Free US shipping on orders over $${RULES.freeShippingOver}` },
+        rules: companionRules(f.entity),
+        info: { entity: f.entity.name, email: f.email, phone: f.entity.phone, address: f.entity.address, announcement: `Free US shipping on orders of $${RULES.freeShippingOver} or more` },
       });
+      await wp("POST", "site-agent/v1/cleanup-defaults", {});
       const a = parseUsAddress(f.entity.address);
       await wp("POST", "wc/v3/settings/general/batch", {
         update: [
@@ -244,22 +356,21 @@ export function storeSteps(ctx: StepCtx): Record<BackStepKey, () => Promise<Step
       const zones = (await wp("GET", "wc/v3/shipping/zones")) as { id: number; name: string }[];
       const zone = zones.find((z) => z.name === ZONE) ?? ((await wp("POST", "wc/v3/shipping/zones", { name: ZONE })) as { id: number });
       await wp("PUT", `wc/v3/shipping/zones/${zone.id}/locations`, CONTIGUOUS.map((s) => ({ code: `US:${s}`, type: "state" })));
-      const methods = (await wp("GET", `wc/v3/shipping/zones/${zone.id}/methods`)) as { method_id: string }[];
-      if (!methods.some((m) => m.method_id === "free_shipping")) {
-        await wp("POST", `wc/v3/shipping/zones/${zone.id}/methods`, { method_id: "free_shipping", settings: { requires: "min_amount", min_amount: String(RULES.freeShippingOver) } });
-      }
-      if (!methods.some((m) => m.method_id === "flat_rate")) {
-        await wp("POST", `wc/v3/shipping/zones/${zone.id}/methods`, { method_id: "flat_rate", settings: { title: "Standard shipping", cost: String(RULES.flatRate) } });
+      const methods = await wp("GET", `wc/v3/shipping/zones/${zone.id}/methods`) as { instance_id: number; method_id: string }[];
+      for (const desired of [
+        { method_id: "free_shipping", settings: { requires: "min_amount", min_amount: String(RULES.freeShippingOver), ignore_discounts: "no" } },
+        { method_id: "flat_rate", settings: { title: "Standard shipping", cost: String(RULES.flatRate) } },
+      ]) {
+        const existing = methods.filter((m) => m.method_id === desired.method_id);
+        if (!existing.length) await wp("POST", `wc/v3/shipping/zones/${zone.id}/methods`, { ...desired, enabled: true });
+        else for (const method of existing) await wp("PUT", `wc/v3/shipping/zones/${zone.id}/methods/${method.instance_id}`, { settings: desired.settings, enabled: true });
       }
 
-      let style = `风格 ${copy.style}`;
-      try {
-        await applyStyle(copy.style);
-      } catch (e) {
-        style = "风格没设置成功，用主题默认";
-        ctx.emit("warn", { message: `设置风格失败：${(e as Error).message}` });
-      }
-      return { status: "done", detail: `店名 ${f.brand}；美国本土 48 州满 $${RULES.freeShippingOver} 包邮，否则 $${RULES.flatRate}；不收销售税；${style}` };
+
+      // 真实商品上架后再让视觉模型设计；此时先用通过对比度检查的保底样式。
+      await applyGlobalStyles(toObelGlobalStyles(FALLBACK_STYLE));
+      return { status: "done", detail: `店名 ${f.brand}；美国本土 48 州 + DC，满 $${RULES.freeShippingOver} 包邮，否则 $${RULES.flatRate}；订单归因关闭；商品上架后生成 AI 全局样式` };
+
     },
 
     async pages() {
@@ -299,6 +410,7 @@ export function storeSteps(ctx: StepCtx): Record<BackStepKey, () => Promise<Step
         if (pick.status === "done") ctx.emit("ai_text", { task: "上架商品", preview: `已上架 ${done}/${form.count}：${pick.name.slice(0, 60)}` });
       }
       if (done === 0) throw new PermanentError("一个商品都没有上架成功，看日志里跳过的原因");
+      await finishDesign();
       return { status: "done", detail: done < form.count ? `上架 ${done} 个（目标 ${form.count}，合适的候选不够）` : `上架 ${done} 个商品` };
     },
 
@@ -307,15 +419,24 @@ export function storeSteps(ctx: StepCtx): Record<BackStepKey, () => Promise<Step
       ctx.save("qa_json", JSON.stringify(report));
       const blocking = report.checks.filter((c) => c.level === "block" && !c.ok);
       const warnings = report.checks.filter((c) => c.level === "warn" && !c.ok);
-      if (blocking.length) throw new PermanentError(`QA 有 ${blocking.length} 项没通过：${blocking.map((c) => c.name).join("、")}`);
+      if (blocking.length) throw new PermanentError(`QA 有 ${blocking.length} 项没通过：${blocking.map((c) => `${c.name}：${c.detail}`).join("；")}`);
       return { status: "done", detail: `${report.checks.filter((c) => c.ok).length}/${report.checks.length} 项通过${warnings.length ? `，${warnings.length} 个提醒` : ""}` };
     },
   };
 }
 
-async function runQa(ctx: StepCtx): Promise<QaReport> {
+export async function runQa(ctx: StepCtx): Promise<QaReport> {
   const { wp } = ctx;
   const f = facts(ctx);
+  // 先复核/修复，随后按最终线上状态跑确定性验收，避免把修复前的失败留在最终报告。
+  const vision = ctx.d.vision ?? ((prompt, images) => completeVision(ctx.d.db, ctx.d.key, prompt, images, ctx.d.fetch));
+  const review = await runFullSiteReview(ctx, {
+    loginUrl: async () => {
+      const links = await ctx.hx("wordpress_login_create-links", { username: ctx.site.hostinger_username, software: ctx.site.wp_software_id }) as { login: string };
+      return `https://${links.login.replace(/^https?:\/\//, "")}`;
+    },
+    outDir: join(ctx.d.workDir, "qa", ctx.domain), vision,
+  });
   const checks: QaCheck[] = [];
   const add = (id: string, name: string, level: QaCheck["level"], ok: boolean, detail: string) => checks.push({ id, name, level, ok, detail });
   // 检查时站点明确拒绝（权限、接口不存在）记为没通过；网络超时等临时错误往外抛，由任务队列稍后重跑 QA
@@ -329,6 +450,9 @@ async function runQa(ctx: StepCtx): Promise<QaReport> {
   };
   const decode = (s: string) => s.replace(/&#(\d+);/g, (_m, n: string) => String.fromCharCode(Number(n))).replace(/&nbsp;/g, " ");
 
+  const openP1 = review.issues.filter((i) => i.level === "P1" && i.status !== "fixed");
+  add("ai-review", "整站 AI 文字与视觉复核", "block", review.passed && openP1.length === 0,
+    openP1.length ? openP1.map((i) => `${i.page} [${i.status}]：${i.evidence}；待办：${i.fix}`).join("；") : `已复核全部页面，自动修复 ${review.rounds} 轮`);
   // 页面：流水线建的 8 个 + Woo 自带的 4 个（页眉页脚都链接到这些地址）
   const slugs = [...PAGE_SLUGS, "shop", "cart", "checkout", "my-account"];
   const pages = (await wp("GET", `wp/v2/pages?slug=${slugs.join(",")}&per_page=50&_fields=id,slug,status,content`)) as { id: number; slug: string; status: string; content: { rendered: string } }[];
@@ -352,10 +476,10 @@ async function runQa(ctx: StepCtx): Promise<QaReport> {
   const policyProblems = checkPolicies(pol, f);
   add("policies", "政策页写明了运费、时效、退货和联系方式", "block", policyProblems.length === 0, policyProblems.slice(0, 5).join("; ") || "和表单及默认规则一致");
 
-  const products = (await wp("GET", "wc/store/v1/products?per_page=100")) as {
+  const products = await allWp<{
     id: number; name: string; type: string; permalink: string; description: string; short_description: string;
     images: unknown[]; variations?: { id: number }[]; prices: { price: string; currency_minor_unit: number; price_range?: { min_amount: string; max_amount: string } | null };
-  }[];
+  }>(ctx, "wc/store/v1/products");
   const money = (p: (typeof products)[number], v: string) => Number(v) / 10 ** p.prices.currency_minor_unit;
   const badProducts = products.filter((p) => {
     const [min, max] = p.prices.price_range ? [money(p, p.prices.price_range.min_amount), money(p, p.prices.price_range.max_amount)] : [money(p, p.prices.price), money(p, p.prices.price)];
@@ -371,9 +495,33 @@ async function runQa(ctx: StepCtx): Promise<QaReport> {
 
   await attempt("shipping", "运费设置", "block", async () => {
     const zone = ((await wp("GET", "wc/v3/shipping/zones")) as { id: number; name: string }[]).find((z) => z.name === ZONE);
-    const methods = zone ? ((await wp("GET", `wc/v3/shipping/zones/${zone.id}/methods`)) as { method_id: string; enabled: boolean }[]) : [];
-    const has = (id: string) => methods.some((m) => m.method_id === id && m.enabled);
-    add("shipping", "运费设置", "block", has("free_shipping") && has("flat_rate"), zone ? `满 $${RULES.freeShippingOver} 包邮 / $${RULES.flatRate}` : "没有配送区域");
+    const methods = zone ? await wp("GET", `wc/v3/shipping/zones/${zone.id}/methods`) as { method_id: string; enabled: boolean; settings?: Record<string, unknown> }[] : [];
+    const locations = zone ? await wp("GET", `wc/v3/shipping/zones/${zone.id}/locations`) as { code: string; type: string }[] : [];
+    const value = (method: (typeof methods)[number], key: string) => {
+      const raw = method.settings?.[key];
+      return raw && typeof raw === "object" && "value" in raw ? (raw as { value: unknown }).value : raw;
+    };
+    const free = methods.filter((m) => m.method_id === "free_shipping" && m.enabled);
+    const flat = methods.filter((m) => m.method_id === "flat_rate" && m.enabled);
+    const problems: string[] = [];
+    if (!free.length || free.some((m) => value(m, "requires") !== "min_amount" || Number(value(m, "min_amount")) !== RULES.freeShippingOver || value(m, "ignore_discounts") !== "no")) problems.push(`免邮必须按折后小计满 $${RULES.freeShippingOver}，不得设其它门槛`);
+    if (!flat.length || flat.some((m) => Number(value(m, "cost")) !== RULES.flatRate)) problems.push(`Standard 必须为 $${RULES.flatRate}`);
+    const codes = new Set(locations.filter((l) => l.type === "state").map((l) => l.code));
+    if (locations.length !== CONTIGUOUS.length || codes.size !== CONTIGUOUS.length || CONTIGUOUS.some((state) => !codes.has(`US:${state}`))) problems.push("配送范围必须恰好为美国本土 48 州 + DC");
+    add("shipping", "运费设置", "block", problems.length === 0, problems.join("；") || `折后满 $${RULES.freeShippingOver} 包邮 / $${RULES.flatRate}；48 州 + DC`);
+  });
+
+  await attempt("metadata", "每页和商品有独立的搜索与分享摘要", "warn", async () => {
+    const data = await wp("GET", "site-agent/v1/metadata") as { items?: Record<string, { description: string; og_description: string }> };
+    const keys = [...bySlug].map(([slug, page]) => slug === "home" ? "home" : slug === "shop" ? "shop" : `page:${page.id}`);
+    keys.push(...products.map((p) => `product:${p.id}`));
+    const seen = new Set<string>();
+    const bad = keys.filter((key) => {
+      const meta = data.items?.[key];
+      if (!meta?.description?.trim() || !meta.og_description?.trim() || seen.has(meta.description)) return true;
+      seen.add(meta.description); return false;
+    });
+    add("metadata", "每页和商品有独立的搜索与分享摘要", "warn", bad.length === 0, bad.length ? `缺少或重复：${bad.join("、")}` : `${keys.length} 个页面和商品均有摘要`);
   });
 
   await attempt("currency", "币种为美元", "block", async () => {
@@ -442,5 +590,6 @@ async function runQa(ctx: StepCtx): Promise<QaReport> {
       add("render", "页面能正常显示并能加购到结账", "block", r.problems.length === 0, r.problems.join("；") || `${r.shots.length} 张截图`);
     });
   }
-  return { at: ctx.d.now(), checks, shots };
+  const reviewFactsHash = (JSON.parse(ctx.site.qa_json ?? "{}") as { reviewFactsHash?: string }).reviewFactsHash;
+  return { at: ctx.d.now(), checks, shots, review, ...(reviewFactsHash ? { reviewFactsHash } : {}) };
 }

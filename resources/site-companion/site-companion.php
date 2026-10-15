@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Site Companion
  * Description:       Lets the website-gen desktop app manage this store over the REST API.
- * Version:           0.4.1
+ * Version:           0.5.0
  * Requires at least: 6.8
  * Requires PHP:      8.1
  * License:           GPLv2 or later
@@ -15,6 +15,8 @@ const SITE_COMPANION_USER           = 'site-agent';
 const SITE_COMPANION_APP_PASSWORD    = 'website-gen';
 const SITE_COMPANION_ENROLLED_GEN    = 'site_companion_enrolled_generation';
 const SITE_COMPANION_INFO            = 'site_companion_info';
+const SITE_COMPANION_RULES           = 'site_companion_store_rules';
+const SITE_COMPANION_METADATA        = 'site_companion_metadata';
 // Site options the app may set through /site. The service user is a shop manager without manage_options,
 // so this short allow-list is the only way it can change them.
 const SITE_COMPANION_OPTIONS         = array( 'blogname', 'blogdescription', 'blog_public', 'show_on_front', 'page_on_front', 'wp_page_for_privacy_policy', 'woocommerce_coming_soon' );
@@ -68,6 +70,8 @@ function site_companion_activate(): void {
 		$user = get_user_by( 'id', $id );
 	}
 	$user->add_cap( 'edit_theme_options' ); // global styles
+	update_option( 'woocommerce_feature_order_attribution_enabled', 'no', false );
+	site_companion_cleanup_defaults();
 }
 
 add_action( 'rest_api_init', 'site_companion_routes' );
@@ -104,6 +108,31 @@ function site_companion_routes(): void {
 				'permission_callback' => 'site_companion_is_agent',
 				'callback'            => 'site_companion_set_site',
 			),
+		)
+	);
+	register_rest_route(
+		'site-agent/v1',
+		'/metadata',
+		array(
+			array(
+				'methods'             => 'GET',
+				'permission_callback' => 'site_companion_is_agent',
+				'callback'            => 'site_companion_get_metadata',
+			),
+			array(
+				'methods'             => 'POST',
+				'permission_callback' => 'site_companion_is_agent',
+				'callback'            => 'site_companion_set_metadata',
+			),
+		)
+	);
+	register_rest_route(
+		'site-agent/v1',
+		'/cleanup-defaults',
+		array(
+			'methods'             => 'POST',
+			'permission_callback' => 'site_companion_is_agent',
+			'callback'            => 'site_companion_cleanup_defaults_request',
 		)
 	);
 }
@@ -169,7 +198,56 @@ function site_companion_get_site(): array {
 	return array(
 		'options' => $options,
 		'info'    => (array) get_option( SITE_COMPANION_INFO, array() ),
+		'rules'   => site_companion_rules(),
 	);
+}
+
+/** Fixed operational promises copied from the app's shared rules at build time. */
+function site_companion_rules(): array {
+	$defaults = array(
+		'free_shipping_over' => 49.0,
+		'flat_rate'           => 4.99,
+		'return_days'         => 30,
+		'refund_days'         => array( 5, 7 ),
+		'processing_days'     => array( 1, 3 ),
+		'transit_days'        => array( 5, 10 ),
+		'region'              => 'the contiguous United States (48 states and Washington, D.C.)',
+	);
+	$stored = get_option( SITE_COMPANION_RULES, array() );
+	return is_array( $stored ) ? array_replace( $defaults, array_intersect_key( $stored, $defaults ) ) : $defaults;
+}
+
+/** Validate the deliberately small rules contract before storing any part of it. */
+function site_companion_validate_rules( $value ) {
+	$allowed = array( 'free_shipping_over', 'flat_rate', 'return_days', 'refund_days', 'processing_days', 'transit_days', 'region' );
+	if ( ! is_array( $value ) || array_diff( array_keys( $value ), $allowed ) || array_diff( $allowed, array_keys( $value ) ) ) {
+		return new WP_Error( 'site_companion_rules', 'Rules must contain exactly the supported fields.', array( 'status' => 400 ) );
+	}
+	if ( ! ( is_int( $value['free_shipping_over'] ) || is_float( $value['free_shipping_over'] ) ) || ! is_finite( (float) $value['free_shipping_over'] ) || $value['free_shipping_over'] <= 0 || $value['free_shipping_over'] > 100000 ) {
+		return new WP_Error( 'site_companion_rules', 'free_shipping_over must be a finite positive number.', array( 'status' => 400 ) );
+	}
+	if ( ! ( is_int( $value['flat_rate'] ) || is_float( $value['flat_rate'] ) ) || ! is_finite( (float) $value['flat_rate'] ) || $value['flat_rate'] < 0 || $value['flat_rate'] > 10000 ) {
+		return new WP_Error( 'site_companion_rules', 'flat_rate must be a finite non-negative number.', array( 'status' => 400 ) );
+	}
+	if ( ! is_int( $value['return_days'] ) || $value['return_days'] < 1 || $value['return_days'] > 90 ) {
+		return new WP_Error( 'site_companion_rules', 'return_days must be an integer from 1 to 90.', array( 'status' => 400 ) );
+	}
+	if ( ! is_string( $value['region'] ) || '' === trim( $value['region'] ) || strlen( $value['region'] ) > 300 ) {
+		return new WP_Error( 'site_companion_rules', 'region must be a non-empty string.', array( 'status' => 400 ) );
+	}
+	$pairs = array( 'refund_days', 'processing_days', 'transit_days' );
+	foreach ( $pairs as $name ) {
+		if ( ! is_array( $value[ $name ] ) || ! array_is_list( $value[ $name ] ) || 2 !== count( $value[ $name ] ) || ! is_int( $value[ $name ][0] ) || ! is_int( $value[ $name ][1] ) ) {
+			return new WP_Error( 'site_companion_rules', "{$name} must contain two day counts.", array( 'status' => 400 ) );
+		}
+		if ( $value[ $name ][0] < 1 || $value[ $name ][1] < $value[ $name ][0] || $value[ $name ][1] > 90 ) {
+			return new WP_Error( 'site_companion_rules', "{$name} is outside the supported range.", array( 'status' => 400 ) );
+		}
+	}
+	$value['free_shipping_over'] = (float) $value['free_shipping_over'];
+	$value['flat_rate']           = (float) $value['flat_rate'];
+	$value['region']              = sanitize_text_field( (string) $value['region'] );
+	return $value;
 }
 
 function site_companion_set_site( WP_REST_Request $request ) {
@@ -177,6 +255,13 @@ function site_companion_set_site( WP_REST_Request $request ) {
 	foreach ( array_keys( $options ) as $name ) {
 		if ( ! in_array( $name, SITE_COMPANION_OPTIONS, true ) ) {
 			return new WP_Error( 'site_companion_option', "Option {$name} cannot be changed here.", array( 'status' => 400 ) );
+		}
+	}
+	$rules = $request->get_param( 'rules' );
+	if ( null !== $rules ) {
+		$rules = site_companion_validate_rules( $rules );
+		if ( is_wp_error( $rules ) ) {
+			return $rules;
 		}
 	}
 	foreach ( $options as $name => $value ) {
@@ -195,6 +280,9 @@ function site_companion_set_site( WP_REST_Request $request ) {
 	if ( is_array( $info ) ) {
 		$info = array_intersect_key( $info, array_flip( SITE_COMPANION_INFO_KEYS ) );
 		update_option( SITE_COMPANION_INFO, array_map( fn( $v ) => sanitize_text_field( (string) $v ), $info ), false );
+	}
+	if ( null !== $rules ) {
+		update_option( SITE_COMPANION_RULES, $rules, false );
 	}
 	return site_companion_get_site();
 }
@@ -348,6 +436,239 @@ function site_companion_info_shortcode( $atts ): string {
 			return esc_html( $text );
 	}
 }
+
+// 商品页与政策页共用同一份由应用写入的经营规则，主题不再维护第二套承诺。
+add_shortcode( 'site_shipping_returns', 'site_companion_shipping_returns_shortcode' );
+function site_companion_shipping_returns_shortcode(): string {
+	$rules   = site_companion_rules();
+	$range   = static fn( array $days ): string => $days[0] === $days[1] ? (string) $days[0] : $days[0] . '–' . $days[1];
+	$money   = static fn( float $amount ): string => floor( $amount ) === $amount ? number_format_i18n( $amount, 0 ) : number_format_i18n( $amount, 2 );
+	$free    = $money( (float) $rules['free_shipping_over'] );
+	$flat    = $money( (float) $rules['flat_rate'] );
+	$content = sprintf(
+		'Orders are processed in %1$s business days and usually arrive %2$s business days after shipment. Shipping is free when the product subtotal after discounts is $%3$s or more, excluding taxes and shipping charges; otherwise, standard shipping is $%4$s. We ship only to %5$s. Request a return within %6$d days of delivery and wait for approval and return instructions before shipping it back. Approved refunds are sent to the original payment method within %7$s business days after the return is received.',
+		esc_html( $range( $rules['processing_days'] ) ),
+		esc_html( $range( $rules['transit_days'] ) ),
+		esc_html( $free ),
+		esc_html( $flat ),
+		esc_html( $rules['region'] ),
+		(int) $rules['return_days'],
+		esc_html( $range( $rules['refund_days'] ) )
+	);
+	return '<p>' . $content . '</p>';
+}
+
+/** Map the REST target contract to a stable metadata option key. */
+function site_companion_metadata_key( string $type, int $id ) {
+	if ( ! in_array( $type, array( 'home', 'shop', 'page', 'product', 'product_cat' ), true ) ) {
+		return new WP_Error( 'site_companion_metadata', 'Unsupported metadata target_type.', array( 'status' => 400 ) );
+	}
+	if ( in_array( $type, array( 'home', 'shop' ), true ) ) {
+		if ( 0 !== $id ) {
+			return new WP_Error( 'site_companion_metadata', 'target_id must be 0 for home and shop.', array( 'status' => 400 ) );
+		}
+		return $type;
+	}
+	if ( $id < 1 ) {
+		return new WP_Error( 'site_companion_metadata', 'target_id is required for this target_type.', array( 'status' => 400 ) );
+	}
+	if ( in_array( $type, array( 'page', 'product' ), true ) ) {
+		$post = get_post( $id );
+		if ( ! $post || $type !== $post->post_type ) {
+			return new WP_Error( 'site_companion_metadata', 'The metadata post target does not exist.', array( 'status' => 404 ) );
+		}
+	} elseif ( 'product_cat' === $type ) {
+		$term = get_term( $id, 'product_cat' );
+		if ( ! $term || is_wp_error( $term ) ) {
+			return new WP_Error( 'site_companion_metadata', 'The metadata category target does not exist.', array( 'status' => 404 ) );
+		}
+	}
+	return $type . ':' . $id;
+}
+
+function site_companion_get_metadata( WP_REST_Request $request ) {
+	$items = (array) get_option( SITE_COMPANION_METADATA, array() );
+	$type  = sanitize_key( (string) $request->get_param( 'target_type' ) );
+	if ( '' === $type ) {
+		return array( 'items' => $items );
+	}
+	$key = site_companion_metadata_key( $type, absint( $request->get_param( 'target_id' ) ) );
+	if ( is_wp_error( $key ) ) {
+		return $key;
+	}
+	return isset( $items[ $key ] )
+		? array( 'exists' => true ) + $items[ $key ]
+		: array(
+			'target_type'    => $type,
+			'target_id'      => absint( $request->get_param( 'target_id' ) ),
+			'description'    => '',
+			'og_description' => '',
+			'exists'         => false,
+		);
+}
+
+function site_companion_set_metadata( WP_REST_Request $request ) {
+	$json    = $request->get_json_params();
+	$allowed = array( 'target_type', 'target_id', 'description', 'og_description' );
+	if ( ! is_array( $json ) || array_diff( array_keys( $json ), $allowed ) || array_diff( $allowed, array_keys( $json ) ) ) {
+		return new WP_Error( 'site_companion_metadata', 'Metadata must contain exactly the supported fields.', array( 'status' => 400 ) );
+	}
+	$type = sanitize_key( (string) $request->get_param( 'target_type' ) );
+	$id   = absint( $request->get_param( 'target_id' ) );
+	$key  = site_companion_metadata_key( $type, $id );
+	if ( is_wp_error( $key ) ) {
+		return $key;
+	}
+	$description = sanitize_textarea_field( (string) $request->get_param( 'description' ) );
+	$og          = sanitize_textarea_field( (string) $request->get_param( 'og_description' ) );
+	$length      = static fn( string $text ): int => function_exists( 'mb_strlen' ) ? mb_strlen( $text ) : strlen( $text );
+	if ( ( '' === $description ) !== ( '' === $og ) || $length( $description ) > 320 || $length( $og ) > 320 ) {
+		return new WP_Error( 'site_companion_metadata', 'Descriptions must both be empty (delete) or both contain at most 320 characters.', array( 'status' => 400 ) );
+	}
+	$items = (array) get_option( SITE_COMPANION_METADATA, array() );
+	if ( '' === $description ) {
+		unset( $items[ $key ] );
+		update_option( SITE_COMPANION_METADATA, $items, false );
+		return array(
+			'target_type'    => $type,
+			'target_id'      => $id,
+			'description'    => '',
+			'og_description' => '',
+			'exists'         => false,
+		);
+	}
+	$items[ $key ] = array(
+		'target_type'   => $type,
+		'target_id'     => $id,
+		'description'   => $description,
+		'og_description' => $og,
+	);
+	update_option( SITE_COMPANION_METADATA, $items, false );
+	return array( 'exists' => true ) + $items[ $key ];
+}
+
+function site_companion_current_metadata(): ?array {
+	$key = null;
+	if ( is_front_page() ) {
+		$key = 'home';
+	} elseif ( function_exists( 'is_shop' ) && is_shop() ) {
+		$key = 'shop';
+	} elseif ( function_exists( 'is_product' ) && is_product() ) {
+		$key = 'product:' . get_queried_object_id();
+	} elseif ( function_exists( 'is_product_category' ) && is_product_category() ) {
+		$key = 'product_cat:' . get_queried_object_id();
+	} elseif ( is_page() ) {
+		$key = 'page:' . get_queried_object_id();
+	}
+	$items = (array) get_option( SITE_COMPANION_METADATA, array() );
+	return $key && isset( $items[ $key ] ) && is_array( $items[ $key ] ) ? $items[ $key ] : null;
+}
+
+add_action(
+	'wp_head',
+	static function (): void {
+		$metadata = site_companion_current_metadata();
+		if ( ! $metadata ) {
+			return;
+		}
+		echo '<meta name="description" content="' . esc_attr( $metadata['description'] ) . '">' . "\n";
+		echo '<meta property="og:description" content="' . esc_attr( $metadata['og_description'] ) . '">' . "\n";
+	},
+	2
+);
+
+/** Remove only WordPress' known installer samples; repeated runs are harmless. */
+function site_companion_cleanup_defaults(): array {
+	$deleted = array();
+	$hello   = get_page_by_path( 'hello-world', OBJECT, 'post' );
+	if ( $hello && 'Hello world!' === $hello->post_title && false !== stripos( $hello->post_content, 'Welcome to WordPress' ) ) {
+		foreach ( get_comments( array( 'post_id' => $hello->ID ) ) as $comment ) {
+			wp_delete_comment( $comment->comment_ID, true );
+		}
+		wp_delete_post( $hello->ID, true );
+		$deleted[] = 'hello-world';
+	}
+	$sample = get_page_by_path( 'sample-page', OBJECT, 'page' );
+	if ( $sample && 'Sample Page' === $sample->post_title && false !== stripos( $sample->post_content, 'This is an example page' ) ) {
+		wp_delete_post( $sample->ID, true );
+		$deleted[] = 'sample-page';
+	}
+	$uncategorized = get_term_by( 'slug', 'uncategorized', 'category' );
+	if ( $uncategorized && ! is_wp_error( $uncategorized ) ) {
+		wp_update_term( $uncategorized->term_id, 'category', array( 'name' => 'General', 'slug' => 'general' ) );
+	}
+	return array( 'deleted' => $deleted, 'default_category' => $uncategorized ? 'general' : null );
+}
+
+function site_companion_cleanup_defaults_request( WP_REST_Request $request ) {
+	$json = $request->get_json_params();
+	if ( is_array( $json ) && array() !== $json ) {
+		return new WP_Error( 'site_companion_cleanup', 'This endpoint accepts no fields.', array( 'status' => 400 ) );
+	}
+	return site_companion_cleanup_defaults();
+}
+
+// WooCommerce attribution is not enabled by this product, so its sourcebuster cookies must stay off.
+add_filter( 'woocommerce_feature_order_attribution_enabled', '__return_false' );
+add_action(
+	'init',
+	static function (): void {
+		if ( 'no' !== get_option( 'woocommerce_feature_order_attribution_enabled' ) ) {
+			update_option( 'woocommerce_feature_order_attribution_enabled', 'no', false );
+		}
+	},
+	1
+);
+
+// 作者归档不属于商店内容；阻止索引并从 WordPress XML sitemap 中移除。
+add_filter(
+	'wp_robots',
+	static function ( array $robots ): array {
+		if ( is_author() ) {
+			$robots['noindex'] = true;
+			unset( $robots['index'] );
+		}
+		return $robots;
+	}
+);
+add_filter(
+	'wp_sitemaps_add_provider',
+	static function ( $provider, string $name ) {
+		return 'users' === $name ? false : $provider;
+	},
+	10,
+	2
+);
+
+/** Hide paid methods once a free-shipping rate is actually available for this package. */
+function site_companion_hide_paid_rates_when_free( array $rates ): array {
+	$has_free = false;
+	foreach ( $rates as $rate ) {
+		$method = is_object( $rate ) && method_exists( $rate, 'get_method_id' )
+			? $rate->get_method_id()
+			: ( is_array( $rate ) ? ( $rate['method_id'] ?? '' ) : ( $rate->method_id ?? '' ) );
+		if ( 'free_shipping' === $method ) {
+			$has_free = true;
+			break;
+		}
+	}
+	if ( ! $has_free ) {
+		return $rates;
+	}
+	return array_filter(
+		$rates,
+		static function ( $rate ): bool {
+			$method = is_object( $rate ) && method_exists( $rate, 'get_method_id' )
+				? $rate->get_method_id()
+				: ( is_array( $rate ) ? ( $rate['method_id'] ?? '' ) : ( $rate->method_id ?? '' ) );
+			$cost = is_object( $rate ) && method_exists( $rate, 'get_cost' )
+				? (float) $rate->get_cost()
+				: (float) ( is_array( $rate ) ? ( $rate['cost'] ?? 0 ) : ( $rate->cost ?? 0 ) );
+			return 'free_shipping' === $method || $cost <= 0;
+		}
+	);
+}
+add_filter( 'woocommerce_package_rates', 'site_companion_hide_paid_rates_when_free', 100 );
 
 function site_companion_enroll( WP_REST_Request $request ) {
 	$cfg   = site_companion_enroll_config();

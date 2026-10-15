@@ -16,7 +16,7 @@
 		<div class="wp-block-columns alignwide are-vertically-aligned-top">
 			<!-- wp:column {"verticalAlignment":"top","width":"55%"} -->
 			<div class="wp-block-column is-vertically-aligned-top" style="flex-basis:55%">
-				<!-- wp:post-featured-image {"isLink":false,"sizeSlug":"large"} /-->
+				<!-- wp:woocommerce/product-image-gallery {"hoverZoom":true,"fullScreenOnClick":true} /-->
 			</div>
 			<!-- /wp:column -->
 
@@ -100,17 +100,9 @@
 
 			<!-- wp:details {"summary":"Shipping and returns"} -->
 			<details class="wp-block-details"><summary>Shipping and returns</summary>
-				<!-- wp:paragraph -->
-				<p>Standard shipping is free on orders over $50 and ships within 1–2 business days. Express delivery available at checkout. Returns accepted within 30 days on unopened items in their original packaging.</p>
-				<!-- /wp:paragraph -->
-			</details>
-			<!-- /wp:details -->
-
-			<!-- wp:details {"summary":"Materials and care"} -->
-			<details class="wp-block-details"><summary>Materials and care</summary>
-				<!-- wp:paragraph -->
-				<p>Crafted from responsibly sourced materials and finished by hand. Wipe clean with a soft, dry cloth; avoid prolonged direct sunlight. With reasonable care, intended to last a very long time.</p>
-				<!-- /wp:paragraph -->
+				<!-- wp:shortcode -->
+				[site_shipping_returns]
+				<!-- /wp:shortcode -->
 			</details>
 			<!-- /wp:details -->
 		</div>

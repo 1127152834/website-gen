@@ -2,10 +2,13 @@
 // 文案和政策仍然存在 spec_json 里，页面由代码按它重新渲染，所以事实核对、禁用说法检查和建站时完全一样。
 import { Type, type TSchema } from "@earendil-works/pi-ai";
 import { range, RULES } from "../shared/rules.ts";
-import { applyChange, listChanges, revertChange, scheduleRevert, type Target } from "./changes.ts";
+import { applyChange, listChanges, revertChange, scheduleRevert, type MetadataTargetType, type Target } from "./changes.ts";
 import { buildPages, checkCopy, checkPolicies, claimProblems, cleanHtml, STYLES, type Policies, type SiteCopy, type Style } from "./content.ts";
 import type { StepCtx } from "./pipeline.ts";
 import { facts } from "./store.ts";
+import { buildAiHomepage, type CategoryDesign, type DesignProduct, type HomepageDesign } from "./home-design.ts";
+import { splitVariants, type CjProduct } from "./cj.ts";
+import { checkProductAnalysis, unitReviewCopyProblems, type ProductAnalysis, type UnitReview } from "./product-content.ts";
 
 export interface SiteTool {
   name: string;
@@ -16,9 +19,19 @@ export interface SiteTool {
   run: (params: any) => Promise<Record<string, unknown>>;
 }
 
-interface Spec { copy: SiteCopy; policies: Policies }
+interface Spec { copy: SiteCopy; policies: Policies; design?: { completed: boolean; categories: CategoryDesign[]; home: HomepageDesign; products?: DesignProduct[] } }
 const POLICY_SLUG = { shipping: "shipping", returns: "returns", privacy: "privacy-policy", terms: "terms" } as const;
 const summary = Type.String({ description: "一句中文，说明这次改了什么（会显示在变更记录里）" });
+const metadataTargetTypes = ["home", "shop", "page", "product", "product_cat"] as const;
+interface ProductSource { product: CjProduct; analysis: ProductAnalysis; unitReview: UnitReview }
+const sourceValue = (value: unknown): ProductSource | undefined => {
+  try { return (typeof value === "string" ? JSON.parse(value) : value) as ProductSource; } catch { return undefined; }
+};
+const words = (value: string) => new Set(value.toLowerCase().replace(/<[^>]+>/g, " ").match(/[a-z0-9]+/g) ?? []);
+const onlyRemovesFacts = (before: string, after: string) => {
+  const old = words(before);
+  return [...words(after)].every((word) => old.has(word));
+};
 /** 本地时间 "2026-12-01 00:00"，给模型和人看的都是这个格式 */
 export const localTime = (ts: number) => {
   const t = new Date(ts);
@@ -34,8 +47,27 @@ export function siteTools(ctx: StepCtx): SiteTool[] {
   };
   const changed = (id: number | null, what: string) => (id === null ? { ok: true, change_id: null, note: "内容和现在一样，没有修改" } : { ok: true, change_id: id, note: `${what}，已记录为变更 #${id}，可以回滚` });
   const pageEdit = (slug: string, c: SiteCopy, p: Policies): { target: Target; patch: Record<string, unknown> } => {
+    if (slug === "home") {
+      const design = spec().design;
+      if (design?.completed && design.products?.length) {
+        const home = { ...design.home, heading: c.hero.heading, subheading: c.hero.subheading };
+        return { target: { kind: "page", slug }, patch: { title: "Home", content: buildAiHomepage(home, design.products, design.categories) } };
+      }
+    }
     const page = buildPages(c, p, facts(ctx)).find((x) => x.slug === slug)!;
     return { target: { kind: "page", slug }, patch: { title: page.title, content: page.content } };
+  };
+  const designEdits = (mutate: (design: NonNullable<Spec["design"]>) => boolean): { target: Target; patch: Record<string, unknown> }[] => {
+    if (!ctx.site.spec_json) return [];
+    const current = spec(), design = current.design;
+    if (!design?.completed || !design.products?.length) return [];
+    const next = structuredClone(design);
+    if (!mutate(next)) return [];
+    const home = { ...next.home, heading: current.copy.hero.heading, subheading: current.copy.hero.subheading };
+    return [
+      { target: { kind: "spec" }, patch: { design: next } },
+      { target: { kind: "page", slug: "home" }, patch: { title: "Home", content: buildAiHomepage(home, next.products!, next.categories) } },
+    ];
   };
 
   return [
@@ -177,14 +209,121 @@ export function siteTools(ctx: StepCtx): SiteTool[] {
         name: Type.Optional(Type.String()), short_description: Type.Optional(Type.String()), description_html: Type.Optional(Type.String()),
       }),
       run: async (p: { summary: string; id: number; name?: string; short_description?: string; description_html?: string }) => {
+        const current = (await wp("GET", `wc/v3/products/${p.id}?_fields=id,name,short_description,description,meta_data`)) as {
+          name: string; short_description: string; description: string; meta_data?: { key: string; value: unknown }[];
+        };
         const patch: Record<string, string> = {};
         if (p.name !== undefined) patch.name = p.name.trim();
         if (p.short_description !== undefined) patch.short_description = cleanHtml(p.short_description);
         if (p.description_html !== undefined) patch.description = cleanHtml(p.description_html);
         const problems = [...(patch.name !== undefined && (patch.name.length === 0 || patch.name.length > 80) ? ["name must be 1-80 characters"] : []), ...claimProblems(Object.values(patch).join("\n"))];
+        const picks = JSON.parse(ctx.site.picks_json ?? "[]") as { productId?: number; source?: ProductSource }[];
+        const source = sourceValue(current.meta_data?.find((x) => x.key === "_source_cj_facts")?.value)
+          ?? picks.find((x) => x.productId === p.id)?.source;
+        if (source?.product && source.analysis && source.unitReview) {
+          const attrs = splitVariants(source.product.keyNames, source.product.variants.map((v) => v.key));
+          const analyzedKeys = new Set(source.analysis.variants.map((v) => v.sourceKey));
+          const inputs = source.product.variants.map((variant, i) => ({ ...variant, attrs: attrs[i] })).filter((v) => analyzedKeys.has(v.key));
+          const next: ProductAnalysis = {
+            ...source.analysis,
+            title: patch.name ?? current.name,
+            short_description: patch.short_description ?? current.short_description,
+            description_html: patch.description ?? current.description,
+            // 当前商品 description 已经是合并后的最终正文，不能把原材料段重复拼一次。
+            materials_and_care_html: null,
+          };
+          problems.push(...checkProductAnalysis(next, source.product, inputs), ...unitReviewCopyProblems(source.unitReview, next, inputs));
+        } else {
+          // 老站没有 CJ 快照时只允许删除/收紧现有文字，不能凭模型加入任何新事实。
+          if (patch.name !== undefined && !onlyRemovesFacts(current.name, patch.name)) problems.push("source facts are missing; product name may only remove existing words");
+          if (patch.short_description !== undefined && !onlyRemovesFacts(current.short_description, patch.short_description)) problems.push("source facts are missing; short description may only remove existing words");
+          if (patch.description !== undefined && !onlyRemovesFacts(current.description, patch.description)) problems.push("source facts are missing; description may only remove existing words");
+        }
         if (problems.length) return { ok: false, problems };
-        const id = await applyChange(ctx, p.summary, [{ target: { kind: "product", id: p.id }, patch }]);
+        const linked = patch.name === undefined ? [] : designEdits((design) => {
+          const item = design.products?.find((x) => x.id === p.id);
+          if (!item || item.name === patch.name) return false;
+          item.name = patch.name!;
+          return true;
+        });
+        const id = await applyChange(ctx, p.summary, [{ target: { kind: "product", id: p.id }, patch }, ...linked]);
         return changed(id, `商品 #${p.id} 已更新`);
+      },
+    },
+    {
+      name: "update_product_main_image", risk: "L1",
+      description: "Choose one of a product's existing gallery images as its main image. The image id must already belong to this product.",
+      parameters: Type.Object({ summary, id: Type.Integer(), image_id: Type.Integer() }),
+      run: async (p: { summary: string; id: number; image_id: number }) => {
+        const product = (await wp("GET", `wc/v3/products/${p.id}?_fields=id,images`)) as { images?: { id: number; src?: string; alt?: string }[] };
+        const images = product.images ?? [];
+        const selected = images.find((x) => x.id === p.image_id);
+        if (!selected) return { ok: false, problems: [`image ${p.image_id} does not belong to product ${p.id}`] };
+        const ordered = [selected, ...images.filter((x) => x.id !== p.image_id)];
+        const linked = selected.src ? designEdits((design) => {
+          const item = design.products?.find((x) => x.id === p.id);
+          if (!item || item.image === selected.src) return false;
+          item.image = selected.src!;
+          return true;
+        }) : [];
+        const id = await applyChange(ctx, p.summary, [{ target: { kind: "product", id: p.id }, patch: { images: ordered } }, ...linked], "pi");
+        return changed(id, `商品 #${p.id} 主图已更新`);
+      },
+    },
+    {
+      name: "update_product_categories", risk: "L1",
+      description: "Replace a product's use-based categories with existing WooCommerce category ids.",
+      parameters: Type.Object({ summary, id: Type.Integer(), category_ids: Type.Array(Type.Integer(), { minItems: 1, maxItems: 8 }) }),
+      run: async (p: { summary: string; id: number; category_ids: number[] }) => {
+        const ids = [...new Set(p.category_ids)];
+        if (ids.length === 0 || ids.length > 8) return { ok: false, problems: ["category_ids must contain 1-8 ids"] };
+        const all = (await wp("GET", "wc/v3/products/categories?per_page=100&hide_empty=false&_fields=id,slug")) as { id: number; slug?: string }[];
+        const missing = ids.filter((id) => !all.some((x) => x.id === id));
+        if (missing.length) return { ok: false, problems: [`unknown category ids: ${missing.join(", ")}`] };
+        const selectedSlugs = new Set(all.filter((x) => ids.includes(x.id)).map((x) => x.slug).filter((x): x is string => Boolean(x)));
+        const knownSlugs = new Set(all.map((x) => x.slug).filter((x): x is string => Boolean(x)));
+        const linked = designEdits((design) => {
+          const designSlugs = new Set(design.categories.map((x) => x.slug));
+          if (![...selectedSlugs].some((x) => designSlugs.has(x))) return false;
+          let changed = false;
+          for (const category of design.categories) {
+            if (!knownSlugs.has(category.slug)) continue;
+            const has = category.productIds.includes(p.id), wants = selectedSlugs.has(category.slug);
+            if (wants && !has) { category.productIds.push(p.id); changed = true; }
+            if (!wants && has) { category.productIds = category.productIds.filter((x) => x !== p.id); changed = true; }
+          }
+          const empty = new Set(design.categories.filter((x) => x.productIds.length === 0).map((x) => x.slug));
+          if (empty.size) {
+            design.categories = design.categories.filter((x) => !empty.has(x.slug));
+            design.home.categorySlugs = design.home.categorySlugs.filter((x) => !empty.has(x));
+          }
+          return changed;
+        });
+        const id = await applyChange(ctx, p.summary, [{ target: { kind: "product", id: p.id }, patch: { categories: ids.map((x) => ({ id: x })) } }, ...linked], "pi");
+        return changed(id, `商品 #${p.id} 分类已更新`);
+      },
+    },
+    {
+      name: "update_meta", risk: "L1",
+      description: "Write an accurate, unique meta description and OG description for a home, shop, page, product or product category target.",
+      parameters: Type.Object({
+        summary,
+        target_type: Type.Union(metadataTargetTypes.map((x) => Type.Literal(x))), target_id: Type.Integer(),
+        description: Type.String({ minLength: 50, maxLength: 180 }), og_description: Type.String({ minLength: 50, maxLength: 220 }),
+      }),
+      run: async (p: { summary: string; target_type: MetadataTargetType; target_id: number; description: string; og_description: string }) => {
+        const description = p.description.trim(), og = p.og_description.trim();
+        const problems = [
+          ...(description.length < 50 || description.length > 180 ? ["description must be 50-180 characters"] : []),
+          ...(og.length < 50 || og.length > 220 ? ["og_description must be 50-220 characters"] : []),
+          ...claimProblems(`${description}\n${og}`),
+        ];
+        if (problems.length) return { ok: false, problems };
+        const id = await applyChange(ctx, p.summary, [{
+          target: { kind: "metadata", targetType: p.target_type, targetId: p.target_id },
+          patch: { description, og_description: og },
+        }], "pi");
+        return changed(id, `${p.target_type} #${p.target_id} 摘要已更新`);
       },
     },
     {

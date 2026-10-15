@@ -94,6 +94,8 @@ export interface CjVariant {
   length: number;
   width: number;
   height: number;
+  /** CJ 为该规格提供的图片；上架时必须绑定到对应 variation。 */
+  image?: string;
 }
 
 export interface CjProduct {
@@ -127,6 +129,7 @@ export function parseDetail(d: any): CjProduct {
       length: Number(v.variantLength ?? 0),
       width: Number(v.variantWidth ?? 0),
       height: Number(v.variantHeight ?? 0),
+      image: /^https:\/\//.test(String(v.variantImage ?? "")) ? String(v.variantImage) : undefined,
     })).filter((v) => v.cost > 0),
   };
 }

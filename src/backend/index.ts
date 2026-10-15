@@ -1,6 +1,6 @@
 // 每个用户一个工作区：数据库、凭据、连接池、任务和对话都只在这个闭包里。
-import { mkdirSync, readFileSync, realpathSync } from "node:fs";
-import { join, resolve, sep } from "node:path";
+import { mkdirSync } from "node:fs";
+import { join, resolve } from "node:path";
 import type { ModelRole, Push, RunEvent } from "../shared/protocol.ts";
 import type { BatchForm } from "../shared/forms.ts";
 import { accountToken, addAccount, listAccounts, listDomains, removeAccount, syncWithStoredToken } from "./accounts.ts";
@@ -19,6 +19,7 @@ import { buildRuntime, completeText, listProviders, listRoles, pingModel, seedMo
 import { browseWithEdge } from "./qa-browser.ts";
 import { secretHint, unseal } from "./secrets.ts";
 import type { QaReport } from "./store.ts";
+import { qaView } from "./qa-view.ts";
 import type { Handlers } from "./rpc.ts";
 
 export interface Workspace {
@@ -231,21 +232,7 @@ export function createWorkspace(opts: { userDir: string; key: Buffer; resourcesD
       const row = db.prepare("SELECT qa_json FROM sites WHERE id = ?").get(Number((p as { siteId: number }).siteId)) as { qa_json: string | null } | undefined;
       if (!row?.qa_json) return null;
       const report = JSON.parse(row.qa_json) as QaReport;
-      const root = resolve(workDir, "qa") + sep;
-      return {
-        ...report,
-        shots: report.shots.flatMap((s) => {
-          const candidate = resolve(s.file);
-          if (!candidate.startsWith(root)) return [];
-          try {
-            const file = realpathSync(candidate);
-            if (!file.startsWith(realpathSync(root) + sep)) return [];
-            return [{ name: s.name, src: `data:image/png;base64,${readFileSync(file).toString("base64")}` }];
-          } catch {
-            return [];
-          }
-        }),
-      };
+      return qaView(report, workDir);
     },
     "cj.status": () => ({ keyHint: secretHint(db, "cj.apiKey") }),
     "cj.setKey": async (p) => {

@@ -11,10 +11,12 @@ import { PermanentError } from "./jobs.ts";
 import { provisionSite, UNWANTED_PLUGINS, type PipelineDeps } from "./pipeline.ts";
 import { launchSite } from "./launch.ts";
 import { seal, unseal } from "./secrets.ts";
-import type { BrowseInput } from "./qa-browser.ts";
+import type { Browse, BrowseInput } from "./qa-browser.ts";
 import type { ZoneGroup } from "./mail.ts";
 import type { BatchForm } from "../shared/forms.ts";
 import { PROVISION_STEPS } from "../shared/protocol.ts";
+import { FALLBACK_STYLE } from "./style.ts";
+import type { VisionComplete } from "./vision.ts";
 
 export const key = randomBytes(32);
 export const DOMAIN = "nordicpaws.com";
@@ -165,6 +167,9 @@ export function fakeSite(st: ReturnType<typeof fakeHostinger>["st"], opts: { rej
   const wp = {
     options: { blogname: "", blogdescription: "", blog_public: 1, show_on_front: "posts", page_on_front: 0, wp_page_for_privacy_policy: 3, woocommerce_coming_soon: "yes" } as Record<string, unknown>,
     info: {} as Record<string, string>,
+    rules: {} as Record<string, unknown>,
+    metadata: new Map<string, { target_type: string; target_id: number; description: string; og_description: string; exists: boolean }>(),
+    defaultsRemoved: false,
     pages: new Map<number, Page>([
       [3, { id: 3, slug: "privacy-policy", title: "Privacy Policy", content: "draft", status: "draft" }],
       ...["shop", "cart", "checkout", "my-account"].map((slug, i): [number, Page] => [10 + i, { id: 10 + i, slug, title: slug, content: "", status: "publish" }]),
@@ -176,11 +181,15 @@ export function fakeSite(st: ReturnType<typeof fakeHostinger>["st"], opts: { rej
     smtp: null as null | { host: string; port: number; username: string; password: string; from_email: string },
     sentMails: [] as { to: string; subject: string; viaSmtp: boolean }[],
     failSmtp: false,
-    zones: [] as { id: number; name: string; locations: unknown[]; methods: { method_id: string; enabled: boolean; settings: unknown }[] }[],
-    categories: [] as { id: number; name: string; slug: string }[],
-    products: [] as { id: number; sku: string; status: string; name: string; type: string; price?: string; images: unknown[]; variations: { id: number; price: string }[]; description: string; short_description: string; featured: boolean }[],
+    zones: [] as { id: number; name: string; locations: unknown[]; methods: { instance_id: number; method_id: string; enabled: boolean; settings: unknown }[] }[],
+    categories: [] as { id: number; name: string; slug: string; description?: string }[],
+    products: [] as { id: number; sku: string; status: string; name: string; type: string; price?: string; images: unknown[]; variations: { id: number; price: string }[]; description: string; short_description: string; featured: boolean; categories?: { id: number }[]; meta_data?: { key: string; value: unknown }[]; [key: string]: any }[],
   };
   const json = (v: unknown, status = 200) => Response.json(v, { status });
+  const paginate = <T>(rows: T[], q: URLSearchParams) => {
+    const count = Number(q.get("per_page") || 100), page = Number(q.get("page") || 1);
+    return rows.slice((page - 1) * count, page * count);
+  };
 
   const fetchImpl = (async (url: string | URL, init?: RequestInit) => {
     const u = new URL(String(url));
@@ -217,14 +226,33 @@ export function fakeSite(st: ReturnType<typeof fakeHostinger>["st"], opts: { rej
     }
     // 其余接口都要带注册拿到的应用密码
     if (new Headers(init?.headers).get("Authorization") !== "Basic " + Buffer.from("site-agent:app pass word 1234").toString("base64") && !path.startsWith("wc/store/")) return json({ message: "unauthorized" }, 401);
+    if (path === "wp/v2/posts") return json([]);
     if (path === "site-agent/v1/health") return json({ wp: "7.1.3", woocommerce: "11.2.1", theme: `obel ${THEME_VERSION}` });
     if (path === "site-agent/v1/site") {
       if (method === "POST" && wp.failSiteWrites) return json({ message: "boom" }, 500);
       if (method === "POST") {
         Object.assign(wp.options, body.options ?? {});
         if (body.info) wp.info = body.info;
+        if (body.rules) wp.rules = body.rules;
       }
-      return json({ options: wp.options, info: wp.info });
+      return json({ options: wp.options, info: wp.info, rules: wp.rules });
+    }
+    if (path === "site-agent/v1/cleanup-defaults") {
+      wp.defaultsRemoved = true;
+      wp.options.woocommerce_feature_order_attribution_enabled = "no";
+      for (const [id, p] of wp.pages) if (p.slug === "sample-page") wp.pages.delete(id);
+      return json({ ok: true });
+    }
+    if (path === "site-agent/v1/metadata") {
+      const type = body?.target_type ?? q.get("target_type");
+      const id = body?.target_id ?? q.get("target_id");
+      const key = `${type}:${id}`;
+      if (method === "POST") {
+        if (body.description === "" && body.og_description === "") wp.metadata.delete(key);
+        else wp.metadata.set(key, { target_type: type, target_id: Number(id), description: body.description, og_description: body.og_description, exists: true });
+      }
+      if (!type) return json({ items: Object.fromEntries([...wp.metadata].map(([key, value]) => [key === "home:0" ? "home" : key === "shop:0" ? "shop" : key, value])) });
+      return json(wp.metadata.get(key) ?? { target_type: type, target_id: Number(id), description: "", og_description: "", exists: false });
     }
     if (path === "site-agent/v1/smtp") {
       if (method === "POST") wp.smtp = body.enabled === false ? null : { host: body.host, port: body.port, username: body.username, password: body.password, from_email: body.from_email };
@@ -251,7 +279,7 @@ export function fakeSite(st: ReturnType<typeof fakeHostinger>["st"], opts: { rej
       const statuses = (q.get("status") ?? "publish").split(",");
       // 和真实站点一样：店长在编辑上下文里看不到被设为隐私政策页的那一页
       const hidden = (p: Page) => q.get("context") === "edit" && p.id === wp.options.wp_page_for_privacy_policy;
-      return json([...wp.pages.values()].filter((p) => slugs.includes(p.slug) && statuses.includes(p.status) && !hidden(p)).map((p) => ({ id: p.id, slug: p.slug, status: p.status, title: { raw: p.title, rendered: p.title }, content: { raw: p.content, rendered: p.content } })));
+      return json(paginate([...wp.pages.values()].filter((p) => slugs.includes(p.slug) && statuses.includes(p.status) && !hidden(p)), q).map((p) => ({ id: p.id, slug: p.slug, link: `https://${DOMAIN}/${p.slug === "home" ? "" : p.slug + "/"}`, status: p.status, title: { raw: p.title, rendered: p.title }, content: { raw: p.content, rendered: p.content } })));
     }
     let m: RegExpExecArray | null;
     if (path === "wp/v2/pages" || (m = /^wp\/v2\/pages\/(\d+)$/.exec(path))) {
@@ -274,15 +302,26 @@ export function fakeSite(st: ReturnType<typeof fakeHostinger>["st"], opts: { rej
     }
     if ((m = /^wc\/v3\/shipping\/zones\/(\d+)\/(locations|methods)$/.exec(path))) {
       const zone = wp.zones.find((z) => z.id === Number(m![1]))!;
-      if (m[2] === "locations") return json((zone.locations = body));
-      if (method === "POST") zone.methods.push({ method_id: body.method_id, enabled: true, settings: body.settings });
+      if (m[2] === "locations") return json(method === "GET" ? zone.locations : (zone.locations = body));
+      if (method === "POST") zone.methods.push({ instance_id: nextId++, method_id: body.method_id, enabled: body.enabled ?? true, settings: body.settings });
       return json(zone.methods);
     }
-    if (path === "wc/v3/products/categories") {
-      if (method === "POST") wp.categories.push({ id: nextId++, name: body.name, slug: body.slug });
-      return json(method === "POST" ? wp.categories.at(-1) : wp.categories.filter((c) => c.slug === q.get("slug")));
+    if ((m = /^wc\/v3\/shipping\/zones\/(\d+)\/methods\/(\d+)$/.exec(path))) {
+      const method = wp.zones.find((z) => z.id === Number(m![1]))?.methods.find((x) => x.instance_id === Number(m![2]));
+      if (!method) return json({ message: "No shipping method" }, 404);
+      if (body) Object.assign(method, body);
+      return json(method);
     }
-    if (path === "wc/v3/products" && method === "GET") return json(q.has("sku") ? wp.products.filter((p) => p.sku === q.get("sku")) : wp.products);
+    if (path === "wc/v3/products/categories") {
+      if (method === "POST") wp.categories.push({ id: nextId++, name: body.name, slug: body.slug, description: body.description });
+      return json(method === "POST" ? wp.categories.at(-1) : paginate(wp.categories.filter((c) => !q.has("slug") || c.slug === q.get("slug")).map((c) => ({ ...c, count: wp.products.filter((p) => p.categories?.some((x) => x.id === c.id)).length })), q));
+    }
+    if ((m = /^wc\/v3\/products\/categories\/(\d+)$/.exec(path))) {
+      const category = wp.categories.find((c) => c.id === Number(m![1]));
+      if (method === "PUT") Object.assign(category!, body);
+      return json(category);
+    }
+    if (path === "wc/v3/products" && method === "GET") return json(paginate(wp.products.filter((p) => (!q.has("sku") || p.sku === q.get("sku")) && (!q.has("status") || q.get("status") === "any" || p.status === q.get("status"))), q));
     if (path === "wc/v3/products") {
       const p = { id: nextId++, variations: [], ...body, price: body.regular_price };
       wp.products.push(p);
@@ -290,18 +329,22 @@ export function fakeSite(st: ReturnType<typeof fakeHostinger>["st"], opts: { rej
     }
     if ((m = /^wc\/v3\/products\/(\d+)\/variations\/batch$/.exec(path))) {
       const p = wp.products.find((x) => x.id === Number(m![1]))!;
-      const created = body.create.map((v: { regular_price: string }) => ({ id: nextId++, price: v.regular_price }));
+      const created = body.create.map((v: { regular_price: string }) => ({ ...v, id: nextId++, price: v.regular_price }));
       p.variations.push(...created);
       return json({ create: created });
+    }
+    if ((m = /^wc\/v3\/products\/(\d+)\/variations$/.exec(path))) {
+      return json(paginate(wp.products.find((p) => p.id === Number(m![1]))?.variations ?? [], q));
     }
     if ((m = /^wc\/v3\/products\/(\d+)$/.exec(path))) {
       const product = wp.products.find((x) => x.id === Number(m![1]));
       if (!product) return json({ message: "Invalid ID." }, 404);
+      if (method === "DELETE") { wp.products.splice(wp.products.indexOf(product), 1); return json({ deleted: true }); }
       if (method !== "GET") Object.assign(product, body);
       return json(product);
     }
     if (path === "wc/store/v1/products") {
-      return json(wp.products.filter((p) => p.status === "publish").map((p) => {
+      return json(paginate(wp.products.filter((p) => p.status === "publish"), q).map((p) => {
         const cents = (p.variations.length ? p.variations.map((v) => v.price) : [p.price!]).map((x) => String(Math.round(Number(x) * 100)));
         return {
           id: p.id, name: p.name, type: p.type, permalink: `https://${DOMAIN}/product/${p.id}/`, description: p.description, short_description: p.short_description,
@@ -327,8 +370,8 @@ export function fakeCj(path: string) {
   }
   const pid = new URLSearchParams(path.split("?")[1]).get("pid")!;
   const variants = pid === "1001"
-    ? [{ variantKey: "Light Grey-S", variantSellPrice: 5.99, variantWeight: 800, variantLength: 450, variantWidth: 400, variantHeight: 100 }, { variantKey: "Light Grey-M", variantSellPrice: 7.4, variantWeight: 1000, variantLength: 550, variantWidth: 450, variantHeight: 100 }]
-    : [{ variantKey: "Brown", variantSellPrice: 4.1, variantWeight: 300, variantLength: 700, variantWidth: 500, variantHeight: 10 }];
+    ? [{ variantKey: "Light Grey-S", variantImage: "https://img/grey-s.jpg", variantSellPrice: 5.99, variantWeight: 800, variantLength: 450, variantWidth: 400, variantHeight: 100 }, { variantKey: "Light Grey-M", variantImage: "https://img/grey-m.jpg", variantSellPrice: 7.4, variantWeight: 1000, variantLength: 550, variantWidth: 450, variantHeight: 100 }]
+    : [{ variantKey: "Brown", variantImage: "https://img/brown.jpg", variantSellPrice: 4.1, variantWeight: 300, variantLength: 700, variantWidth: 500, variantHeight: 10 }];
   return Promise.resolve({
     pid, productNameEn: pid === "1001" ? "Dog Bed" : "Pet Blanket", categoryName: "Pet Supplies", materialNameEnSet: ["Cloth"],
     description: "<p>Soft cloth.</p>", productImageSet: ["https://img/a.jpg", "https://img/b.jpg"], productKeyEn: pid === "1001" ? "Color-Size" : "Color", variants,
@@ -336,15 +379,17 @@ export function fakeCj(path: string) {
 }
 
 export const POLICIES = `=== SHIPPING ===
-<h2>Processing and delivery</h2><p>We process orders within 1–3 business days. Delivery takes 5 to 10 business days after shipping. We ship only within the contiguous United States.</p>
-<p>Shipping is free on orders of $49 or more. Otherwise a flat rate of $4.99 applies. Questions? Email ${EMAIL}.</p>
+<h2>Processing and delivery</h2><p>We process orders within 1–3 business days. Delivery takes 5 to 10 business days after shipping. We ship only within the contiguous United States (48 states and Washington, D.C.).</p>
+<p>Shipping is free on orders of $49 or more after discounts, excluding taxes and shipping. Otherwise a flat rate of $4.99 applies. Questions? Email ${EMAIL}.</p>
+<p>If shipment is delayed, we notify you with a revised shipping date. You may accept the delay or cancel for a full refund. Contact us to cancel before shipment.</p>
+<p>For a lost parcel contact support. We check tracking with the carrier and open an investigation, then communicate the outcome and resolve the loss with a refund or replacement as appropriate.</p>
 === RETURNS ===
-<h2>Returns</h2><p>You may return items within 30 days of delivery. If an item arrives damaged or wrong, we pay the return shipping.</p>
-<ul><li>Refunds go to your original payment method within 5-7 business days after we receive the return.</li><li>We do not offer exchanges.</li></ul><p>Contact ${EMAIL}.</p>
+<h2>Returns</h2><p>Request a return within 30 days after delivery by contacting ${EMAIL}. Wait for approval and return instructions, then ship the item back promptly to Nordic Paws LLC, 1 Main St, Austin, TX 78701. The customer pays return shipping except for damaged, defective or wrong items, for which we pay.</p>
+<p>After we receive and inspect your return, we initiate the refund to your original payment method within 5–7 business days of receiving it. Your bank may take additional time to post the credit; timing varies. We do not offer exchanges.</p>
 === PRIVACY ===
-<h2>Who we are</h2><p>This store is operated by Nordic Paws LLC. We collect your name, address, email and order details to fulfil orders. Payments are handled by Stripe and PayPal. Our site is hosted by Hostinger. Contact ${EMAIL} with any privacy question.</p>
+<h2>Who we are</h2><p>This store is operated by Nordic Paws LLC. We collect your name, address, email and order details to fulfil orders. Our site is hosted by Hostinger and uses WordPress with WooCommerce. We use essential cookies for cart, checkout and login. We do not enable analytics, advertising pixels or a newsletter. We do not sell personal information. Contact ${EMAIL} with privacy questions.</p>
 === TERMS ===
-<h2>Terms</h2><p>These terms govern your use of this store, operated by Nordic Paws LLC. By placing an order you agree to these terms and to our shipping and returns policies. Contact ${EMAIL} with any question about these terms.</p>`;
+<h2>Terms</h2><p>These terms govern your use of this store, operated by Nordic Paws LLC. By placing an order you agree to these terms and to our shipping and returns policies. Available payment methods are shown at checkout. Contact ${EMAIL} with any question about these terms.</p>`;
 
 /** 模拟模型：第一次写站点文案时编了成立年份，检查不通过后第二次改好。 */
 export function fakeAi(log: string[]) {
@@ -355,7 +400,7 @@ export function fakeAi(log: string[]) {
       text = JSON.stringify({ keep: [...prompt.matchAll(/"pid":"(\d+)"/g)].map((m) => m[1]) });
       log.push("screen");
     } else if (prompt.startsWith("You write the website copy")) {
-      const faq = Array.from({ length: 8 }, (_, i) => ({ q: `Question ${i + 1}?`, a: "Orders ship within 1-3 business days and arrive in 5-10 business days." }));
+      const faq = Array.from({ length: 8 }, (_, i) => ({ q: `Question ${i + 1}?`, a: i === 7 ? "Available payment methods are shown at checkout." : "Orders ship within 1-3 business days and arrive in 5-10 business days." }));
       text = JSON.stringify({
         tagline: "Cozy beds for happy dogs", style: "editorial", hero: { heading: "Rest easy, pup", subheading: "Soft beds and blankets for dogs." },
         about: [copyCalls++ === 0 ? "Founded in 2015 by dog lovers." : "Nordic Paws sells dog beds and blankets.", "We are operated by Nordic Paws LLC."], faq,
@@ -364,11 +409,60 @@ export function fakeAi(log: string[]) {
     } else if (prompt.startsWith("You write the legal")) {
       text = POLICIES;
       log.push("policies");
+    } else if (prompt.startsWith("You are preparing one factual")) {
+      const source = JSON.parse(prompt.split("CJ SOURCE: ")[1].split("\n\nYour previous reply")[0]);
+      const variants = source.variants.map((v: { sourceKey: string; attributes: Record<string, string> }) => ({ sourceKey: v.sourceKey, buyerName: Object.values(v.attributes).join(" "), clear: true, pieceCount: null, components: [], color: v.attributes.Color ?? null, evidence: v.sourceKey }));
+      text = JSON.stringify({ title: source.name === "Dog Bed" ? "Cozy Dog Bed" : "Pet Blanket", short_description: "Soft cloth.", description_html: `<p style="x">Soft cloth ${source.name === "Dog Bed" ? "bed" : "blanket"}.</p><p>Options: ${variants.map((v: { buyerName: string }) => v.buyerName).join(", ")}.</p>`, materials_and_care_html: null, image_alt: source.name, mainImage: source.candidateImages[0], metaDescription: `Shop ${source.name} in the listed options.`, ogDescription: `Explore ${source.name} and available options.`, variants });
+      log.push("product");
+    } else if (prompt.startsWith("Review dimension units only")) {
+      text = '{"questionable":[]}';
+      log.push("units");
+    } else if (prompt.startsWith("Group these real products")) {
+      const products = JSON.parse(prompt.split("PRODUCTS: ")[1]);
+      text = JSON.stringify({ categories: [{ name: "Rest at Home", slug: "rest-at-home", description: "Beds and blankets for dogs.", productIds: products.map((p: { id: number }) => p.id) }] });
+      log.push("categories");
+    } else if (prompt.startsWith("Design a compact ecommerce homepage")) {
+      const data = JSON.parse(prompt.split("DATA: ")[1]);
+      text = JSON.stringify({ heading: "Rest easy, pup", subheading: "Soft beds and blankets for dogs.", heroProductId: data.products[0].id, categorySlugs: data.categories.map((c: { slug: string }) => c.slug), featuredProductIds: data.products.map((p: { id: number }) => p.id) });
+      log.push("homepage");
+    } else if (prompt.startsWith("Write a unique factual search")) {
+      const pages = JSON.parse(prompt.split("PAGES: ")[1]);
+      text = JSON.stringify({ metadata: pages.map((p: { key: string; title: string }) => ({ key: p.key, description: `${p.title}: information and options from Nordic Paws (${p.key}).`, ogDescription: `Explore ${p.title} at Nordic Paws (${p.key}).` })) });
+      log.push("metadata");
+    } else if (prompt.startsWith("You are the final compliance reviewer")) {
+      text = '{"issues":[]}'; log.push("review");
     } else {
       text = '```json\n{"title":"Cozy Dog Bed","short_description":"A soft bed.","description_html":"<p style=\\"x\\">Soft cloth bed.</p>","image_alt":"Grey dog bed"}\n```';
       log.push("product");
     }
     return { text, cost: 0.001 };
+  };
+}
+
+/** 假视觉响应与文字响应分开，测试不会因只传 URL 而假装调用过视觉模型。 */
+export const fakeVision: VisionComplete = async (prompt, images) => {
+  if (prompt.startsWith("Choose the clearest main photo")) return { text: JSON.stringify({ mainImage: images.find((i) => i.url)?.url, reason: "Complete product visible in candidate photo", completeProductVisible: true }), cost: 0 };
+  if (prompt.startsWith("Design a restrained ecommerce")) return { text: JSON.stringify(FALLBACK_STYLE), cost: 0 };
+  return { text: '{"issues":[]}', cost: 0 };
+};
+
+/** 从假站的真实 REST 状态生成页面文字，修复后再次抓取会看到更新，而不是固定通过串。 */
+export function fakeBrowse(fetchImpl: typeof fetch): Browse {
+  return async (input) => {
+    const headers = { Authorization: "Basic " + Buffer.from("site-agent:app pass word 1234").toString("base64") };
+    const get = async (path: string) => (await fetchImpl(`https://${DOMAIN}/wp-json/${path}`, { headers })).json();
+    const pages = await get("wp/v2/pages?per_page=100") as { slug: string; title: { rendered: string }; content: { rendered: string } }[];
+    const products = await get("wc/v3/products?status=publish&per_page=100") as { id: number; name: string; description: string; short_description: string }[];
+    const names = products.map((p) => p.name).join(" ");
+    const capture = (name: string, path: string) => {
+      const page = pages.find((p) => (p.slug === "home" ? "/" : `/${p.slug}/`) === path);
+      const product = products.find((p) => path === `/product/${p.id}/`);
+      const text = [page?.title.rendered, page?.content.rendered, product?.name, product?.description, product?.short_description,
+        path.startsWith("/shop/") || path.startsWith("/product-category/") || path === "/cart/" || path === "/checkout/" ? names : ""].filter(Boolean).join(" ").replace(/<[^>]*>/g, " ");
+      return { name, path, url: input.origin + path, text, shot: join(input.outDir, `${name}.png`) };
+    };
+    const captures = [...input.pages.map((p) => capture(p.name, p.path)), ...(input.cart ? [capture("cart", "/cart/"), capture("checkout", "/checkout/")] : []), capture("home-mobile", "/")];
+    return { captures, shots: captures.map((p) => ({ name: p.name, file: p.shot })), problems: [] };
   };
 }
 
@@ -385,7 +479,8 @@ export function deps(db: PipelineDeps["db"], exec: HostingerExec, fetchImpl: typ
     now: () => (now += 1000),
     ai: fakeAi([]),
     cj: fakeCj,
-    browse: async (input) => ({ shots: input.pages.map((p) => ({ name: p.name, file: `${p.name}.png` })), problems: [] }),
+    browse: fakeBrowse(fetchImpl),
+    vision: fakeVision,
     inbox: async () => true,
     ...extra,
   };

@@ -17,6 +17,9 @@ add_action(
 		load_theme_textdomain( 'obel', get_template_directory() . '/languages' );
 
 		add_theme_support( 'woocommerce' );
+		add_theme_support( 'wc-product-gallery-zoom' );
+		add_theme_support( 'wc-product-gallery-lightbox' );
+		add_theme_support( 'wc-product-gallery-slider' );
 		add_theme_support( 'responsive-embeds' );
 		add_theme_support( 'post-thumbnails' );
 		add_theme_support( 'html5', array( 'comment-list', 'comment-form', 'search-form', 'gallery', 'caption', 'style', 'script', 'navigation-widgets' ) );
@@ -376,6 +379,16 @@ add_action( 'wp_head', 'fifty_view_transitions_speculation_rules', 1 );
 // the middle of nowhere" post-mortem in git history for the long form.
 add_filter( 'woocommerce_show_page_title', '__return_true' );
 
+// The storefront search is intentionally product-only; do not fall back to the blog loop.
+add_action(
+	'pre_get_posts',
+	static function ( $query ): void {
+		if ( ! is_admin() && $query->is_main_query() && $query->is_search() ) {
+			$query->set( 'post_type', 'product' );
+		}
+	}
+);
+
 add_filter(
 	'woocommerce_pagination_args',
 	static function ( array $args ): array {
@@ -395,14 +408,35 @@ add_filter(
 			return $block_content;
 		}
 		$total = (int) wc_get_loop_prop( 'total', 0 );
+		// The count block renders before Product Collection initializes WC loop props.
+		// The main product archive query already has the authoritative found_posts value.
+		if ( $total <= 0 && isset( $GLOBALS['wp_query']->found_posts ) ) {
+			$total = (int) $GLOBALS['wp_query']->found_posts;
+		}
 		if ( $total <= 0 ) {
 			return $block_content;
 		}
-		$label = sprintf(
-			/* translators: %d: number of products in the current archive. */
-			esc_html( _n( '%d item', '%d items', $total, 'obel' ) ),
-			$total
-		);
+		$main_query = $GLOBALS['wp_query'] ?? null;
+		$per_page   = (int) wc_get_loop_prop( 'per_page', is_object( $main_query ) ? $main_query->get( 'posts_per_page' ) : $total );
+		$per_page   = $per_page > 0 ? $per_page : $total;
+		$page       = max( 1, (int) wc_get_loop_prop( 'current_page', is_object( $main_query ) ? $main_query->get( 'paged' ) : 1 ) );
+		if ( $total > $per_page ) {
+			$first = ( ( $page - 1 ) * $per_page ) + 1;
+			$last  = min( $total, $page * $per_page );
+			$label = sprintf(
+				/* translators: 1: first result, 2: last result, 3: total products. */
+				esc_html__( 'Showing %1$d–%2$d of %3$d items', 'obel' ),
+				$first,
+				$last,
+				$total
+			);
+		} else {
+			$label = sprintf(
+				/* translators: %d: number of products in the current archive. */
+				esc_html( _n( '%d item', '%d items', $total, 'obel' ) ),
+				$total
+			);
+		}
 		$rewritten = preg_replace(
 			'#(<p\b[^>]*\bclass="[^"]*\bwoocommerce-result-count\b[^"]*"[^>]*>)[\s\S]*?(</p>)#i',
 			'$1' . $label . '$2',
@@ -1127,113 +1161,52 @@ add_action(
 // === END archive-hero ===
 
 // === BEGIN payment-icons ===
-//
-// "We accept" trust strip on cart + checkout.
-//
-// The WC Blocks cart/checkout pages don't expose a clean PHP hook
-// post-render, so we attach via wp_footer and DOM-inject a small
-// `.wo-payment-icons` element into the cart-totals + checkout-actions
-// containers. Inline SVG glyphs keep the strip dependency-free (no
-// asset URLs, no font-loading races) and render identically across
-// every theme. Per-theme: the label text and the brands list are
-// owned here so each theme's voice + accepted-payments mix can
-// diverge without touching another theme.
+// Cart/checkout only advertise payment methods WooCommerce says are available for this customer.
 add_action(
 	'wp_footer',
 	static function (): void {
-		if ( is_admin() ) {
+		if ( is_admin() || ! ( function_exists( 'is_cart' ) && ( is_cart() || is_checkout() ) ) ) {
 			return;
 		}
-		if ( ! ( function_exists( 'is_cart' ) && ( is_cart() || is_checkout() ) ) ) {
+		if ( ! function_exists( 'WC' ) || ! WC()->payment_gateways() ) {
 			return;
 		}
-		$label = esc_js( __( 'We accept', 'obel' ) );
+		$gateways = WC()->payment_gateways()->get_available_payment_gateways();
+		$methods  = array();
+		foreach ( $gateways as $gateway ) {
+			if ( ! isset( $gateway->enabled ) || 'yes' !== $gateway->enabled ) {
+				continue;
+			}
+			$methods[] = array(
+				'id'    => sanitize_key( (string) $gateway->id ),
+				'title' => wp_strip_all_tags( (string) $gateway->get_title() ),
+				'icon'  => wp_kses( (string) $gateway->get_icon(), array( 'img' => array( 'src' => true, 'alt' => true, 'width' => true, 'height' => true, 'class' => true, 'loading' => true ) ) ),
+			);
+		}
+		if ( array() === $methods ) {
+			return;
+		}
 		?>
 <script>
 (function(){
-	var LABEL = '<?php echo $label; // phpcs:ignore WordPress.Security.EscapeOutput ?>';
-	var BRANDS = [
-		{ name: 'Visa', svg:
-			'<svg viewBox="0 0 40 26" xmlns="http://www.w3.org/2000/svg" aria-label="Visa" focusable="false">'
-			+ '<rect width="40" height="26" rx="4" fill="#1A1F71"/>'
-			+ '<text x="20" y="18" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif" font-weight="900" font-style="italic" font-size="13" letter-spacing="0.5" fill="#fff">VISA</text>'
-			+ '</svg>'
-		},
-		{ name: 'Mastercard', svg:
-			'<svg viewBox="0 0 40 26" xmlns="http://www.w3.org/2000/svg" aria-label="Mastercard" focusable="false">'
-			+ '<rect width="40" height="26" rx="4" fill="#fff" stroke="#E5E5E5"/>'
-			+ '<circle cx="16" cy="13" r="7" fill="#EB001B"/>'
-			+ '<circle cx="24" cy="13" r="7" fill="#F79E1B"/>'
-			+ '<path d="M20 8 a7 7 0 0 1 0 10 a7 7 0 0 1 0-10 z" fill="#FF5F00"/>'
-			+ '</svg>'
-		},
-		{ name: 'American Express', svg:
-			'<svg viewBox="0 0 40 26" xmlns="http://www.w3.org/2000/svg" aria-label="American Express" focusable="false">'
-			+ '<rect width="40" height="26" rx="4" fill="#1F72CD"/>'
-			+ '<text x="20" y="17" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif" font-weight="800" font-size="9" letter-spacing="0.7" fill="#fff">AMEX</text>'
-			+ '</svg>'
-		},
-		{ name: 'Discover', svg:
-			'<svg viewBox="0 0 40 26" xmlns="http://www.w3.org/2000/svg" aria-label="Discover" focusable="false">'
-			+ '<rect width="40" height="26" rx="4" fill="#fff" stroke="#E5E5E5"/>'
-			+ '<text x="3" y="16" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif" font-weight="700" font-size="5.5" letter-spacing="0.1" fill="#111">DISCOVER</text>'
-			+ '<circle cx="35" cy="13" r="3" fill="#F76B1C"/>'
-			+ '</svg>'
-		},
-		{ name: 'Apple Pay', svg:
-			'<svg viewBox="0 0 40 26" xmlns="http://www.w3.org/2000/svg" aria-label="Apple Pay" focusable="false">'
-			+ '<rect width="40" height="26" rx="4" fill="#000"/>'
-			+ '<g transform="translate(7 5.5) scale(0.014)" fill="#fff">'
-			+ '<path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105.6-57-155.5-127C46.7 790.7 0 663 0 541.8c0-194.4 126.4-297.5 250.8-297.5 66.1 0 121.2 43.4 162.7 43.4 39.5 0 101.1-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2zm-234-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3z"/>'
-			+ '</g>'
-			+ '<text x="21" y="17" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif" font-weight="600" font-size="10" letter-spacing="0.2" fill="#fff">Pay</text>'
-			+ '</svg>'
-		},
-		{ name: 'Google Pay', svg:
-			'<svg viewBox="0 0 40 26" xmlns="http://www.w3.org/2000/svg" aria-label="Google Pay" focusable="false">'
-			+ '<rect width="40" height="26" rx="4" fill="#fff" stroke="#E5E5E5"/>'
-			+ '<text x="6" y="18" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif" font-weight="700" font-size="13" fill="#4285F4">G</text>'
-			+ '<text x="16" y="17" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif" font-weight="600" font-size="10" letter-spacing="0.2" fill="#5F6368">Pay</text>'
-			+ '</svg>'
-		}
-	];
+	var METHODS=<?php echo wp_json_encode( $methods ); // phpcs:ignore WordPress.Security.EscapeOutput ?>;
 	function build(){
-		var div = document.createElement('div');
-		div.className = 'wo-payment-icons';
-		var label = document.createElement('span');
-		label.className = 'wo-payment-icons__label';
-		label.textContent = LABEL;
-		div.appendChild(label);
-		var list = document.createElement('span');
-		list.className = 'wo-payment-icons__list';
-		BRANDS.forEach(function(brand){
-			var pill = document.createElement('span');
-			pill.className = 'wo-payment-icons__icon';
-			pill.setAttribute('role', 'img');
-			pill.setAttribute('aria-label', brand.name);
-			pill.innerHTML = brand.svg;
+		var div=document.createElement('div'); div.className='wo-payment-icons';
+		var label=document.createElement('span'); label.className='wo-payment-icons__label'; label.textContent=<?php echo wp_json_encode( __( 'We accept', 'obel' ) ); // phpcs:ignore WordPress.Security.EscapeOutput ?>; div.appendChild(label);
+		var list=document.createElement('span'); list.className='wo-payment-icons__list';
+		METHODS.forEach(function(method){
+			var pill=document.createElement('span'); pill.className='wo-payment-icons__icon wo-payment-icons__icon--'+method.id; pill.setAttribute('role','img'); pill.setAttribute('aria-label',method.title);
+			if(method.icon){pill.innerHTML=method.icon;}else{pill.textContent=method.title;}
 			list.appendChild(pill);
 		});
-		div.appendChild(list);
-		return div;
+		div.appendChild(list); return div;
 	}
 	function inject(){
-		var actions = document.querySelector('.wp-block-woocommerce-checkout-actions-block');
-		if (actions && !actions.querySelector(':scope > .wo-payment-icons')) {
-			actions.appendChild(build());
-		}
-		var totals = document.querySelector('.wp-block-woocommerce-cart-totals-block');
-		if (totals && !totals.querySelector(':scope > .wo-payment-icons')) {
-			totals.appendChild(build());
-		}
+		var targets=document.querySelectorAll('.wp-block-woocommerce-checkout-actions-block,.wp-block-woocommerce-cart-totals-block');
+		targets.forEach(function(target){if(!target.querySelector(':scope > .wo-payment-icons'))target.appendChild(build());});
 	}
-	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', inject);
-	} else {
-		inject();
-	}
-	var mo = new MutationObserver(function(){ inject(); });
-	mo.observe(document.body, { childList: true, subtree: true });
+	if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',inject);else inject();
+	new MutationObserver(inject).observe(document.body,{childList:true,subtree:true});
 })();
 </script>
 		<?php

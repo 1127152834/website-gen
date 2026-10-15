@@ -4,11 +4,13 @@ import type { DatabaseSync } from "node:sqlite";
 import type { ChangeSummary } from "../shared/protocol.ts";
 import type { StepCtx } from "./pipeline.ts";
 
+export type MetadataTargetType = "home" | "shop" | "page" | "product" | "product_cat";
 export type Target =
   | { kind: "page"; slug: string }
   | { kind: "site" }
   | { kind: "styles" }
   | { kind: "product"; id: number }
+  | { kind: "metadata"; targetType: MetadataTargetType; targetId: number }
   | { kind: "spec" };
 
 type State = Record<string, unknown>;
@@ -16,7 +18,8 @@ interface Op { target: Target; before: State; after: State }
 
 
 export const targetLabel = (t: Target) =>
-  t.kind === "page" ? `页面 /${t.slug}/` : t.kind === "site" ? "站点标语与页脚信息" : t.kind === "styles" ? "全局样式" : t.kind === "product" ? `商品 #${t.id}` : "文案底稿";
+  t.kind === "page" ? `页面 /${t.slug}/` : t.kind === "site" ? "站点标语与页脚信息" : t.kind === "styles" ? "全局样式"
+  : t.kind === "product" ? `商品 #${t.id}` : t.kind === "metadata" ? `SEO ${t.targetType} #${t.targetId}` : "文案底稿";
 
 /** 键顺序无关的比较（WordPress 返回的 JSON 键顺序可能和写入时不同） */
 const stable = (v: unknown): string =>
@@ -50,9 +53,17 @@ async function read(ctx: StepCtx, t: Target): Promise<State> {
       return { styles: g.styles ?? {}, settings: g.settings ?? {} };
     }
     case "product": {
-      const p = (await ctx.wp("GET", `wc/v3/products/${t.id}`)) as { name: string; short_description: string; description: string };
-      return { name: p.name, short_description: p.short_description, description: p.description };
+      const p = (await ctx.wp("GET", `wc/v3/products/${t.id}`)) as {
+        name: string; short_description: string; description: string;
+        images?: { id: number; src?: string; alt?: string }[]; categories?: { id: number; name?: string; slug?: string }[];
+      };
+      return {
+        name: p.name, short_description: p.short_description, description: p.description,
+        images: p.images ?? [], categories: p.categories ?? [],
+      };
     }
+    case "metadata":
+      return (await ctx.wp("GET", `site-agent/v1/metadata?target_type=${t.targetType}&target_id=${t.targetId}`)) as State;
     case "spec":
       return JSON.parse(ctx.site.spec_json ?? "{}") as State;
   }
@@ -73,6 +84,12 @@ async function write(ctx: StepCtx, t: Target, s: State): Promise<void> {
     case "product":
       await ctx.wp("PUT", `wc/v3/products/${t.id}`, s);
       return;
+    case "metadata":
+      await ctx.wp("POST", "site-agent/v1/metadata", {
+        target_type: t.targetType, target_id: t.targetId,
+        description: s.description, og_description: s.og_description,
+      });
+      return;
     case "spec":
       ctx.save("spec_json", JSON.stringify(s));
   }
@@ -90,19 +107,23 @@ export async function applyChange(
       const before = await read(ctx, target);
       const wanted = { ...before, ...patch };
       if (same(before, wanted)) continue;
+      // 先登记恢复点再写：即使写成功后的核验读取失败，这一项也会进入 catch 回滚。
+      const op: Op = { target, before, after: wanted };
+      ops.push(op);
       await write(ctx, target, wanted);
       // 以写入后的实际内容为准：WordPress 保存时会过滤 HTML
-      ops.push({ target, before, after: await read(ctx, target) });
+      op.after = await read(ctx, target);
     }
+    if (ops.length === 0) return null;
+    // DB 记录也是事务的一部分；插入失败时不能把已经写到 WordPress 的内容留在外面。
+    const id = (ctx.d.db.prepare("INSERT INTO changesets (site_id, summary, initiator, ops_json, created_at) VALUES (?, ?, ?, ?, ?) RETURNING id")
+      .get(ctx.site.id, summary, initiator, JSON.stringify(ops), ctx.d.now()) as { id: number }).id;
+    ctx.emit("ai_tool", { change: id, summary, targets: ops.map((o) => targetLabel(o.target)) });
+    return id;
   } catch (e) {
     for (const op of ops.reverse()) await write(ctx, op.target, op.before).catch(() => {});
     throw e;
   }
-  if (ops.length === 0) return null;
-  const id = (ctx.d.db.prepare("INSERT INTO changesets (site_id, summary, initiator, ops_json, created_at) VALUES (?, ?, ?, ?, ?) RETURNING id")
-    .get(ctx.site.id, summary, initiator, JSON.stringify(ops), ctx.d.now()) as { id: number }).id;
-  ctx.emit("ai_tool", { change: id, summary, targets: ops.map((o) => targetLabel(o.target)) });
-  return id;
 }
 
 export async function revertChange(ctx: StepCtx, changeId: number): Promise<void> {
