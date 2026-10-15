@@ -8,7 +8,8 @@ import { migrate, openDb } from "./db.ts";
 import { createBatch, siteSteps } from "./batches.ts";
 import { HostingerError, type HostingerExec } from "./hostinger.ts";
 import { PermanentError } from "./jobs.ts";
-import { provisionSite, type PipelineDeps } from "./pipeline.ts";
+import { provisionSite, UNWANTED_PLUGINS, type PipelineDeps } from "./pipeline.ts";
+import { launchSite } from "./launch.ts";
 import { seal, unseal } from "./secrets.ts";
 import type { BrowseInput } from "./qa-browser.ts";
 import type { BatchForm } from "../shared/forms.ts";
@@ -40,7 +41,10 @@ function fakeHostinger(opts: { websiteAlreadyThere?: boolean } = {}) {
     websites: new Set<string>(opts.websiteAlreadyThere ? [DOMAIN] : []),
     setup: null as null | { status: string; polls: number },
     installed: false,
-    plugins: new Map<string, string>([["hostinger", "active"]]),
+    maintenance: "disabled",
+    // Hostinger 新站默认装的插件；卸载是异步的，下一次列表才消失
+    plugins: new Map<string, string>([["hostinger", "active"], ["hostinger-ai-assistant", "active"], ["hostinger-easy-onboarding", "active"], ["hostinger-reach", "active"]]),
+    uninstallQueued: [] as string[],
     themes: new Map<string, { status: string; version: string }>([["twentytwentyfive", { status: "active", version: "1.5" }]]),
     pluginDeploys: [] as string[],
     calls: [] as string[],
@@ -69,9 +73,18 @@ function fakeHostinger(opts: { websiteAlreadyThere?: boolean } = {}) {
       case "hosting_ssl_status":
         return { status: "active" };
       case "wordpress_maintenance_show-status":
-        return { status: "enabled" };
-      case "wordpress_plugins_list-installed":
-        return [...st.plugins].map(([name, status]) => ({ name, status }));
+        return { status: st.maintenance };
+      case "wordpress_maintenance_toggle":
+        st.maintenance = params.enabled ? "enabled" : "disabled";
+        throw new HostingerError("HTTP 500: [Hosting:9999] Request failed", 500);
+      case "wordpress_plugins_uninstall":
+        st.uninstallQueued.push(...params.plugins);
+        return {};
+      case "wordpress_plugins_list-installed": {
+        const list = [...st.plugins].map(([name, status]) => ({ name, status }));
+        for (const n of st.uninstallQueued.splice(0)) st.plugins.delete(n);
+        return list;
+      }
       case "wordpress_plugins_install":
         for (const n of params.plugins) st.plugins.set(n, "active");
         throw new HostingerError("HTTP 500: [Hosting:9999] Request failed", 500);
@@ -106,7 +119,7 @@ function fakeSite(st: ReturnType<typeof fakeHostinger>["st"], opts: { rejectFirs
   let nextId = 100;
   type Page = { id: number; slug: string; title: string; content: string; status: string };
   const wp = {
-    options: { blogname: "", blogdescription: "", blog_public: 1, show_on_front: "posts", page_on_front: 0, wp_page_for_privacy_policy: 3 } as Record<string, unknown>,
+    options: { blogname: "", blogdescription: "", blog_public: 1, show_on_front: "posts", page_on_front: 0, wp_page_for_privacy_policy: 3, woocommerce_coming_soon: "yes" } as Record<string, unknown>,
     info: {} as Record<string, string>,
     pages: new Map<number, Page>([
       [3, { id: 3, slug: "privacy-policy", title: "Privacy Policy", content: "draft", status: "draft" }],
@@ -127,6 +140,11 @@ function fakeSite(st: ReturnType<typeof fakeHostinger>["st"], opts: { rejectFirs
     const path = u.pathname.replace(/^\/wp-json\//, "");
     const q = u.searchParams;
 
+    // 访客看到的前台：维护模式或 Woo「即将上线」时是维护页
+    if (!u.pathname.startsWith("/wp-json/")) {
+      const hidden = st.maintenance === "enabled" || wp.options.woocommerce_coming_soon === "yes";
+      return new Response(hidden ? "<h1>Coming Soon</h1>" : "<h1>Rest easy, pup</h1>", { headers: { "Content-Type": "text/html" } });
+    }
     if (path === "site-agent/v1/enroll") {
       const php = readFileSync(join(st.pluginDeploys.at(-1)!, "enroll.php"), "utf8");
       const hash = /'token_hash' => '([0-9a-f]+)'/.exec(php)![1];
@@ -331,6 +349,10 @@ test("a new site goes through every step: built on Hostinger, filled from CJ and
   assert.equal(site.wp_software_id, "31100468");
   assert.equal(st.plugins.get("woocommerce"), "active");
   assert.deepEqual(st.themes.get("obel"), { status: "active", version: THEME_VERSION });
+  for (const p of UNWANTED_PLUGINS) assert.ok(!st.plugins.has(p), `${p} uninstalled`);
+  assert.equal(st.plugins.get("hostinger"), "active", "Hostinger Tools stays (it runs maintenance mode)");
+  assert.equal(steps.find((s) => s.key === "plugins_cleanup")!.status, "done");
+  assert.equal(st.maintenance, "enabled", "still hidden until launch");
   assert.deepEqual(JSON.parse(unseal(key, site.companion_ciphertext)), { username: "site-agent", password: "app pass word 1234" });
 
   // 文案：编造的成立年份被拦下，AI 改写后通过
@@ -391,6 +413,26 @@ test("a rejected enrollment redeploys the companion with a newer generation and 
   assert.equal(st.pluginDeploys.length, 2);
   const site = db.prepare("SELECT status FROM sites WHERE id = ?").get(siteId) as { status: string };
   assert.equal(site.status, "done");
+});
+
+test("launch turns off maintenance and coming-soon, allows indexing, and confirms visitors see the site", async () => {
+  const { db, siteId } = setup();
+  const { st, exec } = fakeHostinger();
+  const { fetchImpl, wp } = fakeSite(st);
+  const d = deps(db, exec, fetchImpl, []);
+  const noPause = async () => {};
+  await assert.rejects(launchSite(d, siteId, noPause), /全部完成后才能上线/);
+  await runToEnd(d, siteId);
+
+  assert.match(await launchSite(d, siteId, noPause), /访客已经能看到网站/);
+  assert.equal(st.maintenance, "disabled");
+  assert.equal(wp.options.blog_public, 1);
+  assert.equal(wp.options.woocommerce_coming_soon, "no");
+  assert.ok((db.prepare("SELECT launched_at FROM sites WHERE id = ?").get(siteId) as { launched_at: number }).launched_at > 0);
+  // 再点一次也安全：维护模式已关，不会再切换
+  const toggles = st.calls.filter((c) => c === "wordpress_maintenance_toggle").length;
+  await launchSite(d, siteId, noPause);
+  assert.equal(st.calls.filter((c) => c === "wordpress_maintenance_toggle").length, toggles);
 });
 
 test("QA failures stop the site with a report instead of finishing", async () => {

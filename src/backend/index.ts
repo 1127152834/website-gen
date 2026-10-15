@@ -11,7 +11,8 @@ import { createCj, setCjKey, type CjGet } from "./cj.ts";
 import { appendEvent, eventsForSite, eventsSince, migrate, openDb, schemaVersion } from "./db.ts";
 import { createHostingerPool } from "./hostinger.ts";
 import { createRunner, recoverStale } from "./jobs.ts";
-import { provisionSite } from "./pipeline.ts";
+import { provisionSite, type PipelineDeps } from "./pipeline.ts";
+import { launchSite } from "./launch.ts";
 import { buildRuntime, completeText, listProviders, listRoles, pingModel, seedModelDefaults, setProviderKey, setRole } from "./models.ts";
 import { browseWithEdge } from "./qa-browser.ts";
 import { secretHint } from "./secrets.ts";
@@ -66,6 +67,22 @@ setInterval(() => void syncAll(), 30 * 60_000);
 // CJ 限速是整个账号每秒 1 次，所有建站任务共用一个客户端
 let cj: CjGet | null = null;
 const workDir = join(userData, "work");
+const launching = new Set<number>();
+
+/** 流水线和上线用到的外部依赖 */
+function pipelineDeps(): PipelineDeps {
+  const key = requireKey();
+  return {
+    db, key, fetch, resourcesDir,
+    hostinger: (accountId) => hostinger.forAccount(accountId, accountToken(db, key, accountId)),
+    emit: (e) => emit({ batchId: String(e.batchId), siteId: String(e.siteId), kind: e.kind, payload: e.payload }),
+    workDir,
+    now: Date.now,
+    ai: (role, prompt) => completeText(db, key, role, prompt),
+    cj: (path) => (cj ??= createCj(db, key))(path),
+    browse: browseWithEdge,
+  };
+}
 
 // ---- 建站任务队列：后台进程里只有这一个消费者，启动时上次没跑完的任务全部重新排队 ----
 recoverStale(db, Number.MAX_SAFE_INTEGER);
@@ -73,19 +90,7 @@ const runner = createRunner({
   db,
   concurrency: 3,
   handlers: {
-    [PROVISION_JOB]: (job) => {
-      const key = requireKey();
-      return provisionSite({
-        db, key, fetch, resourcesDir,
-        hostinger: (accountId) => hostinger.forAccount(accountId, accountToken(db, key, accountId)),
-        emit: (e) => emit({ batchId: String(e.batchId), siteId: String(e.siteId), kind: e.kind, payload: e.payload }),
-        workDir,
-        now: Date.now,
-        ai: (role, prompt) => completeText(db, key, role, prompt),
-        cj: (path) => (cj ??= createCj(db, key))(path),
-        browse: browseWithEdge,
-      }, job.siteId!);
-    },
+    [PROVISION_JOB]: (job) => provisionSite(pipelineDeps(), job.siteId!),
   },
   onSettled: (job, outcome, error) => {
     if (outcome === "failed" || outcome === "retry") {
@@ -187,6 +192,18 @@ const handlers: Handlers = {
     await setCjKey(db, requireKey(), String((p as { apiKey: string }).apiKey ?? ""));
     cj = null;
     return { keyHint: secretHint(db, "cj.apiKey") };
+  },
+  // 一键上线：同一个站同时只跑一次，几十秒内完成，不进任务队列
+  "sites.launch": async (p) => {
+    const siteId = Number((p as { siteId: number }).siteId);
+    if (launching.has(siteId)) throw new Error("正在上线，请稍候");
+    launching.add(siteId);
+    try {
+      return { detail: await launchSite(pipelineDeps(), siteId) };
+    } finally {
+      launching.delete(siteId);
+      push({ kind: "changed", topic: "batches" });
+    }
   },
   "sites.retry": (p) => {
     retrySite(db, Number((p as { siteId: number }).siteId), Date.now());

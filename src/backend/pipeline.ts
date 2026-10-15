@@ -6,7 +6,7 @@ import type { DatabaseSync } from "node:sqlite";
 import { randomBytes } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { PROVISION_STEPS, type ModelRole, type RunEventKind, type StepKey, type StepState } from "../shared/protocol.ts";
+import { PROVISION_STEPS, type ModelRole, type RunEventKind, type SiteStatus, type StepKey, type StepState } from "../shared/protocol.ts";
 import type { EntityForm, SiteForm } from "../shared/forms.ts";
 import { HostingerError, listAll, type HostingerExec } from "./hostinger.ts";
 import { PermanentError } from "./jobs.ts";
@@ -41,6 +41,7 @@ export interface SiteRow {
   id: number;
   batch_id: number;
   domain: string;
+  status: SiteStatus;
   account_id: number | null;
   order_id: number | null;
   hostinger_username: string | null;
@@ -53,6 +54,7 @@ export interface SiteRow {
   picks_json: string | null;
   spec_json: string | null;
   qa_json: string | null;
+  launched_at: number | null;
 }
 
 export interface StepRow { status: StepState["status"]; detail: string | null; started_at: number }
@@ -73,18 +75,23 @@ export interface StepCtx {
   save: (col: keyof SiteRow, value: SiteRow[keyof SiteRow]) => void;
   emit: (kind: RunEventKind, payload: Record<string, unknown>) => void;
   hx: HostingerExec;
+  /** Hostinger 写操作：5xx 返回 UNKNOWN（调用方查状态确认），4xx 抛 PermanentError */
+  act: (op: string, params: Record<string, unknown>) => Promise<unknown>;
+  /** Hostinger 的 WordPress 安装标识 { username, software } */
+  inst: () => { username: string; software: string };
   /** 用伴侣插件的应用密码调站点 REST，path 不带 /wp-json/ 前缀 */
   wp: (method: string, path: string, body?: unknown) => Promise<unknown>;
 }
 
-const UNKNOWN = Symbol("unknown");
+export const UNKNOWN = Symbol("unknown");
 const INSTALL_WAIT = "已提交安装，等待 Hostinger 完成";
+/** Hostinger 新站默认装的插件里不需要的三个（AI 助手会在后台和结账页弹侧边栏）；Hostinger Tools 管维护模式，保留 */
+export const UNWANTED_PLUGINS = ["hostinger-ai-assistant", "hostinger-easy-onboarding", "hostinger-reach"];
 const SSL_WAIT = "已申请 SSL 证书，等待签发";
 
-export async function provisionSite(d: PipelineDeps, siteId: number): Promise<{ waitMs: number } | void> {
+/** 读出站点并准备好对它操作要用的东西：Hostinger 调用（带日志）、写操作确认、站点 REST。流水线和上线共用。 */
+export function siteContext(d: PipelineDeps, siteId: number): StepCtx {
   const { db, key } = d;
-  const pollMs = d.pollMs ?? 15_000;
-  const maxWaitMs = d.maxWaitMs ?? 20 * 60_000;
   const row = db.prepare("SELECT * FROM sites WHERE id = ?").get(siteId) as unknown as SiteRow | undefined;
   if (!row) throw new PermanentError(`站点 ${siteId} 不存在`);
   const site: SiteRow = row;
@@ -96,27 +103,6 @@ export async function provisionSite(d: PipelineDeps, siteId: number): Promise<{ 
     db.prepare(`UPDATE sites SET ${col} = ?, updated_at = ? WHERE id = ?`).run(value, d.now(), siteId);
     (site as unknown as Record<string, unknown>)[col] = value;
   };
-
-  // ---- 步骤进度：只在状态或说明变化时写库并发事件，轮询时不刷屏 ----
-  const rows = new Map<StepKey, StepRow>(
-    (db.prepare("SELECT step, status, detail, started_at FROM provision_steps WHERE site_id = ?").all(siteId) as unknown as (StepRow & { step: StepKey })[])
-      .map((r) => [r.step, r]),
-  );
-  function mark(step: StepKey, status: StepRow["status"], detail: string | null) {
-    const prev = rows.get(step);
-    if (prev && prev.status === status && prev.detail === detail) return;
-    const now = d.now();
-    const startedAt = prev && (prev.status === "running" || prev.status === "waiting") ? prev.started_at : now;
-    const finishedAt = status === "done" || status === "skipped" || status === "failed" ? now : null;
-    db.prepare(`INSERT INTO provision_steps (site_id, step, status, detail, started_at, finished_at) VALUES (?, ?, ?, ?, ?, ?)
-      ON CONFLICT (site_id, step) DO UPDATE SET status = excluded.status, detail = excluded.detail, started_at = excluded.started_at, finished_at = excluded.finished_at`)
-      .run(siteId, step, status, detail, startedAt, finishedAt);
-    rows.set(step, { status, detail, started_at: startedAt });
-    const i = PROVISION_STEPS.findIndex((s) => s.key === step);
-    emit("step", { step, index: i + 1, total: PROVISION_STEPS.length, name: PROVISION_STEPS[i].name, status, detail });
-  }
-  const setStatus = (status: "running" | "waiting" | "done") =>
-    db.prepare("UPDATE sites SET status = ?, last_error = CASE WHEN ? = 'done' THEN NULL ELSE last_error END, updated_at = ? WHERE id = ?").run(status, status, d.now(), siteId);
 
   // ---- Hostinger 调用：日志里只记操作名、耗时和成败，从不记参数（里面有密码） ----
   let rawExec: HostingerExec | null = null;
@@ -144,28 +130,6 @@ export async function provisionSite(d: PipelineDeps, siteId: number): Promise<{ 
     }
   }
   const inst = () => ({ username: site.hostinger_username!, software: site.wp_software_id! });
-  const setups = async () => (await hx("hosting_websites_list-setups", { domain })) as { username?: string; status?: string }[];
-  const website = async () =>
-    ((await listAll(hx, "hosting_websites_list", { domain })) as { domain: string; username?: string }[]).find((w) => w.domain === domain);
-
-  /** 插件或主题：没装（或版本不对）就装，装了没启用就启用，最后以列表里的状态为准。 */
-  async function ensureActive(
-    kind: "plugin" | "theme", slug: string, install: () => Promise<void>, prevDetail: string | null, isCurrent = (_version?: string) => true,
-  ): Promise<{ status: "done" | "skipped"; detail: string } | { wait: string }> {
-    const find = async () =>
-      ((await hx(`wordpress_${kind}s_list-installed`, inst())) as { name: string; status: string; version?: string }[]).find((x) => x.name === slug);
-    let x = await find();
-    if (x?.status === "active" && isCurrent(x.version)) return { status: "skipped", detail: `${slug} ${x.version ?? ""} 已是启用状态`.trim() };
-    if ((!x || !isCurrent(x.version)) && prevDetail !== INSTALL_WAIT) {
-      await install();
-      x = await find();
-    }
-    if (x && x.status !== "active") {
-      await act(`wordpress_${kind}s_activate`, { ...inst(), [kind]: slug });
-      x = await find();
-    }
-    return x?.status === "active" && isCurrent(x.version) ? { status: "done", detail: `${slug} ${x.version ?? ""} 已启用`.trim() } : { wait: INSTALL_WAIT };
-  }
 
   // ---- 站点 REST：伴侣插件注册得到的应用密码 ----
   async function wp(method: string, path: string, body?: unknown): Promise<unknown> {
@@ -191,9 +155,63 @@ export async function provisionSite(d: PipelineDeps, siteId: number): Promise<{ 
     }
     return json;
   }
+
+  return { d, site, domain, entity, form: JSON.parse(site.form_json) as SiteForm, save, emit, hx, act, inst, wp };
+}
+
+export async function provisionSite(d: PipelineDeps, siteId: number): Promise<{ waitMs: number } | void> {
+  const { db, key } = d;
+  const pollMs = d.pollMs ?? 15_000;
+  const maxWaitMs = d.maxWaitMs ?? 20 * 60_000;
+  const ctx = siteContext(d, siteId);
+  const { site, domain, entity, emit, save, hx, act, inst } = ctx;
+
+  // ---- 步骤进度：只在状态或说明变化时写库并发事件，轮询时不刷屏 ----
+  const rows = new Map<StepKey, StepRow>(
+    (db.prepare("SELECT step, status, detail, started_at FROM provision_steps WHERE site_id = ?").all(siteId) as unknown as (StepRow & { step: StepKey })[])
+      .map((r) => [r.step, r]),
+  );
+  function mark(step: StepKey, status: StepRow["status"], detail: string | null) {
+    const prev = rows.get(step);
+    if (prev && prev.status === status && prev.detail === detail) return;
+    const now = d.now();
+    const startedAt = prev && (prev.status === "running" || prev.status === "waiting") ? prev.started_at : now;
+    const finishedAt = status === "done" || status === "skipped" || status === "failed" ? now : null;
+    db.prepare(`INSERT INTO provision_steps (site_id, step, status, detail, started_at, finished_at) VALUES (?, ?, ?, ?, ?, ?)
+      ON CONFLICT (site_id, step) DO UPDATE SET status = excluded.status, detail = excluded.detail, started_at = excluded.started_at, finished_at = excluded.finished_at`)
+      .run(siteId, step, status, detail, startedAt, finishedAt);
+    rows.set(step, { status, detail, started_at: startedAt });
+    const i = PROVISION_STEPS.findIndex((s) => s.key === step);
+    emit("step", { step, index: i + 1, total: PROVISION_STEPS.length, name: PROVISION_STEPS[i].name, status, detail });
+  }
+  const setStatus = (status: "running" | "waiting" | "done") =>
+    db.prepare("UPDATE sites SET status = ?, last_error = CASE WHEN ? = 'done' THEN NULL ELSE last_error END, updated_at = ? WHERE id = ?").run(status, status, d.now(), siteId);
+
+  const setups = async () => (await hx("hosting_websites_list-setups", { domain })) as { username?: string; status?: string }[];
+  const website = async () =>
+    ((await listAll(hx, "hosting_websites_list", { domain })) as { domain: string; username?: string }[]).find((w) => w.domain === domain);
+
+  /** 插件或主题：没装（或版本不对）就装，装了没启用就启用，最后以列表里的状态为准。 */
+  async function ensureActive(
+    kind: "plugin" | "theme", slug: string, install: () => Promise<void>, prevDetail: string | null, isCurrent = (_version?: string) => true,
+  ): Promise<{ status: "done" | "skipped"; detail: string } | { wait: string }> {
+    const find = async () =>
+      ((await hx(`wordpress_${kind}s_list-installed`, inst())) as { name: string; status: string; version?: string }[]).find((x) => x.name === slug);
+    let x = await find();
+    if (x?.status === "active" && isCurrent(x.version)) return { status: "skipped", detail: `${slug} ${x.version ?? ""} 已是启用状态`.trim() };
+    if ((!x || !isCurrent(x.version)) && prevDetail !== INSTALL_WAIT) {
+      await install();
+      x = await find();
+    }
+    if (x && x.status !== "active") {
+      await act(`wordpress_${kind}s_activate`, { ...inst(), [kind]: slug });
+      x = await find();
+    }
+    return x?.status === "active" && isCurrent(x.version) ? { status: "done", detail: `${slug} ${x.version ?? ""} 已启用`.trim() } : { wait: INSTALL_WAIT };
+  }
+
   const themeVersion = /Version:\s*([\d.]+)/.exec(readFileSync(join(d.resourcesDir, "theme", "obel", "style.css"), "utf8"))?.[1];
 
-  const ctx: StepCtx = { d, site, domain, entity, form: JSON.parse(site.form_json) as SiteForm, save, emit, hx, wp };
   const steps: Record<StepKey, (prev: StepRow | undefined) => Promise<StepResult>> = {
     ...storeSteps(ctx),
     async precheck() {
@@ -260,6 +278,14 @@ export async function provisionSite(d: PipelineDeps, siteId: number): Promise<{ 
 
     async woocommerce(prev) {
       return ensureActive("plugin", "woocommerce", async () => void (await act("wordpress_plugins_install", { ...inst(), plugins: ["woocommerce"] })), prev?.detail ?? null);
+    },
+
+    async plugins_cleanup(prev) {
+      // 卸载是异步任务：提交一次，之后每次轮询只看列表里还剩没剩
+      const left = ((await hx("wordpress_plugins_list-installed", inst())) as { name: string }[]).map((p) => p.name).filter((n) => UNWANTED_PLUGINS.includes(n));
+      if (left.length === 0) return prev ? { status: "done", detail: "已卸载 Hostinger AI 助手、Easy Onboarding、Reach" } : { status: "skipped", detail: "没有需要卸载的插件" };
+      if (prev?.status !== "waiting") await act("wordpress_plugins_uninstall", { ...inst(), plugins: left });
+      return { wait: `正在卸载：${left.join(", ")}` };
     },
 
     async theme(prev) {

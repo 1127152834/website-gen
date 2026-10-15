@@ -138,4 +138,7 @@ export const MIGRATIONS: string[] = [
      hint       TEXT,
      updated_at INTEGER NOT NULL
    );`,
+
+  // 006：上线时间（为空 = 还在维护模式）
+  `ALTER TABLE sites ADD COLUMN launched_at INTEGER;`,
 ];

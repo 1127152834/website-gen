@@ -65,14 +65,14 @@ export function siteSteps(db: DatabaseSync, siteId: number): StepState[] {
 }
 
 export function batchSites(db: DatabaseSync, batchId: number): SiteProgress[] {
-  const sites = db.prepare("SELECT id, batch_id, domain, status, last_error, updated_at FROM sites WHERE batch_id = ? ORDER BY id").all(batchId) as {
-    id: number; batch_id: number; domain: string; status: SiteProgress["status"]; last_error: string | null; updated_at: number;
+  const sites = db.prepare("SELECT id, batch_id, domain, status, last_error, updated_at, launched_at FROM sites WHERE batch_id = ? ORDER BY id").all(batchId) as {
+    id: number; batch_id: number; domain: string; status: SiteProgress["status"]; last_error: string | null; updated_at: number; launched_at: number | null;
   }[];
   return sites.map((s) => {
     const steps = siteSteps(db, s.id);
     const completed = steps.filter((x) => x.status === "done" || x.status === "skipped").length;
     const current = s.status === "done" ? null : steps.find((x) => x.status !== "done" && x.status !== "skipped");
-    return { id: s.id, batchId: s.batch_id, domain: s.domain, status: s.status, completed, currentStep: current?.name ?? null, lastError: s.last_error, updatedAt: s.updated_at };
+    return { id: s.id, batchId: s.batch_id, domain: s.domain, status: s.status, completed, currentStep: current?.name ?? null, lastError: s.last_error, updatedAt: s.updated_at, launchedAt: s.launched_at };
   });
 }
 

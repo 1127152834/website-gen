@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CircleAlert, CircleCheck, Circle, CircleDashed, Clock, LoaderCircle, RotateCcw } from "lucide-react";
+import { CircleAlert, CircleCheck, Circle, CircleDashed, Clock, ExternalLink, LoaderCircle, Rocket, RotateCcw } from "lucide-react";
 import { PROVISION_STEPS, type BatchSummary, type RunEvent, type SiteProgress, type SiteStatus, type StepState } from "../../../shared/protocol.ts";
 import { call, onChanged, onConnect, onEvent } from "@/lib/backend.ts";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+  AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 
 const SITE_STATUS: Record<SiteStatus, { label: string; variant: "secondary" | "outline" | "destructive" | "default" }> = {
@@ -68,6 +72,9 @@ export function BatchesPage({ initialBatch, onNew }: { initialBatch: number | nu
   const [events, setEvents] = useState<RunEvent[]>([]);
   const [qa, setQa] = useState<QaView | null>(null);
   const [zoom, setZoom] = useState<QaView["shots"][number] | null>(null);
+  const [confirmLaunch, setConfirmLaunch] = useState(false);
+  const [launching, setLaunching] = useState(false);
+  const [launchNote, setLaunchNote] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const logEnd = useRef<HTMLDivElement>(null);
   // 事件回调里要读到最新的选择，用 ref 避免反复重新订阅
@@ -136,6 +143,7 @@ export function BatchesPage({ initialBatch, onNew }: { initialBatch: number | nu
     setSteps([]);
     setEvents([]);
     setQa(null);
+    setLaunchNote(null);
     loadSite();
   }, [siteId, loadSite]);
 
@@ -143,6 +151,21 @@ export function BatchesPage({ initialBatch, onNew }: { initialBatch: number | nu
   useEffect(() => {
     void logEnd.current?.scrollIntoView({ block: "end" });
   }, [events.length]);
+
+  const launch = async (id: number) => {
+    setLaunching(true);
+    setError(null);
+    setLaunchNote(null);
+    try {
+      setLaunchNote((await call<{ detail: string }>("sites.launch", { siteId: id })).detail);
+      loadSites();
+    } catch (e) {
+      fail(e as Error);
+    } finally {
+      setLaunching(false);
+      setConfirmLaunch(false);
+    }
+  };
 
   const retry = async (id: number) => {
     setError(null);
@@ -219,7 +242,7 @@ export function BatchesPage({ initialBatch, onNew }: { initialBatch: number | nu
                     <TableCell>
                       <button type="button" className="font-medium outline-none focus-visible:underline" aria-pressed={s.id === siteId} onClick={() => setSiteId(s.id)}>{s.domain}</button>
                     </TableCell>
-                    <TableCell><Badge variant={SITE_STATUS[s.status].variant}>{SITE_STATUS[s.status].label}</Badge></TableCell>
+                    <TableCell>{s.launchedAt ? <Badge>已上线</Badge> : <Badge variant={SITE_STATUS[s.status].variant}>{SITE_STATUS[s.status].label}</Badge>}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <div className="h-1.5 flex-1 rounded-full bg-muted" role="progressbar" aria-valuemin={0} aria-valuemax={TOTAL} aria-valuenow={s.completed} aria-label={`${s.domain} 的进度`}>
@@ -229,7 +252,8 @@ export function BatchesPage({ initialBatch, onNew }: { initialBatch: number | nu
                       </div>
                     </TableCell>
                     <TableCell className="whitespace-normal">
-                      {s.status === "done" ? <span className="text-muted-foreground">已完成，维护模式中，等你检查后上线</span> : (s.currentStep ?? "—")}
+                      {s.launchedAt ? <span className="text-muted-foreground">{dateTime(s.launchedAt)} 上线</span>
+                        : s.status === "done" ? <span className="text-muted-foreground">已完成，维护模式中，等你检查后上线</span> : (s.currentStep ?? "—")}
                       {s.lastError && s.status !== "done" && <span className="mt-1 block max-w-96 text-xs text-destructive">{s.lastError}</span>}
                     </TableCell>
                     <TableCell>
@@ -249,7 +273,19 @@ export function BatchesPage({ initialBatch, onNew }: { initialBatch: number | nu
           {site && (
             <section aria-label={`${site.domain} 的详情`} className="grid gap-6 lg:grid-cols-[18rem_minmax(0,1fr)]">
               <div>
-                <h2 className="mb-3 text-sm font-medium">{site.domain}</h2>
+                <div className="mb-3 flex flex-wrap items-center gap-2">
+                  <h2 className="text-sm font-medium">{site.domain}</h2>
+                  <a href={`https://${site.domain}/`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-2 hover:underline">
+                    打开网站<ExternalLink className="size-3" aria-hidden />
+                  </a>
+                </div>
+                {site.status === "done" && !site.launchedAt && (
+                  <Button size="sm" className="mb-4" onClick={() => setConfirmLaunch(true)} disabled={launching}>
+                    {launching ? <LoaderCircle className="motion-safe:animate-spin" aria-hidden /> : <Rocket aria-hidden />}
+                    {launching ? "正在上线" : "上线"}
+                  </Button>
+                )}
+                {launchNote && <p role="status" className="mb-4 text-sm text-green-700">{launchNote}</p>}
                 <ol aria-label="建站步骤" className="flex flex-col">
                   {steps.map((st, i) => (
                     <li key={st.key} className="relative flex gap-3 pb-4 last:pb-0">
@@ -331,6 +367,32 @@ export function BatchesPage({ initialBatch, onNew }: { initialBatch: number | nu
           )}
         </div>
       </div>
+
+      <AlertDialog open={confirmLaunch} onOpenChange={(open) => !open && !launching && setConfirmLaunch(false)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>上线 {site?.domain}？</AlertDialogTitle>
+            <AlertDialogDescription>
+              会关闭 Hostinger 维护模式和 WooCommerce 的「即将上线」页，并允许搜索引擎收录。之后访客就能浏览和下单。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {qa && qa.checks.some((c) => !c.ok) && (
+            <section aria-label="上线前的提醒" className="text-sm">
+              <p className="font-medium">QA 还有这些提醒：</p>
+              <ul className="mt-1 list-disc pl-5 text-amber-700">
+                {qa.checks.filter((c) => !c.ok).map((c) => <li key={c.id}>{c.name}：{c.detail}</li>)}
+              </ul>
+            </section>
+          )}
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={launching}>取消</AlertDialogCancel>
+            <AlertDialogAction disabled={launching} onClick={(e) => { e.preventDefault(); if (site) void launch(site.id); }}>
+              {launching && <LoaderCircle className="motion-safe:animate-spin" aria-hidden />}
+              上线
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Dialog open={zoom !== null} onOpenChange={(open) => !open && setZoom(null)}>
         <DialogContent className="max-h-[90vh] overflow-auto sm:max-w-5xl">

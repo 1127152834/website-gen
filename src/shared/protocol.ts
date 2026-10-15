@@ -55,13 +55,14 @@ export interface RoleSummary {
   problem: string | null;
 }
 
-/** 建站流水线的步骤（顺序即执行顺序）：前 8 步在 Hostinger 上搭站，后 6 步填内容并验收 */
+/** 建站流水线的步骤（顺序即执行顺序）：前 9 步在 Hostinger 上搭站，后 6 步填内容并验收 */
 export const PROVISION_STEPS = [
   { key: "precheck", name: "预检" },
   { key: "create_site", name: "创建网站" },
   { key: "wait_wordpress", name: "安装 WordPress" },
   { key: "ssl_maintenance", name: "SSL 与维护模式" },
   { key: "woocommerce", name: "安装 WooCommerce" },
+  { key: "plugins_cleanup", name: "卸载多余插件" },
   { key: "theme", name: "部署 Obel 主题" },
   { key: "companion", name: "部署伴侣插件" },
   { key: "enroll", name: "注册伴侣插件" },
@@ -104,6 +105,8 @@ export interface SiteProgress {
   currentStep: string | null;
   lastError: string | null;
   updatedAt: number;
+  /** 一键上线的时间；为空表示还在维护模式 */
+  launchedAt: number | null;
 }
 
 export interface StepState {

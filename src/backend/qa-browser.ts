@@ -49,11 +49,34 @@ export const browseWithEdge: Browse = async ({ loginUrl, origin, outDir, pages, 
       await page.screenshot({ path: file });
       shots.push({ name, file });
     };
+    // 管理员的购物车会跨会话保存：加购前先清空（结账页只有这一件），检查完再清空，不留痕迹
+    const clearCart = async () => {
+      await go(origin + "/cart/");
+      // 购物车区块页面上有 wp.apiFetch，自带登录和 Store API 的 nonce
+      const viaApi = await page.evaluate(async () => {
+        const apiFetch = (window as { wp?: { apiFetch?: (o: object) => Promise<unknown> } }).wp?.apiFetch;
+        if (!apiFetch) return false;
+        await apiFetch({ path: "/wc/store/v1/cart/items", method: "DELETE" });
+        return true;
+      }).catch(() => false);
+      if (viaApi) return;
+      for (let i = 0; i < 20; i++) {
+        const remove = page.locator(".wc-block-cart-item__remove-link").first();
+        if ((await remove.count()) === 0) break;
+        await remove.click();
+        await page.waitForTimeout(1500);
+      }
+    };
     for (const p of pages) await visit(p.name, p.path, p.expect);
     if (cart) {
+      await clearCart().catch(() => {});
       await go(origin + cart.addPath);
-      await visit("cart", "/cart/", cart.expect);
-      await visit("checkout", "/checkout/", cart.expect);
+      try {
+        await visit("cart", "/cart/", cart.expect);
+        await visit("checkout", "/checkout/", cart.expect);
+      } finally {
+        await clearCart().catch(() => {});
+      }
     }
     await page.setViewportSize({ width: 390, height: 844 });
     await visit("home-mobile", "/");

@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Site Companion
  * Description:       Lets the website-gen desktop app manage this store over the REST API.
- * Version:           0.3.1
+ * Version:           0.3.2
  * Requires at least: 6.8
  * Requires PHP:      8.1
  * License:           GPLv2 or later
@@ -17,7 +17,7 @@ const SITE_COMPANION_ENROLLED_GEN    = 'site_companion_enrolled_generation';
 const SITE_COMPANION_INFO            = 'site_companion_info';
 // Site options the app may set through /site. The service user is a shop manager without manage_options,
 // so this short allow-list is the only way it can change them.
-const SITE_COMPANION_OPTIONS         = array( 'blogname', 'blogdescription', 'blog_public', 'show_on_front', 'page_on_front', 'wp_page_for_privacy_policy' );
+const SITE_COMPANION_OPTIONS         = array( 'blogname', 'blogdescription', 'blog_public', 'show_on_front', 'page_on_front', 'wp_page_for_privacy_policy', 'woocommerce_coming_soon' );
 const SITE_COMPANION_INFO_KEYS       = array( 'entity', 'email', 'phone', 'address', 'announcement' );
 
 /**
@@ -152,6 +152,8 @@ function site_companion_set_site( WP_REST_Request $request ) {
 	foreach ( $options as $name => $value ) {
 		if ( in_array( $name, array( 'blog_public', 'page_on_front', 'wp_page_for_privacy_policy' ), true ) ) {
 			$value = absint( $value );
+		} elseif ( 'woocommerce_coming_soon' === $name ) {
+			$value = 'yes' === $value ? 'yes' : 'no';
 		} elseif ( 'show_on_front' === $name ) {
 			$value = 'page' === $value ? 'page' : 'posts';
 		} else {
