@@ -2,8 +2,10 @@
 // 主进程每接入一个界面窗口（或后台重启后），就送来一个 MessagePort；事件广播给所有在连的窗口。
 import { join } from "node:path";
 import type { MessagePortMain } from "electron";
-import type { BackendMessage, Request, RunEvent } from "../shared/protocol.ts";
+import type { BackendMessage, Push, Request, RunEvent } from "../shared/protocol.ts";
+import { addAccount, listAccounts, listDomains, removeAccount, syncWithStoredToken } from "./accounts.ts";
 import { appendEvent, eventsSince, migrate, openDb, schemaVersion } from "./db.ts";
+import { createHostingerPool } from "./hostinger.ts";
 import { handleRequest, type Handlers } from "./rpc.ts";
 
 const userData = process.argv[2];
@@ -14,10 +16,41 @@ migrate(db);
 
 const ports = new Set<MessagePortMain>();
 const send = (port: MessagePortMain, msg: BackendMessage) => port.postMessage(msg);
+const push = (msg: Push) => {
+  for (const port of ports) send(port, msg);
+};
 const emit = (e: Parameters<typeof appendEvent>[1]) => {
   const event: RunEvent = appendEvent(db, e);
-  for (const port of ports) send(port, { kind: "event", event });
+  push({ kind: "event", event });
 };
+
+// 主密钥由主进程在第一条消息里交付；没有它就不能保存或读取任何凭据
+let masterKey: Buffer | null = null;
+const requireKey = () => {
+  if (!masterKey) throw new Error("本机密钥不可用，无法保存或读取账号凭据");
+  return masterKey;
+};
+
+const hostinger = createHostingerPool();
+const syncing = new Map<number, Promise<unknown>>();
+function sync(id: number) {
+  // 同一账号同时只跑一个同步，重复请求复用正在进行的那个
+  let running = syncing.get(id);
+  if (!running) {
+    running = (async () => syncWithStoredToken(db, requireKey(), id, (token) => hostinger.forAccount(id, token)))().finally(() => {
+      syncing.delete(id);
+      push({ kind: "changed", topic: "accounts" });
+    });
+    syncing.set(id, running);
+  }
+  return running;
+}
+const syncAll = async () => {
+  for (const { id } of listAccounts(db)) await sync(id).catch(() => {}); // 失败已记录在账号状态里
+};
+// ponytail: 定时器做周期同步，P1 任务队列（jobs 表）落地后改由任务循环调度
+setTimeout(() => void syncAll(), 15_000);
+setInterval(() => void syncAll(), 30 * 60_000);
 
 // ponytail: 示例任务只用来演示事件流，P1 建站流水线落地后删除
 const DEMO_STEPS = ["预检", "创建网站", "安装 WordPress", "部署伴侣插件", "安装 WooCommerce", "导入商品", "QA 验收"];
@@ -43,9 +76,38 @@ const handlers: Handlers = {
   }),
   "events.since": (p) => eventsSince(db, Number((p as { afterSeq?: number } | undefined)?.afterSeq ?? 0)),
   "demo.start": startDemo,
+
+  "accounts.list": () => listAccounts(db),
+  "accounts.domains": (p) => listDomains(db, Number((p as { id: number }).id)),
+  "accounts.add": async (p) => {
+    const { label, token } = p as { label: string; token: string };
+    const key = requireKey();
+    // 验证用临时连接；入库后按账号 ID 建正式连接
+    const probeId = -Date.now();
+    let id: number;
+    try {
+      id = await addAccount(db, key, { label, token }, hostinger.forAccount(probeId, token));
+    } finally {
+      void hostinger.close(probeId);
+    }
+    void sync(id).catch(() => {}); // 首次同步在后台跑，完成后推送 changed
+    return { id };
+  },
+  "accounts.sync": async (p) => sync(Number((p as { id: number }).id)),
+  "accounts.remove": async (p) => {
+    const id = Number((p as { id: number }).id);
+    await hostinger.close(id);
+    removeAccount(db, id);
+    return { ok: true };
+  },
 };
 
 process.parentPort.on("message", (e) => {
+  const data = e.data as { type?: string; masterKey?: string | null } | null;
+  if (data?.type === "init") {
+    masterKey = data.masterKey ? Buffer.from(data.masterKey, "base64") : null;
+    return;
+  }
   const [port] = e.ports;
   if (!port) return;
   ports.add(port);

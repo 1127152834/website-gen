@@ -1,6 +1,6 @@
 // 冒烟测试：启动构建好的桌面应用（先 npm run build），走一遍「连后台 → 跑示例任务 → 刷新后按 seq 补发 → 关窗进托盘 → 退出」。
 // 用法：npm run smoke    截图写到 poc/out/（已被 git 忽略）
-import { mkdtempSync, mkdirSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import assert from "node:assert/strict";
@@ -43,6 +43,24 @@ try {
   const visible = await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows().map((w) => w.isVisible()));
   assert.deepEqual(visible, [false], "window should be hidden, not destroyed");
   console.log("✔ closing the window hides it to the tray");
+
+  // 主密钥：safeStorage 加密后落盘
+  assert.ok(existsSync(join(userData, "master.key")), "master.key should be created");
+  console.log("✔ master key created and protected with safeStorage");
+
+  // 账号页：空状态 → 用假 Token 添加，必须被 Hostinger 拒绝（走一遍 界面→后台→MCP 子进程→Hostinger API）
+  await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].show());
+  await page.getByRole("button", { name: "账号" }).click();
+  await page.getByText("还没有接入账号").waitFor({ timeout: 10_000 });
+  await page.getByRole("button", { name: "添加账号" }).click();
+  await page.getByLabel("名称").fill("冒烟测试");
+  await page.getByLabel("API Token").fill("invalid-smoke-test-token-0000");
+  await page.getByRole("button", { name: "验证并添加" }).click();
+  await page.getByRole("alert").filter({ hasText: "Token 无效" }).waitFor({ timeout: 60_000 });
+  await page.screenshot({ path: "poc/out/smoke-2-accounts.png" });
+  await page.keyboard.press("Escape");
+  await page.getByText("还没有接入账号").waitFor({ timeout: 10_000 });
+  console.log("✔ an invalid token is rejected by Hostinger and nothing is saved");
 
   assert.deepEqual(errors, [], "no console errors");
   console.log("✔ no console errors");

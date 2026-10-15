@@ -1,11 +1,12 @@
 // 主进程：只管窗口、托盘、单实例，以及拉起/重启后台进程；业务逻辑都在后台进程里。
 import { join } from "node:path";
 import {
-  app, BrowserWindow, Menu, MessageChannelMain, nativeImage, shell, Tray, utilityProcess,
+  app, BrowserWindow, dialog, Menu, MessageChannelMain, nativeImage, shell, Tray, utilityProcess,
   type UtilityProcess,
 } from "electron";
 import backendPath from "../backend/index.ts?modulePath";
 import iconPath from "../../resources/icon.png?asset";
+import { loadMasterKey } from "./master-key.ts";
 
 // 冒烟测试用临时数据目录，不碰真实的应用数据
 if (process.env.WEBSITE_GEN_USER_DATA) app.setPath("userData", process.env.WEBSITE_GEN_USER_DATA);
@@ -14,9 +15,12 @@ let win: BrowserWindow | null = null;
 let tray: Tray | null = null;
 let backend: UtilityProcess | null = null;
 let quitting = false;
+let masterKey: Buffer | null = null;
 
 function startBackend() {
   backend = utilityProcess.fork(backendPath, [app.getPath("userData")], { serviceName: "website-gen backend" });
+  // 第一条消息交付主密钥（不走命令行参数或环境变量，避免出现在进程列表里）
+  backend.postMessage({ type: "init", masterKey: masterKey?.toString("base64") ?? null });
   backend.on("exit", (code) => {
     backend = null;
     if (quitting) return;
@@ -98,7 +102,13 @@ if (!app.requestSingleInstanceLock()) {
   app.on("before-quit", () => {
     quitting = true;
   });
-  void app.whenReady().then(() => {
+  void app.whenReady().then(async () => {
+    try {
+      masterKey = await loadMasterKey();
+    } catch (e) {
+      // 没有主密钥时应用照常打开，但不能保存或读取任何凭据
+      dialog.showErrorBox("无法解开本机密钥", `${(e as Error).message}\n\n已保存的账号凭据暂时不可用。`);
+    }
     startBackend();
     createWindow();
     createTray();

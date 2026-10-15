@@ -582,14 +582,16 @@ flowchart TD
 
 | 表 | 关键字段 |
 |---|---|
-| `hostinger_accounts` | id, label, plan_type（business/cloud/agency）, token_ciphertext, status, last_synced_at |
-| `hosting_orders` | id, account_id, external_id, plan, website_limit, websites_used |
+| `hostinger_accounts` | id, label（唯一）, token_ciphertext（AES-256-GCM）, token_hint（末 4 位）, status（new / ok / auth_failed / error）, last_error, last_synced_at |
+| `hosting_orders` | account_id, external_id, plan, status（同步快照，按账号整体替换） |
+| `hosting_websites` | account_id, domain, username, order_id, website_type, is_enabled（同步快照） |
 | `batches` | id, entity_json（经营主体与联系信息）, concurrency, status, confirmed_at, created_at |
 | `entity_presets` | id, name, entity_json（保存的主体信息，下次一键带出） |
 | `sites` | id, batch_id, account_id, order_id, external_website_id, status, primary_domain, temp_domain, form_json（域名、类目、数量、售价区间、品牌名）, decisions_json（AI 按 4.2.2 做出的决策，含政策关键条款）, template_id, wp_credentials_ciphertext, woo_keys_ciphertext, cj_store_status |
 | `site_specs` | id, site_id, version, spec_json, created_by（you / pi 会话 id） |
-| `domains` | id, account_id, name, expires_at, auto_renew, locked, privacy, nameservers |
+| `domains` | account_id, external_id, domain, type, status, expires_at（同步快照；锁定、隐私、NS 等按需再加） |
 | `domain_bindings` | domain_id, site_id, mode（same_account / cross_account / external）, status |
+| `mail_orders` | account_id, external_id, domain, plan, status, seats, is_trial, expires_at（同步快照） |
 | `mailboxes` | id, account_id, domain, address, password_ciphertext |
 | `jobs` | id, type, payload, status, run_at, attempts, lease_until, idempotency_key, error |
 | `provision_steps` | site_id, step, status（pending / running / waiting / waiting_user / done / failed / skipped）, attempt, started_at, finished_at |
@@ -857,7 +859,8 @@ website-gen/
 - [ ] `mail_mailboxes_create-mailbox` 实际创建（测试域名上的 support 邮箱已存在，这次复用了）；DKIM 记录如何获取
 - [ ] Hostinger 限流行为与 `Retry-After`（只读调用已通过，每次 0.5–0.8 秒；限流要在批量建站时实测）
 - [x] Electron 44：自带的 Node（24.21）下 `node:sqlite`、Hostinger MCP 子进程、pi 都能正常运行
-- [ ] Electron 打包后：MCP 子进程、`resources/` 目录部署、`safeStorage` 加解密都可用
+- [x] Electron 开发模式和构建版本：`safeStorage` 主密钥、后台进程里拉起 Hostinger MCP 子进程都可用（冒烟测试覆盖）
+- [ ] Electron 打包成安装包后：MCP 子进程、`resources/` 目录部署、`safeStorage` 加解密都可用
 - [x] DeepSeek：两种格式下多轮工具调用（含思考模式）和 `deepseek-flash` 看截图都通过。单站生成的实际用量待完整流水线跑通后再测
 
 ---

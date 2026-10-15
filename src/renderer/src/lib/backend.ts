@@ -8,6 +8,7 @@ let port: MessagePort | null = null;
 let nextId = 1;
 const pending = new Map<number, Pending>();
 const eventListeners = new Set<(e: RunEvent) => void>();
+const changedListeners = new Set<(topic: string) => void>();
 const connectListeners = new Set<() => void>();
 
 window.addEventListener("message", (e) => {
@@ -19,6 +20,10 @@ window.addEventListener("message", (e) => {
     const msg = m.data;
     if (msg.kind === "event") {
       for (const l of eventListeners) l(msg.event);
+      return;
+    }
+    if (msg.kind === "changed") {
+      for (const l of changedListeners) l(msg.topic);
       return;
     }
     const p = pending.get(msg.id);
@@ -43,6 +48,15 @@ export function call<T>(method: string, params?: unknown): Promise<T> {
 export function onEvent(listener: (e: RunEvent) => void): () => void {
   eventListeners.add(listener);
   return () => eventListeners.delete(listener);
+}
+
+/** 后台通知某类数据变了（例如定时同步完成）。 */
+export function onChanged(topic: string, listener: () => void): () => void {
+  const l = (t: string) => {
+    if (t === topic) listener();
+  };
+  changedListeners.add(l);
+  return () => changedListeners.delete(l);
 }
 
 /** 每次（重新）连上后台都会触发；已连上时立即触发一次。 */

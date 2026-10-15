@@ -17,7 +17,8 @@
     "start": "electron-vite preview",
     "test": "node --test \"src/**/*.test.ts\"",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "smoke": "node scripts/smoke.ts"
+    "smoke": "node scripts/smoke.ts",
+    "check:sync": "node --env-file=.env scripts/check-sync.ts"
   },
   "dependencies": {
     "@earendil-works/pi-ai": "^1.2.0",
