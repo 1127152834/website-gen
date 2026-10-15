@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Site Companion
  * Description:       Lets the website-gen desktop app manage this store over the REST API.
- * Version:           0.4.0
+ * Version:           0.4.1
  * Requires at least: 6.8
  * Requires PHP:      8.1
  * License:           GPLv2 or later
@@ -19,6 +19,17 @@ const SITE_COMPANION_INFO            = 'site_companion_info';
 // so this short allow-list is the only way it can change them.
 const SITE_COMPANION_OPTIONS         = array( 'blogname', 'blogdescription', 'blog_public', 'show_on_front', 'page_on_front', 'wp_page_for_privacy_policy', 'woocommerce_coming_soon' );
 const SITE_COMPANION_INFO_KEYS       = array( 'entity', 'email', 'phone', 'address', 'announcement' );
+// Outgoing mail may only be routed through these providers, so the mail transport cannot be pointed at an arbitrary server.
+const SITE_COMPANION_SMTP_HOSTS      = array( 'smtp.hostinger.com' );
+
+/**
+ * Only the app's own service user may change site options, pages or the mail transport through this plugin.
+ * Other shop managers keep their normal WooCommerce rights but cannot, for example, redirect site mail
+ * (which would let them intercept an administrator's password reset email).
+ */
+function site_companion_is_agent(): bool {
+	return current_user_can( 'manage_woocommerce' ) && SITE_COMPANION_USER === wp_get_current_user()->user_login;
+}
 
 /**
  * Per-site enrollment config written by the desktop app at deploy time:
@@ -85,12 +96,12 @@ function site_companion_routes(): void {
 		array(
 			array(
 				'methods'             => 'GET',
-				'permission_callback' => fn() => current_user_can( 'manage_woocommerce' ),
+				'permission_callback' => 'site_companion_is_agent',
 				'callback'            => 'site_companion_get_site',
 			),
 			array(
 				'methods'             => 'POST',
-				'permission_callback' => fn() => current_user_can( 'manage_woocommerce' ),
+				'permission_callback' => 'site_companion_is_agent',
 				'callback'            => 'site_companion_set_site',
 			),
 		)
@@ -109,12 +120,12 @@ add_action(
 			array(
 				array(
 					'methods'             => 'GET',
-					'permission_callback' => fn() => current_user_can( 'manage_woocommerce' ),
+					'permission_callback' => 'site_companion_is_agent',
 					'callback'            => 'site_companion_get_privacy_page',
 				),
 				array(
 					'methods'             => 'POST',
-					'permission_callback' => fn() => current_user_can( 'manage_woocommerce' ),
+					'permission_callback' => 'site_companion_is_agent',
 					'callback'            => 'site_companion_privacy_page',
 				),
 			)
@@ -242,7 +253,7 @@ function site_companion_phpmailer( $phpmailer ): void {
 add_action(
 	'rest_api_init',
 	static function (): void {
-		$can = fn() => current_user_can( 'manage_woocommerce' );
+		$can = 'site_companion_is_agent';
 		register_rest_route(
 			'site-agent/v1',
 			'/smtp',
@@ -280,8 +291,8 @@ function site_companion_set_smtp( WP_REST_Request $request ) {
 	$username = sanitize_email( (string) $request->get_param( 'username' ) );
 	$from     = sanitize_email( (string) $request->get_param( 'from_email' ) );
 	$password = (string) $request->get_param( 'password' );
-	if ( '' === $host || ! in_array( $port, array( 25, 465, 587, 2525 ), true ) || ! in_array( $secure, array( 'ssl', 'tls', '' ), true ) || ! is_email( $username ) || ! is_email( $from ) || '' === $password ) {
-		return new WP_Error( 'site_companion_smtp', 'host, port (25/465/587/2525), secure (ssl/tls), username, from_email and password are required.', array( 'status' => 400 ) );
+	if ( ! in_array( $host, SITE_COMPANION_SMTP_HOSTS, true ) || ! in_array( $port, array( 465, 587 ), true ) || ! in_array( $secure, array( 'ssl', 'tls' ), true ) || ! is_email( $username ) || ! is_email( $from ) || '' === $password ) {
+		return new WP_Error( 'site_companion_smtp', 'host (' . implode( ', ', SITE_COMPANION_SMTP_HOSTS ) . '), port (465/587), secure (ssl/tls), username, from_email and password are required.', array( 'status' => 400 ) );
 	}
 	update_option(
 		SITE_COMPANION_SMTP,

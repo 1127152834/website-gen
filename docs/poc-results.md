@@ -162,6 +162,7 @@
 | 伴侣插件 0.4.0 | `phpmailer_init` 接管 wp_mail（WooCommerce 也走这条路），发件人强制为登录的邮箱；SMTP 密码用站点 auth salt 派生的密钥加密（sodium secretbox）后存进选项，数据库被导出也看不到明文；`/smtp/test` 经 wp_mail 发一封并回报 SMTP 错误 |
 | 已有邮箱没有密码 | support@shopunitycart.com 是你之前在 hPanel 建的，应用里没有密码。新增「生成新密码」：应用生成随机强密码、先加密保存再调 `mail_mailboxes_change-mailbox-password`，再用 IMAP 登录确认生效 |
 | 实测 | 生成新密码后约 12 秒 IMAP 登录成功；启用 SMTP、经站点发测试邮件、IMAP 在收件箱里找到它，共 19 秒；WooCommerce 发件人设为 Shopunitycart / support@shopunitycart.com（`wc/v3/settings/email`）；QA 14/16，「交易邮件经客服邮箱发出」通过 |
+| 安全修正（0.4.1） | 提交后的安全审查指出：店长权限就能改发信服务器，可能被用来截获管理员的重置密码邮件。改为伴侣插件的写接口和 SMTP 接口只认应用的服务账号 site-agent（其他店长 403）；SMTP 主机限定 `smtp.hostinger.com`、端口 465/587、必须加密。重新部署后再测一次，7 秒送达 |
 | 注意 | support@shopunitycart.com 的旧密码已失效。新密码只在实测用的临时库里（加密），可以自己运行 `node poc/out/show-mailbox-password.ts` 查看，或在 hPanel 里再改一个 |
 
 ## POC 带来的设计修正（已同步进方案 v0.6）
