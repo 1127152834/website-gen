@@ -159,6 +159,9 @@ Analyze every source variant separately. A variant is clear only when the source
 When actualWooAttributes are present, use those exact live option names in the copy, but treat only sourceAttributes and the other CJ fields as evidence for factual claims.
 Use short buyer-readable variant names. The title and copy must accurately cover every clear variant, including differing piece counts or components. If materials or care instructions are absent, return materials_and_care_html=null. Do not repeat questionable dimensions in any copy.
 Choose mainImage only from candidateImages and prefer a clear view of the complete sold product.
+The title must be at most 80 characters.
+For every variant, evidence must be copied verbatim (an exact substring, no paraphrase) from that variant's sourceKey or sourceAttributes, or from a CJ description sentence that names this variant; when nothing more specific exists, use the variant's sourceKey itself.
+Set pieceCount to null and components to [] unless the CJ source explicitly states them for that variant; never assume "1 piece".
 Reply with JSON only matching:
 {"title":string,"short_description":string,"description_html":string,"materials_and_care_html":string|null,"image_alt":string,"mainImage":string,"metaDescription":string,"ogDescription":string,"variants":[{"sourceKey":string,"buyerName":string,"clear":boolean,"pieceCount":number|null,"components":string[],"color":string|null,"evidence":string}]}
 SITE CATEGORIES: ${JSON.stringify(f.categories)}

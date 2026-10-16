@@ -19,6 +19,7 @@ import type { BrandRenderer } from "./branding.ts";
 import { storeSteps } from "./store.ts";
 import { ensureMailbox, mailDns, mailSetup } from "./mail.ts";
 import { enableSmtp, imapHasSubject, type InboxCheck, type MailboxCreds } from "./smtp.ts";
+import { siteFetch } from "./site-fetch.ts";
 
 export interface PipelineDeps {
   db: DatabaseSync;
@@ -157,7 +158,7 @@ export function siteContext(d: PipelineDeps, siteId: number): StepCtx {
     assertActive();
     if (!site.companion_ciphertext) throw new Error("伴侣插件还没注册");
     const creds = JSON.parse(unseal(key, site.companion_ciphertext)) as CompanionCreds;
-    const res = await d.fetch(`https://${domain}/wp-json/${path}`, {
+    const res = await siteFetch(d.fetch, `https://${domain}/wp-json/${path}`, {
       method,
       // 媒体上传交给 fetch 生成 multipart boundary，其余接口仍严格发送 JSON。
       headers: { Authorization: "Basic " + Buffer.from(`${creds.username}:${creds.password}`).toString("base64"), ...(body === undefined || body instanceof FormData ? {} : { "Content-Type": "application/json" }) },

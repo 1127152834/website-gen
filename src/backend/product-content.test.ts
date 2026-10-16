@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import type { Facts } from "./content.ts";
 import type { CjProduct } from "./cj.ts";
 import {
-  buildPublishableVariants, checkProductAnalysis, checkUnitReview, deterministicDimensionProblems, reconcileActualVariations, type ProductAnalysis, type ProductVariantInput,
+  buildPublishableVariants, checkProductAnalysis, productAnalysisPrompt, checkUnitReview, deterministicDimensionProblems, reconcileActualVariations, type ProductAnalysis, type ProductVariantInput,
 } from "./product-content.ts";
 
 const facts: Facts = {
@@ -203,3 +203,11 @@ test("a source 120 cm measurement does not substring-ground an invented 20 cm cl
 });
 
 void facts;
+
+// 实测 2026-10-16：提示词没说明 evidence 必须逐字摘自资料、件数/组件不能补、标题上限，导致真实商品的修复两次都被校验挡下
+test("the product analysis prompt states the evidence, piece-count/components and title-length rules the checker enforces", () => {
+  const prompt = productAnalysisPrompt({ brand: "B", categories: ["dog beds"] } as unknown as Facts, { name: "Bed", category: "Pet", materials: [], description: "", images: [] } as unknown as CjProduct, []);
+  assert.match(prompt, /evidence must be copied verbatim/i);
+  assert.match(prompt, /pieceCount.*null.*components.*\[\]/is);
+  assert.match(prompt, /title.*at most 80 characters/i);
+});
