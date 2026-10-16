@@ -104,7 +104,11 @@ log "uploading archive to ${REMOTE}:${remote_archive}"
 scp -q "$archive" "$REMOTE:$remote_archive"
 
 log "activating release and waiting for production health checks"
-remote_output="$(remote_ssh "$REMOTE" 'bash -s' -- "$PROD_ROOT" "$release_name" "$remote_archive" 2>&1 <<'REMOTE_DEPLOY' | tee /dev/stderr
+# 远端步骤写成文件上传，在服务器上脱离 SSH 后台运行（setsid nohup），本地轮询日志：
+# SSH 中途断线（例如 sshd 限流）也不会打断构建，重连后继续看进度。
+remote_script="$(mktemp)"
+trap 'rm -f "$archive" "$remote_script"' EXIT
+cat >"$remote_script" <<'REMOTE_DEPLOY'
 set -euo pipefail
 umask 077
 root="$1"
@@ -204,8 +208,33 @@ for name in "${releases[@]}"; do
 done
 echo "[deploy] REMOTE-DEPLOY-FINISHED"
 REMOTE_DEPLOY
-)"
-# 远端脚本经 stdin 送达；若中途有命令吞掉 stdin，bash 会以 0 退出却没跑完。只认这个结束标记。
-[[ "$remote_output" == *"[deploy] REMOTE-DEPLOY-FINISHED"* ]] || die "remote deploy script did not run to completion; release was not verified"
+
+remote_runner="$PROD_ROOT/incoming/${release_name}.sh"
+remote_log="$PROD_ROOT/incoming/${release_name}.log"
+scp -q "$remote_script" "$REMOTE:$remote_runner"
+remote_pid="$PROD_ROOT/incoming/${release_name}.pid"
+remote_ssh "$REMOTE" "nohup setsid bash '$remote_runner' '$PROD_ROOT' '$release_name' '$remote_archive' >'$remote_log' 2>&1 </dev/null & echo \$! >'$remote_pid'" >/dev/null
+
+remote_output="" deadline=$((SECONDS + 1800)) lost=0
+while :; do
+  # 每次取整份日志，只打印新增部分；SSH 失败就等一会再试，不中断部署
+  if full="$(remote_ssh "$REMOTE" "cat '$remote_log' 2>/dev/null; kill -0 \$(cat '$remote_pid') 2>/dev/null && echo '__RUNNING__' || echo '__STOPPED__'" 2>/dev/null)"; then
+    lost=0
+    state="${full##*$'\n'}"
+    body="${full%$'\n'*}"
+    [[ "$state" == "__RUNNING__" || "$state" == "__STOPPED__" ]] || { state="__RUNNING__"; body="$full"; }
+    if (( ${#body} > ${#remote_output} )); then
+      printf '%s\n' "${body:${#remote_output}}" | sed '/^$/d' >&2
+      remote_output="$body"
+    fi
+    [[ "$remote_output" == *"[deploy] REMOTE-DEPLOY-FINISHED"* ]] && break
+    [[ "$state" == "__STOPPED__" ]] && die "remote deploy script stopped before finishing; see $remote_log on the server"
+  else
+    lost=$((lost + 1))
+    log "SSH unavailable (attempt ${lost}); the deploy keeps running on the server, retrying"
+  fi
+  (( SECONDS < deadline )) || die "timed out waiting for the remote deploy; it may still be running (see $remote_log)"
+  sleep 5
+done
 
 log "deployment complete"
