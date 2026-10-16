@@ -842,3 +842,17 @@ test("the mandated payment wording is not reported page by page; payment setup s
   }] });
   assert.deepEqual(parseReviewIssues(reply), []);
 });
+
+// 实测 2026-10-16：问题是「描述里的颜色和实际可选颜色对不上」，因「怎么改」里顺带提到「补上带图片的变体」被误判成改规格图片，修完问题还在
+test("a description-vs-options mismatch is classified as product copy even when the fix mentions images", async () => {
+  const { reviewIssueFixKind } = await import("./review-presentation.ts");
+  const issue = {
+    id: "p1", level: "P1", kind: "product", status: "open", page: "商品：Foldable Dog House Pet Cat Bed", url: "https://shop.test/product/foldable/",
+    evidence: "Description bullet reads 'Available specifications: gray star, coffee color puppy' while the only selectable Color options are 'Green bear den, Grey stars Blue'.",
+    why: "A buyer choosing a colour from the description cannot order it; the description and the real options disagree.",
+    fix: "Delete the stale bullet and make the description's colour list match the live Color options (or add the missing colours as real purchasable variants with matching images).",
+  } as const;
+  assert.equal(reviewIssueFixKind(issue as never), "product-copy");
+  // 真正的规格图片问题仍然判成 variation-images
+  assert.equal(reviewIssueFixKind({ ...issue, evidence: "All 12 variations use the same image id 115.", why: "Variant images do not match the variant colours, so buyers cannot see what they order.", fix: "Assign each variation its own image." } as never), "variation-images");
+});

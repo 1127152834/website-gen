@@ -14,6 +14,7 @@ import { catalogCopyProblems, checkCopy, checkPolicies, checkProductCopy, copyPr
 import { ask, chooseProductMainImage, ensureReviewProductSource, facts } from "./store.ts";
 import { friendlyReviewPageLabel, isReviewActionShape, reviewIssueFixKind, reviewIssueFixable, type ReviewFixKind } from "./review-presentation.ts";
 import { checkPageMetadata, metadataPrompt, parsePageMetadata } from "./home-design.ts";
+import { runPool } from "./run-pool.ts";
 
 export { reviewIssueFixKind, reviewIssueFixable } from "./review-presentation.ts";
 
@@ -445,17 +446,13 @@ export async function inspectReviewSnapshot(ctx: StepCtx, snapshot: ReviewSnapsh
   targeted?: boolean;
   onProgress?: (progress: { page: string; index: number; total: number }) => void;
 } = {}): Promise<ReviewFinding[]> {
-  // 逐页复核彼此独立：3 个并发，结果按页面顺序合并
-  const perPage: ReviewFinding[][] = new Array(snapshot.captures.length);
-  let next = 0;
-  const worker = async () => {
-    for (let index = next++; index < snapshot.captures.length; index = next++) {
-      const capture = snapshot.captures[index];
-      perPage[index] = await inspectCapture(ctx, snapshot, capture, vision);
-      options.onProgress?.({ page: friendlyReviewPageLabel(capture.name, capture.url, snapshot), index: index + 1, total: snapshot.captures.length });
-    }
-  };
-  await Promise.all([worker(), worker(), worker()]);
+  // 逐页复核彼此独立：3 个并发，结果按页面顺序合并；一页出错后其他页不再开工，等在跑的结束再报错
+  let done = 0;
+  const perPage = await runPool(snapshot.captures, 3, async (capture) => {
+    const findings = await inspectCapture(ctx, snapshot, capture, vision);
+    options.onProgress?.({ page: friendlyReviewPageLabel(capture.name, capture.url, snapshot), index: ++done, total: snapshot.captures.length });
+    return findings;
+  });
   const all = perPage.flat();
   all.push(...deterministicSourceFindings(snapshot));
   if (!options.targeted || snapshot.captures.some((capture) => capture.path === "/")) all.push(...deterministicTrustFindings(snapshot));

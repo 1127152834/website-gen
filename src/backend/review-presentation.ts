@@ -82,7 +82,8 @@ export function friendlyReviewPageLabel(page: string, url: string, snapshot?: Re
 
 export function reviewIssueFixKind(issue: ReviewIssue, snapshot?: ReviewLocationSnapshot): ReviewFixKind | undefined {
   if (issue.status !== "open") return undefined;
-  const text = `${issue.page}\n${issue.evidence}\n${issue.why}\n${issue.fix}`;
+  // 只按问题本身（证据、原因）分类；「怎么改」里常列出几种备选做法，拿来分类会误判
+  const text = `${issue.page}\n${issue.evidence}\n${issue.why}`;
   const path = (() => { try { return new URL(issue.url).pathname; } catch { return ""; } })();
   if (issue.kind === "policy" && /(?:shipping|returns?|refund|privacy|terms|配送|退货|退款|隐私|条款)/i.test(`${path} ${issue.page}`)) return "policy-text";
   // 新复核不接收 SEO 问题；这里只让旧报告中能唯一落到真实页面的摘要问题继续使用安全 planner。
@@ -90,6 +91,9 @@ export function reviewIssueFixKind(issue: ReviewIssue, snapshot?: ReviewLocation
   const product = /\/product\//.test(path) || /^商品[:：]|^Product[:\s#-]/i.test(issue.page)
     || snapshot?.captures?.some((capture) => capture.url === issue.url && snapshot.targets?.some((target) => target.name === capture.name && target.kind === "product"));
   if (product && ["product", "visual", "copy"].includes(issue.kind)) {
+    // 描述/标题与实际选项或资料不符，优先当作商品文字问题
+    if (/(?:description|title|copy|bullet|描述|标题|文案)/i.test(text)
+      && /(?:mismatch|inconsisten|contradict|disagree|differ|unsupported|stale|cannot order|does not match|不符|不一致|矛盾|对不上|无依据|过时)/i.test(text)) return "product-copy";
     if (/(?:variation|variant|规格|款式|选项)/i.test(text) && /(?:image|photo|picture|图片|照片)/i.test(text)
       && /(?:same|shared|identical|missing|mismatch|wrong|different|相同|共用|缺少|不符|错误|不同)/i.test(text)) return "variation-images";
     if (/(?:image|photo|picture|主图|图片|照片)/i.test(text)
