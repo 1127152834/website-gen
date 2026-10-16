@@ -606,7 +606,7 @@ export function storeSteps(ctx: StepCtx): Record<BackStepKey, () => Promise<Step
       ctx.save("qa_json", JSON.stringify(report));
       const blocking = report.checks.filter((c) => c.level === "block" && !c.ok);
       const warnings = report.checks.filter((c) => c.level === "warn" && !c.ok);
-      if (blocking.length) throw new PermanentError(`QA 有 ${blocking.length} 项没通过：${blocking.map((c) => `${c.name}：${c.detail}`).join("；")}`);
+      if (blocking.length) throw new PermanentError(`QA 有 ${blocking.length} 项没通过：${blocking.map((c) => `${c.name}（${c.detail.length > 60 ? `${c.detail.slice(0, 60)}…` : c.detail}）`).join("；")}`);
       return { status: "done", detail: `${report.checks.filter((c) => c.ok).length}/${report.checks.length} 项通过${warnings.length ? `，${warnings.length} 个提醒` : ""}` };
     },
   };
@@ -638,8 +638,13 @@ export async function runQa(ctx: StepCtx): Promise<QaReport> {
   const decode = (s: string) => s.replace(/&#(\d+);/g, (_m, n: string) => String.fromCharCode(Number(n))).replace(/&nbsp;/g, " ");
 
   const openP1 = review.issues.filter((i) => i.level === "P1" && i.status !== "fixed");
+  // 明细（英文证据、待办）只放在复核报告里；这里给界面和日志一句看得懂的中文小结
+  const incomplete = openP1.find((i) => i.page === "Full-site review");
+  const needsYou = openP1.filter((i) => i.status === "needs_you").length;
   add("ai-review", "整站 AI 文字与视觉复核", "block", review.passed && openP1.length === 0,
-    openP1.length ? openP1.map((i) => `${i.page} [${i.status}]：${i.evidence}；待办：${i.fix}`).join("；") : `已复核信任范围内页面，自动修复 ${review.rounds} 轮`);
+    incomplete ? `整站复核没跑完（${incomplete.evidence.slice(0, 40)}），稍后重试 QA`
+      : openP1.length ? `${openP1.length} 个关键问题未解决${needsYou ? `（其中 ${needsYou} 个需要你补充资料）` : ""}，详见复核报告`
+        : `已复核信任范围内页面，自动修复 ${review.rounds} 轮`);
   // 页面：流水线建的 8 个 + Woo 自带的 4 个（页眉页脚都链接到这些地址）
   const slugs = [...PAGE_SLUGS, "shop", "cart", "checkout", "my-account"];
   const pages = (await wp("GET", `wp/v2/pages?slug=${slugs.join(",")}&per_page=50&_fields=id,slug,status,content`)) as { id: number; slug: string; status: string; content: { rendered: string } }[];

@@ -1,7 +1,7 @@
 // 运营总览只读取当前工作区的快照，不发起外部调用。
 import type { DatabaseSync } from "node:sqlite";
 import { batchSites, listBatches } from "./batches.ts";
-import type { QaView, SiteProgress, SiteStatus } from "../shared/protocol.ts";
+import { PROVISION_STEPS, type QaView, type SiteProgress, type SiteStatus } from "../shared/protocol.ts";
 
 export interface Overview {
   counts: Record<SiteStatus | "total" | "launched", number>;
@@ -23,12 +23,24 @@ export function getOverview(db: DatabaseSync, now = Date.now()): Overview {
     const row = reports.get(site.id)!;
     const reasons: string[] = [];
     let tab = "overview";
-    if (site.status === "failed") reasons.push(site.lastError ? `建站失败：${site.lastError}` : "建站失败，请检查日志后重试");
-    if (row.qa_json) {
-      const qa = JSON.parse(row.qa_json) as QaView;
-      if (qa.checks?.some((check) => !check.ok)) { reasons.push("QA 检查存在未通过项"); tab = "qa"; }
-      const needs = qa.review?.issues.filter((issue) => issue.status === "needs_you").length ?? 0;
-      if (needs) { reasons.push(`复核有 ${needs} 项待你补充`); tab = "qa"; }
+    // 总览只说一句看得懂的中文：问题明细（英文证据、待办）在复核报告和站点页里
+    const failedStep = site.status === "failed"
+      ? (db.prepare("SELECT step FROM provision_steps WHERE site_id = ? AND status = 'failed' LIMIT 1").get(site.id) as { step: string } | undefined)?.step
+      : undefined;
+    const qa = row.qa_json ? JSON.parse(row.qa_json) as QaView : null;
+    const open = qa?.review?.issues.filter((issue) => issue.status !== "fixed") ?? [];
+    const p1 = open.filter((issue) => issue.level === "P1").length;
+    const needs = open.filter((issue) => issue.status === "needs_you").length;
+    if (site.status === "failed" && failedStep === "qa" && qa) {
+      reasons.push(`QA 未通过：${p1 ? `${p1} 个关键问题待解决` : "有检查项没通过"}${needs ? `，其中 ${needs} 项需要你补充资料` : ""}`);
+      tab = "qa";
+    } else if (site.status === "failed") {
+      const stepName = PROVISION_STEPS.find((s) => s.key === failedStep)?.name;
+      const brief = (site.lastError ?? "").replace(/^[^：]{1,20}：/, "").split(/[；;\n]/)[0].trim();
+      reasons.push(`${stepName ? `「${stepName}」` : ""}建站失败${brief ? `：${brief.length > 50 ? `${brief.slice(0, 50)}…` : brief}` : "，请检查日志后重试"}`);
+    } else if (qa) {
+      if (qa.checks?.some((check) => !check.ok)) { reasons.push("QA 检查有提醒项"); tab = "qa"; }
+      if (needs) { reasons.push(`复核有 ${needs} 项需要你补充资料`); tab = "qa"; }
     }
     if (site.status === "done" && !row.mailbox_ciphertext) {
       const mailbox = db.prepare("SELECT status FROM provision_steps WHERE site_id = ? AND step = 'mailbox'").get(site.id) as { status: string } | undefined;

@@ -84,8 +84,10 @@ test("phase3 P1 needing real data leaves QA failed with exact evidence and canno
     return ai(role, prompt);
   } });
   try {
-    await assert.rejects(runToEnd(d, siteId), /Provide a verified length and its unit/);
+    // 失败信息只给中文小结；具体证据和待办在复核报告里
+    await assert.rejects(runToEnd(d, siteId), /关键问题未解决.*需要你补充资料/);
     const qa = JSON.parse(siteContext(d, siteId).site.qa_json!);
+    assert.ok(qa.review.issues.some((i: { fix: string }) => i.fix === "Provide a verified length and its unit"));
     assert.equal(qa.review.passed, false);
     assert.ok(qa.review.issues.some((i: { status: string }) => i.status === "needs_you"));
     assert.equal(siteSteps(db, siteId).find((s) => s.key === "qa")!.status, "failed");
@@ -142,12 +144,13 @@ test("phase3 auto fixes are snapshotted, stop after two rounds across retries, a
     return ai(role, prompt);
   } });
   try {
-    await assert.rejects(runToEnd(d, siteId), /Correct the factual summary/);
+    await assert.rejects(runToEnd(d, siteId), /关键问题未解决/);
     let review = JSON.parse(siteContext(d, siteId).site.qa_json!).review as SiteReview;
+    assert.ok(review.issues.some((i) => /Correct the factual summary/.test(i.fix)));
     assert.equal(review.rounds, 2); assert.equal(review.passed, false);
     assert.ok(review.issues.some((i) => i.status === "needs_you"));
     assert.equal(listChanges(db, siteId).length, 2);
-    await assert.rejects(provisionSite(d, siteId), /Correct the factual summary/);
+    await assert.rejects(provisionSite(d, siteId), /关键问题未解决/);
     review = JSON.parse(siteContext(d, siteId).site.qa_json!).review as SiteReview;
     assert.equal(review.rounds, 2); assert.equal(listChanges(db, siteId).length, 2, "no third fix round on retry");
     for (const change of listChanges(db, siteId)) assert.equal(change.status, "applied");
@@ -231,8 +234,9 @@ test("underwriter models review terms, business/catalog authenticity and restric
       return ai(role, prompt);
     } });
     try {
-      await assert.rejects(runToEnd(d, siteId), /Correct the supported business\/catalog discrepancy/);
+      await assert.rejects(runToEnd(d, siteId), /关键问题未解决/);
       const report = JSON.parse(siteContext(d, siteId).site.qa_json!).review as SiteReview;
+      assert(report.issues.some((i) => i.fix === "Correct the supported business/catalog discrepancy before submission"));
       assert(report.issues.some((i) => i.evidence === scenario.evidence && i.kind === scenario.kind && i.level === "P1"));
       assert(prompts.some((p) => p.includes(`PAGE URL:\nhttps://${DOMAIN}/terms/\n`)));
       assert(prompts.every((p) => !/PAGE URL:\nhttps:[^\n]+\/(?:cart|checkout|my-account|search)\//.test(p)));
