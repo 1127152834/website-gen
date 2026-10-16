@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import type { Facts } from "./content.ts";
 import type { CjProduct } from "./cj.ts";
 import {
-  buildPublishableVariants, checkProductAnalysis, checkUnitReview, deterministicDimensionProblems, type ProductAnalysis, type ProductVariantInput,
+  buildPublishableVariants, checkProductAnalysis, checkUnitReview, deterministicDimensionProblems, reconcileActualVariations, type ProductAnalysis, type ProductVariantInput,
 } from "./product-content.ts";
 
 const facts: Facts = {
@@ -132,6 +132,74 @@ test("unsupported materials, care, certifications and discounts are rejected", (
   assert.match(problems, /material "leather"/);
   assert.match(problems, /claim "Waterproof"/i);
   assert.match(problems, /claim "machine wash/);
+});
+
+test("actual Woo variation options replace stale analysis labels through an exact source mapping", () => {
+  const stale = analysis();
+  stale.variants[0].buyerName = "Old Black Label";
+  const actual = reconcileActualVariations(product, stale, [{
+    id: 91, sku: "WG-p1-1", attributes: [{ name: "Color", option: "Black" }, { name: "Set", option: "2pcs" }],
+  }]);
+  assert.deepEqual(actual.problems, []);
+  assert.equal(actual.analysis.variants[0].buyerName, "Black / 2pcs");
+  assert.deepEqual(actual.inputs[0].attrs, { Color: "Black", Set: "2pcs" });
+  assert.deepEqual(actual.inputs[0].sourceAttrs, { Color: "Black", Set: "2pcs" });
+});
+
+test("actual Woo variation reconciliation rejects ambiguous source mappings", () => {
+  const duplicate: CjProduct = { ...product, variants: [product.variants[0], { ...product.variants[0] }] };
+  const stale = analysis();
+  stale.variants = [stale.variants[0], { ...stale.variants[0] }];
+  const actual = reconcileActualVariations(duplicate, stale, [{
+    id: 91, sku: "", attributes: [{ name: "Color", option: "Black" }, { name: "Set", option: "2pcs" }],
+  }]);
+  assert.match(actual.problems.join("\n"), /ambiguous/i);
+});
+
+test("variation reconciliation fails closed when SKU and exact source attributes disagree", () => {
+  const actual = reconcileActualVariations(product, analysis(), [{
+    id: 91, sku: "WG-p1-1", attributes: [{ name: "Color", option: "Blue" }, { name: "Set", option: "3pcs" }],
+  }]);
+  assert.match(actual.problems.join("\n"), /conflicting exact/i);
+  assert.equal(actual.sourceByVariationId.size, 0);
+});
+
+test("renamed actual Woo options remain authoritative without becoming factual evidence", () => {
+  const actual = reconcileActualVariations(product, analysis(), [{
+    id: 91, sku: "WG-p1-1", attributes: [{ name: "Option", option: "Bundle A" }],
+  }]);
+  const repaired: ProductAnalysis = {
+    ...actual.analysis, title: "Travel Organizer Bundle", short_description: "Choose Bundle A.",
+    description_html: "<p>Bundle A includes a large organizer and small organizer.</p>",
+  };
+  assert.deepEqual(checkProductAnalysis(repaired, product, actual.inputs), []);
+  const unsupported = { ...repaired, description_html: "<p>Bundle A is a 4-piece leather set measuring 999cm.</p>" };
+  const problems = checkProductAnalysis(unsupported, product, actual.inputs).join("\n");
+  assert.match(problems, /copy advertises 4 pieces/);
+  assert.match(problems, /material "leather"/);
+  assert.match(problems, /dimension "999cm"/);
+});
+
+test("actual Woo labels are not evidence and invented dimensions are rejected", () => {
+  const actual = reconcileActualVariations(product, analysis(), [{
+    id: 91, sku: "WG-p1-1", attributes: [{ name: "Option", option: "Black 4-Piece Set 999cm" }],
+  }]);
+  const repaired = { ...actual.analysis, short_description: "Choose Black 4-Piece Set 999cm.", description_html: "<p>Black 4-Piece Set 999cm includes four organizers.</p>" };
+  const problems = checkProductAnalysis(repaired, product, actual.inputs).join("\n");
+  assert.match(problems, /copy advertises 4 pieces/i);
+  assert.match(problems, /dimension "999cm" is not supported/i);
+});
+
+test("a source 120 cm measurement does not substring-ground an invented 20 cm claim", () => {
+  const measuredProduct: CjProduct = {
+    ...product, description: "Black 2pcs set includes a large organizer and small organizer. Overall length 120 cm.",
+    variants: [{ ...product.variants[0], length: 300, width: 400, height: 500 }],
+  };
+  const measuredInputs = [{ ...measuredProduct.variants[0], attrs: { Color: "Black", Set: "2pcs" } }];
+  const a = analysis();
+  a.variants = [a.variants[0]];
+  a.short_description += " Measures 20 cm.";
+  assert.match(checkProductAnalysis(a, measuredProduct, measuredInputs).join("\n"), /dimension "20 cm" is not supported/i);
 });
 
 void facts;

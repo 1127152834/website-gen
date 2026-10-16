@@ -343,6 +343,13 @@ export function fakeSite(st: ReturnType<typeof fakeHostinger>["st"], opts: { rej
       p.variations.push(...created);
       return json({ create: created });
     }
+    if ((m = /^wc\/v3\/products\/(\d+)\/variations\/(\d+)$/.exec(path))) {
+      const p = wp.products.find((x) => x.id === Number(m![1]));
+      const variation = p?.variations.find((x) => x.id === Number(m![2]));
+      if (!variation) return json({ message: "Invalid variation ID." }, 404);
+      if (method === "PUT") Object.assign(variation, body);
+      return json(variation);
+    }
     if ((m = /^wc\/v3\/products\/(\d+)\/variations$/.exec(path))) {
       return json(paginate(wp.products.find((p) => p.id === Number(m![1]))?.variations ?? [], q));
     }

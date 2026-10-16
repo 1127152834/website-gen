@@ -10,6 +10,7 @@ export type Target =
   | { kind: "site" }
   | { kind: "styles" }
   | { kind: "product"; id: number }
+  | { kind: "variation"; productId: number; id: number }
   | { kind: "metadata"; targetType: MetadataTargetType; targetId: number }
   | { kind: "spec" };
 
@@ -17,7 +18,7 @@ type State = Record<string, unknown>;
 interface Op { target: Target; before: State; after: State }
 
 
-export const targetLabel = (t: Target) =>
+export const targetLabel = (t: Target) => t.kind === "variation" ? `product #${t.productId} variation #${t.id}` :
   t.kind === "page" ? `页面 /${t.slug}/` : t.kind === "site" ? "站点标语与页脚信息" : t.kind === "styles" ? "全局样式"
   : t.kind === "product" ? `商品 #${t.id}` : t.kind === "metadata" ? `SEO ${t.targetType} #${t.targetId}` : "文案底稿";
 
@@ -62,6 +63,10 @@ async function read(ctx: StepCtx, t: Target): Promise<State> {
         images: p.images ?? [], categories: p.categories ?? [],
       };
     }
+    case "variation": {
+      const v = (await ctx.wp("GET", `wc/v3/products/${t.productId}/variations/${t.id}`)) as { image?: unknown };
+      return { image: v.image ?? null };
+    }
     case "metadata":
       return (await ctx.wp("GET", `site-agent/v1/metadata?target_type=${t.targetType}&target_id=${t.targetId}`)) as State;
     case "spec":
@@ -83,6 +88,9 @@ async function write(ctx: StepCtx, t: Target, s: State): Promise<void> {
       return;
     case "product":
       await ctx.wp("PUT", `wc/v3/products/${t.id}`, s);
+      return;
+    case "variation":
+      await ctx.wp("PUT", `wc/v3/products/${t.productId}/variations/${t.id}`, s);
       return;
     case "metadata":
       await ctx.wp("POST", "site-agent/v1/metadata", {

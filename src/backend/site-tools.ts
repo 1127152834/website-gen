@@ -3,12 +3,12 @@
 import { Type, type TSchema } from "@earendil-works/pi-ai";
 import { range, RULES } from "../shared/rules.ts";
 import { applyChange, listChanges, revertChange, scheduleRevert, type MetadataTargetType, type Target } from "./changes.ts";
-import { buildPages, checkCopy, checkPolicies, claimProblems, cleanHtml, STYLES, type Policies, type SiteCopy, type Style } from "./content.ts";
+import { buildPages, checkCopy, checkPolicies, checkProductCopy, claimProblems, cleanHtml, STYLES, type Policies, type SiteCopy, type Style } from "./content.ts";
 import type { StepCtx } from "./pipeline.ts";
 import { facts } from "./store.ts";
 import { buildAiHomepage, type CategoryDesign, type DesignProduct, type HomepageDesign } from "./home-design.ts";
 import { splitVariants, type CjProduct } from "./cj.ts";
-import { checkProductAnalysis, unitReviewCopyProblems, type ProductAnalysis, type UnitReview } from "./product-content.ts";
+import { checkProductAnalysis, reconcileActualVariations, unitReviewCopyProblems, type ProductAnalysis, type UnitReview, type WooVariationFacts } from "./product-content.ts";
 
 export interface SiteTool {
   name: string;
@@ -44,6 +44,42 @@ export function siteTools(ctx: StepCtx): SiteTool[] {
   const spec = (): Spec => {
     if (!ctx.site.spec_json) throw new Error("这个站还没有生成文案");
     return JSON.parse(ctx.site.spec_json) as Spec;
+  };
+  const storedProductSource = (id: number, metaData?: { key: string; value: unknown }[]) => {
+    const direct = sourceValue(metaData?.find((x) => x.key === "_source_cj_facts")?.value);
+    if (direct) return direct;
+    const picks = JSON.parse(ctx.site.picks_json ?? "[]") as { productId?: number; source?: ProductSource }[];
+    return picks.find((x) => x.productId === id)?.source;
+  };
+  const allWooVariations = async (productId: number) => {
+    const rows: WooVariationFacts[] = [];
+    for (let page = 1; page <= 100; page++) {
+      let batch: WooVariationFacts[];
+      try {
+        batch = (await wp("GET", `wc/v3/products/${productId}/variations?per_page=100&page=${page}&_fields=id,sku,attributes,image`)) as WooVariationFacts[];
+      } catch (e) {
+        if (page > 1 && e instanceof Error && /HTTP 400.*page number requested is larger than the number of pages available/i.test(e.message)) return rows;
+        throw e;
+      }
+      rows.push(...batch);
+      if (batch.length < 100) return rows;
+    }
+    throw new Error(`product ${productId} has too many variations to verify safely`);
+  };
+  const publishedCatalog = async () => {
+    const rows: { name?: unknown; categories?: unknown }[] = [];
+    for (let page = 1; page <= 100; page++) {
+      let batch: typeof rows;
+      try {
+        batch = (await wp("GET", `wc/v3/products?status=publish&per_page=100&page=${page}&_fields=id,name,categories`)) as typeof rows;
+      } catch (e) {
+        if (page > 1 && e instanceof Error && /HTTP 400.*page number requested is larger than the number of pages available/i.test(e.message)) return rows;
+        throw e;
+      }
+      rows.push(...batch);
+      if (batch.length < 100) return rows;
+    }
+    throw new Error("published catalog is too large to verify safely");
   };
   const changed = (id: number | null, what: string) => (id === null ? { ok: true, change_id: null, note: "内容和现在一样，没有修改" } : { ok: true, change_id: id, note: `${what}，已记录为变更 #${id}，可以回滚` });
   const pageEdit = (slug: string, c: SiteCopy, p: Policies): { target: Target; patch: Record<string, unknown> } => {
@@ -148,7 +184,7 @@ export function siteTools(ctx: StepCtx): SiteTool[] {
           about: p.about ?? copy.about,
           faq: p.faq ?? copy.faq,
         };
-        const problems = checkCopy(next, facts(ctx));
+        const problems = checkCopy(next, facts(ctx), await publishedCatalog());
         if (problems.length) return { ok: false, problems };
         const id = await applyChange(ctx, p.summary, [
           pageEdit("home", next, policies), pageEdit("about", next, policies), pageEdit("faq", next, policies),
@@ -209,29 +245,41 @@ export function siteTools(ctx: StepCtx): SiteTool[] {
         name: Type.Optional(Type.String()), short_description: Type.Optional(Type.String()), description_html: Type.Optional(Type.String()),
       }),
       run: async (p: { summary: string; id: number; name?: string; short_description?: string; description_html?: string }) => {
-        const current = (await wp("GET", `wc/v3/products/${p.id}?_fields=id,name,short_description,description,meta_data`)) as {
-          name: string; short_description: string; description: string; meta_data?: { key: string; value: unknown }[];
+        const current = (await wp("GET", `wc/v3/products/${p.id}?_fields=id,name,sku,short_description,description,variations,meta_data`)) as {
+          name: string; sku?: string; short_description: string; description: string; variations?: (number | { id: number })[]; meta_data?: { key: string; value: unknown }[];
         };
         const patch: Record<string, string> = {};
         if (p.name !== undefined) patch.name = p.name.trim();
         if (p.short_description !== undefined) patch.short_description = cleanHtml(p.short_description);
         if (p.description_html !== undefined) patch.description = cleanHtml(p.description_html);
         const problems = [...(patch.name !== undefined && (patch.name.length === 0 || patch.name.length > 80) ? ["name must be 1-80 characters"] : []), ...claimProblems(Object.values(patch).join("\n"))];
-        const picks = JSON.parse(ctx.site.picks_json ?? "[]") as { productId?: number; source?: ProductSource }[];
-        const source = sourceValue(current.meta_data?.find((x) => x.key === "_source_cj_facts")?.value)
-          ?? picks.find((x) => x.productId === p.id)?.source;
+        const source = storedProductSource(p.id, current.meta_data);
         if (source?.product && source.analysis && source.unitReview) {
           const attrs = splitVariants(source.product.keyNames, source.product.variants.map((v) => v.key));
           const analyzedKeys = new Set(source.analysis.variants.map((v) => v.sourceKey));
-          const inputs = source.product.variants.map((variant, i) => ({ ...variant, attrs: attrs[i] })).filter((v) => analyzedKeys.has(v.key));
+          let inputs = source.product.variants.map((variant, i) => ({ ...variant, attrs: attrs[i] })).filter((v) => analyzedKeys.has(v.key));
+          let baseAnalysis = source.analysis;
+          if (current.variations?.length) {
+            const variations = await allWooVariations(p.id);
+            const expectedIds = new Set(current.variations.map((variation) => typeof variation === "number" ? variation : variation.id));
+            const actualIds = new Set(variations.map((variation) => variation.id));
+            if (variations.length !== actualIds.size || expectedIds.size !== actualIds.size || [...expectedIds].some((id) => !actualIds.has(id))) {
+              problems.push("Woo variation pagination did not return the product's complete exact variation set");
+            }
+            const actual = reconcileActualVariations(source.product, source.analysis, variations);
+            problems.push(...actual.problems);
+            inputs = actual.inputs;
+            baseAnalysis = actual.analysis;
+          }
           const next: ProductAnalysis = {
-            ...source.analysis,
+            ...baseAnalysis,
             title: patch.name ?? current.name,
             short_description: patch.short_description ?? current.short_description,
             description_html: patch.description ?? current.description,
             // 当前商品 description 已经是合并后的最终正文，不能把原材料段重复拼一次。
             materials_and_care_html: null,
           };
+          problems.push(...checkProductCopy({ title: next.title, short_description: next.short_description, description_html: next.description_html, image_alt: next.image_alt }));
           problems.push(...checkProductAnalysis(next, source.product, inputs), ...unitReviewCopyProblems(source.unitReview, next, inputs));
         } else {
           // 老站没有 CJ 快照时只允许删除/收紧现有文字，不能凭模型加入任何新事实。
@@ -252,14 +300,22 @@ export function siteTools(ctx: StepCtx): SiteTool[] {
     },
     {
       name: "update_product_main_image", risk: "L1",
-      description: "Choose one of a product's existing gallery images as its main image. The image id must already belong to this product.",
-      parameters: Type.Object({ summary, id: Type.Integer(), image_id: Type.Integer() }),
-      run: async (p: { summary: string; id: number; image_id: number }) => {
-        const product = (await wp("GET", `wc/v3/products/${p.id}?_fields=id,images`)) as { images?: { id: number; src?: string; alt?: string }[] };
+      description: "Choose an existing gallery image by id, or an exact persisted CJ source image URL, as a product's main image.",
+      parameters: Type.Object({ summary, id: Type.Integer(), image_id: Type.Optional(Type.Integer()), image_url: Type.Optional(Type.String()) }),
+      run: async (p: { summary: string; id: number; image_id?: number; image_url?: string }) => {
+        if ((p.image_id === undefined) === (p.image_url === undefined)) return { ok: false, problems: ["pass exactly one of image_id or image_url"] };
+        const product = (await wp("GET", `wc/v3/products/${p.id}?_fields=id,images,meta_data`)) as { images?: { id?: number; src?: string; alt?: string }[]; meta_data?: { key: string; value: unknown }[] };
         const images = product.images ?? [];
-        const selected = images.find((x) => x.id === p.image_id);
-        if (!selected) return { ok: false, problems: [`image ${p.image_id} does not belong to product ${p.id}`] };
-        const ordered = [selected, ...images.filter((x) => x.id !== p.image_id)];
+        let selected = p.image_id === undefined ? undefined : images.find((x) => x.id === p.image_id);
+        if (p.image_id !== undefined && !selected) return { ok: false, problems: [`image ${p.image_id} does not belong to product ${p.id}`] };
+        if (p.image_url !== undefined) {
+          const source = storedProductSource(p.id, product.meta_data);
+          const allowed = new Set([...(source?.product.images ?? []), ...(source?.product.variants.flatMap((v) => v.image ? [v.image] : []) ?? [])]);
+          if (!/^https:\/\//i.test(p.image_url) || !allowed.has(p.image_url)) return { ok: false, problems: ["image_url must be HTTPS and in this product's persisted CJ source facts"] };
+          selected = images.find((x) => x.src === p.image_url) ?? { src: p.image_url, alt: source?.analysis.image_alt ?? images[0]?.alt ?? "" };
+        }
+        if (!selected) return { ok: false, problems: ["main image could not be selected"] };
+        const ordered = [selected, ...images.filter((x) => x !== selected && (selected!.id === undefined || x.id !== selected!.id) && x.src !== selected!.src)];
         const linked = selected.src ? designEdits((design) => {
           const item = design.products?.find((x) => x.id === p.id);
           if (!item || item.image === selected.src) return false;
@@ -268,6 +324,38 @@ export function siteTools(ctx: StepCtx): SiteTool[] {
         }) : [];
         const id = await applyChange(ctx, p.summary, [{ target: { kind: "product", id: p.id }, patch: { images: ordered } }, ...linked], "pi");
         return changed(id, `商品 #${p.id} 主图已更新`);
+      },
+    },
+    {
+      name: "update_product_variation_images", risk: "L1",
+      description: "Restore each Woo variation's exact persisted CJ source image. Mapping must be unique; ambiguous products are not changed.",
+      parameters: Type.Object({ summary, id: Type.Integer() }),
+      run: async (p: { summary: string; id: number }) => {
+        const product = (await wp("GET", `wc/v3/products/${p.id}?_fields=id,sku,variations,meta_data`)) as {
+          variations?: (number | { id: number })[]; meta_data?: { key: string; value: unknown }[];
+        };
+        const source = storedProductSource(p.id, product.meta_data);
+        if (!source?.product || !source.analysis) return { ok: false, problems: ["persisted CJ source facts are missing"] };
+        if (!product.variations?.length) return { ok: false, problems: ["product has no Woo variations"] };
+        const variations = await allWooVariations(p.id) as (WooVariationFacts & { image?: { id?: number; src?: string } | null })[];
+        const expectedIds = new Set(product.variations.map((variation) => typeof variation === "number" ? variation : variation.id));
+        const actualIds = new Set(variations.map((variation) => variation.id));
+        if (variations.length !== actualIds.size || expectedIds.size !== actualIds.size || [...expectedIds].some((id) => !actualIds.has(id))) {
+          return { ok: false, problems: ["Woo variation pagination did not return the product's complete exact variation set"] };
+        }
+        const actual = reconcileActualVariations(source.product, source.analysis, variations);
+        const problems = [...actual.problems];
+        const edits: { target: Target; patch: Record<string, unknown> }[] = [];
+        for (const variation of variations) {
+          const input = actual.sourceByVariationId.get(variation.id);
+          if (!input) continue;
+          if (!input.image || !/^https:\/\//i.test(input.image)) { problems.push(`CJ source variant ${input.key} has no HTTPS image`); continue; }
+          edits.push({ target: { kind: "variation", productId: p.id, id: variation.id }, patch: { image: variation.image?.src === input.image ? variation.image : { src: input.image } } });
+        }
+        if (problems.length) return { ok: false, problems };
+        if (edits.length !== variations.length) return { ok: false, problems: ["not every Woo variation has one exact source image mapping"] };
+        const id = await applyChange(ctx, p.summary, edits, "pi");
+        return changed(id, `Product #${p.id} variation images updated`);
       },
     },
     {

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { buildPages, checkCopy, checkPolicies, claimProblems, htmlToBlocks, parsePolicies, type Facts, type Policies, type SiteCopy } from "./content.ts";
+import { buildPages, checkCopy, checkPolicies, claimProblems, copyPrompt, filterCandidatesForCategories, htmlToBlocks, parsePolicies, screenPrompt, type Facts, type Policies, type SiteCopy } from "./content.ts";
 import { costRange, parseDetail, splitVariants } from "./cj.ts";
 import { parseUsAddress } from "./store.ts";
 
@@ -146,4 +146,72 @@ test("a one-line About page is rejected; a concrete one naming the operator and 
     "If something is not right, you can request a return within 30 days of delivery. Questions about an order? Email support@nordicpaws.com and our team will help.",
   ] };
   assert.deepEqual(checkCopy(concrete, facts).filter((x) => /about/i.test(x)), []);
+});
+
+test("strict category filtering keeps the named target and rejects another target or product type", () => {
+  const candidates = [
+    { pid: "cat-bed", name: "Plush Cat Bed" },
+    { pid: "shared-bed", name: "Washable Dog and Cat Bed" },
+    { pid: "dog-bowl", name: "Raised Dog Bowl" },
+    { pid: "dog-bed", name: "Orthopedic Dog Bed" },
+  ];
+  assert.deepEqual(filterCandidatesForCategories(["dog beds"], candidates).map((x) => x.pid), ["shared-bed", "dog-bed"]);
+  assert.deepEqual(filterCandidatesForCategories(["baby clothing"], [
+    { name: "Kids Clothing Set" }, { name: "Baby and Kids Clothing Set" }, { name: "Baby Feeding Bowl" },
+  ]).map((x) => x.name), ["Baby and Kids Clothing Set"]);
+  assert.deepEqual(filterCandidatesForCategories(["women's bags"], [
+    { name: "Men's Travel Bag" }, { name: "Men and Women Tote Bag" }, { name: "Women's Walking Shoes" },
+  ]).map((x) => x.name), ["Men and Women Tote Bag"]);
+});
+
+test("the AI screening prompt requires the product main purpose to match the operator category", () => {
+  const prompt = screenPrompt(["dog beds"], [{ pid: "1", name: "Dog Bowl" }]);
+  assert.match(prompt, /main purpose/i);
+  assert.match(prompt, /operator.*wrote/i);
+  assert.match(prompt, /compliance/i);
+});
+
+test("site copy that narrows a mixed catalog to dogs is rejected", () => {
+  const dogOnly: SiteCopy = {
+    tagline: "Beds for dogs", style: "default", hero: { heading: "Dog beds", subheading: "Comfortable beds for dogs." },
+    about: [
+      "Nordic Paws is an online store operated by Nordic Paws LLC from 1 Main St. We focus on dog beds selected for comfortable everyday rest at home.",
+      "Every order ships within the contiguous United States. Orders are processed in 1-3 business days and usually arrive in 5-10 business days after dispatch.",
+      "If something is not right, you can request a return within 30 days of delivery. Questions about an order? Email support@nordicpaws.com and our team will help.",
+    ],
+    faq: Array.from({ length: 8 }, (_, i) => ({ q: `Question ${i + 1}`, a: i === 0 ? "Available payment methods are shown at checkout." : "Contact support for help." })),
+  };
+  const catalog = [
+    { name: "Orthopedic Dog Bed", categories: [{ name: "dog beds" }] },
+    { name: "Plush Cat Bed", categories: [{ name: "cat beds" }] },
+  ];
+  assert.match(checkCopy(dogOnly, facts, catalog).join("\n"), /catalog categories/i);
+  assert.match(copyPrompt(facts, catalog), /dog beds, cat beds/i);
+
+  const inclusive: SiteCopy = {
+    ...dogOnly,
+    tagline: "Beds for dogs and cats",
+    hero: { heading: "Dog and cat beds", subheading: "Comfortable beds for dogs and cats." },
+    about: dogOnly.about.map((paragraph) => paragraph.replace("dog beds", "dog and cat beds")),
+  };
+  assert.deepEqual(checkCopy(inclusive, facts, catalog).filter((x) => /catalog categories/i.test(x)), []);
+
+  const generic: SiteCopy = {
+    ...dogOnly,
+    tagline: "Beds for pets",
+    hero: { heading: "Pet beds", subheading: "Comfortable beds for household pets." },
+    about: dogOnly.about.map((paragraph) => paragraph.replace("dog beds", "pet beds")),
+  };
+  assert.deepEqual(checkCopy(generic, facts, catalog).filter((x) => /catalog categories/i.test(x)), []);
+
+  const misleadingTagline: SiteCopy = { ...generic, tagline: "Beds for dogs" };
+  assert.match(checkCopy(misleadingTagline, facts, catalog).join("\n"), /tagline.*catalog categories/i);
+  assert.match(checkCopy({ ...generic, tagline: "Pet beds for dogs" }, facts, catalog).join("\n"), /tagline.*catalog categories/i);
+
+  const unsupportedTarget: SiteCopy = { ...generic, tagline: "Pet beds for babies" };
+  assert.match(checkCopy(unsupportedTarget, facts, catalog).join("\n"), /tagline.*catalog categories/i);
+
+  const dogCatalog = [{ name: "Cozy Dog Bed", categories: [{ name: "animals" }] }];
+  const dogCopy: SiteCopy = { ...generic, tagline: "Rest easy, pup", hero: { heading: "Rest easy", subheading: "Comfort at home." } };
+  assert.deepEqual(checkCopy(dogCopy, facts, dogCatalog).filter((x) => /catalog categories/i.test(x)), []);
 });

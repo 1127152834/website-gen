@@ -31,6 +31,95 @@ export interface Policies {
 export const STYLES = ["default", "editorial", "dark"] as const;
 export type Style = (typeof STYLES)[number];
 
+export interface CatalogProductContext {
+  name?: unknown;
+  categories?: unknown;
+}
+
+const CATEGORY_TARGETS = [
+  ["dog", /\b(?:dogs?|canines?|pupp(?:y|ies))\b/i],
+  ["cat", /\b(?:cats?|felines?|kittens?)\b/i],
+  ["baby", /\b(?:bab(?:y|ies)|infants?|newborns?|toddlers?)\b/i],
+  ["men", /\b(?:men|man's|men's|male)\b/i],
+  ["women", /\b(?:women|woman|woman's|women's|female)\b/i],
+  ["kids", /\b(?:kids?|children|child|boys?|girls?)\b/i],
+] as const;
+
+// 只在类目和商品名都明确写出不同商品类型时拦截；模糊名称仍交给 AI 做语义筛查。
+const PRODUCT_TYPES = [
+  ["bed", /\bbeds?\b/i], ["bowl", /\bbowls?\b/i], ["collar", /\bcollars?\b/i],
+  ["leash", /\b(?:leashes|leash|leads?)\b/i], ["harness", /\bharness(?:es)?\b/i], ["toy", /\btoys?\b/i],
+  ["blanket", /\bblankets?\b/i], ["mat", /\bmats?\b/i], ["carrier", /\bcarriers?\b/i],
+  ["crate", /\bcrates?\b/i], ["clothing", /\b(?:clothing|clothes|apparel)\b/i], ["shirt", /\bshirts?\b/i],
+  ["shoe", /\b(?:shoes|boots?|slippers?)\b/i], ["feeder", /\bfeeders?\b/i], ["fountain", /\bfountains?\b/i],
+  ["stroller", /\bstrollers?\b/i], ["bag", /\b(?:bags?|backpacks?)\b/i], ["brush", /\bbrush(?:es)?\b/i],
+] as const;
+
+const namedKinds = (text: string, definitions: readonly (readonly [string, RegExp])[]) =>
+  new Set(definitions.filter(([, pattern]) => pattern.test(text)).map(([name]) => name));
+
+const categoryMatchesCandidate = (category: string, candidateName: string) => {
+  const categoryTargets = namedKinds(category, CATEGORY_TARGETS);
+  const candidateTargets = namedKinds(candidateName, CATEGORY_TARGETS);
+  if (categoryTargets.size && candidateTargets.size && ![...candidateTargets].some((target) => categoryTargets.has(target))) return false;
+  const categoryTypes = namedKinds(category, PRODUCT_TYPES);
+  const candidateTypes = namedKinds(candidateName, PRODUCT_TYPES);
+  return !(categoryTypes.size && candidateTypes.size && ![...candidateTypes].some((type) => categoryTypes.has(type)));
+};
+
+/** AI 筛查前的硬过滤：候选商品只要明确属于任一运营者填写的类目就保留。 */
+export function filterCandidatesForCategories<T extends { name: string }>(categories: string[], candidates: T[]): T[] {
+  const wanted = categories.map((category) => category.trim()).filter(Boolean);
+  if (!wanted.length) return candidates;
+  return candidates.filter((candidate) => wanted.some((category) => categoryMatchesCandidate(category, candidate.name)));
+}
+
+const catalogStrings = (catalog: CatalogProductContext[]) => {
+  const names: string[] = [], categories: string[] = [];
+  for (const product of catalog) {
+    if (typeof product?.name === "string" && product.name.trim()) names.push(product.name.trim());
+    if (!Array.isArray(product?.categories)) continue;
+    for (const category of product.categories) {
+      if (typeof category === "string" && category.trim()) categories.push(category.trim());
+      else if (category && typeof category === "object" && "name" in category && typeof category.name === "string" && category.name.trim()) categories.push(category.name.trim());
+    }
+  }
+  return { names: [...new Set(names)], categories: [...new Set(categories)] };
+};
+
+/** 检查营销文案有没有把真实目录缩窄成另一类商品；“pet”可概括猫狗混合目录。 */
+export function catalogCopyProblems(c: SiteCopy, catalog: CatalogProductContext[]): string[] {
+  if (!catalog.length) return [];
+  const { names, categories } = catalogStrings(catalog);
+  const catalogText = [...categories, ...names].join("\n");
+  const actualTargets = namedKinds(catalogText, CATEGORY_TARGETS);
+  const actualTypes = namedKinds(catalogText, PRODUCT_TYPES);
+  const petCatalog = [...actualTargets].every((target) => target === "dog" || target === "cat");
+  const fields = [
+    ["tagline", typeof c?.tagline === "string" ? c.tagline : ""],
+    ["hero", [c?.hero?.heading, c?.hero?.subheading].filter((value): value is string => typeof value === "string").join("\n")],
+    ["about", (Array.isArray(c?.about) ? c.about : []).filter((value): value is string => typeof value === "string").join("\n")],
+  ] as const;
+  const out: string[] = [];
+  for (const [field, text] of fields) {
+    if (!text.trim()) continue;
+    const copyTargets = namedKinds(text, CATEGORY_TARGETS);
+    const genericPet = /\b(?:pets?|animals?)\b/i.test(text);
+    const genericCoversTargets = genericPet && copyTargets.size === 0 && petCatalog;
+    const unsupportedTargets = [...copyTargets].filter((target) => !actualTargets.has(target));
+    const missingTargets = [...actualTargets].filter((target) => !copyTargets.has(target));
+    if (actualTargets.size && (unsupportedTargets.length || (genericPet && !petCatalog) || (!genericCoversTargets && copyTargets.size && missingTargets.length))) {
+      out.push(`${field}: site copy must match the actual catalog categories (${[...actualTargets].join(", ")}); remove unsupported or incomplete target wording`);
+    }
+    const copyTypes = namedKinds(text, PRODUCT_TYPES);
+    const unsupportedTypes = [...copyTypes].filter((type) => !actualTypes.has(type));
+    if (actualTypes.size && unsupportedTypes.length) {
+      out.push(`${field}: site copy must match the actual catalog categories (${[...actualTypes].join(", ")}); remove unrelated product type wording: ${unsupportedTypes.join(", ")}`);
+    }
+  }
+  return out;
+}
+
 // ---- 提示词 ----
 
 const factLines = (f: Facts) => [
@@ -53,10 +142,13 @@ const RULES_FOR_WRITING = `Writing rules:
 - No reviews or testimonials. No health, safety, medical or environmental claims. No "best", "#1" or superlatives you cannot prove.
 - Never mention suppliers, dropshipping, marketplaces or where products are sourced.`;
 
-export function copyPrompt(f: Facts): string {
+export function copyPrompt(f: Facts, catalog: CatalogProductContext[] = []): string {
+  const actual = catalogStrings(catalog);
+  const catalogFacts = catalog.length ? `\nACTUAL PUBLISHED CATALOG (this overrides any broader category wording above):\n- Categories: ${actual.categories.join(", ") || "not separately named"}\n- Products: ${actual.names.join(", ")}\n- The tagline, hero and About copy must accurately describe this whole catalog. Do not narrow a mixed catalog to only one target; generic wording such as "pet beds" is allowed for a mixed dog-and-cat bed catalog.\n` : "";
   return `You write the website copy for a new US online store.
 FACTS:
 ${factLines(f)}
+  ${catalogFacts}
 
 ${RULES_FOR_WRITING}
 
@@ -106,7 +198,7 @@ INPUT: ${JSON.stringify(p)}`;
 /** 选品筛查：只保留和类目相符、可以合规销售的商品。 */
 export function screenPrompt(categories: string[], items: { pid: string; name: string }[]): string {
   return `You pick products for a US online store selling: ${categories.join(", ")}.
-Keep a product only if it clearly belongs to one of those categories AND it is none of these: battery-powered or rechargeable devices, liquids, gels, cosmetics, food, supplements, medicine or medical devices, items for babies or children under 12, toys, weapons, adult products, counterfeit or branded/licensed goods (brand names, characters, sports teams).
+The category is the category the operator wrote. Keep a product only when its main purpose and intended target clearly match that category; a related accessory or another product type is not a match. Also apply the existing compliance screening: keep only products that are none of these: battery-powered or rechargeable devices, liquids, gels, cosmetics, food, supplements, medicine or medical devices, items for babies or children under 12, toys, weapons, adult products, counterfeit or branded/licensed goods (brand names, characters, sports teams).
 Reply with JSON only: {"keep": string[]} listing the pid of every product to keep.
 PRODUCTS: ${JSON.stringify(items)}`;
 }
@@ -176,14 +268,14 @@ function numberProblems(html: string, f: Facts, where: string): string[] {
   return out;
 }
 
-export function checkCopy(c: SiteCopy, f: Facts): string[] {
+export function checkCopy(c: SiteCopy, f: Facts, catalog: CatalogProductContext[] = []): string[] {
   const out: string[] = [];
   if (!c.tagline || c.tagline.length > 80) out.push("tagline is missing or too long");
   if (!STYLES.includes(c.style)) out.push(`style must be one of ${STYLES.join(", ")}`);
   if (!c.hero?.heading || !c.hero?.subheading) out.push("hero heading and subheading are required");
   if (!Array.isArray(c.about) || c.about.length < 3 || c.about.length > 4) out.push("about needs 3-4 paragraphs");
   if (!Array.isArray(c.faq) || c.faq.length < 6 || c.faq.some((x) => !x.q || !x.a)) out.push("faq needs 8 questions with answers");
-  if (out.length) return out;
+  if (out.length) return [...out, ...catalogCopyProblems(c, catalog)];
   // 支付网关审核会看「关于我们」是否像真实在经营的商家：不能只有一两句套话（和虚假宣传一起报，AI 一次改全）
   const aboutText = c.about.join("\n");
   if (aboutText.length < 450 || c.about.some((x) => x.length < 100)) out.push("about is too thin: write 3-4 paragraphs of 2-4 sentences each (at least 100 characters per paragraph)");
@@ -193,7 +285,7 @@ export function checkCopy(c: SiteCopy, f: Facts): string[] {
   const payment = c.faq.map((x) => x.a).join("\n");
   if (!payment.includes("Available payment methods are shown at checkout.")) out.push("faq must use the exact checkout payment wording");
   if (/stripe|paypal|visa|mastercard|american express|apple pay|google pay/i.test(payment)) out.push("faq must not promise a payment gateway");
-  return [...out, ...claimProblems(all), ...unofferedShippingProblems(all, "site copy"), ...numberProblems(payment, f, "faq")];
+  return [...out, ...catalogCopyProblems(c, catalog), ...claimProblems(all), ...unofferedShippingProblems(all, "site copy"), ...numberProblems(payment, f, "faq")];
 }
 
 export function checkPolicies(p: Policies, f: Facts): string[] {
