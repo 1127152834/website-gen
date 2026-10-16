@@ -30,6 +30,46 @@ class FakeManager implements WorkspaceManagerLike {
 const cleanups: (() => Promise<void> | void)[] = [];
 afterEach(async () => { while (cleanups.length) await cleanups.pop()!(); });
 
+test("mail attachment downloads require a ready session and are attachment-only, isolated and nosniff", async () => {
+  const { manager, request, post, login } = await setup();
+  const path = "/api/mail/attachments?mailboxId=7&folder=INBOX&uid=9&partId=1";
+  assert.equal((await request(path)).status, 401);
+  const admin = await login("admin", "admin password");
+  assert.equal((await request(path, { headers: { Cookie: admin.cookie } })).status, 403);
+  await post("/api/password", { old: "admin password", new: "changed password" }, admin.cookie);
+  const calls: unknown[] = [];
+  const workspace = [...manager.workspaces.values()][0];
+  Object.assign(workspace, { mailAttachment: async (input: unknown) => {
+    calls.push(input);
+    return { name: 'unsafe\r\n<img src="https://tracker.example/pixel">.html', type: "text/html", size: 6, data: Buffer.from("<h1>x") };
+  } });
+  const response = await request(path, { headers: { Cookie: admin.cookie } });
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("content-disposition")!, /^attachment;/);
+  assert.doesNotMatch(response.headers.get("content-disposition")!, /[\r\n]/);
+  assert.equal(response.headers.get("content-type"), "application/octet-stream");
+  assert.equal(response.headers.get("x-content-type-options"), "nosniff");
+  assert.match(response.headers.get("content-security-policy")!, /default-src 'none'/);
+  assert.equal(response.headers.get("cache-control"), "no-store");
+  assert.equal(await response.text(), "<h1>x");
+  assert.deepEqual(calls, [{ mailboxId: 7, folder: "INBOX", uid: 9, partId: "1" }]);
+  assert.equal((await request(path.replace("mailboxId=7", "mailboxId=NaN"), { headers: { Cookie: admin.cookie } })).status, 400);
+  assert.equal(calls.length, 1);
+});
+
+test("mail.send allows base64 attachments while ordinary RPC retains the small request limit", async () => {
+  const { manager, post, login } = await setup();
+  const admin = await login("admin", "admin password");
+  await post("/api/password", { old: "admin password", new: "changed password" }, admin.cookie);
+  const workspace = [...manager.workspaces.values()][0];
+  Object.assign(workspace.handlers, { "mail.send": () => ({ ok: true }) });
+  const params = { data: "a".repeat(1024 * 1024 + 1) };
+  assert.equal((await post("/api/rpc", { method: "test.owner", params }, admin.cookie)).status, 400);
+  const response = await post("/api/rpc", { method: "mail.send", params }, admin.cookie);
+  assert.equal(response.status, 200);
+  assert.equal((await response.json() as { ok: boolean }).ok, true);
+});
+
 async function setup(env: NodeJS.ProcessEnv = {}) {
   const dataDir = mkdtempSync(join(tmpdir(), "website-gen-http-"));
   const distDir = join(dataDir, "dist");

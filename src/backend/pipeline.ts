@@ -108,11 +108,18 @@ export function siteContext(d: PipelineDeps, siteId: number): StepCtx {
   const row = db.prepare("SELECT * FROM sites WHERE id = ?").get(siteId) as unknown as SiteRow | undefined;
   if (!row) throw new PermanentError(`站点 ${siteId} 不存在`);
   const site: SiteRow = row;
+  const assertActive = () => {
+    if (db.prepare("SELECT 1 FROM abandoned_domains WHERE domain = ? COLLATE NOCASE").get(site.domain)) {
+      throw new PermanentError("这个域名已进入放弃流程，不能继续建站、上线或修改");
+    }
+  };
+  assertActive();
   const entity = JSON.parse((db.prepare("SELECT entity_json FROM batches WHERE id = ?").get(site.batch_id) as { entity_json: string }).entity_json) as EntityForm;
   const { domain } = site;
   const emit = (kind: RunEventKind, payload: Record<string, unknown>) => d.emit({ batchId: site.batch_id, siteId, kind, payload });
 
   const save = (col: keyof SiteRow, value: SiteRow[keyof SiteRow]) => {
+    assertActive();
     db.prepare(`UPDATE sites SET ${col} = ?, updated_at = ? WHERE id = ?`).run(value, d.now(), siteId);
     (site as unknown as Record<string, unknown>)[col] = value;
   };
@@ -120,6 +127,7 @@ export function siteContext(d: PipelineDeps, siteId: number): StepCtx {
   // ---- Hostinger 调用：日志里只记操作名、耗时和成败，从不记参数（里面有密码） ----
   let rawExec: HostingerExec | null = null;
   const hx: HostingerExec = async (op, params) => {
+    assertActive();
     if (site.account_id == null) throw new Error("站点还没有关联 Hostinger 账号");
     rawExec ??= d.hostinger(site.account_id);
     const t0 = performance.now();
@@ -146,6 +154,7 @@ export function siteContext(d: PipelineDeps, siteId: number): StepCtx {
 
   // ---- 站点 REST：伴侣插件注册得到的应用密码 ----
   async function wp(method: string, path: string, body?: unknown): Promise<unknown> {
+    assertActive();
     if (!site.companion_ciphertext) throw new Error("伴侣插件还没注册");
     const creds = JSON.parse(unseal(key, site.companion_ciphertext)) as CompanionCreds;
     const res = await d.fetch(`https://${domain}/wp-json/${path}`, {

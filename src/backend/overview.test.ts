@@ -20,7 +20,7 @@ test("overview aggregates current workspace status, attention and 30-day expiry 
     domain.run(5, "invalid.example", "not-a-date");
     const before = db.prepare("SELECT total_changes() AS n").get();
     const view = getOverview(db, now);
-    assert.deepEqual(view.counts, { total: 4, queued: 0, running: 1, waiting: 0, done: 2, failed: 1, launched: 1 });
+    assert.deepEqual(view.counts, { total: 4, queued: 0, running: 1, waiting: 0, done: 2, failed: 1, abandoned: 0, launched: 1 });
     assert.equal(view.runningBatches.length, 1);
     assert.deepEqual(view.attention.map((site) => site.siteId), [2, 3]);
     assert.equal(view.attention[1].reasons.length, 4);

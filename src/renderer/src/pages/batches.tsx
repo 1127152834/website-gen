@@ -16,6 +16,7 @@ const SITE_STATUS: Record<SiteStatus, { label: string; variant: "secondary" | "o
   waiting: { label: "等待 Hostinger", variant: "outline", className: "border-amber-500/60 bg-amber-50 text-amber-800 dark:bg-amber-950/30 dark:text-amber-300" },
   done: { label: "已完成", variant: "secondary" },
   failed: { label: "失败", variant: "destructive" },
+  abandoned: { label: "已放弃", variant: "outline" },
 };
 
 const TOTAL = PROVISION_STEPS.length;

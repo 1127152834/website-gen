@@ -110,7 +110,9 @@ test("domains Hostinger returns without a name (pending setup) are kept as unnam
 
 test('domains already saved as the string "null" by older versions are cleaned up by the migration', async () => {
   const { migrate } = await import("./db.ts");
-  const db = fresh();
+  const { MIGRATIONS } = await import("./migrations.ts");
+  const db = openDb(":memory:");
+  for (let i = 0; i < 8; i++) { db.exec(MIGRATIONS[i]); db.exec(`PRAGMA user_version = ${i + 1}`); }
   const id = await addAccount(db, key, { label: "账号二", token: "tok-85b0" }, fake({ hosting_orders_list: page([]) }));
   db.prepare("INSERT INTO domains VALUES (?, 7, 'null', 'domain', 'pending_setup', NULL, NULL)").run(id);
   db.exec("PRAGMA user_version = 8"); // 回到修复前的版本

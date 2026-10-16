@@ -11,6 +11,8 @@ import { acquireServerLock } from "./lock.ts";
 
 export interface WorkspaceLike {
   handlers: Handlers;
+  /** 只在通过会话鉴权的显式附件下载中调用，绝不解析消息中的 URL。 */
+  mailAttachment?(input: { mailboxId: number; folder: string; uid: number; partId: string }): Promise<{ name: string; type: string; size: number; data: Buffer }>;
   subscribe(listener: (push: Push) => void): () => void;
   close(): Promise<void>;
 }
@@ -57,13 +59,13 @@ function json(res: ServerResponse, status: number, body: unknown): void {
 }
 const apiError = (res: ServerResponse, status: number, error: string, code?: string) => json(res, status, code ? { error, code } : { error });
 
-async function bodyJson(req: IncomingMessage): Promise<Record<string, unknown>> {
+async function bodyJson(req: IncomingMessage, limit = 1024 * 1024): Promise<Record<string, unknown>> {
   const chunks: Buffer[] = [];
   let length = 0;
   for await (const chunk of req) {
     const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
     length += buffer.length;
-    if (length > 1024 * 1024) throw new Error("请求内容过大");
+    if (length > limit) throw new Error("请求内容过大");
     chunks.push(buffer);
   }
   if (!length) return {};
@@ -230,11 +232,38 @@ export async function createApp(options: CreateAppOptions): Promise<{ server: Se
 
       if (req.method === "POST" && url.pathname === "/api/rpc") {
         let session = requireReady(req, res); if (!session) return;
-        const body = await bodyJson(req);
+        // 20 MB 附件经 base64 编码会增加三分之一；其他 RPC 仍限制为 1 MB。
+        const body = await bodyJson(req, 29 * 1024 * 1024);
+        if (body.method !== "mail.send" && Buffer.byteLength(JSON.stringify(body)) > 1024 * 1024) throw new Error("请求内容过大");
         session = requireReady(req, res); if (!session) return;
         const request: Request = { kind: "req", id: Number(body.id ?? 0), method: String(body.method ?? ""), params: body.params };
         const workspace = options.workspaceManager.get(session.user.id) ?? attachWorkspace(session.user.id);
         json(res, 200, await handleRequest(workspace.handlers, request)); return;
+      }
+
+      if (req.method === "GET" && url.pathname === "/api/mail/attachments") {
+        const session = requireReady(req, res); if (!session) return;
+        const mailboxId = Number(url.searchParams.get("mailboxId"));
+        const uid = Number(url.searchParams.get("uid"));
+        const folder = url.searchParams.get("folder") ?? "";
+        const partId = url.searchParams.get("partId") ?? "";
+        if (!Number.isSafeInteger(mailboxId) || mailboxId <= 0 || !Number.isSafeInteger(uid) || uid <= 0 || !folder || folder.length > 1024 || !partId || partId.length > 128) throw new Error("附件参数无效");
+        const workspace = options.workspaceManager.get(session.user.id) ?? attachWorkspace(session.user.id);
+        if (!workspace.mailAttachment) { apiError(res, 404, "附件不存在"); return; }
+        const attachment = await workspace.mailAttachment({ mailboxId, folder, uid, partId });
+        // 下载期间会话可能被撤销；不能把已停用用户的数据继续发出去。
+        if (!requireReady(req, res)) return;
+        const safeName = attachment.name.replace(/[\r\n\u0000-\u001f\u007f/\\]/g, "_").slice(0, 200) || "attachment";
+        const encoded = encodeURIComponent(safeName).replace(/['()*]/g, (character) => `%${character.charCodeAt(0).toString(16)}`);
+        res.writeHead(200, {
+          "Content-Type": "application/octet-stream",
+          "Content-Disposition": `attachment; filename="attachment"; filename*=UTF-8''${encoded}`,
+          "X-Content-Type-Options": "nosniff",
+          "Content-Security-Policy": "default-src 'none'; sandbox",
+          "Cache-Control": "no-store",
+          "Content-Length": attachment.data.length,
+        }).end(attachment.data);
+        return;
       }
 
       if (req.method === "GET" && url.pathname === "/api/events") {

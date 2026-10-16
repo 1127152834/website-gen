@@ -11,12 +11,12 @@ export interface Overview {
 }
 
 export function allSites(db: DatabaseSync): SiteProgress[] {
-  return listBatches(db).flatMap((batch) => batchSites(db, batch.id));
+  return listBatches(db).flatMap((batch) => batchSites(db, batch.id)).filter((site) => site.status !== "abandoned");
 }
 
 export function getOverview(db: DatabaseSync, now = Date.now()): Overview {
   const sites = allSites(db);
-  const counts: Overview["counts"] = { total: sites.length, queued: 0, running: 0, waiting: 0, done: 0, failed: 0, launched: 0 };
+  const counts: Overview["counts"] = { total: sites.length, queued: 0, running: 0, waiting: 0, done: 0, failed: 0, abandoned: 0, launched: 0 };
   for (const site of sites) { counts[site.status]++; if (site.launchedAt != null) counts.launched++; }
   const reports = new Map((db.prepare("SELECT id, qa_json, mailbox_ciphertext FROM sites").all() as { id: number; qa_json: string | null; mailbox_ciphertext: Uint8Array | null }[]).map((row) => [row.id, row]));
   const attention = sites.flatMap((site) => {
@@ -37,7 +37,10 @@ export function getOverview(db: DatabaseSync, now = Date.now()): Overview {
     if (site.status === "done" && site.launchedAt == null) reasons.push("上线前请确认支付接入与买家流程");
     return reasons.length ? [{ siteId: site.id, domain: site.domain, reasons, tab }] : [];
   });
-  const expiringDomains = (db.prepare("SELECT d.account_id, a.label, d.domain, d.expires_at FROM domains d JOIN hostinger_accounts a ON a.id = d.account_id WHERE d.expires_at IS NOT NULL AND d.domain <> ''").all() as { account_id: number; label: string; domain: string; expires_at: string }[])
+  const expiringDomains = (db.prepare(`SELECT d.account_id, a.label, d.domain, d.expires_at FROM domains d
+    JOIN hostinger_accounts a ON a.id = d.account_id
+    WHERE d.expires_at IS NOT NULL AND d.domain <> ''
+      AND NOT EXISTS (SELECT 1 FROM abandoned_domains x WHERE x.domain = d.domain COLLATE NOCASE)`).all() as { account_id: number; label: string; domain: string; expires_at: string }[])
     .map((d) => ({ accountId: d.account_id, accountLabel: d.label, domain: d.domain, expiresAt: d.expires_at, daysLeft: Math.ceil((Date.parse(d.expires_at) - now) / 86_400_000) }))
     .filter((d) => Number.isFinite(d.daysLeft) && Date.parse(d.expiresAt) >= now && Date.parse(d.expiresAt) <= now + 30 * 86_400_000)
     .sort((a, b) => Date.parse(a.expiresAt) - Date.parse(b.expiresAt));

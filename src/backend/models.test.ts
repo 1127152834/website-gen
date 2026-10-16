@@ -56,7 +56,7 @@ test("migration 010 preserves legacy DeepSeek provider, key, models and role row
 
   migrate(db);
 
-  assert.equal((db.prepare("PRAGMA user_version").get() as { user_version: number }).user_version, 10);
+  assert.equal((db.prepare("PRAGMA user_version").get() as { user_version: number }).user_version, MIGRATIONS.length);
   const provider = listProviders(db)[0];
   assert.equal(provider.name, "DeepSeek（旧工作区）");
   assert.equal(provider.keyHint, "cret");

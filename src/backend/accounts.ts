@@ -114,10 +114,13 @@ export function listAccounts(db: DatabaseSync): AccountSummary[] {
 export function listDomains(db: DatabaseSync, accountId: number): DomainSummary[] {
   const rows = db.prepare(`
     -- 网站和邮箱可能在别的 Hostinger 账号下（跨账号绑定），所以这里不限账号
-    SELECT d.external_id, d.domain, d.status, d.expires_at,
+    SELECT d.external_id, d.domain,
+      CASE WHEN x.domain IS NOT NULL THEN 'abandoned' ELSE d.status END AS status,
+      d.expires_at, x.domain IS NOT NULL AS abandoned,
       EXISTS (SELECT 1 FROM hosting_websites w WHERE w.domain = d.domain) AS has_website,
       EXISTS (SELECT 1 FROM mail_orders m WHERE m.domain = d.domain) AS has_mail
-    FROM domains d WHERE d.account_id = ? ORDER BY d.domain = '', d.domain`).all(accountId) as Obj[];
+    FROM domains d LEFT JOIN abandoned_domains x ON x.domain = d.domain COLLATE NOCASE
+    WHERE d.account_id = ? ORDER BY d.domain = '', d.domain`).all(accountId) as Obj[];
   return rows.map((r) => ({
     id: Number(r.external_id),
     domain: String(r.domain),
@@ -125,6 +128,7 @@ export function listDomains(db: DatabaseSync, accountId: number): DomainSummary[
     expiresAt: str(r.expires_at),
     hasWebsite: Boolean(r.has_website),
     hasMail: Boolean(r.has_mail),
+    abandoned: Boolean(r.abandoned),
   }));
 }
 

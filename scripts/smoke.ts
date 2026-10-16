@@ -124,7 +124,9 @@ try {
   await page.getByText("还没有站点", { exact: true }).waitFor();
   await nav.getByRole("link", { name: "账号", exact: true }).click();
   await page.getByText("还没有接入账号").waitFor();
-  console.log("✔ 总览、建站、批次、站点、账号页空状态正常");
+  await nav.getByRole("link", { name: "邮箱", exact: true }).click();
+  await page.getByText("还没有邮箱", { exact: true }).waitFor();
+  console.log("✔ 总览、建站、批次、站点、账号、邮箱页空状态正常");
 
   // 使用明确的本地模型服务夹具，真实经过 RPC、密钥解密、HTTP 和模型 SDK；不依赖外网可用性。
   modelFixture = createHttpServer((request, response) => {
@@ -163,7 +165,7 @@ try {
   // 真实 URL 重载 + 两个目标视口。设 SMOKE_KEEP_SCREENSHOTS=1 可保留成功截图供人工审查。
   for (const width of [1280, 390]) {
     await page.setViewportSize({ width, height: 900 });
-    for (const [path, title] of [["/", "总览"], ["/new", "建站"], ["/batches", "批次"], ["/sites", "站点"], ["/accounts", "Hostinger 账号"], ["/settings", "设置"]]) {
+    for (const [path, title] of [["/", "总览"], ["/new", "建站"], ["/batches", "批次"], ["/sites", "站点"], ["/accounts", "Hostinger 账号"], ["/mail", "邮箱"], ["/settings", "设置"]]) {
       await page.goto(`${baseUrl}${path}`, { waitUntil: "domcontentloaded" });
       await page.getByRole("heading", { name: title, exact: true }).waitFor();
       await page.getByText("后台已连接").waitFor();

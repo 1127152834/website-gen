@@ -10,6 +10,7 @@ import { call, onChanged, onChat, onConnect, onEvent } from "@/lib/backend.ts";
 import { cn } from "@/lib/utils";
 import { LogViewer, StepTimeline } from "./site-operations.tsx";
 import { QaReport } from "./qa-report.tsx";
+import { AbandonSiteButton } from "@/components/abandon-site.tsx";
 
 const TOOL_TEXT: Record<string, string> = {
   get_site: "查看站点概况", get_copy: "读取文案", get_policy: "读取政策页", list_products: "查看商品列表", get_product: "读取商品", list_changes: "查看变更记录",
@@ -24,6 +25,7 @@ const TOTAL = PROVISION_STEPS.length;
 const STATUS: Record<SiteStatus, { text: string; variant: "default" | "secondary" | "outline" | "destructive"; className?: string }> = {
   queued: { text: "排队中", variant: "outline" }, running: { text: "进行中", variant: "default", className: "status-running" },
   waiting: { text: "待外部服务", variant: "outline", className: "status-waiting" }, done: { text: "已完成", variant: "secondary", className: "status-done" }, failed: { text: "失败", variant: "destructive", className: "status-failed" },
+  abandoned: { text: "已放弃", variant: "outline" },
 };
 
 function unresolvedQa(qa: QaView | null): string[] {
@@ -35,6 +37,7 @@ function unresolvedQa(qa: QaView | null): string[] {
 }
 
 function siteBadge(site: SiteProgress) {
+  if (site.status === "abandoned") return <Badge variant="outline">已放弃</Badge>;
   if (site.launchedAt) return <Badge variant="secondary" className="status-launched">已上线</Badge>;
   const value = STATUS[site.status];
   return <Badge variant={value.variant} className={value.className}>{value.text}</Badge>;
@@ -62,8 +65,11 @@ type SitesPageProps = { siteId?: number; tab?: string; onNavigate?: (path: strin
 
 export function SitesPage({ siteId, tab, onNavigate }: SitesPageProps) {
   const [sites, setSites] = useState<SiteProgress[] | null>(null);
+  const [history, setHistory] = useState<SiteProgress[] | null>(null);
+  const [showHistory, setShowHistory] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const load = useCallback(() => void call<SiteProgress[]>("sites.all").then(setSites, (reason: Error) => setError(reason.message)), []);
+  const loadHistory = useCallback(() => void call<SiteProgress[]>("sites.history").then(setHistory, (reason: Error) => setError(reason.message)), []);
   useEffect(() => { const off = [onConnect(load), onChanged("batches", load)]; return () => off.forEach((dispose) => dispose()); }, [load]);
 
   const navigate = (path: string) => {
@@ -74,9 +80,10 @@ export function SitesPage({ siteId, tab, onNavigate }: SitesPageProps) {
   if (sites === null) return <div className="space-y-6"><header><h1 className="text-2xl font-semibold tracking-tight">站点</h1><p className="mt-1 text-sm text-muted-foreground">管理全部站点，包括进行中、失败和已上线的站点。</p></header>{error && <div role="alert" className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive"><p>{error}</p><Button variant="outline" size="sm" className="mt-3" onClick={load}>重新加载</Button></div>}<div className="h-64 animate-pulse rounded-lg bg-muted" /></div>;
   return (
     <div className="space-y-6">
-      <header><h1 className="text-2xl font-semibold tracking-tight">站点</h1><p className="mt-1 text-sm text-muted-foreground">管理全部站点，包括进行中、失败和已上线的站点。</p></header>
+      <header className="flex flex-wrap items-start justify-between gap-3"><div><h1 className="text-2xl font-semibold tracking-tight">站点</h1><p className="mt-1 text-sm text-muted-foreground">管理全部站点，包括进行中、失败和已上线的站点。</p></div><Button variant="outline" size="sm" onClick={() => { const next = !showHistory; setShowHistory(next); if (next && history === null) loadHistory(); }}>{showHistory ? "隐藏已放弃历史" : "查看已放弃历史"}</Button></header>
       {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
       {sites.length === 0 ? <div className="rounded-lg border border-dashed p-8 text-center text-sm"><p className="font-medium">还没有站点</p><p className="mt-1 text-muted-foreground">先从「建站」创建一个批次。站点进入队列后就会出现在这里。</p></div> : <div className="overflow-x-auto rounded-lg border bg-card"><Table aria-label="全部站点"><TableHeader><TableRow><TableHead>域名</TableHead><TableHead>状态</TableHead><TableHead className="min-w-48">进度</TableHead><TableHead className="min-w-56">当前步骤</TableHead><TableHead>最近更新</TableHead></TableRow></TableHeader><TableBody>{sites.map((site) => <TableRow key={site.id} className="cursor-pointer" tabIndex={0} onClick={() => navigate(`/sites/${site.id}/overview`)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); navigate(`/sites/${site.id}/overview`); } }}><TableCell className="font-medium">{site.domain}</TableCell><TableCell>{siteBadge(site)}</TableCell><TableCell><div className="flex items-center gap-2"><div className="h-1.5 flex-1 rounded-full bg-muted"><div className={cn("h-full rounded-full", site.status === "failed" ? "bg-destructive" : site.status === "waiting" ? "bg-amber-500" : "bg-primary")} style={{ width: `${Math.min(100, (site.completed / TOTAL) * 100)}%` }} /></div><span className="text-xs text-muted-foreground tabular-nums">{site.completed}/{TOTAL}</span></div></TableCell><TableCell className="whitespace-normal">{site.launchedAt ? "站点已上线" : site.status === "done" ? "等待检查并上线" : site.currentStep ?? "—"}{site.lastError && <span className="mt-1 block max-w-md text-xs text-destructive">{site.lastError}</span>}</TableCell><TableCell className="text-muted-foreground tabular-nums">{dateTime(site.updatedAt)}</TableCell></TableRow>)}</TableBody></Table></div>}
+      {showHistory && <section aria-label="已放弃站点历史"><h2 className="mb-3 text-sm font-medium">已放弃历史</h2>{history === null ? <p className="text-sm text-muted-foreground">正在读取…</p> : history.length === 0 ? <p className="rounded-lg border border-dashed p-6 text-sm text-muted-foreground">还没有已放弃的站点。</p> : <div className="rounded-lg border"><Table><TableHeader><TableRow><TableHead>域名</TableHead><TableHead>状态</TableHead><TableHead>最近更新</TableHead></TableRow></TableHeader><TableBody>{history.map((site) => <TableRow key={site.id} className="cursor-pointer" tabIndex={0} onClick={() => navigate(`/sites/${site.id}/overview`)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); navigate(`/sites/${site.id}/overview`); } }}><TableCell className="font-medium">{site.domain}</TableCell><TableCell>{siteBadge(site)}</TableCell><TableCell className="text-muted-foreground">{dateTime(site.updatedAt)}</TableCell></TableRow>)}</TableBody></Table></div>}</section>}
     </div>
   );
 }
@@ -130,12 +137,13 @@ function SiteDetail({ siteId, tab, onNavigate }: { siteId: number; tab: SiteTab;
   return (
     <div className="space-y-6">
       <nav aria-label="面包屑" className="text-sm text-muted-foreground"><button type="button" className="outline-none hover:text-foreground focus-visible:underline" onClick={() => onNavigate("/sites")}>站点</button><span className="mx-2">/</span><span className="text-foreground">{site.domain}</span></nav>
-      <header className="flex flex-wrap items-start justify-between gap-4"><div><div className="flex flex-wrap items-center gap-2"><h1 className="text-2xl font-semibold tracking-tight">{site.domain}</h1>{siteBadge(site)}</div><p className="mt-1 text-sm text-muted-foreground tabular-nums">批次 {site.batchId} · 最近更新 {dateTime(site.updatedAt)}</p></div><div className="flex flex-wrap gap-2">{site.status === "failed" && <Button variant="outline" disabled={busy} onClick={() => void retry()}>{busy ? <LoaderCircle className="motion-safe:animate-spin" aria-hidden /> : <RotateCcw aria-hidden />}重试</Button>}{site.status === "done" && !site.launchedAt && <Button disabled={busy} onClick={() => void launch()}><Rocket aria-hidden />上线</Button>}<Button variant="outline" asChild><a href={`https://${site.domain}/`} target="_blank" rel="noreferrer">打开网站<ExternalLink aria-hidden /></a></Button></div></header>
+      <header className="flex flex-wrap items-start justify-between gap-4"><div><div className="flex flex-wrap items-center gap-2"><h1 className="text-2xl font-semibold tracking-tight">{site.domain}</h1>{siteBadge(site)}</div><p className="mt-1 text-sm text-muted-foreground tabular-nums">批次 {site.batchId} · 最近更新 {dateTime(site.updatedAt)}</p></div>{site.status !== "abandoned" ? <div className="flex flex-wrap gap-2">{site.status === "failed" && <Button variant="outline" disabled={busy} onClick={() => void retry()}>{busy ? <LoaderCircle className="motion-safe:animate-spin" aria-hidden /> : <RotateCcw aria-hidden />}重试</Button>}{site.status === "done" && !site.launchedAt && <Button disabled={busy} onClick={() => void launch()}><Rocket aria-hidden />上线</Button>}<Button variant="outline" asChild><a href={`https://${site.domain}/`} target="_blank" rel="noreferrer">打开网站<ExternalLink aria-hidden /></a></Button><AbandonSiteButton domain={site.domain} siteId={siteId} onDone={() => onNavigate("/sites")} /></div> : <AbandonSiteButton domain={site.domain} siteId={siteId} statusOnly />}</header>
       {error && <p role="alert" className="rounded-md border border-destructive/40 bg-destructive/5 px-3 py-2 text-sm text-destructive">{error}</p>}
-      <nav aria-label="站点详情" className="-mx-1 flex overflow-x-auto border-b px-1">{TABS.map((item) => <button key={item.key} type="button" aria-current={tab === item.key ? "page" : undefined} onClick={() => onNavigate(`/sites/${siteId}/${item.key}`)} className={cn("shrink-0 border-b-2 px-4 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset", tab === item.key ? "border-primary font-medium text-foreground" : "border-transparent text-muted-foreground hover:text-foreground")}>{item.label}</button>)}</nav>
-      {tab === "overview" && <div className="grid gap-6 xl:grid-cols-[20rem_minmax(0,1fr)]"><section><h2 className="mb-3 text-sm font-medium">步骤时间线</h2><StepTimeline steps={steps} /></section><LogViewer events={events} /></div>}
-      {tab === "chat" && <ChatPanel siteId={siteId} domain={site.domain} />}
-      {tab === "mail" && <MailPanel siteId={siteId} />}
+      {site.status === "abandoned" && <p className="rounded-md border bg-muted/40 p-3 text-sm text-muted-foreground">此站点已放弃。这里只保留执行时间线、日志、变更和 QA 历史，不再提供上线、重试、邮箱或对话修改。</p>}
+      <nav aria-label="站点详情" className="-mx-1 flex overflow-x-auto border-b px-1">{TABS.filter((item) => site.status !== "abandoned" || (item.key !== "chat" && item.key !== "mail")).map((item) => <button key={item.key} type="button" aria-current={tab === item.key ? "page" : undefined} onClick={() => onNavigate(`/sites/${siteId}/${item.key}`)} className={cn("shrink-0 border-b-2 px-4 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset", tab === item.key ? "border-primary font-medium text-foreground" : "border-transparent text-muted-foreground hover:text-foreground")}>{item.label}</button>)}</nav>
+      {(tab === "overview" || (site.status === "abandoned" && (tab === "chat" || tab === "mail"))) && <div className="grid gap-6 xl:grid-cols-[20rem_minmax(0,1fr)]"><section><h2 className="mb-3 text-sm font-medium">步骤时间线</h2><StepTimeline steps={steps} /></section><LogViewer events={events} /></div>}
+      {tab === "chat" && site.status !== "abandoned" && <ChatPanel siteId={siteId} domain={site.domain} />}
+      {tab === "mail" && site.status !== "abandoned" && <MailPanel siteId={siteId} />}
       {tab === "changes" && <ChangesPanel siteId={siteId} />}
       {tab === "qa" && <QaReport qa={qa} />}
     </div>

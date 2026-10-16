@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ChevronDown, Globe, KeyRound, Layers, LogOut, Settings, Store, Users, LayoutDashboard, PanelLeftClose, PanelLeftOpen, Sun, Moon, Monitor, Plus } from "lucide-react";
+import { ChevronDown, Globe, KeyRound, Layers, LogOut, Settings, Store, Users, LayoutDashboard, PanelLeftClose, PanelLeftOpen, Sun, Moon, Monitor, Plus, Mail } from "lucide-react";
 import { DropdownMenu } from "radix-ui";
 import type { AuthUser } from "../../shared/auth.ts";
-import { onConnectionStatus, startBackendTransport, stopBackendTransport } from "@/lib/backend.ts";
+import { call, onChanged, onConnectionStatus, onMail, startBackendTransport, stopBackendTransport } from "@/lib/backend.ts";
 import { AUTH_SYNC_KEY, getCurrentUser, HttpError, invalidateApiRequests, logout } from "@/lib/auth.ts";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import { SettingsPage } from "./pages/settings.tsx";
 import { SitesPage } from "./pages/sites.tsx";
 import { UsersPage } from "./pages/users.tsx";
 import { OverviewPage } from "./pages/overview.tsx";
+import { MailPage } from "./pages/mail.tsx";
 import { FeedbackProvider, toast } from "@/components/feedback";
 import { Skeleton } from "@/components/page-state";
 import { parseRoute, type Page } from "@/lib/routes.ts";
@@ -27,6 +28,7 @@ const NAV: { label: string; icon: typeof Store; page: Page; admin?: boolean }[] 
   { label: "批次", icon: Layers, page: "batches" },
   { label: "站点", icon: Globe, page: "sites" },
   { label: "账号", icon: KeyRound, page: "accounts" },
+  { label: "邮箱", icon: Mail, page: "mail" },
   { label: "设置", icon: Settings, page: "settings" },
   { label: "用户管理", icon: Users, page: "users", admin: true },
 ];
@@ -146,6 +148,7 @@ function WorkspaceShell({ user, onUserChange, onLogout }: { user: AuthUser; onUs
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
+  const [mailUnread, setMailUnread] = useState(0);
   const contentRef = useRef<HTMLDivElement>(null);
   const navToggle = useRef<HTMLButtonElement>(null);
   const navigate = useCallback((path: string) => {
@@ -157,6 +160,19 @@ function WorkspaceShell({ user, onUserChange, onLogout }: { user: AuthUser; onUs
   useEffect(() => { document.title = `${NAV.find((item) => item.page === route.page)?.label ?? "页面未找到"} · 独立站 AI 工厂`; }, [route]);
   useEffect(() => onConnectionStatus(setConnected), []);
   useEffect(() => { startBackendTransport(user.id, true); return () => stopBackendTransport(true); }, [user.id]);
+  useEffect(() => {
+    const loadUnread = () => void call<{ unreadCount: number }[] | { unread: number }>("mail.list").then((result) => {
+      const count = Array.isArray(result) ? result.reduce((sum, mailbox) => sum + (mailbox.unreadCount ?? 0), 0) : result.unread;
+      setMailUnread(count);
+    }).catch(() => {});
+    loadUnread();
+    const offMail = onMail((event) => {
+      if (event.type === "new") toast("收到新邮件");
+      loadUnread();
+    });
+    const offChanged = onChanged("mail", loadUnread);
+    return () => { offMail(); offChanged(); };
+  }, [user.id]);
   const signOut = async () => {
     try { await logout(); stopBackendTransport(true); onLogout(); }
     catch (error) { if (error instanceof HttpError && error.status === 401) { stopBackendTransport(true); onLogout(); } else toast(`退出失败：${(error as Error).message}`, "error"); }
@@ -170,7 +186,7 @@ function WorkspaceShell({ user, onUserChange, onLogout }: { user: AuthUser; onUs
     {mobileOpen && <button type="button" aria-label="关闭导航" className="fixed inset-0 z-30 bg-black/30 md:hidden" onClick={() => { setMobileOpen(false); navToggle.current?.focus(); }} />}
     <aside id="console-navigation" className={cn("console-sidebar flex shrink-0 flex-col border-r bg-sidebar p-3", collapsed ? "md:w-[4.5rem]" : "md:w-52", mobileOpen ? "mobile-open" : "")} onKeyDown={(event) => { if (event.key === "Escape") { setMobileOpen(false); navToggle.current?.focus(); } }}>
       <div className="mb-7 flex h-9 items-center gap-2 overflow-hidden px-2"><img src={iconUrl} alt="" className="size-7 shrink-0 rounded-md" /><span className={cn("whitespace-nowrap text-sm font-semibold", collapsed && "md:hidden")}>独立站 AI 工厂</span></div>
-      <nav aria-label="主导航" className="flex flex-col gap-1">{visibleNav.map(({ label, icon: Icon, page: target }) => <a key={target} href={target === "overview" ? "/" : `/${target}`} title={collapsed ? label : undefined} aria-current={target === route.page ? "page" : undefined} onClick={(event) => { if (!event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) { event.preventDefault(); navigate(target === "overview" ? "/" : `/${target}`); } }} className={cn("flex min-h-10 items-center gap-3 rounded-md px-3 text-sm", target === route.page ? "bg-sidebar-accent font-medium text-sidebar-accent-foreground" : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-foreground")}><Icon className="size-4 shrink-0" aria-hidden /><span className={collapsed ? "md:sr-only" : ""}>{label}</span></a>)}</nav>
+      <nav aria-label="主导航" className="flex flex-col gap-1">{visibleNav.map(({ label, icon: Icon, page: target }) => <a key={target} href={target === "overview" ? "/" : `/${target}`} title={collapsed ? label : undefined} aria-current={target === route.page ? "page" : undefined} onClick={(event) => { if (!event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) { event.preventDefault(); navigate(target === "overview" ? "/" : `/${target}`); } }} className={cn("flex min-h-10 items-center gap-3 rounded-md px-3 text-sm", target === route.page ? "bg-sidebar-accent font-medium text-sidebar-accent-foreground" : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-foreground")}><Icon className="size-4 shrink-0" aria-hidden /><span className={collapsed ? "md:sr-only" : ""}>{label}</span>{target === "mail" && mailUnread > 0 && <span aria-label={`${mailUnread} 封未读邮件`} className={cn("ml-auto rounded-full bg-primary px-1.5 py-0.5 text-[10px] leading-none text-primary-foreground", collapsed && "md:absolute md:ml-5 md:-mt-5")}>{mailUnread > 99 ? "99+" : mailUnread}</span>}</a>)}</nav>
       <div className={cn("mt-auto border-t px-2 pt-4 text-xs text-muted-foreground", collapsed && "md:hidden")}><p>独立工作区 · {user.username}</p><p className="mt-1">仅显示当前用户的业务数据</p></div>
     </aside>
     <main className="flex min-w-0 flex-1 flex-col">
@@ -183,11 +199,12 @@ function WorkspaceShell({ user, onUserChange, onLogout }: { user: AuthUser; onUs
       </header>
       <div ref={contentRef} id="page-content" tabIndex={-1} className="min-h-0 flex-1 overflow-auto px-4 py-5 md:px-8 md:py-7">
         <div className="mx-auto w-full max-w-[1440px]">
-          {route.id && route.page !== "sites" && <nav aria-label="面包屑" className="mb-5 flex items-center gap-2 text-sm text-muted-foreground"><a href={`/${route.page}`} className="hover:text-primary" onClick={(event) => { event.preventDefault(); navigate(`/${route.page}`); }}>{pageTitle}</a><span aria-hidden>/</span><span className="text-foreground">#{route.id}</span></nav>}
+          {route.id && route.page !== "sites" && route.page !== "mail" && <nav aria-label="面包屑" className="mb-5 flex items-center gap-2 text-sm text-muted-foreground"><a href={`/${route.page}`} className="hover:text-primary" onClick={(event) => { event.preventDefault(); navigate(`/${route.page}`); }}>{pageTitle}</a><span aria-hidden>/</span><span className="text-foreground">#{route.id}</span></nav>}
           {route.page === "overview" && <OverviewPage onNavigate={navigate} />}
           {route.page === "new" && <NewBatchPage onCreated={(id) => navigate(`/batches/${id}`)} userId={user.id} />}
           {route.page === "batches" && <BatchesPage key={route.id ?? "list"} initialBatch={route.id ?? null} onNew={() => navigate("/new")} onNavigate={navigate} />}
           {route.page === "accounts" && <AccountsPage />}
+          {route.page === "mail" && <MailPage mailboxId={route.id} folder={route.folder} uid={route.uid} onNavigate={navigate} />}
           {route.page === "sites" && <SitesPage siteId={route.id} tab={route.tab} onNavigate={navigate} />}
           {route.page === "settings" && <SettingsPage onPasswordChanged={onUserChange} />}
           {route.page === "users" && (user.role === "admin" ? <UsersPage currentUser={user} /> : <p role="alert">此页面仅限管理员访问。你的业务数据与其他用户隔离。</p>)}

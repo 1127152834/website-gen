@@ -13,6 +13,7 @@ export function listFreeDomains(db: DatabaseSync): FreeDomain[] {
       EXISTS (SELECT 1 FROM mail_orders m WHERE m.domain = d.domain) AS has_mail
     FROM domains d JOIN hostinger_accounts a ON a.id = d.account_id
     WHERE (d.status IS NULL OR d.status = 'active') AND d.domain <> ''
+      AND NOT EXISTS (SELECT 1 FROM abandoned_domains x WHERE x.domain = d.domain COLLATE NOCASE)
       AND NOT EXISTS (SELECT 1 FROM hosting_websites w WHERE w.domain = d.domain)
       AND NOT EXISTS (SELECT 1 FROM sites s WHERE s.domain = d.domain)
     ORDER BY d.domain`).all() as { domain: string; account_id: number; label: string; expires_at: string | null; has_mail: number }[];
@@ -44,11 +45,14 @@ export function createBatch(db: DatabaseSync, form: BatchForm, now: number): { b
 
 export function listBatches(db: DatabaseSync): BatchSummary[] {
   const rows = db.prepare(`
-    SELECT b.id, b.created_at, count(s.id) AS total,
-      sum(s.status = 'done') AS done, sum(s.status = 'failed') AS failed,
-      sum(s.status IN ('queued','running','waiting')) AS active
+    SELECT b.id, b.created_at,
+      sum(CASE WHEN s.id IS NOT NULL AND s.abandoned_at IS NULL AND x.domain IS NULL THEN 1 ELSE 0 END) AS total,
+      sum(CASE WHEN s.abandoned_at IS NULL AND x.domain IS NULL AND s.status = 'done' THEN 1 ELSE 0 END) AS done,
+      sum(CASE WHEN s.abandoned_at IS NULL AND x.domain IS NULL AND s.status = 'failed' THEN 1 ELSE 0 END) AS failed,
+      sum(CASE WHEN s.abandoned_at IS NULL AND x.domain IS NULL AND s.status IN ('queued','running','waiting') THEN 1 ELSE 0 END) AS active
     FROM batches b LEFT JOIN sites s ON s.batch_id = b.id
-    GROUP BY b.id ORDER BY b.id DESC`).all() as Record<string, number>[];
+    LEFT JOIN abandoned_domains x ON x.domain = s.domain COLLATE NOCASE
+    GROUP BY b.id HAVING total > 0 ORDER BY b.id DESC`).all() as Record<string, number>[];
   return rows.map((r) => ({ id: r.id, createdAt: r.created_at, total: r.total, done: r.done ?? 0, failed: r.failed ?? 0, active: r.active ?? 0 }));
 }
 
@@ -65,19 +69,26 @@ export function siteSteps(db: DatabaseSync, siteId: number): StepState[] {
 }
 
 export function batchSites(db: DatabaseSync, batchId: number): SiteProgress[] {
-  const sites = db.prepare("SELECT id, batch_id, domain, status, last_error, updated_at, launched_at FROM sites WHERE batch_id = ? ORDER BY id").all(batchId) as {
+  const sites = db.prepare(`SELECT s.id, s.batch_id, s.domain,
+    CASE WHEN s.abandoned_at IS NOT NULL OR x.domain IS NOT NULL THEN 'abandoned' ELSE s.status END AS status,
+    s.last_error, s.updated_at, s.launched_at
+    FROM sites s LEFT JOIN abandoned_domains x ON x.domain = s.domain COLLATE NOCASE
+    WHERE s.batch_id = ? ORDER BY s.id`).all(batchId) as {
     id: number; batch_id: number; domain: string; status: SiteProgress["status"]; last_error: string | null; updated_at: number; launched_at: number | null;
   }[];
   return sites.map((s) => {
     const steps = siteSteps(db, s.id);
     const completed = steps.filter((x) => x.status === "done" || x.status === "skipped").length;
-    const current = s.status === "done" ? null : steps.find((x) => x.status !== "done" && x.status !== "skipped");
+    const current = s.status === "done" || s.status === "abandoned" ? null : steps.find((x) => x.status !== "done" && x.status !== "skipped");
     return { id: s.id, batchId: s.batch_id, domain: s.domain, status: s.status, completed, currentStep: current?.name ?? null, lastError: s.last_error, updatedAt: s.updated_at, launchedAt: s.launched_at };
   });
 }
 
 /** 失败的站从失败的那一步重新开始。 */
 export function retrySite(db: DatabaseSync, siteId: number, now: number): void {
+  const abandoned = db.prepare(`SELECT 1 FROM sites s LEFT JOIN abandoned_domains x ON x.domain = s.domain COLLATE NOCASE
+    WHERE s.id = ? AND (s.abandoned_at IS NOT NULL OR x.domain IS NOT NULL)`).get(siteId);
+  if (abandoned) throw new Error("已放弃的站点不能重试建站");
   const job = db.prepare("SELECT id FROM jobs WHERE site_id = ? AND type = ? ORDER BY id DESC LIMIT 1").get(siteId, PROVISION_JOB) as { id: number } | undefined;
   if (!job) throw new Error(`站点 ${siteId} 没有建站任务`);
   db.prepare("DELETE FROM provision_steps WHERE site_id = ? AND status = 'failed'").run(siteId);

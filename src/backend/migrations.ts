@@ -173,4 +173,65 @@ export const MIGRATIONS: string[] = [
      created_at   INTEGER NOT NULL,
      updated_at   INTEGER NOT NULL
    );`,
+
+  // 011：工作区邮件索引与可恢复的放弃任务。流水线状态不变，abandoned_at 是独立生命周期。
+  `ALTER TABLE sites ADD COLUMN abandoned_at INTEGER;
+   CREATE TABLE abandoned_domains (
+     domain TEXT PRIMARY KEY COLLATE NOCASE,
+     abandoned_at INTEGER NOT NULL,
+     abandon_job_id INTEGER
+   );
+   CREATE TABLE mailboxes (
+     id INTEGER PRIMARY KEY,
+     account_id INTEGER NOT NULL REFERENCES hostinger_accounts(id) ON DELETE CASCADE,
+     order_id TEXT NOT NULL,
+     remote_id TEXT NOT NULL,
+     address TEXT NOT NULL COLLATE NOCASE,
+     domain TEXT NOT NULL COLLATE NOCASE,
+     status TEXT,
+     credential_ciphertext BLOB,
+     monitoring INTEGER NOT NULL DEFAULT 0 CHECK(monitoring IN (0,1)),
+     sync_state_json TEXT CHECK(sync_state_json IS NULL OR json_valid(sync_state_json)),
+     last_synced_at INTEGER,
+     UNIQUE(account_id,remote_id), UNIQUE(account_id,address)
+   );
+   CREATE INDEX mailboxes_domain ON mailboxes(domain);
+   CREATE TABLE mail_messages (
+     mailbox_id INTEGER NOT NULL REFERENCES mailboxes(id) ON DELETE CASCADE,
+     folder TEXT NOT NULL,
+     uid INTEGER NOT NULL,
+     message_id TEXT,
+     from_json TEXT NOT NULL DEFAULT '[]',
+     to_json TEXT NOT NULL DEFAULT '[]',
+     cc_json TEXT NOT NULL DEFAULT '[]',
+     subject TEXT NOT NULL DEFAULT '',
+     date INTEGER,
+     snippet TEXT NOT NULL DEFAULT '',
+     seen INTEGER NOT NULL DEFAULT 0 CHECK(seen IN (0,1)),
+     has_attachments INTEGER NOT NULL DEFAULT 0 CHECK(has_attachments IN (0,1)),
+     size INTEGER NOT NULL DEFAULT 0,
+     body_text TEXT,
+     attachments_json TEXT NOT NULL DEFAULT '[]',
+     references_json TEXT NOT NULL DEFAULT '[]',
+     in_reply_to TEXT,
+     PRIMARY KEY(mailbox_id,folder,uid)
+   );
+   CREATE INDEX mail_messages_list ON mail_messages(mailbox_id,folder,date DESC,uid DESC);
+   CREATE TABLE abandon_runs (
+     job_id INTEGER PRIMARY KEY REFERENCES jobs(id) ON DELETE CASCADE,
+     domain TEXT NOT NULL COLLATE NOCASE,
+     requested_account_id INTEGER,
+     site_id INTEGER,
+     created_at INTEGER NOT NULL,
+     updated_at INTEGER NOT NULL
+   );
+   CREATE TABLE abandon_steps (
+     job_id INTEGER NOT NULL REFERENCES abandon_runs(job_id) ON DELETE CASCADE,
+     step TEXT NOT NULL CHECK(step IN ('local_mail','remote_mail','website','domain_renewal','finalize')),
+     status TEXT NOT NULL CHECK(status IN ('pending','running','done','failed')),
+     detail TEXT,
+     started_at INTEGER,
+     finished_at INTEGER,
+     PRIMARY KEY(job_id,step)
+   );`,
 ];

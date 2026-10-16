@@ -17,6 +17,8 @@ import type { BatchForm } from "../shared/forms.ts";
 import { PROVISION_STEPS } from "../shared/protocol.ts";
 import { FALLBACK_STYLE } from "./style.ts";
 import type { VisionComplete } from "./vision.ts";
+import type { MailAttachment } from "../shared/mail-types.ts";
+import type { MailCredentials, MailTransport, OutgoingMessage, RemoteFolder, RemoteMessage, SendResult } from "./mailbox-transport.ts";
 
 export const key = randomBytes(32);
 export const DOMAIN = "nordicpaws.com";
@@ -573,5 +575,111 @@ export async function runToEnd(d: PipelineDeps, siteId: number) {
     waits++;
   }
   throw new Error("pipeline did not finish");
+}
+
+/** 邮箱管理测试专用的纯内存 IMAP/SMTP；不会创建套接字。 */
+export class FakeMailTransport implements MailTransport {
+  readonly passwords = new Map<string, string>();
+  readonly folders = new Map<string, Map<string, RemoteMessage[]>>();
+  readonly sent: { credentials: MailCredentials; message: OutgoingMessage }[] = [];
+  readonly idleStarts: { address: string; password: string }[] = [];
+  readonly idleStops: string[] = [];
+  readonly downloads = new Map<string, Buffer>();
+
+  seed(address: string, folder: string, messages: RemoteMessage[]): void {
+    let byFolder = this.folders.get(address.toLowerCase());
+    if (!byFolder) { byFolder = new Map(); this.folders.set(address.toLowerCase(), byFolder); }
+    byFolder.set(folder, messages.map((message) => ({ ...message, source: message.source ? Buffer.from(message.source) : undefined, flags: [...message.flags] })));
+  }
+
+  async verify(credentials: MailCredentials): Promise<void> {
+    const expected = this.passwords.get(credentials.address.toLowerCase());
+    if (expected == null || expected !== credentials.password) throw new Error("IMAP authentication failed");
+  }
+
+  async listFolders(credentials: MailCredentials): Promise<RemoteFolder[]> {
+    await this.verify(credentials);
+    const names = this.folders.has(credentials.address.toLowerCase())
+      ? [...this.folders.get(credentials.address.toLowerCase())!.keys()]
+      : ["INBOX", "Sent"];
+    return names.map((path) => ({ path, name: path, specialUse: /^sent$/i.test(path) ? "\\Sent" : /^trash$/i.test(path) ? "\\Trash" : /^inbox$/i.test(path) ? "\\Inbox" : null }));
+  }
+
+  async fetchMessages(credentials: MailCredentials, folder: string): Promise<RemoteMessage[]> {
+    await this.verify(credentials);
+    return (this.folders.get(credentials.address.toLowerCase())?.get(folder) ?? []).map((message) => ({ ...message, source: message.source ? Buffer.from(message.source) : undefined, flags: [...message.flags] }));
+  }
+
+  async *streamMessages(credentials: MailCredentials, folder: string, known?: { uidValidity?: string; uids: ReadonlySet<number> }) {
+    const messages = await this.fetchMessages(credentials, folder);
+    const uidValidity = messages[0]?.uidValidity ?? "1";
+    yield { kind: "mailbox" as const, uidValidity };
+    for (const message of messages) yield {
+      kind: "message" as const,
+      message: known?.uidValidity === uidValidity && known.uids.has(message.uid) ? { ...message, source: undefined } : message,
+    };
+  }
+
+  async fetchMessage(credentials: MailCredentials, folder: string, uid: number): Promise<RemoteMessage | null> {
+    return (await this.fetchMessages(credentials, folder)).find((message) => message.uid === uid) ?? null;
+  }
+
+  async setSeen(credentials: MailCredentials, folder: string, uid: number, seen: boolean): Promise<void> {
+    await this.verify(credentials);
+    const message = this.folders.get(credentials.address.toLowerCase())?.get(folder)?.find((item) => item.uid === uid);
+    if (!message) throw new Error("message missing");
+    message.flags = seen ? [...new Set([...message.flags, "\\Seen"])] : message.flags.filter((flag) => flag !== "\\Seen");
+  }
+
+  async moveToTrash(credentials: MailCredentials, folder: string, uid: number): Promise<void> {
+    await this.verify(credentials);
+    const source = this.folders.get(credentials.address.toLowerCase())?.get(folder);
+    const index = source?.findIndex((item) => item.uid === uid) ?? -1;
+    if (!source || index < 0) throw new Error("message missing");
+    const [message] = source.splice(index, 1);
+    let trash = this.folders.get(credentials.address.toLowerCase())?.get("Trash");
+    if (!trash) { trash = []; this.folders.get(credentials.address.toLowerCase())?.set("Trash", trash); }
+    trash.push({ ...message, folder: "Trash" });
+  }
+
+  async downloadAttachment(credentials: MailCredentials, folder: string, uid: number, attachment: MailAttachment): Promise<Buffer> {
+    await this.verify(credentials);
+    const value = this.downloads.get(`${credentials.address}:${folder}:${uid}:${attachment.partId}`);
+    if (!value) throw new Error("attachment missing");
+    return Buffer.from(value);
+  }
+
+  async send(credentials: MailCredentials, message: OutgoingMessage): Promise<SendResult> {
+    await this.verify(credentials);
+    this.sent.push({ credentials: { ...credentials }, message: { ...message, attachments: message.attachments.map((item) => ({ ...item, content: Buffer.from(item.content) })) } });
+    const folders = this.folders.get(credentials.address.toLowerCase()) ?? new Map<string, RemoteMessage[]>();
+    this.folders.set(credentials.address.toLowerCase(), folders);
+    const sent = folders.get("Sent") ?? [];
+    folders.set("Sent", sent);
+    if (!sent.some((item) => item.source?.includes(message.messageId))) sent.push({ uid: Math.max(0, ...sent.map((item) => item.uid)) + 1, folder: "Sent", flags: ["\\Seen"], size: Buffer.byteLength(message.text), source: fakeRawMail({ from: message.from, to: message.to, cc: message.cc, subject: message.subject, text: message.text, messageId: message.messageId, inReplyTo: message.inReplyTo, references: message.references }) });
+    return { messageId: message.messageId, appended: true };
+  }
+
+  async idle(credentials: MailCredentials, _onExists: () => void | Promise<void>, signal: AbortSignal): Promise<void> {
+    await this.verify(credentials);
+    this.idleStarts.push({ address: credentials.address, password: credentials.password });
+    await new Promise<void>((resolve) => {
+      if (signal.aborted) return resolve();
+      signal.addEventListener("abort", () => resolve(), { once: true });
+    });
+    this.idleStops.push(credentials.address);
+  }
+}
+
+export function fakeRawMail(input: { from: string; to: string[]; cc?: string[]; subject: string; text?: string; html?: string; messageId?: string; inReplyTo?: string; references?: string[] }): Buffer {
+  const headers = [
+    `From: ${input.from}`, `To: ${input.to.join(", ")}`, ...(input.cc?.length ? [`Cc: ${input.cc.join(", ")}`] : []),
+    `Subject: ${input.subject}`, `Date: ${new Date("2026-10-15T12:00:00Z").toUTCString()}`,
+    `Message-ID: ${input.messageId ?? `<fake-${randomBytes(4).toString("hex")}@example.test>`}`,
+    ...(input.inReplyTo ? [`In-Reply-To: ${input.inReplyTo}`] : []), ...(input.references?.length ? [`References: ${input.references.join(" ")}`] : []),
+    "MIME-Version: 1.0", `Content-Type: ${input.html != null ? "text/html" : "text/plain"}; charset=utf-8`, "",
+    input.html ?? input.text ?? "",
+  ];
+  return Buffer.from(headers.join("\r\n"));
 }
 

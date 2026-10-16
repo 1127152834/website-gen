@@ -20,6 +20,8 @@ const changedListeners = new Set<(topic: string) => void>();
 const connectListeners = new Set<() => void>();
 const statusListeners = new Set<(connected: boolean) => void>();
 const chatListeners = new Set<(siteId: number, e: ChatEvent) => void>();
+export type MailPushEvent = { type: "new" | "changed"; mailboxId: number; folder?: string; uid?: number; unreadCount?: number };
+const mailListeners = new Set<(event: MailPushEvent) => void>();
 
 function reportAuthProblem(problem: AuthProblem): void {
   window.dispatchEvent(new CustomEvent<AuthProblem>("website-gen:auth", { detail: problem }));
@@ -39,6 +41,8 @@ function dispatch(message: BackendMessage): void {
     for (const listener of changedListeners) listener(message.topic);
   } else if (message.kind === "chat") {
     for (const listener of chatListeners) listener(message.siteId, message.event);
+  } else if (message.kind === "mail") {
+    for (const listener of mailListeners) listener(message.event);
   }
 }
 
@@ -191,6 +195,12 @@ export function onChanged(topic: string, listener: () => void): () => void {
 export function onChat(listener: (siteId: number, e: ChatEvent) => void): () => void {
   chatListeners.add(listener);
   return () => chatListeners.delete(listener);
+}
+
+/** 邮件监听的新信/状态推送。正文永远不进入 SSE。 */
+export function onMail(listener: (event: MailPushEvent) => void): () => void {
+  mailListeners.add(listener);
+  return () => mailListeners.delete(listener);
 }
 
 /** 每次（重新）连上后台都会触发；已连上时立即触发一次。 */

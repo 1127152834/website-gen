@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useConfirm, toast } from "@/components/feedback";
 import { Skeleton } from "@/components/page-state";
 import { cn } from "@/lib/utils";
+import { AbandonSiteButton } from "@/components/abandon-site.tsx";
 
 const STATUS: Record<AccountSummary["status"], { label: string; variant: "secondary" | "outline" | "destructive" }> = {
   new: { label: "首次同步中", variant: "outline" },
@@ -197,6 +198,7 @@ export function AccountsPage() {
                     <TableHead>到期</TableHead>
                     <TableHead>网站</TableHead>
                     <TableHead>邮箱</TableHead>
+                    <TableHead className="w-0"><span className="sr-only">操作</span></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -213,6 +215,7 @@ export function AccountsPage() {
                         </TableCell>
                         <TableCell>{d.hasWebsite ? "已建站" : <span className="text-muted-foreground">空闲</span>}</TableCell>
                         <TableCell>{d.hasMail ? "已开通" : <span className="text-muted-foreground">未开通</span>}</TableCell>
+                        <TableCell>{d.domain && <AbandonSiteButton domain={d.domain} accountId={current.id} onDone={() => setDomains((items) => items.filter((item) => item.id !== d.id))} />}</TableCell>
                       </TableRow>
                     );
                   })}

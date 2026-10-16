@@ -32,6 +32,8 @@ export interface DomainSummary {
   expiresAt: string | null;
   hasWebsite: boolean;
   hasMail: boolean;
+  /** 已进入放弃流程的域名永久不再进入新批次。 */
+  abandoned?: boolean;
 }
 
 /** 模型用途：agent 对话与建站，vision 看截图，bulk 批量文案，review 合规审查 */
@@ -81,7 +83,7 @@ export const PROVISION_STEPS = [
 ] as const;
 export type StepKey = (typeof PROVISION_STEPS)[number]["key"];
 
-export type SiteStatus = "queued" | "running" | "waiting" | "done" | "failed";
+export type SiteStatus = "queued" | "running" | "waiting" | "done" | "failed" | "abandoned";
 
 export interface FreeDomain {
   domain: string;
@@ -255,8 +257,18 @@ export type Response =
 export type Push =
   | { kind: "event"; event: RunEvent }
   // 某类数据在后台变了（例如定时同步完成），界面收到后重新拉取
-  | { kind: "changed"; topic: "accounts" | "batches" | "changes" }
+  | { kind: "changed"; topic: "accounts" | "batches" | "changes" | "mail" }
+  // 邮件只推送索引变动；正文始终通过当前用户的工作区读取。
+  | { kind: "mail"; event: MailEvent }
   // pi 对话的流式输出，只推不存（历史在 pi 的会话文件里）
   | { kind: "chat"; siteId: number; event: ChatEvent };
 
 export type BackendMessage = Response | Push;
+
+export interface MailEvent {
+  type: "new" | "changed";
+  mailboxId: number;
+  folder?: string;
+  uid?: number;
+  unreadCount?: number;
+}

@@ -37,14 +37,22 @@ import { qaView } from "./qa-view.ts";
 import type { Handlers } from "./rpc.ts";
 import { allSites, getOverview } from "./overview.ts";
 import { listTemplates, removeTemplate, saveTemplate } from "./entity-templates.ts";
+import { ABANDON_JOB, abandonStatus, queueAbandon, retryAbandon, runAbandon } from "./abandon.ts";
+import type { MailTransportFactory } from "./mailbox-transport.ts";
+import { createMailboxService } from "./mailbox-service.ts";
 
 export interface Workspace {
   handlers: Handlers;
+  mailAttachment(input: { mailboxId: number; folder: string; uid: number; partId: string }): Promise<{ name: string; type: string; size: number; data: Buffer }>;
   subscribe(listener: (msg: Push) => void): () => void;
   close(): Promise<void>;
 }
 
-export function createWorkspace(opts: { userDir: string; key: Buffer; resourcesDir?: string }): Workspace {
+export function createWorkspace(opts: {
+  userDir: string; key: Buffer; resourcesDir?: string;
+  /** 测试只注入进程内替身，不触发 MCP 子进程或真实 IMAP / SMTP。 */
+  dependencies?: { hostingerPool?: ReturnType<typeof createHostingerPool>; mailTransport?: MailTransportFactory };
+}): Workspace {
   const userData = resolve(opts.userDir);
   const resourcesDir = opts.resourcesDir ?? resolve(import.meta.dirname, "../../resources");
   if (opts.key.length !== 32) throw new Error("用户密钥必须为 32 字节");
@@ -53,9 +61,34 @@ export function createWorkspace(opts: { userDir: string; key: Buffer; resourcesD
   mkdirSync(join(userData, "pi"), { recursive: true });
   let closing = false;
   const background = new Set<Promise<unknown>>();
+  const siteWork = new Map<number, Set<Promise<unknown>>>();
+  const mailWork = new Map<string, Set<Promise<unknown>>>();
   const track = <T>(task: Promise<T>): Promise<T> => {
     background.add(task);
     void task.finally(() => background.delete(task)).catch(() => {});
+    return task;
+  };
+  const trackSite = <T>(siteId: number, task: Promise<T>): Promise<T> => {
+    let pending = siteWork.get(siteId);
+    if (!pending) siteWork.set(siteId, pending = new Set());
+    pending.add(task);
+    void task.finally(() => {
+      pending.delete(task);
+      if (!pending.size) siteWork.delete(siteId);
+    }).catch(() => {});
+    return task;
+  };
+  const trackMailbox = <T>(mailboxId: number, task: Promise<T>): Promise<T> => {
+    const row = db.prepare("SELECT domain FROM mailboxes WHERE id = ?").get(mailboxId) as { domain: string } | undefined;
+    if (!row) return task;
+    const domain = row.domain.toLowerCase();
+    let pending = mailWork.get(domain);
+    if (!pending) mailWork.set(domain, pending = new Set());
+    pending.add(task);
+    void task.finally(() => {
+      pending.delete(task);
+      if (!pending.size) mailWork.delete(domain);
+    }).catch(() => {});
     return task;
   };
   const dbPath = join(userData, "website-gen.sqlite");
@@ -76,14 +109,27 @@ export function createWorkspace(opts: { userDir: string; key: Buffer; resourcesD
 
   const requireKey = () => opts.key;
 
-  const hostinger = createHostingerPool();
+  const hostinger = opts.dependencies?.hostingerPool ?? createHostingerPool();
+  const mailboxes = createMailboxService({
+    db, key: opts.key,
+    accounts: () => listAccounts(db).map(({ id }) => ({ id, exec: hostinger.forAccount(id, accountToken(db, requireKey(), id)) })),
+    transport: opts.dependencies?.mailTransport,
+    push: (event) => push({ kind: "mail", event }),
+  });
+  // 服务启动会打开所有启用用户的工作区；已保存的监听开关不依赖浏览器在线。
+  void track(mailboxes.reconcile()).catch(() => {});
   const syncing = new Map<number, Promise<unknown>>();
   function sync(id: number) {
     if (closing) return Promise.resolve();
     // 同一账号同时只跑一个同步，重复请求复用正在进行的那个
     let running = syncing.get(id);
     if (!running) {
-      running = (async () => syncWithStoredToken(db, requireKey(), id, (token) => hostinger.forAccount(id, token)))().finally(() => {
+      running = (async () => {
+        const result = await syncWithStoredToken(db, requireKey(), id, (token) => hostinger.forAccount(id, token));
+        await mailboxes.sync(id);
+        push({ kind: "changed", topic: "mail" });
+        return result;
+      })().finally(() => {
         syncing.delete(id);
         push({ kind: "changed", topic: "accounts" });
       });
@@ -129,9 +175,37 @@ export function createWorkspace(opts: { userDir: string; key: Buffer; resourcesD
     db,
     concurrency: 3,
     handlers: {
-      [PROVISION_JOB]: (job) => provisionSite(pipelineDeps(), job.siteId!),
+      [PROVISION_JOB]: (job) => trackSite(job.siteId!, provisionSite(pipelineDeps(), job.siteId!)),
+      [ABANDON_JOB]: async (job) => {
+        // 墓碑先阻止新的站点操作，再等此前在途的步骤落定，避免远端资源删除后又被建回来。
+        const target = db.prepare("SELECT domain FROM abandon_runs WHERE job_id = ?").get(job.id) as { domain: string } | undefined;
+        if (target) {
+          const ids = db.prepare("SELECT id FROM sites WHERE domain = ? COLLATE NOCASE").all(target.domain) as { id: number }[];
+          for (const { id } of ids) {
+            await chats.abort(id);
+            while (siteWork.get(id)?.size) await Promise.allSettled([...siteWork.get(id)!]);
+          }
+        }
+        await runAbandon({
+          db,
+          hostinger: (id) => hostinger.forAccount(id, accountToken(db, requireKey(), id)),
+          stopDomain: async (domain) => {
+            // 已提交的 SMTP 无法“撤回”；等待旧请求落定后再清理，新的请求已被墓碑拒绝。
+            const normalized = domain.toLowerCase();
+            while (mailWork.get(normalized)?.size) await Promise.allSettled([...mailWork.get(normalized)!]);
+            await mailboxes.stopDomain(domain);
+          },
+          emit,
+        }, job);
+      },
     },
     onSettled: (job, outcome, error) => {
+      if (job.type === ABANDON_JOB) {
+        push({ kind: "changed", topic: "batches" });
+        push({ kind: "changed", topic: "accounts" });
+        push({ kind: "changed", topic: "mail" });
+        return;
+      }
       if (outcome === "failed" || outcome === "retry") {
         db.prepare("UPDATE sites SET status = ?, updated_at = ? WHERE id = ?").run(outcome === "failed" ? "failed" : "waiting", Date.now(), job.siteId);
         if (outcome === "retry") emit({ siteId: String(job.siteId), kind: "warn", payload: { message: `第 ${job.attempts + 1} 次出错，${30 * (job.attempts + 1)} 秒后自动重试：${error}` } });
@@ -197,7 +271,13 @@ export function createWorkspace(opts: { userDir: string; key: Buffer; resourcesD
     "templates.save": (p) => saveTemplate(db, p),
     "templates.remove": (p) => removeTemplate(db, Number((p as { id: number }).id)),
     "sites.all": () => allSites(db),
-    "sites.get": (p) => allSites(db).find((site) => site.id === siteIdOf(p)) ?? null,
+    "sites.get": (p) => {
+      const siteId = siteIdOf(p);
+      const row = db.prepare("SELECT batch_id FROM sites WHERE id = ?").get(siteId) as { batch_id: number } | undefined;
+      return row ? batchSites(db, row.batch_id).find((site) => site.id === siteId) ?? null : null;
+    },
+    "sites.history": () => (db.prepare("SELECT DISTINCT batch_id FROM sites WHERE abandoned_at IS NOT NULL OR EXISTS (SELECT 1 FROM abandoned_domains d WHERE d.domain=sites.domain COLLATE NOCASE)").all() as { batch_id: number }[])
+      .flatMap(({ batch_id }) => batchSites(db, batch_id).filter((site) => site.status === "abandoned")),
     "system.info": () => ({
       node: process.versions.node,
       sqlite: process.versions.sqlite,
@@ -264,7 +344,7 @@ export function createWorkspace(opts: { userDir: string; key: Buffer; resourcesD
 
     "domains.free": () => listFreeDomains(db),
     "batches.list": () => listBatches(db),
-    "batches.sites": (p) => batchSites(db, Number((p as { batchId: number }).batchId)),
+    "batches.sites": (p) => batchSites(db, Number((p as { batchId: number }).batchId)).filter((site) => site.status !== "abandoned"),
     "batches.create": (p) => {
       const r = createBatch(db, p as BatchForm, Date.now());
       push({ kind: "changed", topic: "batches" });
@@ -289,7 +369,7 @@ export function createWorkspace(opts: { userDir: string; key: Buffer; resourcesD
     // 一键上线：同一个站同时只跑一次，几十秒内完成，不进任务队列
     // 站点页：流程跑完的站（可以和 pi 对话改内容）
     "sites.list": () =>
-      (db.prepare("SELECT id, domain, launched_at FROM sites WHERE status = 'done' ORDER BY id DESC").all() as { id: number; domain: string; launched_at: number | null }[])
+      (db.prepare("SELECT id, domain, launched_at FROM sites WHERE status = 'done' AND abandoned_at IS NULL AND NOT EXISTS (SELECT 1 FROM abandoned_domains d WHERE d.domain = sites.domain COLLATE NOCASE) ORDER BY id DESC").all() as { id: number; domain: string; launched_at: number | null }[])
         .map((s) => ({ id: s.id, domain: s.domain, launchedAt: s.launched_at })),
     "chat.history": (p) => chats.history(siteIdOf(p)),
     "chat.send": async (p) => {
@@ -325,9 +405,34 @@ export function createWorkspace(opts: { userDir: string; key: Buffer; resourcesD
       return { set: hasDefaultMailboxPassword(db) };
     },
     "mail.password": (p) => {
-      const row = db.prepare("SELECT mailbox_ciphertext FROM sites WHERE id = ?").get(siteIdOf(p)) as { mailbox_ciphertext: Uint8Array | null } | undefined;
+      const mailboxId = (p as { mailboxId?: number }).mailboxId;
+      if (mailboxId != null) {
+        // 沿用明确点击“显示密码”的入口，绝不在清单、正文或 SSE 中带出明文。
+        const box = db.prepare(`SELECT address,credential_ciphertext FROM mailboxes m WHERE id = ?
+          AND NOT EXISTS (SELECT 1 FROM abandoned_domains d WHERE d.domain=m.domain COLLATE NOCASE)`).get(Number(mailboxId)) as { address: string; credential_ciphertext: Uint8Array | null } | undefined;
+        if (!box?.credential_ciphertext) return null;
+        const creds = JSON.parse(unseal(requireKey(), box.credential_ciphertext)) as { address: string; password: string };
+        return creds.address.toLowerCase() === box.address.toLowerCase() ? creds : null;
+      }
+      const row = db.prepare("SELECT mailbox_ciphertext FROM sites WHERE id = ? AND NOT EXISTS (SELECT 1 FROM abandoned_domains d WHERE d.domain=sites.domain COLLATE NOCASE)").get(siteIdOf(p)) as { mailbox_ciphertext: Uint8Array | null } | undefined;
       return row?.mailbox_ciphertext ? (JSON.parse(unseal(requireKey(), row.mailbox_ciphertext)) as { address: string; password: string }) : null;
     },
+    "mail.list": () => mailboxes.list(),
+    "mail.sync": async () => {
+      const result = await mailboxes.sync();
+      push({ kind: "changed", topic: "mail" });
+      return result;
+    },
+    "mail.folders": (p) => mailboxes.folders(Number((p as { mailboxId: number }).mailboxId)),
+    "mail.messages": (p) => mailboxes.messages(p as Parameters<typeof mailboxes.messages>[0]),
+    "mail.message": (p) => mailboxes.message(p as Parameters<typeof mailboxes.message>[0]),
+    "mail.credential.save": (p) => mailboxes.saveCredential(p as Parameters<typeof mailboxes.saveCredential>[0]),
+    "mail.credential.reset": (p) => mailboxes.resetCredential(p as Parameters<typeof mailboxes.resetCredential>[0]),
+    "mail.monitor": (p) => mailboxes.setMonitoring(p as Parameters<typeof mailboxes.setMonitoring>[0]),
+    "mail.seen": (p) => mailboxes.markSeen(p as Parameters<typeof mailboxes.markSeen>[0]),
+    "mail.trash": (p) => mailboxes.trash(p as Parameters<typeof mailboxes.trash>[0]),
+    "mail.delete": (p) => mailboxes.deleteMailbox(p as Parameters<typeof mailboxes.deleteMailbox>[0]),
+    "mail.send": (p) => mailboxes.send(p as Parameters<typeof mailboxes.send>[0]),
     // 交易邮件发信：状态、填已有邮箱的密码（先 IMAP 验证）后启用、发测试邮件、关闭
     "smtp.status": (p) => smtpStatus(siteContext(pipelineDeps(), siteIdOf(p))),
     "smtp.enable": async (p) => {
@@ -389,17 +494,41 @@ export function createWorkspace(opts: { userDir: string; key: Buffer; resourcesD
       const id = Number((p as { id: number }).id);
       await hostinger.close(id);
       removeAccount(db, id);
+      // 账号外键已清理邮箱；协调器同步关闭该账号的在途监听。
+      await mailboxes.reconcile();
       return { ok: true };
+    },
+    "abandon.start": (p) => {
+      const result = queueAbandon(db, p as Parameters<typeof queueAbandon>[1]);
+      push({ kind: "changed", topic: "batches" });
+      push({ kind: "changed", topic: "accounts" });
+      tick();
+      return { ...result, ...abandonStatus(db, { jobId: result.jobId }) };
+    },
+    "abandon.status": (p) => abandonStatus(db, p as Parameters<typeof abandonStatus>[1]),
+    "abandon.retry": (p) => {
+      const jobId = Number((p as { jobId: number }).jobId);
+      retryAbandon(db, jobId);
+      tick();
+      return abandonStatus(db, { jobId });
     },
   };
 
   const guarded: Handlers = Object.fromEntries(Object.entries(handlers).map(([method, handler]) => [method, (params: unknown) => {
     if (closing) throw new Error("工作区已关闭");
-    return track(Promise.resolve().then(() => handler(params)));
+    const siteId = Number((params as { siteId?: number } | undefined)?.siteId);
+    const mailboxId = Number((params as { mailboxId?: number } | undefined)?.mailboxId);
+    let task = Promise.resolve().then(() => handler(params));
+    if (method.startsWith("mail.") && Number.isSafeInteger(mailboxId) && mailboxId > 0) task = trackMailbox(mailboxId, task);
+    return track(Number.isSafeInteger(siteId) && siteId > 0 && !method.startsWith("abandon.") ? trackSite(siteId, task) : task);
   }]));
   let closeTask: Promise<void> | undefined;
   return {
     handlers: guarded,
+    mailAttachment(input) {
+      if (closing) return Promise.reject(new Error("工作区已关闭"));
+      return track(trackMailbox(input.mailboxId, mailboxes.attachment(input)));
+    },
     subscribe(listener) {
       if (closing) throw new Error("工作区已关闭");
       listeners.add(listener);
@@ -414,6 +543,7 @@ export function createWorkspace(opts: { userDir: string; key: Buffer; resourcesD
       clearInterval(revertTimer);
       listeners.clear();
       closeTask = (async () => {
+        await mailboxes.close();
         await chats.close();
         await runner.stop();
         while (background.size) await Promise.allSettled([...background]);
