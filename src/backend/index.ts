@@ -404,10 +404,12 @@ export function createWorkspace(opts: {
       return { mailbox: mailbox.detail, dns, smtp };
     },
     "mail.defaultPassword.status": () => ({ set: hasDefaultMailboxPassword(db) }),
-    "mail.defaultPassword.set": (p) => {
+    "mail.defaultPassword.set": async (p) => {
       const password = (p as { password: string | null }).password;
       setDefaultMailboxPassword(db, requireKey(), password ? String(password) : null);
-      return { set: hasDefaultMailboxPassword(db) };
+      const result = await mailboxes.tryDefaultCredentials();
+      push({ kind: "changed", topic: "mail" });
+      return { set: hasDefaultMailboxPassword(db), ...result };
     },
     "mail.password": (p) => {
       const mailboxId = (p as { mailboxId?: number }).mailboxId;
@@ -432,6 +434,7 @@ export function createWorkspace(opts: {
     "mail.messages": (p) => mailboxes.messages(p as Parameters<typeof mailboxes.messages>[0]),
     "mail.message": (p) => mailboxes.message(p as Parameters<typeof mailboxes.message>[0]),
     "mail.credential.save": (p) => mailboxes.saveCredential(p as Parameters<typeof mailboxes.saveCredential>[0]),
+    "mail.credential.retryDefault": (p) => mailboxes.tryDefaultCredentials({ mailboxId: Number((p as { mailboxId: number }).mailboxId), retry: true }),
     "mail.credential.reset": (p) => mailboxes.resetCredential(p as Parameters<typeof mailboxes.resetCredential>[0]),
     "mail.monitor": (p) => mailboxes.setMonitoring(p as Parameters<typeof mailboxes.setMonitoring>[0]),
     "mail.seen": (p) => mailboxes.markSeen(p as Parameters<typeof mailboxes.markSeen>[0]),

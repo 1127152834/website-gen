@@ -10,6 +10,7 @@ import { handleRequest } from "./rpc.ts";
 import { seal } from "./secrets.ts";
 import type { MailTransport } from "./mailbox-transport.ts";
 import type { HostingerExec } from "./hostinger.ts";
+import { FakeMailTransport } from "./testing.ts";
 
 test("mail RPC uses only the authenticated workspace: A cannot list, read or reset B's mailbox", async () => {
   const prefix = resolve(tmpdir(), "website-mail-isolation-");
@@ -39,7 +40,7 @@ test("mail RPC uses only the authenticated workspace: A cannot list, read or res
     assert.equal((reveal.result as { password: string }).password, "B-password");
     assert.deepEqual(await rpc(a, "mail.password", { mailboxId: 42 }), { kind: "res", id: 1, ok: true, result: null });
     assert.deepEqual(await rpc(a, "mail.list", { userId: "b" }), { kind: "res", id: 1, ok: true, result: [] });
-    for (const method of ["mail.message", "mail.messages", "mail.folders", "mail.credential.reset", "mail.delete", "mail.monitor"]) {
+    for (const method of ["mail.message", "mail.messages", "mail.folders", "mail.credential.reset", "mail.credential.retryDefault", "mail.delete", "mail.monitor"]) {
       const result = await rpc(a, method, { mailboxId: 42, folder: "INBOX", uid: 8, userId: "b", accountId: 1, confirmed: true, enabled: true });
       assert.equal(result.ok, false, method);
       assert.doesNotMatch(JSON.stringify(result), /B private|only B|B-password/);
@@ -50,6 +51,41 @@ test("mail RPC uses only the authenticated workspace: A cannot list, read or res
     await a.close(); await b.close();
     if (!resolve(root).startsWith(prefix)) throw new Error("临时目录越界");
     rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("setting the workspace default password attempts every unsaved mailbox and reports counts", async () => {
+  const prefix = resolve(tmpdir(), "website-mail-default-setting-");
+  const dir = mkdtempSync(prefix), workspaceKey = randomBytes(32);
+  const db = openDb(join(dir, "website-gen.sqlite"));
+  migrate(db);
+  db.prepare("INSERT INTO hostinger_accounts(id,label,token_ciphertext,token_hint,created_at) VALUES(1,'default',?,'hint',0)").run(seal(workspaceKey, "token"));
+  db.prepare("INSERT INTO mailboxes(id,account_id,order_id,remote_id,address,domain) VALUES(1,1,'o','r1','ok@example.test','example.test')").run();
+  db.prepare("INSERT INTO mailboxes(id,account_id,order_id,remote_id,address,domain) VALUES(2,1,'o','r2','wrong@example.test','example.test')").run();
+  db.close();
+  const transport = new FakeMailTransport();
+  transport.passwords.set("ok@example.test", "Default1!");
+  transport.passwords.set("wrong@example.test", "Different1!");
+  const noHostinger: HostingerExec = async (operation) => {
+    if (operation === "mail_orders_list") return [];
+    throw new Error(`unexpected ${operation}`);
+  };
+  const workspace = createWorkspace({ userDir: dir, key: workspaceKey, dependencies: {
+    mailTransport: () => transport,
+    hostingerPool: { forAccount: () => noHostinger, close: async () => {}, closeAll: async () => [] },
+  } });
+  try {
+    const result = await workspace.handlers["mail.defaultPassword.set"]({ password: "Default1!" });
+    assert.deepEqual(result, { set: true, succeeded: 1, failed: 1, deferred: 0 });
+    const boxes = await workspace.handlers["mail.list"](undefined) as { address: string; credentialSaved: boolean; credentialSource: string | null; monitoring: boolean }[];
+    assert.deepEqual(boxes.map((box) => [box.address, box.credentialSaved, box.credentialSource, box.monitoring]), [
+      ["ok@example.test", true, "default", true],
+      ["wrong@example.test", false, null, false],
+    ]);
+  } finally {
+    await workspace.close();
+    if (!resolve(dir).startsWith(prefix)) throw new Error("temporary directory escaped prefix");
+    rmSync(dir, { recursive: true, force: true });
   }
 });
 
