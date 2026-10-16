@@ -32,7 +32,8 @@ export function getOverview(db: DatabaseSync, now = Date.now()): Overview {
     const p1 = open.filter((issue) => issue.level === "P1").length;
     const needs = open.filter((issue) => issue.status === "needs_you").length;
     if (site.status === "failed" && failedStep === "qa" && qa) {
-      reasons.push(`QA 未通过：${p1 ? `${p1} 个关键问题待解决` : "有检查项没通过"}${needs ? `，其中 ${needs} 项需要你补充资料` : ""}`);
+      reasons.push(`QA 未通过：${p1 ? `有 ${p1} 个必须先解决的问题` : "有检查项没通过"}`);
+      if (needs) reasons.push(`共 ${needs} 项需要你补充真实资料（如商品尺寸、套装内容）`);
       tab = "qa";
     } else if (site.status === "failed") {
       const stepName = PROVISION_STEPS.find((s) => s.key === failedStep)?.name;
