@@ -13,7 +13,8 @@ export function acquireServerLock(dataDir: string): () => void {
   const path = join(dataDir, "server.lock");
   try {
     const pid = Number(readFileSync(path, "utf8").trim());
-    if (processExists(pid)) throw new Error(`数据目录已被进程 ${pid} 使用`);
+    // 容器里每次启动的 PID 都相同：记录的是自己的 PID 说明是上次没释放的残留锁。
+    if (pid !== process.pid && processExists(pid)) throw new Error(`数据目录已被进程 ${pid} 使用`);
     unlinkSync(path);
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;

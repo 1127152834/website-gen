@@ -77,7 +77,7 @@ test("QA view maps legacy capture ids to friendly Chinese labels and marks only 
 });
 
 test("QA report presents the redesigned Chinese issue groups and one-click actions", () => {
-  const source = readFileSync(join(import.meta.dirname, "../renderer/src/pages/qa-report.tsx"), "utf8");
+  const source = readFileSync(join(import.meta.dirname, "../renderer/src/features/sites/components/qa-report.tsx"), "utf8");
   for (const text of ["待处理", "需要你补充", "已修复", "一键修复全部", "重新复核", "页面原文", "查看修复记录"]) assert.match(source, new RegExp(text));
 });
 

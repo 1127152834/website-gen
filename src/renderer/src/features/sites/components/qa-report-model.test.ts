@@ -45,12 +45,12 @@ test("待补充旧英文记录保留原 fix，并额外给出中文资料指引"
 });
 
 test("移动端把实时进度放在报告内容之前，桌面仍放在右侧末列", () => {
-  const source = readFileSync(new URL("../../../pages/qa-report.tsx", import.meta.url), "utf8");
+  const source = readFileSync(new URL("./qa-report.tsx", import.meta.url), "utf8");
   assert.match(source, /aria-label="修复进度" className="[^"]*order-first[^"]*xl:order-last/);
 });
 
 test("QA 运行记录由 Query 读取，事件订阅只合并实时日志", () => {
-  const source = readFileSync(new URL("../../../pages/qa-report.tsx", import.meta.url), "utf8");
+  const source = readFileSync(new URL("./qa-report.tsx", import.meta.url), "utf8");
   assert.match(source, /useRpcData<QaRun\[]>\("qa\.runs", siteId == null \? null : \{ siteId \}\)/);
   assert.doesNotMatch(source, /call<QaRun\[]>\("qa\.runs"/);
   assert.match(source, /useEffect\(\(\) => onEvent/);

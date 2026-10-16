@@ -14,8 +14,9 @@ import { Main } from './main';
 import { pageTitle } from './navigation';
 export function AuthenticatedLayout(){
   const {epoch}=useSession();const navigate=useNavigate();const location=useLocation();
+  const isTables = location.pathname === '/tables' || location.pathname === '/tables/';
   useEffect(()=>{document.title=`${pageTitle(location.pathname)} · 独立站 AI 工厂`;},[location.pathname]);
   useEffect(()=>onMail(event=>{if(event.type==='new')toast('收到新邮件');}),[]);
   let defaultOpen=true;try{defaultOpen=document.cookie.split('; ').find(c=>c.startsWith('sidebar_state='))!=='sidebar_state=false';}catch{/* default expanded */}
-  return <SearchProvider key={epoch}><SidebarProvider defaultOpen={defaultOpen}><SkipToMain/><AppSidebar/><SidebarInset className="min-w-0"><Header/><Main><Outlet/></Main></SidebarInset><CommandMenu/><GlobalAssistant onNavigate={path=>void navigate({to:path})}/></SidebarProvider></SearchProvider>;
+  return <SearchProvider key={epoch}><SidebarProvider defaultOpen={defaultOpen} className={isTables ? 'h-svh min-h-0 overflow-hidden' : undefined}><SkipToMain/><AppSidebar/><SidebarInset className="min-h-0 min-w-0"><Header/><Main fullBleed={isTables}><Outlet/></Main></SidebarInset><CommandMenu/><GlobalAssistant onNavigate={path=>void navigate({to:path})}/></SidebarProvider></SearchProvider>;
 }

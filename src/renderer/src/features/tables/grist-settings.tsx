@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/password-input";
 import { Skeleton } from "@/components/page-state";
-import { gristMcpCommand, type GristSettings } from "./grist-table-helpers.ts";
+import { gristMcpCommand, type GristSettings } from "./grist-settings-helpers.ts";
 
 type TokenStatus = { createdAt: number | null; lastUsedAt: number | null };
 type ConnectionResult = { ok: boolean; text: string };
@@ -49,7 +49,7 @@ export function GristSettingsSection() {
       const next = await call<GristSettings>("grist.settings.save", { baseUrl: values.baseUrl.trim(), ...(values.apiKey.trim() ? { apiKey: values.apiKey.trim() } : {}) });
       setSettings(next); form.reset({ baseUrl: next.baseUrl, apiKey: "" });
       invalidate();
-      for (const method of ["grist.settings.get", "grist.listOrgs", "grist.listWorkspaces", "grist.listDocs", "grist.getDocStructure", "grist.getPageRecords", "grist.getAttachments"]) invalidateRpcData(method);
+      invalidateRpcData("grist.settings.get");
       void refresh().catch((reason: Error) => setError(reason.message)); toast("Grist 设置已保存", "success");
     } catch (reason) { setError((reason as Error).message); }
     finally { setBusy(null); }
@@ -84,12 +84,12 @@ export function GristSettingsSection() {
     catch { toast("复制失败，请选中文字手动复制", "error"); }
   };
   return <section id="grist" className="scroll-mt-6 space-y-5" aria-labelledby="grist-title">
-    <div><h2 id="grist-title" className="flex items-center gap-2 text-base font-semibold tracking-tight"><Table2 className="size-4" aria-hidden />Grist 表格</h2><p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">连接自己的 Grist，浏览和编辑表格。地址与加密密钥仅保存在当前用户的工作区。</p></div>
+    <div><h2 id="grist-title" className="flex items-center gap-2 text-base font-semibold tracking-tight"><Table2 className="size-4" aria-hidden />Grist 表格</h2><p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">表格页通过浏览器嵌入你的 Grist；API Key 用于测试连接和 MCP。地址与加密密钥仅保存在当前用户的工作区。</p></div>
     {refreshing && settings && <p role="status" className="fixed right-4 bottom-4 text-xs text-muted-foreground">刷新中…</p>}
     {(error || loadError) && <p role="alert" className="text-sm text-destructive">{error ?? loadError?.message}{!settings && <Button variant="link" size="sm" onClick={() => void refresh().catch((reason: Error) => setError(reason.message))}>重新读取</Button>}</p>}
     {loading ? <Skeleton label="正在读取 Grist 设置" /> : settings && <div className="divide-y rounded-xl border bg-card">
       <form onSubmit={form.handleSubmit(save)} className="space-y-4 p-4 sm:p-5" noValidate>
-        <div className="space-y-2"><Label htmlFor="grist-url">Grist 地址</Label><Input id="grist-url" type="url" autoComplete="url" placeholder="https://grist.example.com" {...form.register("baseUrl", { onChange: () => setTest(null) })} disabled={busy !== null} aria-invalid={Boolean(form.formState.errors.baseUrl)} aria-describedby={form.formState.errors.baseUrl ? "grist-url-error" : "grist-url-hint"} />{form.formState.errors.baseUrl ? <p id="grist-url-error" role="alert" className="text-xs text-destructive">{form.formState.errors.baseUrl.message}</p> : <p id="grist-url-hint" className="text-xs text-muted-foreground">仅支持公网 HTTP / HTTPS 地址，不接受回环或内网地址。</p>}</div>
+        <div className="space-y-2"><Label htmlFor="grist-url">Grist 地址</Label><Input id="grist-url" type="url" autoComplete="url" placeholder="https://grist.example.com" {...form.register("baseUrl", { onChange: () => setTest(null) })} disabled={busy !== null} aria-invalid={Boolean(form.formState.errors.baseUrl)} aria-describedby={form.formState.errors.baseUrl ? "grist-url-error" : "grist-url-hint"} />{form.formState.errors.baseUrl ? <p id="grist-url-error" role="alert" className="text-xs text-destructive">{form.formState.errors.baseUrl.message}</p> : <p id="grist-url-hint" className="text-xs text-muted-foreground">表格页只需保存地址；仅支持公网 HTTP / HTTPS 地址，不接受回环或内网地址。</p>}</div>
         <div className="space-y-2"><Label htmlFor="grist-api-key">API Key</Label><PasswordInput id="grist-api-key" autoComplete="new-password" {...form.register("apiKey", { onChange: () => setTest(null) })} placeholder={settings.apiKeyHint ? `已保存 ····${settings.apiKeyHint}；留空不修改` : "在 Grist 个人资料中生成 API Key"} disabled={busy !== null} aria-describedby="grist-api-key-hint" /><p id="grist-api-key-hint" className="text-xs text-muted-foreground">{settings.apiKeyHint ? `已保存密钥末 4 位：${settings.apiKeyHint}。留空表示不修改。` : "密钥保存后只显示末 4 位，不会再次返回明文。"}</p></div>
         <div className="flex flex-wrap gap-2"><Button type="submit" disabled={busy !== null}>{busy === "save" && <LoaderCircle className="motion-safe:animate-spin" aria-hidden />}保存设置</Button><Button type="button" variant="outline" disabled={busy !== null || !baseUrl.trim() || (!apiKey.trim() && !settings.apiKeyHint)} onClick={() => void testConnection()}>{busy === "test" ? <LoaderCircle className="motion-safe:animate-spin" aria-hidden /> : <RefreshCw aria-hidden />}测试连接</Button></div>
         {test && <p role={test.ok ? "status" : "alert"} className={test.ok ? "flex items-center gap-2 text-sm" : "text-sm text-destructive"}>{test.ok && <Check className="size-4 shrink-0" aria-hidden />}{test.text}</p>}

@@ -112,6 +112,15 @@ async function setup(env: NodeJS.ProcessEnv = {}) {
   return { app, manager, request, post, login, dataDir, distDir, setNow: (value: number) => { now = value; } };
 }
 
+test("security headers allow HTTPS frames while keeping this app non-embeddable", async () => {
+  const { request } = await setup();
+  const response = await request("/");
+  const csp = response.headers.get("content-security-policy") ?? "";
+  assert.match(csp, /(?:^|;\s*)frame-src 'self' https:(?:;|$)/);
+  assert.match(csp, /(?:^|;\s*)frame-ancestors 'none'(?:;|$)/);
+  assert.equal(response.headers.get("x-frame-options"), "DENY");
+});
+
 test("logged-out API is 401 and a POST without the CSRF header is 403", async () => {
   const { request, post, login } = await setup();
   assert.equal((await request("/api/me")).status, 401);

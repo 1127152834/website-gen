@@ -1,4 +1,4 @@
-import type { GristClient, GristRecord, GristSqlResult } from "./grist.ts";
+import type { GristClient, GristSqlResult } from "./grist.ts";
 
 export interface GristStructureColumn {
   colRef: number;
@@ -130,87 +130,4 @@ export function assembleGristDocStructure(input: {
     pagePos: number(row.pagePos), sections: sectionsByView.get(number(row.viewRef)) ?? [],
   })).sort((a, b) => a.pagePos - b.pagePos || a.id - b.id);
   return { pages, tables, rawTables: tables.filter((table) => !placedTables.has(table.tableRef)) };
-}
-
-export interface GristAttachment {
-  id: number;
-  fileName: string;
-  fileSize: number;
-  imageHeight: number | null;
-  imageWidth: number | null;
-  timeUploaded: number | null;
-}
-
-export async function getGristAttachments(client: GristClient, docId: string, ids: number[]): Promise<{ attachments: GristAttachment[] }> {
-  const unique = [...new Set(ids)].filter((id) => Number.isSafeInteger(id) && id > 0);
-  if (!unique.length) return { attachments: [] };
-  const placeholders = unique.map(() => "?").join(",");
-  const result = await client.queryDocument(docId, `SELECT id, fileName, fileSize, imageHeight, imageWidth, timeUploaded
-FROM _grist_Attachments WHERE id IN (${placeholders}) ORDER BY id`, unique);
-  return { attachments: rows(result).map((row) => ({
-    id: number(row.id), fileName: text(row.fileName), fileSize: number(row.fileSize),
-    imageHeight: row.imageHeight == null ? null : number(row.imageHeight), imageWidth: row.imageWidth == null ? null : number(row.imageWidth),
-    timeUploaded: row.timeUploaded == null ? null : number(row.timeUploaded),
-  })) };
-}
-
-export const GRIST_PAGE_RECORDS_MAX_BYTES = 16 * 1024 * 1024;
-export const GRIST_PAGE_RECORDS_MAX_ATTACHMENT_IDS = 10_000;
-const GRIST_PAGE_RECORDS_CONCURRENCY = 2;
-
-function collectAttachmentIds(records: GristRecord[], columns: string[], ids: Set<number>): void {
-  for (const record of records) for (const column of columns) {
-    const value = record.fields[column];
-    if (!Array.isArray(value) || value[0] !== "L") continue;
-    for (const id of value.slice(1)) if (Number.isSafeInteger(id) && Number(id) > 0) {
-      ids.add(Number(id));
-      if (ids.size > GRIST_PAGE_RECORDS_MAX_ATTACHMENT_IDS) throw new Error(`当前页面附件超过 ${GRIST_PAGE_RECORDS_MAX_ATTACHMENT_IDS} 个上限`);
-    }
-  }
-}
-
-export async function getGristPageRecords(client: GristClient, input: {
-  docId: string; tableIds: string[]; attachmentColumns?: Record<string, string[]>; limit: number;
-}): Promise<{ tables: Record<string, { records: GristRecord[]; truncated: boolean }>; attachments: GristAttachment[] }> {
-  const uniqueTables = [...new Set(input.tableIds)];
-  const controller = new AbortController();
-  const results = new Map<string, { records: GristRecord[]; truncated: boolean }>();
-  let nextIndex = 0;
-  let aggregateBytes = 32;
-  const workers = Array.from({ length: Math.min(GRIST_PAGE_RECORDS_CONCURRENCY, uniqueTables.length) }, async () => {
-    while (!controller.signal.aborted) {
-      const index = nextIndex++;
-      if (index >= uniqueTables.length) return;
-      const tableId = uniqueTables[index]!;
-      try {
-        const result = await client.listRecords(input.docId, tableId, { limit: input.limit + 1, signal: controller.signal });
-        const visible = { records: result.records.slice(0, input.limit), truncated: result.records.length > input.limit };
-        aggregateBytes += Buffer.byteLength(JSON.stringify(tableId)) + Buffer.byteLength(JSON.stringify(visible)) + 2;
-        if (aggregateBytes > GRIST_PAGE_RECORDS_MAX_BYTES) throw new Error("当前页面数据超过 16 MiB 聚合上限，请减少每页记录数");
-        results.set(tableId, visible);
-      } catch (error) {
-        controller.abort(error);
-        throw error;
-      }
-    }
-  });
-  try { await Promise.all(workers); }
-  catch (error) { controller.abort(error); throw error; }
-  const tables = Object.create(null) as Record<string, { records: GristRecord[]; truncated: boolean }>;
-  const ids = new Set<number>();
-  for (const tableId of uniqueTables) {
-    const result = results.get(tableId)!;
-    const records = result.records;
-    tables[tableId] = result;
-    const attachmentColumns = input.attachmentColumns && Object.prototype.hasOwnProperty.call(input.attachmentColumns, tableId)
-      ? input.attachmentColumns[tableId] ?? [] : [];
-    try { collectAttachmentIds(records, attachmentColumns, ids); }
-    catch (error) { controller.abort(error); throw error; }
-  }
-  const output = { tables, ...(await getGristAttachments(client, input.docId, [...ids])) };
-  if (Buffer.byteLength(JSON.stringify(output)) > GRIST_PAGE_RECORDS_MAX_BYTES) {
-    controller.abort(new Error("当前页面数据与附件元数据超过 16 MiB 聚合上限"));
-    throw controller.signal.reason;
-  }
-  return output;
 }

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -32,9 +32,20 @@ test("master keys persist and derive different stable keys per user", () => {
 test("server lock is exclusive and can be acquired again after release", () => {
   const dir = mkdtempSync(join(tmpdir(), "website-gen-lock-"));
   try {
-    const release = acquireServerLock(dir);
+    // 另一个活着的进程持有锁时拒绝（用父进程模拟）
+    writeFileSync(join(dir, "server.lock"), `${process.ppid}\n`);
     assert.throws(() => acquireServerLock(dir), /数据目录已被进程/);
+    rmSync(join(dir, "server.lock"));
+    const release = acquireServerLock(dir);
     release();
+    acquireServerLock(dir)();
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test("a stale lock carrying our own pid is taken over (containers reuse the same pid)", () => {
+  const dir = mkdtempSync(join(tmpdir(), "website-gen-lock-"));
+  try {
+    writeFileSync(join(dir, "server.lock"), `${process.pid}\n`);
     acquireServerLock(dir)();
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
