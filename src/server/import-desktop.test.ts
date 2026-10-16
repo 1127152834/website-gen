@@ -9,7 +9,6 @@ import { importDesktopData, workspaceHasBusinessData } from "../../scripts/impor
 import { migrate } from "../backend/db.ts";
 import { seal, unseal } from "../backend/secrets.ts";
 import { deriveUserKey } from "./keys.ts";
-import { acquireServerLock } from "./lock.ts";
 
 function desktopFixture(root: string, oldKey: Buffer): string {
   const desktopDir = join(root, "desktop");
@@ -99,12 +98,10 @@ test("desktop import refuses to run while the web server owns the data directory
   const oldKey = randomBytes(32), masterKey = randomBytes(32);
   try {
     const desktopDir = desktopFixture(root, oldKey), dataDir = join(root, "web");
-    const release = acquireServerLock(dataDir);
-    try {
-      await assert.rejects(importDesktopData({ desktopDir, dataDir, userId: 1, oldKey, masterKey }), /数据目录已被进程/);
-    } finally {
-      release();
-    }
+    // 服务器是另一个进程：用活着的父进程 PID 模拟它持有的锁
+    mkdirSync(dataDir, { recursive: true });
+    writeFileSync(join(dataDir, "server.lock"), `${process.ppid}\n`);
+    await assert.rejects(importDesktopData({ desktopDir, dataDir, userId: 1, oldKey, masterKey }), /数据目录已被进程/);
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
