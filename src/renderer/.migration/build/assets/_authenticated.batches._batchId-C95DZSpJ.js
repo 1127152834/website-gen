@@ -1,1 +1,0 @@
-import{t as e}from"./jsx-runtime-DyZJNswf.js";import{t}from"./route-params-DRQYX86F.js";import{B as n,c as r}from"./index-58OD1QGu.js";import{t as i}from"./batches-YbGCDcyT.js";var a=e(),o=()=>{let e=n();return t=>{e({to:t})}},s=()=>{let{batchId:e}=r.useParams(),n=o();return(0,a.jsx)(i,{initialBatch:t(e),onNew:()=>n(`/new`),onNavigate:n},e)};export{s as component};
