@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { LoaderCircle, Plus, RefreshCw, Trash2 } from "lucide-react";
 import type { AccountSummary, DomainSummary } from "../../../shared/protocol.ts";
-import { call, onChanged, onConnect } from "@/lib/backend.ts";
+import { call, useRpcData } from "@/lib/backend.ts";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -33,40 +33,21 @@ const DOMAIN_STATUS: Record<string, string> = { active: "正常", pending_setup:
 const daysLeft = (iso: string) => Math.ceil((Date.parse(iso) - Date.now()) / 86_400_000);
 
 export function AccountsPage() {
-  const [accounts, setAccounts] = useState<AccountSummary[] | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
-  const [domains, setDomains] = useState<DomainSummary[]>([]);
   const [syncingIds, setSyncingIds] = useState<ReadonlySet<number>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const confirm = useConfirm();
 
-  const load = useCallback(() => {
-    call<AccountSummary[]>("accounts.list").then(setAccounts, (e: Error) => setError(e.message));
-  }, []);
-
-  useEffect(() => {
-    const offConnect = onConnect(load);
-    const offChanged = onChanged("accounts", load);
-    return () => {
-      offConnect();
-      offChanged();
-    };
-  }, [load]);
+  const { data: accounts, loading, refreshing, error: loadError, refresh, invalidate } = useRpcData<AccountSummary[]>("accounts.list", undefined, { topics: ["accounts"] });
+  const { data: domains = [], error: domainsError, refresh: refreshDomains, invalidate: invalidateDomains } = useRpcData<DomainSummary[]>("accounts.domains", selected == null ? null : { id: selected }, { topics: ["accounts"] });
+  useEffect(() => { if (domainsError) setError(domainsError.message); }, [domainsError]);
 
   // 默认选中第一个账号；被删掉时换一个
   useEffect(() => {
     if (!accounts) return;
     if (!accounts.some((a) => a.id === selected)) setSelected(accounts[0]?.id ?? null);
   }, [accounts, selected]);
-
-  useEffect(() => {
-    if (selected == null) {
-      setDomains([]);
-      return;
-    }
-    call<DomainSummary[]>("accounts.domains", { id: selected }).then(setDomains, (e: Error) => setError(e.message));
-  }, [selected, accounts]);
 
   const syncNow = async (id: number) => {
     setError(null);
@@ -82,7 +63,7 @@ export function AccountsPage() {
         next.delete(id);
         return next;
       });
-      load();
+      invalidate(); invalidateDomains(); await Promise.all([refresh(), refreshDomains()]);
     }
   };
 
@@ -91,7 +72,7 @@ export function AccountsPage() {
     try {
       await call("accounts.remove", { id: account.id });
       toast("账号已移除");
-      load();
+      invalidate(); await refresh();
     } catch (e) {
       setError(`删除没有完成：${(e as Error).message}`);
     }
@@ -114,9 +95,10 @@ export function AccountsPage() {
         </Button>
       </div>
 
-      {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
+      {refreshing && accounts && <p role="status" className="fixed right-4 bottom-4 text-xs text-muted-foreground">刷新中…</p>}
+      {(error || loadError) && <p role="alert" className="text-sm text-destructive">{error ?? loadError?.message}</p>}
 
-      {accounts === null && !error && <Skeleton label="正在读取账号" />}
+      {loading && !error && <Skeleton label="正在读取账号" />}
       {accounts && accounts.length === 0 && (
         <div className="rounded-lg border border-dashed p-8 text-sm">
           <p className="font-medium">还没有接入账号</p>
@@ -215,7 +197,7 @@ export function AccountsPage() {
                         </TableCell>
                         <TableCell>{d.hasWebsite ? "已建站" : <span className="text-muted-foreground">空闲</span>}</TableCell>
                         <TableCell>{d.hasMail ? "已开通" : <span className="text-muted-foreground">未开通</span>}</TableCell>
-                        <TableCell>{d.domain && <AbandonSiteButton domain={d.domain} accountId={current.id} onDone={() => setDomains((items) => items.filter((item) => item.id !== d.id))} />}</TableCell>
+                        <TableCell>{d.domain && <AbandonSiteButton domain={d.domain} accountId={current.id} onDone={() => { invalidateDomains(); void refreshDomains().catch((reason: Error) => setError(reason.message)); }} />}</TableCell>
                       </TableRow>
                     );
                   })}
@@ -226,7 +208,7 @@ export function AccountsPage() {
         </section>
       )}
 
-      <AddAccountDialog open={adding} onOpenChange={setAdding} onAdded={load} />
+      <AddAccountDialog open={adding} onOpenChange={setAdding} onAdded={() => { invalidate(); void refresh().catch((reason: Error) => setError(reason.message)); }} />
 
 
     </div>

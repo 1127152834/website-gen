@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState, type FormEvent, type ReactNode } from "react";
 import { Bot, Boxes, CircleCheck, Eye, KeyRound, LoaderCircle, Mail, Pencil, Plus, RefreshCw, Settings2, ShieldCheck, Sparkles, Table2, Trash2, X } from "lucide-react";
 import type { AuthUser } from "../../../shared/auth.ts";
 import type { ModelRole, RoleSummary } from "../../../shared/protocol.ts";
@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { call, onConnect } from "@/lib/backend.ts";
+import { call, useRpcData } from "@/lib/backend.ts";
 import { ChangePasswordForm } from "./change-password.tsx";
 import { GristSettingsSection } from "./grist-settings.tsx";
 import { emptyModel, type ModelInput, type ModelProviderPreset, type ProviderDetail, type ProviderDraft, type ProviderProtocol } from "./settings-types.ts";
@@ -94,24 +94,20 @@ export function SettingsPage({ onPasswordChanged }: { onPasswordChanged?: (user:
   const [providers, setProviders] = useState<ProviderDetail[]>([]);
   const [presets, setPresets] = useState<ModelProviderPreset[]>([]);
   const [roles, setRoles] = useState<RoleSummary[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [draft, setDraft] = useState<ProviderDraft | null>(null);
   const [testing, setTesting] = useState<string | null>(null);
   const [tests, setTests] = useState<Record<string, TestResult>>({});
 
-  const load = useCallback(async () => {
-    try {
-      const [nextProviders, nextRoles, nextPresets] = await Promise.all([
+  const loadSettings = useCallback(async () => {
+      const [providers, roles, presets] = await Promise.all([
         call<ProviderDetail[]>("models.providers"),
         call<RoleSummary[]>("models.roles"),
         call<ModelProviderPreset[]>("models.presets"),
       ]);
-      setProviders(nextProviders); setRoles(nextRoles); setPresets(nextPresets); setError(null);
-    } catch (reason) { setError((reason as Error).message); }
-    finally { setLoading(false); }
+      return { providers, roles, presets };
   }, []);
-  useEffect(() => onConnect(() => void load()), [load]);
+  const { data: settingsData, loading, refreshing, error, refresh, invalidate } = useRpcData<{ providers: ProviderDetail[]; roles: RoleSummary[]; presets: ModelProviderPreset[] }>("settings.firstScreen", undefined, { loader: loadSettings });
+  useLayoutEffect(() => { if (settingsData) { setProviders(settingsData.providers); setRoles(settingsData.roles); setPresets(settingsData.presets); } }, [settingsData]);
 
   const openNew = () => setDraft(newProviderDraft(presets.find((preset) => preset.id !== "custom") ?? presets[0]));
 
@@ -135,6 +131,7 @@ export function SettingsPage({ onPasswordChanged }: { onPasswordChanged?: (user:
     try {
       setProviders(await call<ProviderDetail[]>("models.delete", { providerId: provider.id }));
       setRoles(await call<RoleSummary[]>("models.roles"));
+      invalidate(); void refresh().catch((reason: Error) => toast(reason.message, "error"));
       toast("模型厂商已删除", "success");
     } catch (reason) { toast((reason as Error).message, "error"); }
   };
@@ -149,6 +146,7 @@ export function SettingsPage({ onPasswordChanged }: { onPasswordChanged?: (user:
     const thinking = model.thinkingLevels.includes(requestedThinking) ? requestedThinking : (model.thinkingLevels.find((level) => level !== "off") ?? model.thinkingLevels[0] ?? "off");
     try {
       setRoles(await call<RoleSummary[]>("models.setRole", { role: role.role, providerId: provider.id, modelId: model.id, thinking }));
+      invalidate(); void refresh().catch((reason: Error) => toast(reason.message, "error"));
       toast(`「${ROLE_TEXT[role.role].label}」已更新`, "success");
     } catch (reason) { toast((reason as Error).message, "error"); }
   };
@@ -161,7 +159,8 @@ export function SettingsPage({ onPasswordChanged }: { onPasswordChanged?: (user:
           {SECTIONS.map(({ id, label, icon: Icon }) => <a key={id} href={`#${id}`} className="flex min-h-9 shrink-0 items-center gap-2 rounded-lg px-3 text-sm text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 md:w-full"><Icon className="size-4" aria-hidden />{label}</a>)}
         </nav>
         <div className="min-w-0 space-y-12">
-          {error && <div role="alert" className="rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive">{error}</div>}
+          {refreshing && settingsData && <p role="status" className="fixed right-4 bottom-4 text-xs text-muted-foreground">刷新中…</p>}
+          {error && <div role="alert" className="rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive">{error.message}</div>}
           <section id="providers" className="scroll-mt-6 space-y-5" aria-labelledby="providers-title">
             <div id="providers-title"><SectionHeading title="模型厂商" description="每个厂商独立保存自己的 API Key。选择预设可快速填好协议和地址，仍可按服务商文档修改。" action={<Button onClick={openNew}><Plus aria-hidden />添加厂商</Button>} /></div>
             {loading ? <SettingsSkeleton /> : providers.length === 0 ? (
@@ -178,7 +177,7 @@ export function SettingsPage({ onPasswordChanged }: { onPasswordChanged?: (user:
           </section>
         </div>
       </div>
-      <ProviderEditor draft={draft} presets={presets} onClose={() => setDraft(null)} onSaved={(nextProviders) => { setProviders(nextProviders); setDraft(null); void call<RoleSummary[]>("models.roles").then(setRoles, (reason: Error) => toast(reason.message, "error")); }} />
+      <ProviderEditor draft={draft} presets={presets} onClose={() => setDraft(null)} onSaved={(nextProviders) => { setProviders(nextProviders); setDraft(null); void call<RoleSummary[]>("models.roles").then((nextRoles) => { setRoles(nextRoles); invalidate(); void refresh().catch((reason: Error) => toast(reason.message, "error")); }, (reason: Error) => toast(reason.message, "error")); }} />
     </div>
   );
 }
@@ -262,16 +261,20 @@ function ModelEditor({ model, index, onChange, onRemove }: { model: ModelInput; 
 
 function CjSection() {
   const [hint, setHint] = useState<string | null | undefined>(undefined); const [open, setOpen] = useState(false); const [apiKey, setApiKey] = useState(""); const [busy, setBusy] = useState(false); const [error, setError] = useState<string | null>(null);
-  useEffect(() => onConnect(() => void call<{ keyHint: string | null }>("cj.status").then((result) => setHint(result.keyHint), () => setHint(null))), []);
+  const { data: cjStatus, error: cjError, refresh, invalidate } = useRpcData<{ keyHint: string | null }>("cj.status");
+  useEffect(() => { if (cjStatus) setHint(cjStatus.keyHint); }, [cjStatus]);
+  useEffect(() => { if (cjError) setError(cjError.message); }, [cjError]);
   const close = () => { setOpen(false); setApiKey(""); setError(null); };
-  const submit = async (event: FormEvent) => { event.preventDefault(); setBusy(true); setError(null); try { setHint((await call<{ keyHint: string | null }>("cj.setKey", { apiKey })).keyHint); close(); toast("CJ API Key 已验证并保存", "success"); } catch (reason) { setError((reason as Error).message); } finally { setBusy(false); } };
+  const submit = async (event: FormEvent) => { event.preventDefault(); setBusy(true); setError(null); try { setHint((await call<{ keyHint: string | null }>("cj.setKey", { apiKey })).keyHint); invalidate(); void refresh().catch((reason: Error) => setError(reason.message)); close(); toast("CJ API Key 已验证并保存", "success"); } catch (reason) { setError((reason as Error).message); } finally { setBusy(false); } };
   return <section id="cj" className="scroll-mt-6 space-y-5" aria-labelledby="cj-title"><div id="cj-title"><SectionHeading title="商品资料 CJ" description="CJdropshipping 只作为只读商品资料库，用于标题、图片、规格和成本价；不会授权店铺或自动下单。" /></div><div className="flex flex-col gap-4 rounded-xl border bg-card p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5"><div><p className="font-medium">CJdropshipping API Key</p><p className="mt-1 text-sm text-muted-foreground">{hint === undefined ? "正在读取…" : hint ? `已设置 ····${hint}` : "未设置，建站会停在「从 CJ 选品」步骤"}</p></div><Button variant="outline" onClick={() => setOpen(true)}><KeyRound aria-hidden />{hint ? "更换 Key" : "设置 Key"}</Button></div><Dialog open={open} onOpenChange={(next) => !next && close()}><DialogContent><form onSubmit={(event) => void submit(event)} className="space-y-4"><DialogHeader><DialogTitle>设置 CJdropshipping API Key</DialogTitle><DialogDescription>在 CJ 后台「Authorization → API」生成。保存前会先验证，失败时不会写入。</DialogDescription></DialogHeader><div className="space-y-2"><Label htmlFor="cj-key">API Key</Label><Input id="cj-key" type="password" autoComplete="off" required value={apiKey} onChange={(event) => setApiKey(event.target.value)} autoFocus /></div>{error && <p role="alert" className="text-sm text-destructive">{error}</p>}<DialogFooter><Button type="button" variant="outline" onClick={close}>取消</Button><Button type="submit" disabled={busy || !apiKey.trim()}>{busy && <LoaderCircle className="motion-safe:animate-spin" aria-hidden />}验证并保存</Button></DialogFooter></form></DialogContent></Dialog></section>;
 }
 
 function MailboxPasswordSection() {
   const confirm = useConfirm(); const [isSet, setIsSet] = useState<boolean | null>(null); const [password, setPassword] = useState(""); const [busy, setBusy] = useState(false); const [error, setError] = useState<string | null>(null);
-  useEffect(() => onConnect(() => void call<{ set: boolean }>("mail.defaultPassword.status").then((result) => setIsSet(result.set), () => setIsSet(null))), []);
-  const save = async (value: string | null) => { setBusy(true); setError(null); try { const result = await call<{ set: boolean; succeeded: number; failed: number; deferred: number }>("mail.defaultPassword.set", { password: value }); setIsSet(result.set); setPassword(""); toast(value ? `默认邮箱密码已保存；自动登录成功 ${result.succeeded} 个，失败 ${result.failed} 个${result.deferred ? `，稍后重试 ${result.deferred} 个` : ""}` : "已改为每个新邮箱生成随机密码；已有邮箱不受影响", "success"); } catch (reason) { setError((reason as Error).message); } finally { setBusy(false); } };
+  const { data: passwordStatus, error: passwordStatusError, refresh, invalidate } = useRpcData<{ set: boolean }>("mail.defaultPassword.status");
+  useEffect(() => { if (passwordStatus) setIsSet(passwordStatus.set); }, [passwordStatus]);
+  useEffect(() => { if (passwordStatusError) setError(passwordStatusError.message); }, [passwordStatusError]);
+  const save = async (value: string | null) => { setBusy(true); setError(null); try { const result = await call<{ set: boolean; succeeded: number; failed: number; deferred: number }>("mail.defaultPassword.set", { password: value }); setIsSet(result.set); invalidate(); void refresh().catch((reason: Error) => setError(reason.message)); setPassword(""); toast(value ? `默认邮箱密码已保存；自动登录成功 ${result.succeeded} 个，失败 ${result.failed} 个${result.deferred ? `，稍后重试 ${result.deferred} 个` : ""}` : "已改为每个新邮箱生成随机密码；已有邮箱不受影响", "success"); } catch (reason) { setError((reason as Error).message); } finally { setBusy(false); } };
   const clear = async () => { if (await confirm({ title: "清除默认邮箱密码？", description: "以后新建的邮箱将各自使用随机强密码，已有邮箱不受影响。", confirmText: "清除" })) await save(null); };
   return <section id="mailbox" className="scroll-mt-6 space-y-5" aria-labelledby="mailbox-title"><div id="mailbox-title"><SectionHeading title="邮箱" description="默认密码用于新建邮箱，也会自动尝试登录尚未保存凭据的已有邮箱；验证成功后自动开启监听和索引。" /></div><form onSubmit={(event) => { event.preventDefault(); void save(password); }} className="rounded-xl border bg-card p-4 sm:p-5"><div className="flex flex-col gap-4 sm:flex-row sm:items-end"><div className="min-w-0 flex-1 space-y-2"><div className="flex items-center justify-between gap-3"><Label htmlFor="mailbox-default-password">默认邮箱密码</Label><span className="text-xs text-muted-foreground">{isSet === null ? "正在读取…" : isSet ? "已设置" : "使用随机密码"}</span></div><Input id="mailbox-default-password" type="password" autoComplete="new-password" minLength={8} value={password} onChange={(event) => setPassword(event.target.value)} placeholder={isSet ? "输入新密码可替换" : "至少 8 位，含大小写、数字和符号"} /></div><div className="flex gap-2"><Button type="submit" disabled={busy || !password}>{busy && <LoaderCircle className="motion-safe:animate-spin" aria-hidden />}保存</Button>{isSet && <Button type="button" variant="outline" disabled={busy} onClick={() => void clear()}>清除</Button>}</div></div>{error && <p role="alert" className="mt-3 text-sm text-destructive">{error}</p>}<p className="mt-3 text-xs leading-5 text-muted-foreground">保存或更换后，会依次为所有尚无凭据的邮箱自动验证，并报告成功、失败和稍后重试数量。统一密码一旦泄露会影响所有使用它的邮箱；密码会加密保存，保存后不会显示。</p></form></section>;
 }

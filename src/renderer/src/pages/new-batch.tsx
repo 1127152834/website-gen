@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
 import { Plus, Trash2, Upload, Save } from "lucide-react";
 import type { FreeDomain } from "../../../shared/protocol.ts";
 import { brandFromDomain, validateBatch, type BatchForm, type EntityForm } from "../../../shared/forms.ts";
 import { promises } from "../../../shared/rules.ts";
-import { call, onChanged, onConnect } from "@/lib/backend.ts";
+import { call, useRpcData } from "@/lib/backend.ts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -30,7 +30,6 @@ function FieldError({ id, message }: { id: string; message?: string }) {
 }
 
 export function NewBatchPage({ onCreated }: { onCreated: (batchId: number) => void; userId?: number }) {
-  const [free, setFree] = useState<FreeDomain[] | null>(null);
   const [entity, setEntity] = useState<EntityDraft>(emptyEntity);
   const [days, setDays] = useState(emptyDays);
   const [sites, setSites] = useState<SiteDraft[]>([emptySite()]);
@@ -43,15 +42,10 @@ export function NewBatchPage({ onCreated }: { onCreated: (batchId: number) => vo
   const csvInput = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const load = useCallback(() => {
-    void call<typeof templates>("templates.list").then(setTemplates, (e: Error) => setError(e.message));
-    call<FreeDomain[]>("domains.free").then(setFree, (e: Error) => setError(e.message));
-  }, []);
-  useEffect(() => {
-    const offs = [onConnect(load), onChanged("accounts", load), onChanged("batches", load)];
-    return () => offs.forEach((off) => off());
-  }, [load]);
+  const { data: free = null, error: freeError } = useRpcData<FreeDomain[]>("domains.free", undefined, { topics: ["accounts", "batches"] });
+  const { data: savedTemplates, error: templatesError, refresh: refreshTemplates, invalidate: invalidateTemplates } = useRpcData<typeof templates>("templates.list");
+  useLayoutEffect(() => { if (savedTemplates) setTemplates(savedTemplates); }, [savedTemplates]);
+  useEffect(() => { const reason = freeError ?? templatesError; if (reason) setError(reason.message); }, [freeError, templatesError]);
 
   const setE = (patch: Partial<EntityDraft>) => setEntity((e) => ({ ...e, ...patch }));
   const setS = (i: number, patch: Partial<SiteDraft>) => setSites((list) => list.map((s, j) => (j === i ? { ...s, ...patch } : s)));
@@ -81,7 +75,7 @@ export function NewBatchPage({ onCreated }: { onCreated: (batchId: number) => vo
     setErrors(found);
     if (Object.keys(found).length) return;
     setTemplateBusy(true);
-    try { setTemplates(await call<typeof templates>("templates.save", { name: templateName || value.name, entity: value })); setTemplateName(""); toast("经营主体已保存为模板"); }
+    try { setTemplates(await call<typeof templates>("templates.save", { name: templateName || value.name, entity: value })); invalidateTemplates(); void refreshTemplates().catch((reason: Error) => setError(reason.message)); setTemplateName(""); toast("经营主体已保存为模板"); }
     catch (reason) { toast((reason as Error).message, "error"); } finally { setTemplateBusy(false); }
   };
   const importCsv = async (file?: File) => {
@@ -134,7 +128,7 @@ export function NewBatchPage({ onCreated }: { onCreated: (batchId: number) => vo
         <div className="min-w-40 flex-1"><Label htmlFor="entity-template">复用经营主体模板</Label><select id="entity-template" className="mt-2 h-9 w-full rounded-md border bg-background px-3 text-sm" defaultValue="" onChange={(event) => { const template = templates.find((item) => item.id === Number(event.target.value)); if (template) { const value = template.entity; setEntity(value); setDays({ p0: String(value.processingDays[0]), p1: String(value.processingDays[1]), t0: String(value.transitDays[0]), t1: String(value.transitDays[1]) }); setErrors({}); } }}><option value="">选择模板</option>{templates.map((template) => <option key={template.id} value={template.id}>{template.name}</option>)}</select></div>
         <div className="min-w-40 flex-1"><Label htmlFor="template-name">模板名称</Label><Input id="template-name" className="mt-2" value={templateName} maxLength={100} onChange={(event) => setTemplateName(event.target.value)} placeholder="默认使用主体名称" /></div>
         <Button type="button" variant="outline" disabled={templateBusy} onClick={() => void saveEntity()}><Save aria-hidden />保存为模板</Button>
-        {templates.length > 0 && <details className="basis-full text-sm"><summary className="cursor-pointer text-muted-foreground">管理已保存的模板</summary><ul className="mt-2 divide-y">{templates.map((template) => <li key={template.id} className="flex items-center justify-between py-2"><span>{template.name}</span><Button type="button" variant="ghost" size="sm" onClick={async () => { if (!await confirm({ title: `删除模板「${template.name}」？`, description: "只删除模板，不影响已有站点和批次。", destructive: true })) return; try { setTemplates(await call<typeof templates>("templates.remove", { id: template.id })); toast("模板已删除"); } catch (reason) { toast((reason as Error).message, "error"); } }}>删除</Button></li>)}</ul></details>}
+        {templates.length > 0 && <details className="basis-full text-sm"><summary className="cursor-pointer text-muted-foreground">管理已保存的模板</summary><ul className="mt-2 divide-y">{templates.map((template) => <li key={template.id} className="flex items-center justify-between py-2"><span>{template.name}</span><Button type="button" variant="ghost" size="sm" onClick={async () => { if (!await confirm({ title: `删除模板「${template.name}」？`, description: "只删除模板，不影响已有站点和批次。", destructive: true })) return; try { setTemplates(await call<typeof templates>("templates.remove", { id: template.id })); invalidateTemplates(); void refreshTemplates().catch((reason: Error) => setError(reason.message)); toast("模板已删除"); } catch (reason) { toast((reason as Error).message, "error"); } }}>删除</Button></li>)}</ul></details>}
       </section>
 
       <section aria-labelledby="entity-title" className="flex flex-col gap-4">

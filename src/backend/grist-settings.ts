@@ -3,6 +3,7 @@ import { z } from "zod";
 import { assertGristBaseUrl, gristClient, normalizeGristBaseUrl, type GristClient } from "./grist.ts";
 import type { Handlers } from "./rpc.ts";
 import { getSecret, secretHint, setSecret } from "./secrets.ts";
+import { getGristAttachments, getGristDocStructure, getGristPageRecords } from "./grist-structure.ts";
 
 const connection = z.object({ baseUrl: z.string().max(2048), apiKey: z.string().max(8192).optional() });
 const doc = z.object({ docId: z.string().min(1).max(512) });
@@ -57,6 +58,19 @@ export function createGristService(options: {
     "grist.getDocInfo": (p) => client().getDocInfo(doc.parse(p).docId),
     "grist.getTables": (p) => client().getTables(doc.parse(p).docId),
     "grist.getTableColumns": (p) => { const v = table.parse(p); return client().getTableColumns(v.docId, v.tableId); },
+    "grist.getDocStructure": (p) => getGristDocStructure(client(), doc.parse(p).docId),
+    "grist.getAttachments": (p) => {
+      const v = doc.extend({ ids: z.array(z.number().int().positive()).max(1000) }).parse(p);
+      return getGristAttachments(client(), v.docId, v.ids);
+    },
+    "grist.getPageRecords": (p) => {
+      const v = doc.extend({
+        tableIds: z.array(z.string().min(1).max(512)).min(1).max(20),
+        attachmentColumns: z.record(z.string().min(1).max(512), z.array(z.string().min(1).max(512)).max(100)).optional(),
+        limit: z.number().int().min(1).max(1000).default(1000),
+      }).parse(p);
+      return getGristPageRecords(client(), v);
+    },
     // One extra row allows the UI to distinguish exactly 1000 rows from truncation.
     "grist.listRecords": (p) => {
       const v = table.extend({ filter: z.record(z.string(), z.array(z.unknown())).optional(), sort: z.string().optional(), limit: z.number().int().min(1).max(1001).default(1000) }).parse(p);

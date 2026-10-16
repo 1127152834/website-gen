@@ -1,7 +1,9 @@
 // 界面侧的后台客户端：RPC 走同源 HTTP，后台推送走按用户隔离的 SSE。
 // SSE 每次重连都会带上最后收到的 seq，让服务端补发断线期间的消息。
 import type { AssistantEvent, BackendMessage, ChatEvent, Request, Response, RunEvent } from "../../../shared/protocol.ts";
+import { useCallback, useEffect, useMemo, useSyncExternalStore } from "react";
 import { apiRequest, getCurrentUser, HttpError } from "./auth.ts";
+import { RpcCache, stableRpcParams, type RpcCacheSnapshot } from "./rpc-cache.ts";
 
 type AuthProblem = "unauthenticated" | "password_required" | "identity_changed";
 type SseEnvelope = { seq: number; reset?: boolean; message?: BackendMessage } & Partial<BackendMessage>;
@@ -18,6 +20,7 @@ let expectedUserId: number | null = null;
 const eventListeners = new Set<(e: RunEvent) => void>();
 const changedListeners = new Set<(topic: string) => void>();
 const connectListeners = new Set<() => void>();
+const readyListeners = new Set<() => void>();
 const statusListeners = new Set<(connected: boolean) => void>();
 const chatListeners = new Set<(siteId: number, e: ChatEvent) => void>();
 const assistantListeners = new Set<(event: AssistantEvent) => void>();
@@ -132,6 +135,8 @@ function waitForStart(ms = 5000): Promise<void> {
 export function startBackendTransport(userId: number, resetSeq = false): void {
   stopBackendTransport(resetSeq);
   expectedUserId = userId;
+  rpcCache.setUser(userId);
+  for (const listener of readyListeners) listener();
   const currentGeneration = generation;
   openEvents(currentGeneration);
   const waiters = startWaiters;
@@ -143,6 +148,7 @@ export function startBackendTransport(userId: number, resetSeq = false): void {
 export function stopBackendTransport(resetSeq = true): void {
   generation++;
   expectedUserId = null;
+  rpcCache.setUser(null);
   source?.close();
   source = null;
   if (retryTimer != null) window.clearTimeout(retryTimer);
@@ -178,6 +184,74 @@ export async function call<T>(method: string, params?: unknown): Promise<T> {
     }
     throw error;
   }
+}
+
+const rpcCache = new RpcCache((method, params) => call(method, params));
+const DISABLED_RPC_SNAPSHOT: RpcCacheSnapshot = Object.freeze({ data: undefined, error: null, refreshing: false });
+
+export type RpcDataOptions<T> = {
+  topics?: readonly string[];
+  enabled?: boolean;
+  debounceMs?: number;
+  /** 复用同一套按用户隔离的缓存承载少量非 RPC 读接口（例如管理员用户列表）。 */
+  loader?: () => Promise<T>;
+};
+
+export type RpcDataResult<T> = RpcCacheSnapshot<T> & {
+  loading: boolean;
+  refresh: () => Promise<T | undefined>;
+  invalidate: () => void;
+};
+
+/**
+ * 按当前登录用户、方法和稳定参数缓存首屏读取。再次进入页面时同步返回旧值，随后后台校准。
+ * params=null 或 enabled=false 时不发请求；同 key 的并发刷新由 RpcCache 合并。
+ */
+export function useRpcData<T>(method: string, params?: unknown | null, options: RpcDataOptions<T> = {}): RpcDataResult<T> {
+  const paramsKey = stableRpcParams(params);
+  const stableParams = useMemo(() => params, [paramsKey]);
+  const enabled = options.enabled !== false && params !== null;
+  const loader = options.loader;
+  const fetcher = useMemo(() => loader ? () => loader() : undefined, [loader]);
+  const subscribe = useCallback((listener: () => void) => enabled ? rpcCache.subscribe(method, stableParams, listener) : () => undefined, [enabled, method, paramsKey]);
+  const getSnapshot = useCallback(() => enabled ? rpcCache.snapshot<T>(method, stableParams) : DISABLED_RPC_SNAPSHOT as RpcCacheSnapshot<T>, [enabled, method, paramsKey]);
+  const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  const refresh = useCallback(() => enabled
+    ? rpcCache.refresh<T>(method, stableParams, fetcher).then((value) => value as T | undefined)
+    : Promise.resolve(undefined), [enabled, method, paramsKey, fetcher]);
+  const invalidate = useCallback(() => {
+    if (enabled) rpcCache.invalidate(method, stableParams);
+  }, [enabled, method, paramsKey]);
+  const topicsKey = (options.topics ?? []).join("\u0000");
+  const debounceMs = options.debounceMs ?? 200;
+
+  useEffect(() => {
+    if (!enabled) return;
+    const refreshQuietly = () => { void refresh().catch(() => undefined); };
+    let primed = false;
+    const disposers = [onBackendReady(() => {
+      primed = true;
+      void refresh().catch(() => { primed = false; });
+    }), onConnect(() => {
+      if (primed) { primed = false; return; }
+      refreshQuietly();
+    })];
+    for (const topic of options.topics ?? []) {
+      disposers.push(onChanged(topic, () => {
+        rpcCache.invalidate(method, stableParams);
+        rpcCache.scheduleRefresh(method, stableParams, debounceMs, fetcher);
+      }));
+    }
+    return () => disposers.forEach((dispose) => dispose());
+  }, [enabled, method, paramsKey, topicsKey, debounceMs, fetcher, refresh]);
+
+  return { ...snapshot, loading: enabled && snapshot.data === undefined && snapshot.error === null, refresh, invalidate };
+}
+
+/** params 省略时使该方法的所有参数变体过期；传入 params 时只使精确 key 过期。 */
+export function invalidateRpcData(method?: string, ...params: [unknown?]): void {
+  if (params.length === 0) rpcCache.invalidate(method);
+  else rpcCache.invalidate(method, params[0]);
 }
 
 export function onEvent(listener: (e: RunEvent) => void): () => void {
@@ -217,6 +291,13 @@ export function onConnect(listener: () => void): () => void {
   connectListeners.add(listener);
   if (connected) listener();
   return () => connectListeners.delete(listener);
+}
+
+/** 登录身份已绑定到 RPC 传输时触发；不等待 SSE 握手，避免首屏多一个网络往返。 */
+export function onBackendReady(listener: () => void): () => void {
+  readyListeners.add(listener);
+  if (expectedUserId != null) listener();
+  return () => readyListeners.delete(listener);
 }
 
 export function onConnectionStatus(listener: (value: boolean) => void): () => void {

@@ -8,6 +8,51 @@ export interface GristColumn {
   fields: { label?: string; type?: string; isFormula?: boolean; formula?: string; widgetOptions?: string };
 }
 export interface GristRecord { id: number; fields: Record<string, unknown> }
+export interface GristStructureColumn {
+  colRef: number;
+  colId: string;
+  label: string;
+  type: string;
+  isFormula: boolean;
+  widgetOptions?: string | null;
+  parentPos?: number;
+}
+export interface GristStructureSection {
+  id: number;
+  parentKey: string;
+  title: string;
+  tableRef: number;
+  tableId: string;
+  columns: GristStructureColumn[];
+}
+export interface GristStructurePage {
+  id: number;
+  viewRef: number;
+  name: string;
+  indentation: number;
+  pagePos: number;
+  sections: GristStructureSection[];
+}
+export interface GristStructureTable {
+  tableRef: number;
+  tableId: string;
+  primaryViewId: number;
+  rawViewSectionRef: number;
+  columns: GristStructureColumn[];
+}
+export interface GristDocStructure {
+  pages: GristStructurePage[];
+  tables: GristStructureTable[];
+  rawTables: GristStructureTable[];
+}
+export interface GristAttachment {
+  id: number;
+  fileName: string;
+  fileSize?: number | null;
+  imageHeight?: number | null;
+  imageWidth?: number | null;
+  timeUploaded?: number | null;
+}
 
 const EDITABLE_TYPES = new Set(["Text", "Numeric", "Int", "Bool", "Date", "Choice"]);
 export function canEditGristColumn(column: GristColumn): boolean {
@@ -75,6 +120,60 @@ export function gristDocUrl(baseUrl: string, orgDomain: string | null, doc: Gris
 
 export function visibleGristRecords(records: GristRecord[]): { records: GristRecord[]; truncated: boolean } {
   return { records: records.slice(0, 1000), truncated: records.length > 1000 };
+}
+
+export function sectionColumnToGristColumn(column: GristStructureColumn): GristColumn {
+  return {
+    id: column.colId,
+    fields: {
+      label: column.label,
+      type: column.type,
+      isFormula: column.isFormula,
+      widgetOptions: column.widgetOptions ?? undefined,
+    },
+  };
+}
+
+/** Component-visible fields first; the row drawer must not omit the table's other fields. */
+export function rowDetailColumns(visible: GristStructureColumn[], all: GristStructureColumn[] = []): GristStructureColumn[] {
+  const seen = new Set<string>();
+  return [...visible, ...all].filter((column) => {
+    if (seen.has(column.colId)) return false;
+    seen.add(column.colId);
+    return true;
+  });
+}
+
+export function parseAttachmentIds(value: unknown): number[] {
+  if (!Array.isArray(value) || value[0] !== "L") return [];
+  return [...new Set(value.slice(1).filter((id): id is number => Number.isSafeInteger(id) && id > 0))];
+}
+
+export function collectAttachmentIds(records: GristRecord[], columnIds: string[]): number[] {
+  const ids = new Set<number>();
+  for (const record of records) {
+    for (const columnId of columnIds) {
+      for (const id of parseAttachmentIds(record.fields[columnId])) ids.add(id);
+    }
+  }
+  return [...ids];
+}
+
+export function gristAttachmentUrl(docId: string, attachmentId: number): string {
+  return `/api/grist/attachment?docId=${encodeURIComponent(docId)}&id=${encodeURIComponent(String(attachmentId))}`;
+}
+
+export function attachmentKind(fileName: string): "image" | "pdf" | "file" {
+  const extension = fileName.toLowerCase().split(".").pop() ?? "";
+  if (["png", "jpg", "jpeg", "gif", "webp"].includes(extension)) return "image";
+  return extension === "pdf" ? "pdf" : "file";
+}
+
+export function formatFileSize(bytes: number | null | undefined): string {
+  if (typeof bytes !== "number" || !Number.isFinite(bytes) || bytes < 0) return "大小未知";
+  if (bytes < 1024) return `${Math.round(bytes)} B`;
+  if (bytes < 1024 * 1024) return `${Number((bytes / 1024).toFixed(1))} KB`;
+  return `${Number((bytes / (1024 * 1024)).toFixed(1))} MB`;
 }
 
 export function gristMcpCommand(origin: string, token?: string): string {

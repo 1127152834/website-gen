@@ -5,7 +5,7 @@ import { extname, join, normalize, resolve, sep } from "node:path";
 import type { Handlers } from "../backend/rpc.ts";
 import { handleRequest } from "../backend/rpc.ts";
 import type { Push, Request } from "../shared/protocol.ts";
-import { newSessionToken } from "./auth.ts";
+import { newSessionToken, tokenHash } from "./auth.ts";
 import { openAdminStore, type AdminStore, type AdminUser, type UserRole } from "./admin-db.ts";
 import { acquireServerLock } from "./lock.ts";
 import type { GristClient } from "../backend/grist.ts";
@@ -13,6 +13,9 @@ import { handleGristMcp } from "./grist-mcp.ts";
 import { GristTokenStore } from "./grist-tokens.ts";
 import type { AssistantAdminCapability } from "../backend/assistant.ts";
 import { createAssistantAdminAccess } from "./assistant-access.ts";
+import { loadMasterKey } from "./keys.ts";
+import { AttachmentHttpError, parseAttachmentRequest, streamGristAttachment } from "./grist-attachment.ts";
+import { createSignedGristAttachmentUrl, deriveGristAttachmentSigningKey, verifySignedGristAttachmentUrl } from "./grist-attachment-signing.ts";
 
 export interface WorkspaceLike {
   handlers: Handlers;
@@ -39,6 +42,7 @@ export interface CreateAppOptions {
   logger?: Pick<Console, "log" | "warn" | "error">;
   /** startServer 在生成主密钥前先拿锁；测试和嵌入调用可省略，由 createApp 自己拿锁。 */
   releaseLock?: () => void;
+  masterKey?: Buffer;
 }
 interface Session { user: AdminUser; tokenHash: string; rawToken: string }
 interface ReplayItem { seq: number; message: Push }
@@ -106,6 +110,16 @@ function cookieHeader(token: string, req: IncomingMessage, env: NodeJS.ProcessEn
   const directHttps = Boolean((req.socket as typeof req.socket & { encrypted?: boolean }).encrypted);
   return `${COOKIE}=${encodeURIComponent(token)}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${7 * 24 * 60 * 60}${forwardedHttps || directHttps ? "; Secure" : ""}`;
 }
+function requestOrigin(req: IncomingMessage, env: NodeJS.ProcessEnv): string {
+  const forwarded = env.TRUST_PROXY === "1" ? req.headers["x-forwarded-proto"]?.toString().split(",")[0]?.trim().toLowerCase() : undefined;
+  const directHttps = Boolean((req.socket as typeof req.socket & { encrypted?: boolean }).encrypted);
+  const protocol = forwarded === "https" ? "https" : forwarded === "http" ? "http" : directHttps ? "https" : "http";
+  const host = req.headers.host;
+  if (!host || host.length > 255 || /[\s/\\]/.test(host)) throw new Error("请求 Host 无效");
+  const parsed = new URL(`${protocol}://${host}`);
+  if (parsed.host !== host || parsed.username || parsed.password || parsed.pathname !== "/" || parsed.search || parsed.hash) throw new Error("请求 Host 无效");
+  return parsed.origin;
+}
 const clearCookie = `${COOKIE}=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0`;
 const publicUser = (user: AdminUser) => ({ id: user.id, username: user.username, role: user.role, mustChangePassword: user.mustChangePassword });
 
@@ -115,7 +129,9 @@ export async function createApp(options: CreateAppOptions): Promise<{ server: Se
   const logger = options.logger ?? console;
   const releaseLock = options.releaseLock ?? acquireServerLock(options.dataDir);
   let admin: AdminStore;
+  let attachmentSigningKey: Buffer;
   try {
+    attachmentSigningKey = deriveGristAttachmentSigningKey(options.masterKey ?? loadMasterKey(options.dataDir, env.WEBSITE_GEN_MASTER_KEY));
     admin = openAdminStore(join(options.dataDir, "admin.sqlite"));
   } catch (error) {
     releaseLock(); throw error;
@@ -229,6 +245,34 @@ export async function createApp(options: CreateAppOptions): Promise<{ server: Se
           const workspace = options.workspaceManager.get(user.id) ?? attachWorkspace(user.id);
           if (!workspace.gristClient) throw new Error("请先在设置页配置 Grist");
           return workspace.gristClient();
+        }, ({ docId, attachmentId }) => {
+          if (!gristTokens.authenticate(token, clock(), false)) throw new Error("MCP 令牌无效或已撤销");
+          const expiresAt = clock() + 10 * 60_000;
+          return { url: createSignedGristAttachmentUrl({
+            origin: requestOrigin(req, env), key: attachmentSigningKey, tokenHash: tokenHash(token),
+            payload: { userId: user.id, docId, attachmentId, expiresAt },
+          }), expiresAt };
+        });
+        return;
+      }
+      if (req.method === "GET" && url.pathname === "/api/grist/attachment/signed") {
+        const userId = Number(url.searchParams.get("uid"));
+        const currentHash = Number.isSafeInteger(userId) && userId > 0 ? gristTokens.tokenHashForUser(userId) : undefined;
+        const currentUser = currentHash ? admin.getUser(userId) : undefined;
+        if (!currentHash || !currentUser || currentUser.disabled || currentUser.mustChangePassword) {
+          apiError(res, 401, "附件链接无效、已过期或已撤销", "unauthorized"); return;
+        }
+        let payload;
+        try { payload = verifySignedGristAttachmentUrl(url, attachmentSigningKey, currentHash, clock()); }
+        catch { apiError(res, 401, "附件链接无效、已过期或已撤销", "unauthorized"); return; }
+        const workspace = options.workspaceManager.get(payload.userId) ?? attachWorkspace(payload.userId);
+        if (!workspace.gristClient) { apiError(res, 404, "请先配置 Grist"); return; }
+        await streamGristAttachment(req, res, workspace.gristClient(), payload.docId, payload.attachmentId, () => {
+          const hash = gristTokens.tokenHashForUser(payload.userId);
+          const freshUser = admin.getUser(payload.userId);
+          if (hash !== currentHash || !freshUser || freshUser.disabled || freshUser.mustChangePassword) throw new AttachmentHttpError(401, "附件链接已撤销");
+          try { verifySignedGristAttachmentUrl(url, attachmentSigningKey, currentHash, clock()); }
+          catch { throw new AttachmentHttpError(401, "附件链接无效、已过期或已撤销"); }
         });
         return;
       }
@@ -317,6 +361,18 @@ export async function createApp(options: CreateAppOptions): Promise<{ server: Se
           "Cache-Control": "no-store",
           "Content-Length": attachment.data.length,
         }).end(attachment.data);
+        return;
+      }
+
+      if (req.method === "GET" && url.pathname === "/api/grist/attachment") {
+        const session = requireReady(req, res); if (!session) return;
+        const { docId, attachmentId } = parseAttachmentRequest(url);
+        const workspace = options.workspaceManager.get(session.user.id) ?? attachWorkspace(session.user.id);
+        if (!workspace.gristClient) { apiError(res, 404, "请先配置 Grist"); return; }
+        await streamGristAttachment(req, res, workspace.gristClient(), docId, attachmentId, () => {
+          const fresh = admin.session(session.rawToken, clock(), false);
+          if (!fresh || fresh.user.mustChangePassword) throw new AttachmentHttpError(401, "登录已失效");
+        });
         return;
       }
 
@@ -416,7 +472,8 @@ export async function createApp(options: CreateAppOptions): Promise<{ server: Se
       createReadStream(file).on("error", () => res.destroy()).pipe(res);
     } catch (error) {
       const message = error instanceof SyntaxError ? "JSON 格式不正确" : error instanceof Error ? error.message : String(error);
-      if (!res.headersSent) apiError(res, message.includes("不存在") ? 404 : 400, message);
+      const status = error instanceof AttachmentHttpError ? error.status : message.includes("不存在") ? 404 : 400;
+      if (!res.headersSent) apiError(res, status, message, status === 401 ? "unauthorized" : undefined);
       else res.end();
     }
   });

@@ -4,11 +4,15 @@ import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import { sanitizeAssistantValue, type AssistantRisk, type AssistantToolDefinition } from "./assistant-tools.ts";
 import { assertGristSelectSql, type GristClient } from "./grist.ts";
+import { getGristDocStructure } from "./grist-structure.ts";
 
 export type GetGristClient = () => GristClient | Promise<GristClient>;
+/** MCP 传入：生成 10 分钟签名链接；内置助手不传，返回需要登录的站内下载地址。 */
+export type GetAttachmentUrl = (input: { docId: string; attachmentId: number }) => { url: string; expiresAt: number } | Promise<{ url: string; expiresAt: number }>;
 export const GRIST_TOOL_NAMES = [
   "grist_help", "grist_get_user_profile", "grist_list_orgs", "grist_list_workspaces", "grist_list_docs", "grist_get_doc_info",
   "grist_get_tables", "grist_get_table_columns", "grist_list_records", "grist_query_document", "grist_list_snapshots", "grist_list_attachments",
+  "grist_get_pages", "grist_get_attachment_url",
   "grist_add_records", "grist_update_records", "grist_remove_records", "grist_create_doc", "grist_create_table", "grist_add_table_column",
   "grist_update_table_column", "grist_rename_table", "grist_remove_table", "grist_remove_table_column",
 ] as const;
@@ -56,7 +60,7 @@ function typeboxSchema(schema: Schema): TSchema {
 }
 
 /** One definition table powers both the embedded assistant and /api/mcp. */
-export function gristToolDefinitions(getClient: GetGristClient): GristToolDefinition[] {
+export function gristToolDefinitions(getClient: GetGristClient, getAttachmentUrl?: GetAttachmentUrl): GristToolDefinition[] {
   const definitions: GristToolDefinition[] = [];
   const add = <S extends z.ZodRawShape>(
     name: GristToolName, description: string, risk: AssistantRisk, inputSchema: z.ZodObject<S>,
@@ -74,14 +78,14 @@ export function gristToolDefinitions(getClient: GetGristClient): GristToolDefini
   add("grist_help", "说明 Grist 工具的发现顺序、行数限制、SQL 查询、单元格编码和未支持能力。", "read", strict({}), async () => ({
     overview: "这是基于 REST 的 Grist 连接器，使用当前登录用户在设置页保存的 Grist 地址和 API Key。建议依次发现团队站点、工作空间、文档、表、列，再读写记录。",
     tools: GRIST_TOOL_NAMES,
-    records: "列表与 SQL 查询默认返回 100 行，最多 1000 行。写入前先读取列定义。日期使用 UTC Unix 秒，公式、引用、附件和编码列表遵循 Grist REST API 格式。",
+    records: "列表与 SQL 查询默认返回 100 行，最多 1000 行。写入前先读取列定义。日期使用 UTC Unix 秒，公式、引用和编码列表遵循 Grist REST API 格式。附件单元格的值是 [\"L\", 附件ID, ...]，用 grist_list_attachments 查文件名和大小，用 grist_get_attachment_url 拿下载链接。用户在 Grist 左侧看到的是页面名，用 grist_get_pages 查页面对应的表。",
     query: "grist_query_document 只接受一条只读 SELECT，不接受自然语言；调用方需自行生成 SQL。查询会在服务端包裹 LIMIT，不支持 WITH。",
     unsupported: [
-      "grist_get_pages", "grist_update_page", "grist_remove_page", "grist_add_page_widget", "grist_get_page_widgets",
+      "grist_update_page", "grist_remove_page", "grist_add_page_widget", "grist_get_page_widgets",
       "grist_update_page_widget", "grist_remove_page_widget", "grist_get_page_widget_select_by_options", "grist_set_page_widget_select_by",
-      "grist_get_attachment_url", "grist_get_grist_access_rules_reference", "grist_get_available_custom_widgets",
+      "grist_get_grist_access_rules_reference", "grist_get_available_custom_widgets",
     ],
-    limitations: "不提供页面/组件管理、附件下载 URL、访问规则参考、自定义组件目录、自然语言转 SQL、OAuth 或 Grist 原生 MCP。删除和改列工具必须先由用户确认。",
+    limitations: "不提供页面/组件的修改、附件上传、访问规则参考、自定义组件目录、自然语言转 SQL、OAuth 或 Grist 原生 MCP。删除和改列工具必须先由用户确认。",
   }), { noClient: true });
   add("grist_get_user_profile", "查看当前 Grist 会话的用户名、邮箱和可用组织上下文。", "read", strict({}), (client) => client.getUserProfile());
   add("grist_list_orgs", "列出当前 Grist API Key 可见的团队站点（组织）及其 ID、名称和域名。", "read", strict({}), (client) => client.listOrgs());
@@ -108,6 +112,12 @@ export function gristToolDefinitions(getClient: GetGristClient): GristToolDefini
   });
   add("grist_list_snapshots", "列出指定 Grist 文档的快照或备份元数据，不执行恢复。", "read", strict({ docId }), (client, args) => client.listSnapshots(args.docId));
   add("grist_list_attachments", "列出指定 Grist 文档的附件文件名、类型和大小，不返回内容或下载地址。", "read", strict({ docId, limit }), async (client, args) => boundedRows(await client.listAttachments(args.docId, { limit: args.limit }), args.limit));
+  add("grist_get_pages", "按 Grist 左侧顺序列出文档的页面（含缩进）、每个页面的组件及对应表 ID、组件显示的列，以及没放在页面上的表。", "read", strict({ docId }), (client, args) => getGristDocStructure(client, args.docId));
+  add("grist_get_attachment_url", "生成一个附件的下载链接；通过 MCP 调用时链接 10 分钟内有效，令牌撤销后失效。", "read", strict({
+    docId, attachmentId: z.number().int().positive().describe("附件 ID，来自附件单元格 [\"L\", ...] 或 grist_list_attachments。"),
+  }), async (_client, args) => getAttachmentUrl
+    ? getAttachmentUrl(args)
+    : { url: `/api/grist/attachment?docId=${encodeURIComponent(args.docId)}&id=${args.attachmentId}`, note: "站内地址，需在已登录的浏览器中打开。" }, { noClient: true });
   add("grist_add_records", "向指定 Grist 表追加 1–1000 条记录；不能写公式列。", "write", strict({
     docId, tableId, records: z.array(z.object({ fields }).strict()).min(1).max(1000),
   }), (client, args) => client.addRecords(args.docId, args.tableId, args.records));
@@ -134,9 +144,9 @@ export function gristToolDefinitions(getClient: GetGristClient): GristToolDefini
 }
 
 /** New server per HTTP request; resolving the user client remains lazy per tool call. */
-export function createGristMcpServer(getClient: GetGristClient): McpServer {
+export function createGristMcpServer(getClient: GetGristClient, getAttachmentUrl?: GetAttachmentUrl): McpServer {
   const server = new McpServer({ name: "website-gen-grist", version: "1.0.0" }, { maxToolInputElements: 25_000 });
-  for (const definition of gristToolDefinitions(getClient)) {
+  for (const definition of gristToolDefinitions(getClient, getAttachmentUrl)) {
     server.registerTool(definition.name, {
       description: definition.description, inputSchema: definition.inputSchema,
       annotations: { readOnlyHint: definition.risk === "read", destructiveHint: definition.risk === "confirm", openWorldHint: definition.name !== "grist_help" },
