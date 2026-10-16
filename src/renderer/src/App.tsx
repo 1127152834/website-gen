@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ChevronDown, Globe, KeyRound, Layers, LogOut, Settings, Store, Users, LayoutDashboard, PanelLeftClose, PanelLeftOpen, Sun, Moon, Monitor, Plus, Mail } from "lucide-react";
+import { ChevronDown, Globe, KeyRound, Layers, LogOut, Settings, Store, Users, LayoutDashboard, PanelLeftClose, PanelLeftOpen, Sun, Moon, Monitor, Plus, Mail, Table2 } from "lucide-react";
 import { DropdownMenu } from "radix-ui";
 import type { AuthUser } from "../../shared/auth.ts";
 import { call, onChanged, onConnectionStatus, onMail, startBackendTransport, stopBackendTransport } from "@/lib/backend.ts";
@@ -18,6 +18,7 @@ import { SitesPage } from "./pages/sites.tsx";
 import { UsersPage } from "./pages/users.tsx";
 import { OverviewPage } from "./pages/overview.tsx";
 import { MailPage } from "./pages/mail.tsx";
+import { TablesPage } from "./pages/tables.tsx";
 import { FeedbackProvider, toast } from "@/components/feedback";
 import { Skeleton } from "@/components/page-state";
 import { parseRoute, type Page } from "@/lib/routes.ts";
@@ -29,6 +30,7 @@ const NAV: { label: string; icon: typeof Store; page: Page; admin?: boolean }[] 
   { label: "站点", icon: Globe, page: "sites" },
   { label: "账号", icon: KeyRound, page: "accounts" },
   { label: "邮箱", icon: Mail, page: "mail" },
+  { label: "表格", icon: Table2, page: "tables" },
   { label: "设置", icon: Settings, page: "settings" },
   { label: "用户管理", icon: Users, page: "users", admin: true },
 ];
@@ -205,6 +207,7 @@ function WorkspaceShell({ user, onUserChange, onLogout }: { user: AuthUser; onUs
           {route.page === "batches" && <BatchesPage key={route.id ?? "list"} initialBatch={route.id ?? null} onNew={() => navigate("/new")} onNavigate={navigate} />}
           {route.page === "accounts" && <AccountsPage />}
           {route.page === "mail" && <MailPage mailboxId={route.id} folder={route.folder} uid={route.uid} onNavigate={navigate} />}
+          {route.page === "tables" && <TablesPage userId={user.id} onNavigate={navigate} />}
           {route.page === "sites" && <SitesPage siteId={route.id} tab={route.tab} onNavigate={navigate} />}
           {route.page === "settings" && <SettingsPage onPasswordChanged={onUserChange} />}
           {route.page === "users" && (user.role === "admin" ? <UsersPage currentUser={user} /> : <p role="alert">此页面仅限管理员访问。你的业务数据与其他用户隔离。</p>)}

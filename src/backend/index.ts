@@ -40,9 +40,12 @@ import { listTemplates, removeTemplate, saveTemplate } from "./entity-templates.
 import { ABANDON_JOB, abandonStatus, queueAbandon, retryAbandon, runAbandon } from "./abandon.ts";
 import type { MailTransportFactory } from "./mailbox-transport.ts";
 import { createMailboxService } from "./mailbox-service.ts";
+import { createGristService } from "./grist-settings.ts";
+import type { GristClient } from "./grist.ts";
 
 export interface Workspace {
   handlers: Handlers;
+  gristClient(): GristClient;
   mailAttachment(input: { mailboxId: number; folder: string; uid: number; partId: string }): Promise<{ name: string; type: string; size: number; data: Buffer }>;
   subscribe(listener: (msg: Push) => void): () => void;
   close(): Promise<void>;
@@ -94,6 +97,7 @@ export function createWorkspace(opts: {
   const dbPath = join(userData, "website-gen.sqlite");
   const db = openDb(dbPath);
   migrate(db);
+  const grist = createGristService({ db, key: opts.key });
 
   const listeners = new Set<(msg: Push) => void>();
   const push = (msg: Push) => {
@@ -266,6 +270,7 @@ export function createWorkspace(opts: {
   };
 
   const handlers: Handlers = {
+    ...grist.handlers,
     "overview.get": () => getOverview(db),
     "templates.list": () => listTemplates(db),
     "templates.save": (p) => saveTemplate(db, p),
@@ -525,6 +530,19 @@ export function createWorkspace(opts: {
   let closeTask: Promise<void> | undefined;
   return {
     handlers: guarded,
+    gristClient() {
+      if (closing) throw new Error("工作区已关闭");
+      return new Proxy(grist.client(), {
+        get(target, property, receiver) {
+          const value = Reflect.get(target, property, receiver);
+          if (typeof value !== "function") return value;
+          return (...args: unknown[]) => {
+            if (closing) throw new Error("工作区已关闭");
+            return track(Promise.resolve().then(() => value.apply(target, args)));
+          };
+        },
+      });
+    },
     mailAttachment(input) {
       if (closing) return Promise.reject(new Error("工作区已关闭"));
       return track(trackMailbox(input.mailboxId, mailboxes.attachment(input)));

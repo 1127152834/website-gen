@@ -234,4 +234,10 @@ export const MIGRATIONS: string[] = [
      finished_at INTEGER,
      PRIMARY KEY(job_id,step)
    );`,
+  // Grist connection address is workspace-local; API keys stay encrypted in secrets.
+  `CREATE TABLE workspace_settings (
+     name TEXT PRIMARY KEY,
+     value TEXT NOT NULL,
+     updated_at INTEGER NOT NULL
+   );`,
 ];

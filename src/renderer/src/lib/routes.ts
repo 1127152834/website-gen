@@ -1,4 +1,4 @@
-export type Page = "overview" | "new" | "batches" | "sites" | "accounts" | "mail" | "settings" | "users" | "not-found";
+export type Page = "overview" | "new" | "batches" | "sites" | "accounts" | "mail" | "tables" | "settings" | "users" | "not-found";
 export interface Route { page: Page; id?: number; tab?: string; folder?: string; uid?: number }
 export function parseRoute(path: string): Route {
   if (path === "/" || path === "/overview") return { page: "overview" };
@@ -12,7 +12,7 @@ export function parseRoute(path: string): Route {
     if ((folder && id === undefined) || (uid !== undefined && !folder)) return { page: "not-found" };
     return { page: "mail", ...(id ? { id } : {}), ...(folder ? { folder } : {}), ...(uid ? { uid } : {}) };
   }
-  const match = /^\/(new|batches|sites|accounts|settings|users)(?:\/([1-9]\d*))?(?:\/(overview|chat|mail|changes|qa))?\/?$/.exec(path);
+  const match = /^\/(new|batches|sites|accounts|tables|settings|users)(?:\/([1-9]\d*))?(?:\/(overview|chat|mail|changes|qa))?\/?$/.exec(path);
   if (!match) return { page: "not-found" };
   const [, page, id, tab] = match;
   if ((id && page !== "sites" && page !== "batches") || (tab && (page !== "sites" || !id))) return { page: "not-found" };

@@ -8,9 +8,13 @@ import type { Push, Request } from "../shared/protocol.ts";
 import { newSessionToken } from "./auth.ts";
 import { openAdminStore, type AdminStore, type AdminUser, type UserRole } from "./admin-db.ts";
 import { acquireServerLock } from "./lock.ts";
+import type { GristClient } from "../backend/grist.ts";
+import { handleGristMcp } from "./grist-mcp.ts";
+import { GristTokenStore } from "./grist-tokens.ts";
 
 export interface WorkspaceLike {
   handlers: Handlers;
+  gristClient?(): GristClient;
   /** 只在通过会话鉴权的显式附件下载中调用，绝不解析消息中的 URL。 */
   mailAttachment?(input: { mailboxId: number; folder: string; uid: number; partId: string }): Promise<{ name: string; type: string; size: number; data: Buffer }>;
   subscribe(listener: (push: Push) => void): () => void;
@@ -108,6 +112,7 @@ export async function createApp(options: CreateAppOptions): Promise<{ server: Se
   }
 
   const hubs = new Map<number, UserHub>();
+  const gristTokens = new GristTokenStore(admin);
   const attachWorkspace = (userId: number): WorkspaceLike => {
     const workspace = options.workspaceManager.get(userId) ?? options.workspaceManager.open(userId);
     if (!hubs.has(userId)) {
@@ -181,6 +186,24 @@ export async function createApp(options: CreateAppOptions): Promise<{ server: Se
     securityHeaders(res);
     try {
       const url = new URL(req.url ?? "/", "http://localhost");
+      // MCP is a separate, Bearer-only boundary. Cookies and the RPC CSRF marker grant no access.
+      if (url.pathname === "/api/mcp") {
+        res.setHeader("Cache-Control", "no-store");
+        const token = /^Bearer ([A-Za-z0-9_-]{43})$/i.exec(req.headers.authorization ?? "")?.[1];
+        const user = token && gristTokens.authenticate(token, clock());
+        if (!user) {
+          res.setHeader("WWW-Authenticate", 'Bearer realm="grist-mcp"');
+          apiError(res, 401, "MCP 令牌无效或已撤销", "unauthorized"); return;
+        }
+        await handleGristMcp(req, res, () => {
+          // Revocation/disable during a batch or before a tool invocation must also take effect.
+          if (!gristTokens.authenticate(token, clock(), false)) throw new Error("MCP 令牌无效或已撤销");
+          const workspace = options.workspaceManager.get(user.id) ?? attachWorkspace(user.id);
+          if (!workspace.gristClient) throw new Error("请先在设置页配置 Grist");
+          return workspace.gristClient();
+        });
+        return;
+      }
       if (url.pathname.startsWith("/api/") && req.method === "POST" && req.headers["x-requested-with"] !== "website-gen") {
         // 登录没有会话可检查；其余受保护接口先返回 401，避免把 CSRF 检查伪装成登录状态探针。
         if (url.pathname !== "/api/login" && !authenticate(req)) apiError(res, 401, "请先登录", "unauthorized");
@@ -238,7 +261,12 @@ export async function createApp(options: CreateAppOptions): Promise<{ server: Se
         session = requireReady(req, res); if (!session) return;
         const request: Request = { kind: "req", id: Number(body.id ?? 0), method: String(body.method ?? ""), params: body.params };
         const workspace = options.workspaceManager.get(session.user.id) ?? attachWorkspace(session.user.id);
-        json(res, 200, await handleRequest(workspace.handlers, request)); return;
+        const tokenHandlers: Handlers = {
+          "grist.mcpToken.status": () => gristTokens.status(session!.user.id),
+          "grist.mcpToken.generate": () => gristTokens.generate(session!.user.id, clock()),
+          "grist.mcpToken.revoke": () => { gristTokens.revoke(session!.user.id); return { ok: true }; },
+        };
+        json(res, 200, await handleRequest({ ...workspace.handlers, ...tokenHandlers }, request)); return;
       }
 
       if (req.method === "GET" && url.pathname === "/api/mail/attachments") {

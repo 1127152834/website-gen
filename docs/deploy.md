@@ -47,6 +47,46 @@ docker compose logs -f app
 
 镜像基于 `node:24-bookworm-slim`，构建时用固定版本 `playwright@1.64.1` 安装 Chromium 和系统依赖；Linux QA 使用这个 Chromium。
 
+## 出站代理（Grist 等外部服务）
+
+仅当服务器直连外部 HTTPS 服务被防火墙或 Cloudflare 拦截、但通过受信代理可以访问时才配置。Node 24 的 `fetch` 默认不会仅因存在 `HTTPS_PROXY` 就使用代理；必须在进程启动前设置 `NODE_USE_ENV_PROXY=1`，此后会读取 `HTTPS_PROXY` 并遵守 `NO_PROXY`。`NO_PROXY` 至少包含 `localhost,127.0.0.1`，避免本机请求绕到代理。参见 [Node.js 24 内置代理说明](https://nodejs.org/docs/latest-v24.x/api/http.html#built-in-proxy-support)。
+
+PowerShell：
+
+```powershell
+$env:NODE_USE_ENV_PROXY = "1"
+$env:HTTPS_PROXY = "http://127.0.0.1:7890" # 替换为实际代理
+$env:NO_PROXY = "localhost,127.0.0.1"
+npm start
+```
+
+Linux：
+
+```bash
+NODE_USE_ENV_PROXY=1 \
+HTTPS_PROXY=http://127.0.0.1:7890 \
+NO_PROXY=localhost,127.0.0.1 \
+npm start
+```
+
+Docker 可通过 Compose override 把同样的变量传入 `app` 容器：
+
+```yaml
+# compose.proxy.yml
+services:
+  app:
+    environment:
+      NODE_USE_ENV_PROXY: "1"
+      HTTPS_PROXY: "http://proxy.example.com:8080"
+      NO_PROXY: "localhost,127.0.0.1"
+```
+
+```bash
+docker compose -f docker-compose.yml -f compose.proxy.yml up -d --build app
+```
+
+把示例代理地址替换为容器能够访问的地址；容器里的 `127.0.0.1` 指向容器自身，不是宿主机代理。
+
 ## Docker + Caddy 自动 HTTPS
 
 1. 把域名的 A/AAAA 记录指向服务器。

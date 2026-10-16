@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from "react";
-import { Bot, Boxes, CircleCheck, Eye, KeyRound, LoaderCircle, Mail, Pencil, Plus, RefreshCw, Settings2, ShieldCheck, Sparkles, Trash2, X } from "lucide-react";
+import { Bot, Boxes, CircleCheck, Eye, KeyRound, LoaderCircle, Mail, Pencil, Plus, RefreshCw, Settings2, ShieldCheck, Sparkles, Table2, Trash2, X } from "lucide-react";
 import type { AuthUser } from "../../../shared/auth.ts";
 import type { ModelRole, RoleSummary } from "../../../shared/protocol.ts";
 import { useConfirm, toast } from "@/components/feedback";
@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { call, onConnect } from "@/lib/backend.ts";
 import { ChangePasswordForm } from "./change-password.tsx";
+import { GristSettingsSection } from "./grist-settings.tsx";
 import { emptyModel, type ModelInput, type ModelProviderPreset, type ProviderDetail, type ProviderDraft, type ProviderProtocol } from "./settings-types.ts";
 
 const ROLE_TEXT: Record<ModelRole, { label: string; hint: string; icon: typeof Bot }> = {
@@ -27,6 +28,7 @@ const SECTIONS = [
   { id: "roles", label: "用途分配", icon: Settings2 },
   { id: "cj", label: "商品资料 CJ", icon: KeyRound },
   { id: "mailbox", label: "邮箱", icon: Mail },
+  { id: "grist", label: "Grist 表格", icon: Table2 },
   { id: "security", label: "账户安全", icon: ShieldCheck },
 ] as const;
 
@@ -169,6 +171,7 @@ export function SettingsPage({ onPasswordChanged }: { onPasswordChanged?: (user:
           <RoleSection providers={providers} roles={roles} loading={loading} onChange={changeRole} />
           <CjSection />
           <MailboxPasswordSection />
+          <GristSettingsSection />
           <section id="security" className="scroll-mt-6 space-y-5" aria-labelledby="security-title">
             <div id="security-title"><SectionHeading title="账户安全" description="修改当前账户的登录密码。保存后，当前设备以外的登录会话都会退出。" /></div>
             <div className="max-w-xl rounded-xl border bg-card p-4 sm:p-5"><ChangePasswordForm onChanged={(user) => { toast("密码已修改", "success"); onPasswordChanged?.(user); }} /></div>

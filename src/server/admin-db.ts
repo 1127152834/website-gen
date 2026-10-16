@@ -106,6 +106,7 @@ export class AdminStore {
     const result = this.db.prepare("UPDATE users SET password_hash = ?, must_change_password = 1 WHERE id = ?").run(await hashPassword(password), userId);
     if (!result.changes) throw new Error("用户不存在");
     this.db.prepare("DELETE FROM sessions WHERE user_id = ?").run(userId);
+    this.db.prepare("DELETE FROM grist_mcp_tokens WHERE user_id = ?").run(userId);
   }
 
   async changePassword(userId: number, oldPassword: string, password: string, keepTokenHash: string): Promise<void> {
@@ -138,7 +139,10 @@ export class AdminStore {
       if (enabledAdmins <= 1) throw new Error("不能停用最后一个管理员");
     }
     this.db.prepare("UPDATE users SET disabled = ? WHERE id = ?").run(disabled ? 1 : 0, userId);
-    if (disabled) this.db.prepare("DELETE FROM sessions WHERE user_id = ?").run(userId);
+    if (disabled) {
+      this.db.prepare("DELETE FROM sessions WHERE user_id = ?").run(userId);
+      this.db.prepare("DELETE FROM grist_mcp_tokens WHERE user_id = ?").run(userId);
+    }
     return this.getUser(userId)!;
   }
 
@@ -198,6 +202,10 @@ export function openAdminStore(path: string): AdminStore {
       expires_at INTEGER NOT NULL, created_at INTEGER NOT NULL
     );
     CREATE INDEX IF NOT EXISTS sessions_user ON sessions(user_id);
+    CREATE TABLE IF NOT EXISTS grist_mcp_tokens (
+      user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+      token_hash TEXT NOT NULL UNIQUE, created_at INTEGER NOT NULL, last_used_at INTEGER
+    );
     CREATE TABLE IF NOT EXISTS login_attempts (
       id INTEGER PRIMARY KEY, ip TEXT NOT NULL, username TEXT NOT NULL, succeeded INTEGER NOT NULL, attempted_at INTEGER NOT NULL
     );

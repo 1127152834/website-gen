@@ -7,5 +7,7 @@ test("console routes support bookmarkable site tabs and reject malformed detail 
   assert.deepEqual(parseRoute("/batches/4"), { page: "batches", id: 4 });
   assert.deepEqual(parseRoute("/mail/7/Sent%20Messages/42"), { page: "mail", id: 7, folder: "Sent Messages", uid: 42 });
   assert.deepEqual(parseRoute("/mail"), { page: "mail" });
-  for (const url of ["/sites/0/chat", "/accounts/2", "/batches/2/chat", "/sites/2/delete", "/mail/0/INBOX", "/mail/2/INBOX/0", "/other"]) assert.equal(parseRoute(url).page, "not-found");
+  assert.deepEqual(parseRoute("/tables"), { page: "tables" });
+  assert.deepEqual(parseRoute("/tables/"), { page: "tables" });
+  for (const url of ["/sites/0/chat", "/accounts/2", "/batches/2/chat", "/sites/2/delete", "/mail/0/INBOX", "/mail/2/INBOX/0", "/tables/2", "/tables/2/overview", "/tables/other", "/other"]) assert.equal(parseRoute(url).page, "not-found");
 });

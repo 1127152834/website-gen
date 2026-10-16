@@ -18,7 +18,7 @@ test("011 upgrades a populated 010 workspace without losing pipeline history or 
       INSERT INTO changesets(site_id,summary,initiator,ops_json,status,created_at) VALUES(1,'原始变更','you','[]','applied',0);`);
     migrate(db);
     migrate(db);
-    assert.equal(schemaVersion(db), 11);
+    assert.equal(schemaVersion(db), MIGRATIONS.length);
     const site = db.prepare("SELECT domain,status,hex(mailbox_ciphertext) AS secret,abandoned_at FROM sites WHERE id=1").get();
     assert.deepEqual({ ...site }, { domain: "kept.example", status: "done", secret: "5678", abandoned_at: null });
     assert.equal((db.prepare("SELECT count(*) n FROM provision_steps").get() as { n: number }).n, 1);
