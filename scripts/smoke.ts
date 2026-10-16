@@ -118,7 +118,7 @@ try {
   await nav.getByRole("link", { name: "批次", exact: true }).click();
   await page.getByText("还没有建站批次").waitFor();
   await nav.getByRole("link", { name: "建站", exact: true }).click();
-  await page.getByText("没有可用的域名").waitFor();
+  await page.getByRole("heading", { name: "建站", exact: true }).waitFor();
   assert.ok(await page.getByRole("button", { name: "下一步" }).isDisabled());
   await nav.getByRole("link", { name: "站点", exact: true }).click();
   await page.getByText("还没有站点", { exact: true }).waitFor();

@@ -1,0 +1,6 @@
+import { useRouter } from '@tanstack/react-router';
+import { Button } from '@/components/ui/button';
+export function ErrorPage({code,title,description,retry}:{code:string;title:string;description:string;retry?:()=>void}){const router=useRouter();return <section className="flex min-h-[60svh] flex-col items-center justify-center gap-5 px-4 py-12 text-center"><p className="text-7xl font-bold tabular-nums tracking-tight text-muted-foreground/50">{code}</p><div><h1 className="text-2xl font-semibold">{title}</h1><p className="mt-3 max-w-md text-sm text-muted-foreground">{description}</p></div><div className="flex gap-3">{retry&&<Button variant="outline" onClick={retry}>重新加载</Button>}<Button onClick={()=>void router.navigate({to:'/'})}>返回总览</Button></div></section>;}
+export function NotFoundError(){return <ErrorPage code="404" title="页面未找到" description="地址可能已更改，或链接中的编号不正确。请从主导航重新进入。"/>;}
+export function GeneralError({reset}:{reset?:()=>void}){const router=useRouter();return <ErrorPage code="500" title="页面暂时无法加载" description="请检查网络连接后重试。尚未提交的数据不会被自动发送。" retry={()=>{reset?.();void router.invalidate();}}/>;}
+export function ForbiddenError(){return <ErrorPage code="403" title="没有访问权限" description="此页面仅限管理员访问。你的业务数据仍与其他用户隔离。"/>;}

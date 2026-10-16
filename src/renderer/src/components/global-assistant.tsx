@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from "react";
-import { ChevronDown, MessageSquarePlus, Send, Settings, Square, X } from "lucide-react";
+import { BotMessageSquare, ChevronDown, MessageSquarePlus, Send, Settings, Square, X } from "lucide-react";
 import type { AssistantConfirmation, AssistantEvent, ChatItem } from "../../../shared/protocol.ts";
-import { call, onAssistant, onConnect } from "@/lib/backend.ts";
+import { call, onAssistant, useRpcData } from "@/lib/backend.ts";
 import { Button } from "@/components/ui/button.tsx";
 import { ChatMessage, LiveChatMessage } from "@/components/chat-messages.tsx";
 import { toolDisplayName } from "@/components/chat-message-utils.ts";
@@ -12,17 +12,7 @@ import { cn } from "@/lib/utils.ts";
 type AssistantHistory = { items: ChatItem[]; busy: boolean; pending: AssistantConfirmation[] };
 const EXAMPLES = ["我有哪些站点还没上线？", "怎么批量建站？", "看一下 Grist 里 WGwork 的表"];
 
-function PiMascot({ state }: { state: "idle" | "busy" | "happy" }) {
-  return <svg className={cn("pi-mascot", `pi-mascot-${state}`)} viewBox="0 0 72 72" role="img" aria-label={state === "busy" ? "小助手正在工作" : "pi 小助手"}>
-    <path className="pi-shadow" d="M18 61c8-5 28-5 36 0-7 5-29 5-36 0Z" />
-    <path className="pi-body" d="M15 38c0-15 9-27 21-27s21 12 21 27c0 17-7 25-21 25S15 55 15 38Z" />
-    <path className="pi-highlight" d="M23 23c4-6 10-8 15-7" />
-    <g className="pi-face"><ellipse cx="29" cy="37" rx="2.7" ry="4" /><ellipse cx="44" cy="37" rx="2.7" ry="4" /><path d="M32 47c3 3 6 3 9 0" /></g>
-    <path className="pi-cheek" d="M22 44h5M46 44h5" />
-    <path className="pi-arm" d="M55 40c7-3 8-8 5-11" />
-    {state === "busy" && <g className="pi-orbit"><circle cx="59" cy="17" r="2" /><circle cx="64" cy="23" r="1.5" /><circle cx="56" cy="10" r="1.2" /></g>}
-  </svg>;
-}
+function PiMascot({ state }: { state: "idle" | "busy" | "happy" }) { return <BotMessageSquare className="size-5" role="img" aria-label={state === "busy" ? "小助手正在工作" : "pi 小助手"} />; }
 
 function ConfirmCard({ item, resolving, onResolve }: { item: AssistantConfirmation; resolving: boolean; onResolve: (approve: boolean) => void }) {
   const params = confirmationParamEntries(item.args);
@@ -58,19 +48,22 @@ export function GlobalAssistant({ onNavigate }: { onNavigate: (path: string) => 
   const happyTimer = useRef<number | null>(null);
   const historyRequest = useRef(new LatestRequest());
 
-  const load = useCallback(() => {
+  const loadHistory = useCallback(async () => {
     const request = historyRequest.current.begin();
-    void call<AssistantHistory>("assistant.history").then((history) => {
-      if (!historyRequest.current.isCurrent(request)) return;
-      setItems(history.items);
-      setPending(history.pending ?? []);
-      setLive((current) => history.busy ? current ?? emptyLiveChat() : null);
-      setError(null);
-    }, (reason: Error) => { if (historyRequest.current.isCurrent(request)) setError(reason.message); });
+    return { ...(await call<AssistantHistory>("assistant.history")), request };
   }, []);
+  const { data: history, error: historyError, refresh } = useRpcData<AssistantHistory & { request: number }>("assistant.history", undefined, { loader: loadHistory });
+  useEffect(() => {
+    if (!history || !historyRequest.current.isCurrent(history.request)) return;
+    setItems(history.items); setPending(history.pending ?? []);
+    setLive(current => history.busy ? current ?? emptyLiveChat() : null);
+    setError(null);
+  }, [history]);
+  useEffect(() => { if (historyError) setError(historyError.message); }, [historyError]);
+  const load = useCallback(() => { void refresh().catch((reason: Error) => setError(reason.message)); }, [refresh]);
 
   useEffect(() => {
-    const off = [onConnect(load), onAssistant((event: AssistantEvent) => {
+    const off = [onAssistant((event: AssistantEvent) => {
       historyRequest.current.invalidate();
       if (event.type === "confirm") {
         setPending((current) => current.some((item) => item.id === event.id) ? current : [...current, event]);
@@ -84,7 +77,6 @@ export function GlobalAssistant({ onNavigate }: { onNavigate: (path: string) => 
       }
       if (event.type === "settled") {
         setLive(null);
-        load();
         setHappy(true);
         if (!openRef.current) setUnread(true);
         if (happyTimer.current != null) window.clearTimeout(happyTimer.current);
