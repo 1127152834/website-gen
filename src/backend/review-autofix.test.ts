@@ -45,8 +45,8 @@ function reviewIssue(key: string, fields: Record<string, unknown>) {
     page: "Product: Cat Bed",
     url: "https://shop.test/product/cat-bed/",
     evidence: "Visible product inconsistency.",
-    why: "The published product does not match its source facts.",
-    fix: "Correct the published product from its persisted source facts.",
+    why: "已发布商品与来源资料不一致。",
+    fix: "根据已保存的来源资料修正商品。",
     needs_real_data: false,
     ...fields,
   }] });
@@ -171,7 +171,7 @@ function fixture(legacy = false) {
         }), cost: 0 };
         if (prompt.startsWith("You are the final compliance reviewer") && prompt.includes("PAGE URL:\nhttps://shop.test/product/cat-bed/")) {
           if (/Navy|Extra Large/.test(`${product.short_description} ${product.description}`)) {
-            return { text: reviewIssue("variation-option-copy", { evidence: "The description lists Navy and Extra Large, but the actual variation options are Cloud Grey and Warm Brown.", why: "The description has a mismatch with the actual WooCommerce variation names.", fix: "Regenerate title and descriptions using the actual variation option names." }), cost: 0 };
+            return { text: reviewIssue("variation-option-copy", { evidence: "The description lists Navy and Extra Large, but the actual variation options are Cloud Grey and Warm Brown.", why: "商品描述与实际规格名称不一致。", fix: "按实际规格名称重新生成标题和描述。" }), cost: 0 };
           }
         }
         return { text: emptyReview, cost: 0 };
@@ -232,11 +232,11 @@ function fixture(legacy = false) {
     if (prompt.startsWith("Choose the clearest main photo")) return { text: JSON.stringify({ mainImage: "https://img.test/clean-cat-bed.jpg", reason: "The complete cat bed is visible without labels or overlays.", completeProductVisible: true }), cost: 0 };
     if (prompt.includes("https://shop.test/product/cat-bed/")) {
       if (product.images[0]?.src !== "https://img.test/clean-cat-bed.jpg") {
-        const main = JSON.parse(reviewIssue("main-image-overlay", { kind: "visual", evidence: "The main product image has a prominent 60cm text overlay.", why: "A size-label overlay obscures the main product photo.", fix: "Choose a clean complete-item main image without text overlays." }));
-        const variants = JSON.parse(reviewIssue("shared-variation-images", { evidence: "Both variations share the same product image even though source variant images differ.", why: "Variation images are identical and do not represent their individual options.", fix: "Assign each variation its exact source image." }));
+        const main = JSON.parse(reviewIssue("main-image-overlay", { kind: "visual", evidence: "The main product image has a prominent 60cm text overlay.", why: "尺寸文字遮挡了商品主图。", fix: "选择没有文字遮挡且完整展示商品的主图。" }));
+        const variants = JSON.parse(reviewIssue("shared-variation-images", { evidence: "Both variations share the same product image even though source variant images differ.", why: "不同规格使用了相同图片，无法对应各自选项。", fix: "为每个规格设置准确的来源图片。" }));
         return { text: JSON.stringify({ issues: [...main.issues, ...variants.issues] }), cost: 0 };
       }
-      if (variations.every((x) => x.image.src === variations[0].image.src)) return { text: reviewIssue("shared-variation-images", { evidence: "Both variations share the same product image even though source variant images differ.", why: "Variation images are identical and do not represent their individual options.", fix: "Assign each variation its exact source image." }), cost: 0 };
+      if (variations.every((x) => x.image.src === variations[0].image.src)) return { text: reviewIssue("shared-variation-images", { evidence: "Both variations share the same product image even though source variant images differ.", why: "不同规格使用了相同图片，无法对应各自选项。", fix: "为每个规格设置准确的来源图片。" }), cost: 0 };
     }
     return { text: emptyReview, cost: 0 };
   };
@@ -278,8 +278,8 @@ test("a valid model product-copy action also hydrates legacy source before groun
     if (prompt.startsWith("You are the final compliance reviewer") && prompt.includes("PAGE URL:\nhttps://shop.test/product/cat-bed/") && /Navy/.test(f.product.description)) {
       return { text: reviewIssue("variation-option-copy", {
         evidence: "The description variant names differ from the actual variation options Grey / S and Brown / L.",
-        why: "Product description options mismatch the real variants.",
-        fix: "Use actual variation option names.",
+        why: "商品描述选项与实际规格不一致。",
+        fix: "使用实际规格选项名称。",
         action: { tool: "update_product", params: { id: 9, summary: "修复真实规格文案", name: "Cat Bed", short_description: "A cat bed in Grey / S and Brown / L.", description_html: "<p>A cat bed in Grey / S and Brown / L.</p>" } },
       }), cost: 0 };
     }
@@ -299,7 +299,7 @@ test("source recovery failure explicitly clears the model fallback action and ke
     if (prompt.startsWith("You are the final compliance reviewer") && prompt.includes("PAGE URL:\nhttps://shop.test/product/cat-bed/")) {
       return { text: reviewIssue("variation-option-copy", {
         evidence: "The description variant names differ from the real variation options.",
-        why: "Product description options mismatch the real variants.",
+        why: "商品描述选项与实际规格不一致。",
         action: { tool: "update_product", params: { id: 9, summary: "删除多余文字", description_html: "<p>Choose Navy.</p>" } },
       }), cost: 0 };
     }
@@ -483,8 +483,8 @@ test("needs_you findings are never written and exhausted two-round state persist
     if (prompt.includes("https://shop.test/product/cat-bed/")) return { text: reviewIssue("unknown-dimensions", {
       level: "P1",
       evidence: "The actual product dimensions are unknown and the source has no proof.",
-      why: "Real measurements cannot be inferred.",
-      fix: "Confirm the actual dimensions from a verified source.",
+      why: "无法推断商品的真实尺寸。",
+      fix: "请从可靠来源确认实际尺寸。",
       needs_real_data: true,
     }), cost: 0 };
     return { text: emptyReview, cost: 0 };

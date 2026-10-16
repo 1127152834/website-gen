@@ -34,6 +34,7 @@ import { browseWithEdge } from "./qa-browser.ts";
 import { secretHint, unseal } from "./secrets.ts";
 import type { QaReport } from "./store.ts";
 import { qaView } from "./qa-view.ts";
+import { QA_JOB, qaRuns, runQaJob, startQaRun } from "./qa-runs.ts";
 import type { Handlers } from "./rpc.ts";
 import { allSites, getOverview } from "./overview.ts";
 import { listTemplates, removeTemplate, saveTemplate } from "./entity-templates.ts";
@@ -179,6 +180,7 @@ export function createWorkspace(opts: {
     db,
     concurrency: 3,
     handlers: {
+      [QA_JOB]: (job) => trackSite(job.siteId!, runQaJob(pipelineDeps(), job)),
       [PROVISION_JOB]: (job) => trackSite(job.siteId!, provisionSite(pipelineDeps(), job.siteId!)),
       [ABANDON_JOB]: async (job) => {
         // 墓碑先阻止新的站点操作，再等此前在途的步骤落定，避免远端资源删除后又被建回来。
@@ -359,6 +361,23 @@ export function createWorkspace(opts: {
     "sites.steps": (p) => siteSteps(db, Number((p as { siteId: number }).siteId)),
     "sites.events": (p) => eventsForSite(db, String((p as { siteId: number }).siteId)),
     // QA 报告；截图转成 data URL 给界面显示（只读 work/qa 目录下的文件）
+    "qa.fixIssue": (p) => {
+      const { siteId, issueId } = p as { siteId: number; issueId: string };
+      const run = startQaRun(pipelineDeps(), { siteId: Number(siteId), issueId, kind: "fixIssue" });
+      tick();
+      return run;
+    },
+    "qa.fixAll": (p) => {
+      const run = startQaRun(pipelineDeps(), { siteId: Number((p as { siteId: number }).siteId), kind: "fixAll" });
+      tick();
+      return run;
+    },
+    "qa.recheck": (p) => {
+      const run = startQaRun(pipelineDeps(), { siteId: Number((p as { siteId: number }).siteId), kind: "recheck" });
+      tick();
+      return run;
+    },
+    "qa.runs": (p) => qaRuns(db, Number((p as { siteId: number }).siteId)),
     "sites.qa": (p) => {
       const row = db.prepare("SELECT qa_json FROM sites WHERE id = ?").get(Number((p as { siteId: number }).siteId)) as { qa_json: string | null } | undefined;
       if (!row?.qa_json) return null;

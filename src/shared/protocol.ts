@@ -160,8 +160,33 @@ export interface ReviewIssue {
   fix: string;
   /** fixed = AI 已修并复核通过；open = 还没修好；needs_you = 需要你补真实资料（尺寸、套装组件、材质等） */
   status: "fixed" | "open" | "needs_you";
+  /** 仅表示现有代码驱动修复器能处理，不会为计算该值调用模型 */
+  fixable?: boolean;
   /** 相关截图（data URL），可选 */
   shot?: string;
+}
+
+/** 单次人工触发的 QA 修复或复核任务。 */
+export interface QaRun {
+  id: string;
+  siteId: number;
+  kind: "fixIssue" | "fixAll" | "recheck";
+  status: "queued" | "running" | "done" | "error";
+  createdAt: number;
+  finishedAt?: number;
+  events: QaRunEvent[];
+  result?: { fixed: number; remainingP1: number; passed: boolean };
+  error?: string;
+}
+
+/** QA 任务的可持久化进度事件；同样放在 RunEvent.payload 中实时推送。 */
+export interface QaRunEvent {
+  at: number;
+  stage: string;
+  level: "info" | "success" | "warning" | "error";
+  message: string;
+  issueId?: string;
+  changesetId?: number;
 }
 
 /** 站点页列出的站（流程已完成的） */

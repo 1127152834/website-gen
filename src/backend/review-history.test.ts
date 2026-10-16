@@ -160,5 +160,5 @@ test("inspector failure after collection prunes stale pages while preserving det
 
   assert.equal(review.issues.some((issue) => issue.id === stale.id), false, "the successful crawl is sufficient to prune removed page history");
   assert(review.issues.some((issue) => issue.id === issueId("config", homeUrl, "missing-custom-logo")), "deterministic site-level history must survive with its fresh anchor");
-  assert(review.issues.some((issue) => issue.page === "Full-site review" && /inspector boom/.test(issue.evidence)), "the inspector failure must remain explicit");
+  assert(review.issues.some((issue) => issue.page === "全站" && /inspector boom/.test(issue.evidence)), "the inspector failure must remain explicit");
 });

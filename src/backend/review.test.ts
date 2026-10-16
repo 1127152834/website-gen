@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import type { ReviewIssue } from "../shared/protocol.ts";
 import type { StepCtx } from "./pipeline.ts";
-import { collectReviewSnapshot, crawlReviewTargets, deterministicSourceFindings, deterministicUnderwritingFindings, parseReviewIssues, reviewWithRetry, runFullSiteReview, runReviewLoop, type ReviewFinding, type ReviewSnapshot } from "./review.ts";
+import { collectReviewSnapshot, crawlReviewTargets, deterministicSourceFindings, deterministicUnderwritingFindings, parseReviewIssues, planReviewIssueFix, reviewIssueFixKind, reviewIssueFixable, reviewWithRetry, runFullSiteReview, runReviewLoop, type ReviewFinding, type ReviewSnapshot } from "./review.ts";
 
 const issue = (id: string, level: ReviewIssue["level"] = "P1", status: ReviewIssue["status"] = "open"): ReviewIssue => ({
   id, level, kind: "product", page: "Product", url: "https://shop.test/product/bag/",
@@ -42,6 +42,32 @@ test("review issue parsing is strict and creates stable ids from semantic keys",
   }] }))[0];
   assert.equal(guarded.issue.status, "needs_you", "the model cannot bypass real-data safeguards with a false flag");
   assert.equal(guarded.action, undefined);
+});
+
+test("Chinese real-data wording cannot bypass needs_you and Chinese trust findings remain in scope", async () => {
+  const parsed = parseReviewIssues(JSON.stringify({ issues: [{
+    key: "size-unknown", level: "P1", kind: "product", page: "商品：收纳包", url: "https://shop.test/product/bag/",
+    evidence: "Nordic Paws", why: "商品实际尺寸未知，现有资料无法确认", fix: "请补充供应商确认过的尺寸和单位", needs_real_data: false,
+  }] }))[0];
+  assert.equal(parsed.issue.status, "needs_you");
+  assert.equal(parsed.action, undefined);
+
+  const reply = JSON.stringify({ issues: [{
+    key: "identity-mismatch", focus: "store_trust", level: "P1", kind: "config", page: "关于我们", url: "https://shop.test/about/",
+    evidence: "Nordic Paws", why: "页面中的公司名称与已确认资料不一致", fix: "改成批次主体中的真实公司名称", needs_real_data: false,
+  }] });
+  const f = reviewFixture({ reply });
+  const review = await runFullSiteReview(f.ctx, { loginUrl: "https://login.test", vision: f.vision, maxRounds: 0, urls: ["https://shop.test/about/"] });
+  assert(review.issues.some((row) => row.evidence === "Nordic Paws" && row.status === "open"));
+});
+
+test("Chinese needs_you history is preserved when facts have not changed", async () => {
+  const f = reviewFixture();
+  const old = { ...issue("identity-needs-you", "P1", "needs_you"), kind: "config" as const, page: "page-2-about", url: "https://shop.test/about/",
+    evidence: "Nordic Paws", why: "页面缺少真实公司名称和地址", fix: "请在批次主体设置中补充真实公司名称和地址" };
+  f.ctx.site.qa_json = JSON.stringify({ review: { at: 0, rounds: 0, passed: false, issues: [old] } });
+  const review = await runFullSiteReview(f.ctx, { loginUrl: "https://login.test", vision: f.vision, maxRounds: 0 });
+  assert.equal(review.issues.find((row) => row.id === old.id)?.status, "needs_you");
 });
 
 test("auto-fix loop re-reviews after each change, stops at two rounds and keeps needs_you P1 open", async () => {
@@ -180,6 +206,23 @@ test("questionable dimensions and unclear source variants deterministically beco
   const findings = deterministicSourceFindings(snapshot);
   assert.equal(findings.length, 2);
   assert(findings.every((x) => x.issue.level === "P2" && x.issue.status === "needs_you" && !x.action));
+  assert(findings.every((x) => /[\u3400-\u9fff]/.test(x.issue.why) && /[\u3400-\u9fff]/.test(x.issue.fix)));
+});
+
+test("deterministic findings use short Chinese operator guidance and static fixability never marks needs_you", () => {
+  const snapshot = underwritingSnapshot();
+  const about = snapshot.captures.find((capture) => capture.path === "/about/")! as typeof snapshot.captures[number] & { sections: { body: string } };
+  about.sections.body = about.sections.body.replace("Harbor Goods LLC", "Harbor Goods");
+  const findings = deterministicUnderwritingFindings(snapshot);
+  assert(findings.length > 0);
+  assert(findings.every((finding) => /[\u3400-\u9fff]/.test(finding.issue.why) && /[\u3400-\u9fff]/.test(finding.issue.fix)));
+  assert.equal(reviewIssueFixable({ ...findings[0].issue, status: "needs_you" }, snapshot), false);
+  assert.equal(reviewIssueFixable({ ...findings[0].issue, status: "open", kind: "product", url: "https://shop.test/product/bag/", evidence: "主图有条码拼图", why: "商品主图不合适", fix: "更换主图" }, snapshot), true);
+  const policy = { ...findings[0].issue, status: "open" as const, kind: "policy" as const, page: "退货与退款", url: "https://shop.test/returns/" };
+  const metadata = { ...findings[0].issue, status: "open" as const, kind: "seo" as const, page: "关于我们", url: "https://shop.test/about/" };
+  assert.equal(reviewIssueFixKind(policy), "policy-text"); assert.equal(reviewIssueFixable(policy), true);
+  assert.equal(reviewIssueFixKind(metadata), "metadata"); assert.equal(reviewIssueFixable(metadata), true);
+  assert.equal(reviewIssueFixable({ ...policy, status: "needs_you" }), false);
 });
 
 test("a changed source-facts fingerprint lets a successfully re-reviewed needs_you issue close", async () => {
@@ -210,6 +253,36 @@ test("a malformed review reply is retried once with the parse error, then fails 
   assert.equal(prompts.length, 2);
   assert.match(prompts[1], /not valid/);
   await assert.rejects(reviewWithRetry(async () => ({ text: "not json", cost: 0 })));
+});
+
+test("production review retries English why/fix and accepts a Chinese correction", async () => {
+  const prompts: string[] = [];
+  const replies = [
+    JSON.stringify({ issues: [{ key: "identity", level: "P1", kind: "copy", page: "About", url: "https://shop.test/about/", evidence: "Nordic Paws", why: "The business identity is incomplete", fix: "Add the legal company name and address", needs_real_data: false }] }),
+    JSON.stringify({ issues: [{ key: "identity", level: "P1", kind: "copy", page: "关于我们", url: "https://shop.test/about/", evidence: "Nordic Paws", why: "页面没有说明真实经营主体", fix: "补充真实公司名称和地址", needs_real_data: false }] }),
+  ];
+  const findings = await reviewWithRetry(async (extra) => {
+    prompts.push(extra);
+    return { text: replies.shift()!, cost: 0 };
+  }, undefined, { requireChinese: true });
+  assert.equal(prompts.length, 2);
+  assert.match(prompts[1], /简体中文/);
+  assert.equal(findings[0].issue.why, "页面没有说明真实经营主体");
+  assert.equal(findings[0].issue.fix, "补充真实公司名称和地址");
+  assert.equal(findings[0].issue.evidence, "Nordic Paws");
+});
+
+test("production review fails closed after repeated non-Chinese or forbidden-jargon output", async () => {
+  const reply = JSON.stringify({ issues: [{ key: "copy", level: "P2", kind: "copy", page: "首页", url: "https://shop.test/", evidence: "Shop now", why: "CTA 不清楚", fix: "Improve the CTA for underwriting", needs_real_data: false }] });
+  await assert.rejects(
+    reviewWithRetry(async () => ({ text: reply, cost: 0 }), undefined, { requireChinese: true }),
+    /必须使用简短、具体的简体中文/,
+  );
+});
+
+test("production review rejects a token Chinese prefix wrapped around English guidance", async () => {
+  const reply = JSON.stringify({ issues: [{ key: "identity", level: "P1", kind: "copy", page: "关于我们", url: "https://shop.test/about/", evidence: "Nordic Paws", why: "问题: Missing the verified legal business name and address.", fix: "修改: Add the company name in settings.", needs_real_data: false }] });
+  await assert.rejects(reviewWithRetry(async () => ({ text: reply, cost: 0 }), undefined, { requireChinese: true }), /必须使用简短、具体的简体中文/);
 });
 
 const completeReviewPages = ["home", "about", "contact", "shipping", "returns", "privacy-policy", "terms"].map((slug, index) => ({
@@ -267,12 +340,103 @@ test("trust review sends long page text once with only on-page product facts and
   assert.match(home, /CJ-ONLY-BAG/);
   assert.doesNotMatch(home, /CJ-NOT-ON-PAGE|Special Umbrella/);
   assert(f.browseInputs.every((input) => !(input as { cart?: unknown }).cart));
+  assert.match(home, /why and fix MUST be short, concrete Simplified Chinese/);
+  assert.match(f.visualPrompts[0], /evidence MUST remain the exact verbatim/);
+});
+
+test("targeted review browses only requested pages, reports progress and preserves untouched history", async () => {
+  const f = reviewFixture();
+  const untouched = { ...issue("untouched", "P2"), url: "https://shop.test/product/bag/", page: "product-8-bag" };
+  f.ctx.site.qa_json = JSON.stringify({ review: { at: 0, rounds: 0, passed: false, issues: [untouched] } });
+  const progress: { page: string; index: number; total: number }[] = [];
+  const review = await runFullSiteReview(f.ctx, {
+    loginUrl: "https://login.test", vision: f.vision, maxRounds: 0, urls: ["https://shop.test/about/"],
+    onProgress: (value) => progress.push(value),
+  });
+  const pages = (f.browseInputs[0] as { pages: { path: string }[] }).pages;
+  assert.deepEqual(pages.map((page) => page.path), ["/about/"]);
+  assert.deepEqual(progress, [{ page: "关于我们", index: 1, total: 1 }]);
+  assert.equal(review.issues.find((row) => row.id === untouched.id)?.status, "open");
+});
+
+test("validated model actions persist for fixability and the exported user planner reuses them without writing", async () => {
+  const reply = JSON.stringify({ issues: [{
+    key: "about-demo", focus: "underwriting", level: "P2", kind: "copy", page: "关于我们", url: "https://shop.test/about/",
+    evidence: "Demo Store", why: "页面仍是示例店铺内容", fix: "改成真实店铺介绍", needs_real_data: false,
+    action: { tool: "update_copy", params: { summary: "修正关于我们", about: "Harbor Goods LLC sells travel goods." } },
+  }] });
+  const f = reviewFixture({ reply });
+  await runFullSiteReview(f.ctx, { loginUrl: "https://login.test", vision: f.vision, maxRounds: 0, urls: ["https://shop.test/about/"] });
+  const persisted = JSON.parse(f.ctx.site.qa_json!) as { reviewFindings: ReviewFinding[] };
+  const finding = persisted.reviewFindings.find((row) => row.action?.tool === "update_copy")!;
+  assert(finding);
+  const snapshot = await collectReviewSnapshot(f.ctx, "https://login.test", "qa", ["https://shop.test/about/"]);
+  assert.deepEqual(await planReviewIssueFix(f.ctx, snapshot, finding, f.vision), finding.action);
+  assert.equal(await planReviewIssueFix(f.ctx, snapshot, { ...finding, action: { tool: "update_policy", params: { summary: "缺正文", name: "returns" } } }, f.vision), undefined);
+});
+
+test("user planner accepts a valid saved variation-image action only for its product target", async () => {
+  const f = reviewFixture();
+  const snapshot = await collectReviewSnapshot(f.ctx, "https://login.test", "qa", ["https://shop.test/product/bag/"]);
+  const productTarget = snapshot.targets.find((target) => target.kind === "product")!;
+  const productCapture = snapshot.captures.find((capture) => capture.name === productTarget.name)!;
+  const finding: ReviewFinding = {
+    issue: { id: "variation-images", level: "P2", kind: "visual", page: "商品：Travel Bag", url: productCapture.url, evidence: "Two options share one image", why: "不同规格共用同一张图片", fix: "为每个规格设置对应图片", status: "open" },
+    needsRealData: false,
+    action: { tool: "update_product_variation_images", params: { summary: "修正规格图片", id: productTarget.targetId } },
+  };
+  assert.deepEqual(await planReviewIssueFix(f.ctx, snapshot, finding, f.vision), finding.action);
+  assert.equal(await planReviewIssueFix(f.ctx, snapshot, { ...finding, action: { ...finding.action!, params: { summary: "修正规格图片", id: Number(productTarget.targetId) + 1 } } }, f.vision), undefined);
+});
+
+test("user planner accepts one HTTPS product image source and rejects ambiguous saved image actions", async () => {
+  const f = reviewFixture();
+  const snapshot = await collectReviewSnapshot(f.ctx, "https://login.test", "qa", ["https://shop.test/product/bag/"]);
+  const productTarget = snapshot.targets.find((target) => target.kind === "product")!;
+  const productCapture = snapshot.captures.find((capture) => capture.name === productTarget.name)!;
+  const base: ReviewFinding = {
+    issue: { id: "main-image", level: "P1", kind: "visual", page: "商品：Travel Bag", url: productCapture.url, evidence: "The image shows another product", why: "主图与商品不一致", fix: "换成对应商品主图", status: "open" },
+    needsRealData: false,
+    action: { tool: "update_product_main_image", params: { summary: "修正商品主图", id: productTarget.targetId, image_url: "https://cdn.test/bag.jpg" } },
+  };
+  assert.deepEqual(await planReviewIssueFix(f.ctx, snapshot, base, f.vision), base.action);
+  assert.equal(await planReviewIssueFix(f.ctx, snapshot, { ...base, action: { tool: "update_product_main_image", params: { ...base.action!.params, image_id: 12 } } }, f.vision), undefined);
+  assert.equal(await planReviewIssueFix(f.ctx, snapshot, { ...base, action: { tool: "update_product_main_image", params: { summary: "修正商品主图", id: productTarget.targetId, image_id: 0, image_url: "https://cdn.test/bag.jpg" } } }, f.vision), undefined);
+  assert.equal(await planReviewIssueFix(f.ctx, snapshot, { ...base, action: { tool: "update_product_main_image", params: { summary: "修正商品主图", id: productTarget.targetId, image_url: "http://cdn.test/bag.jpg" } } }, f.vision), undefined);
+});
+
+test("old metadata issues use the code planner and a uniquely resolved real page target", async () => {
+  const f = reviewFixture();
+  const snapshot = await collectReviewSnapshot(f.ctx, "https://login.test", "qa", ["https://shop.test/about/"]);
+  const key = `page:${snapshot.targets[0].targetId}`;
+  const description = "Harbor Goods LLC offers a clear overview of this independent travel goods store.";
+  const ogDescription = "Learn about Harbor Goods LLC, its store contact details, and its current travel goods catalog.";
+  f.ctx.d.ai = async () => ({ text: JSON.stringify({ metadata: [{ key, description, ogDescription }] }), cost: 0 });
+  const finding: ReviewFinding = { issue: { id: "old-meta", level: "P3", kind: "seo", page: "关于我们", url: "https://shop.test/about/", evidence: "旧摘要重复", why: "页面摘要与其他页面相同", fix: "生成独立且准确的页面摘要", status: "open" }, needsRealData: false };
+  const action = await planReviewIssueFix(f.ctx, snapshot, finding, f.vision);
+  assert.equal(action?.tool, "update_meta");
+  assert.deepEqual(action?.params, { summary: "QA old-meta：metadata", target_type: "page", target_id: snapshot.targets[0].targetId, description, og_description: ogDescription });
+});
+
+test("policy issues use the grounded policy planner and return a validated page action", async () => {
+  const f = reviewFixture();
+  f.ctx.form = { brand: "Harbor Goods", categories: "travel goods" } as StepCtx["form"];
+  const snapshot = await collectReviewSnapshot(f.ctx, "https://login.test", "qa", ["https://shop.test/returns/"]);
+  const pad = " This sentence keeps the policy detailed enough for customers to understand the store procedure.".repeat(3);
+  const shipping = `<p>Orders ship in 1-3 business days and arrive in 5-10 business days. Free shipping is available on orders of $49 or more, otherwise shipping costs $4.99. Email support@shop.test. If an order is delayed, we email a revised shipping date. You may accept the delay or cancel for a full refund. Cancel before shipment. For a lost parcel, contact us so we can check tracking, open a carrier investigation, communicate the outcome, and resolve the lost parcel.${pad}</p>`;
+  const returns = `<p>Contact support@shop.test to request a return within 30 days after delivery. Wait for approval and return instructions; once approved, ship the item back. The customer pays return shipping unless the item is damaged, defective, or wrong. After we receive and inspect the returned item, we initiate the refund to the original payment method within 5-7 business days after receiving it. Your bank may need additional time to post the credit and bank timing varies.${pad}</p>`;
+  const privacy = `<p>Harbor Goods LLC runs this store. Email support@shop.test.${pad}</p>`;
+  const terms = `<p>Harbor Goods LLC runs this store. Email support@shop.test. Available payment methods are shown at checkout.${pad}</p>`;
+  f.ctx.d.ai = async () => ({ text: `=== SHIPPING ===\n${shipping}\n=== RETURNS ===\n${returns}\n=== PRIVACY ===\n${privacy}\n=== TERMS ===\n${terms}`, cost: 0 });
+  const finding: ReviewFinding = { issue: { id: "returns-policy", level: "P1", kind: "policy", page: "退货与退款", url: "https://shop.test/returns/", evidence: "Return steps are missing", why: "退货步骤不完整", fix: "补齐申请、寄回和退款步骤", status: "open" }, needsRealData: false };
+  const action = await planReviewIssueFix(f.ctx, snapshot, finding, f.vision);
+  assert.equal(action?.tool, "update_policy"); assert.equal(action?.params.name, "returns"); assert.equal(action?.params.html, returns);
 });
 
 test("review ignores out-of-focus model findings and caps merged findings to five per page in severity order", async () => {
   const reply = JSON.stringify({ issues: [
-    { key: "seo", level: "P1", kind: "seo", focus: "seo", page: "Home", url: "https://shop.test/", evidence: "Missing metadata", why: "SEO", fix: "Add metadata", needs_real_data: false },
-    ...Array.from({ length: 9 }, (_, i) => ({ key: `trust-${i}`, level: i === 8 ? "P1" : "P2", kind: "copy", focus: "store_trust", page: "Home", url: "https://shop.test/", evidence: `Demo leftover ${i}`, why: "Demo content", fix: "Remove demo copy", needs_real_data: false })),
+    { key: "seo", level: "P1", kind: "seo", focus: "seo", page: "Home", url: "https://shop.test/", evidence: "Missing metadata", why: "页面摘要缺失", fix: "补充页面摘要", needs_real_data: false },
+    ...Array.from({ length: 9 }, (_, i) => ({ key: `trust-${i}`, level: i === 8 ? "P1" : "P2", kind: "copy", focus: "store_trust", page: "Home", url: "https://shop.test/", evidence: `Demo leftover ${i}`, why: "页面仍有示例内容", fix: "删除示例文案", needs_real_data: false })),
   ] });
   const f = reviewFixture({ reply });
   const report = await runFullSiteReview(f.ctx, { loginUrl: "https://login.test", vision: f.vision });
@@ -320,7 +484,7 @@ test("cosmetic findings cannot bypass scope by labelling themselves trust/produc
     { focus: "store_trust", evidence: "The contact phone font is small" },
     { focus: "product_consistency", evidence: "Product image gallery has too much whitespace" },
     { focus: "operator_policy", evidence: "Returns policy typography is plain" },
-  ].map((v, i) => ({ ...v, key: `cosmetic-${i}`, level: "P1", kind: "visual", page: "Page", url: "https://shop.test/", why: "Improve layout and styling", fix: "Adjust CSS", needs_real_data: false })) });
+  ].map((v, i) => ({ ...v, key: `cosmetic-${i}`, level: "P1", kind: "visual", page: "Page", url: "https://shop.test/", why: "页面排版需要调整", fix: "调整页面样式", needs_real_data: false })) });
   const f = reviewFixture({ reply });
   const report = await runFullSiteReview(f.ctx, { loginUrl: "https://login.test", vision: f.vision });
   assert.deepEqual(report.issues, []);
@@ -345,12 +509,12 @@ test("review preserves three-way page concurrency", async () => {
 });
 
 test("site payment needs_you survives even when five P1 page findings fill the page cap", async () => {
-  const reply = JSON.stringify({ issues: Array.from({ length: 5 }, (_, i) => ({ key: `p1-${i}`, level: "P1", focus: "store_trust", kind: "copy", page: "Home", url: "https://shop.test/", evidence: `Demo leftover ${i}`, why: "Placeholder demo content", fix: "Remove demo copy", needs_real_data: false })) });
+  const reply = JSON.stringify({ issues: Array.from({ length: 5 }, (_, i) => ({ key: `p1-${i}`, level: "P1", focus: "store_trust", kind: "copy", page: "Home", url: "https://shop.test/", evidence: `Demo leftover ${i}`, why: "页面含有示例占位内容", fix: "删除示例文案", needs_real_data: false })) });
   const f = reviewFixture({ payments: [], reply, site: { options: { custom_logo: 0, site_icon: 0 }, info: {} } });
   const report = await runFullSiteReview(f.ctx, { loginUrl: "https://login.test", vision: f.vision });
   const home = report.issues.filter((i) => i.url === "https://shop.test/");
   assert.equal(home.length, 5); assert(home.every((i) => i.level === "P1"));
-  const payment = report.issues.find((i) => i.page === "Payment setup")!;
+  const payment = report.issues.find((i) => i.page === "支付设置")!;
   assert.equal(payment.status, "needs_you"); assert.match(payment.url, /wp-admin\/admin.php/); assert.equal(payment.shot, undefined);
 });
 
@@ -362,7 +526,7 @@ test("correct URL with mismatched capture name fails closed instead of skipping 
 });
 
 test("a missing visible phone needs real data only when the actual store facts lack it", async () => {
-  const reply = JSON.stringify({ issues: [{ key: "contact-phone", focus: "store_trust", level: "P2", kind: "copy", page: "Contact details", url: "https://shop.test/", evidence: "The contact phone number is missing from the page", why: "Contact details are incomplete", fix: "Display the supplied phone number", needs_real_data: false }] });
+  const reply = JSON.stringify({ issues: [{ key: "contact-phone", focus: "store_trust", level: "P2", kind: "copy", page: "Contact details", url: "https://shop.test/", evidence: "The contact phone number is missing from the page", why: "页面联系信息不完整", fix: "显示已提供的联系电话", needs_real_data: false }] });
   for (const [phone, expected] of [["+1 207 736 1829", "open"], ["", "needs_you"]] as const) {
     const f = reviewFixture({ reply, entity: { name: "Harbor Goods LLC", address: "7428 Harbor Avenue", phone } });
     const report = await runFullSiteReview(f.ctx, { loginUrl: "https://login.test", vision: f.vision });
@@ -371,7 +535,7 @@ test("a missing visible phone needs real data only when the actual store facts l
 });
 
 test("vague and perfunctory About copy remains in scope without admitting cosmetic complaints", async () => {
-  const reply = JSON.stringify({ issues: [{ key: "about-boilerplate", focus: "operator_policy", level: "P2", kind: "copy", page: "About us", url: "https://shop.test/about/", evidence: "About copy is vague and perfunctory, not store-specific", why: "It lacks concrete detail and is not believable", fix: "Use the supplied operator facts to explain the store", needs_real_data: false }] });
+  const reply = JSON.stringify({ issues: [{ key: "about-boilerplate", focus: "operator_policy", level: "P2", kind: "copy", page: "About us", url: "https://shop.test/about/", evidence: "About copy is vague and perfunctory, not store-specific", why: "介绍缺少具体信息，无法体现真实店铺", fix: "使用已提供的经营主体信息介绍店铺", needs_real_data: false }] });
   const f = reviewFixture();
   f.ctx.d.ai = async (_role, prompt) => { f.prompts.push(prompt); return { text: prompt.includes("PAGE URL:\nhttps://shop.test/about/\n") ? reply : '{"issues":[]}', cost: 0 }; };
   const report = await runFullSiteReview(f.ctx, { loginUrl: "https://login.test", vision: f.vision });
@@ -440,7 +604,7 @@ test("underwriting consistency catches a different legal entity spelling with ex
   about.sections.body += "\nOperated by Harbour Goods LLC";
   about.text += "\nOperated by Harbour Goods LLC";
   const findings = deterministicUnderwritingFindings(snapshot);
-  const mismatch = findings.find((finding) => /legal business name/i.test(finding.issue.why) && /Harbour Goods LLC/.test(finding.issue.evidence));
+  const mismatch = findings.find((finding) => finding.semanticKey === "underwriting-legal-name-mismatch" && /Harbour Goods LLC/.test(finding.issue.evidence));
   assert(mismatch); assert.equal(mismatch.issue.level, "P1"); assert.equal(mismatch.issue.kind, "config"); assert.equal(mismatch.issue.url, "https://shop.test/about/");
 });
 
@@ -457,17 +621,17 @@ test("underwriting email consistency rejects every foreign or different email ad
   const contact = snapshot.captures.find((capture) => capture.path === "/contact/")! as typeof snapshot.captures[number] & { sections: { body: string } };
   contact.sections.body += "\nWholesale: sales@foreign.example";
   const findings = deterministicUnderwritingFindings(snapshot);
-  assert(findings.some((finding) => finding.issue.url === contact.url && /sales@foreign\.example/.test(finding.issue.evidence) && /email/i.test(finding.issue.why)));
+  assert(findings.some((finding) => finding.issue.url === contact.url && /sales@foreign\.example/.test(finding.issue.evidence) && finding.semanticKey === "underwriting-email-mismatch"));
 });
 
 test("underwriting phone comparison ignores formatting but catches different digits", () => {
   const valid = underwritingSnapshot();
-  assert(!deterministicUnderwritingFindings(valid).some((finding) => /phone/i.test(finding.issue.why)));
+  assert(!deterministicUnderwritingFindings(valid).some((finding) => finding.semanticKey === "underwriting-phone-mismatch"));
   const changed = underwritingSnapshot();
   const contact = changed.captures.find((capture) => capture.path === "/contact/")! as typeof changed.captures[number] & { sections: { body: string } };
   contact.sections.body += "\nCall (503) 555-0198";
   const findings = deterministicUnderwritingFindings(changed);
-  assert(findings.some((finding) => finding.issue.url === contact.url && /\(503\) 555-0198/.test(finding.issue.evidence) && /phone/i.test(finding.issue.why)));
+  assert(findings.some((finding) => finding.issue.url === contact.url && /\(503\) 555-0198/.test(finding.issue.evidence) && finding.semanticKey === "underwriting-phone-mismatch"));
 });
 
 test("underwriting address consistency catches a different street address", () => {
@@ -475,7 +639,7 @@ test("underwriting address consistency catches a different street address", () =
   const privacy = snapshot.captures.find((capture) => capture.path === "/privacy-policy/")! as typeof snapshot.captures[number] & { sections: { body: string } };
   privacy.sections.body += "\nMail: 91 Market Street, Seattle, WA 98101";
   const findings = deterministicUnderwritingFindings(snapshot);
-  assert(findings.some((finding) => finding.issue.url === privacy.url && /91 Market Street, Seattle, WA 98101/.test(finding.issue.evidence) && /address/i.test(finding.issue.why)));
+  assert(findings.some((finding) => finding.issue.url === privacy.url && /91 Market Street, Seattle, WA 98101/.test(finding.issue.evidence) && finding.semanticKey === "underwriting-address-mismatch"));
 });
 
 test("underwriting completeness catches a policy link missing from one page footer", () => {
@@ -483,7 +647,7 @@ test("underwriting completeness catches a policy link missing from one page foot
   const home = snapshot.captures.find((capture) => capture.path === "/")! as typeof snapshot.captures[number] & { links: { url: string; text: string; location: string }[] };
   home.links = home.links.filter((link) => !link.url.endsWith("/returns/"));
   const findings = deterministicUnderwritingFindings(snapshot);
-  assert(findings.some((finding) => finding.issue.url === home.url && /Returns\/refund/.test(finding.issue.evidence) && /footer/i.test(finding.issue.why)));
+  assert(findings.some((finding) => finding.issue.url === home.url && /Returns\/refund/.test(finding.issue.evidence) && finding.semanticKey === "underwriting-footer-links-missing"));
 });
 
 test("underwriting footer check rejects a foreign URL even when its label and path look correct", () => {
@@ -491,7 +655,7 @@ test("underwriting footer check rejects a foreign URL even when its label and pa
   const home = snapshot.captures.find((capture) => capture.path === "/")! as typeof snapshot.captures[number] & { links: { url: string; text: string; location: string }[] };
   home.links = home.links.map((link) => link.url.endsWith("/returns/") ? { ...link, url: "https://foreign.example/returns/" } : link);
   const finding = deterministicUnderwritingFindings(snapshot).find((row) => row.issue.url === home.url && /Returns\/refund/.test(row.issue.evidence));
-  assert(finding); assert.match(finding.issue.why, /published.*this store/i);
+  assert(finding); assert.match(finding.issue.why, /页脚/);
 });
 
 test("underwriting completeness catches broken internal links with status and exact URL", () => {
@@ -528,8 +692,8 @@ test("underwriting completeness checks published pages, USD, shipping timeframe 
   const evidence = findings.map((finding) => `${finding.issue.evidence} ${finding.issue.why}`).join("\n");
   assert.match(evidence, /Terms.*published/i);
   assert.match(evidence, /USD/);
-  assert.match(evidence, /shipping timeframe/i);
-  assert.match(evidence, /cancellation rule/i);
+  assert.match(evidence, /配送政策没有写明/);
+  assert.match(evidence, /订单能否取消/);
 });
 
 test("underwriting cannot use footer identity to excuse a completely empty About body", () => {
