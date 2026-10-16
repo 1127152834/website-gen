@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import type { Facts } from "./content.ts";
 import type { CjProduct } from "./cj.ts";
 import {
-  buildPublishableVariants, checkProductAnalysis, productAnalysisPrompt, checkUnitReview, deterministicDimensionProblems, reconcileActualVariations, type ProductAnalysis, type ProductVariantInput,
+  buildPublishableVariants, checkProductAnalysis, copyCoversVariant, productAnalysisPrompt, checkUnitReview, deterministicDimensionProblems, reconcileActualVariations, type ProductAnalysis, type ProductVariantInput,
 } from "./product-content.ts";
 
 const facts: Facts = {
@@ -210,4 +210,14 @@ test("the product analysis prompt states the evidence, piece-count/components an
   assert.match(prompt, /evidence must be copied verbatim/i);
   assert.match(prompt, /pieceCount.*null.*components.*\[\]/is);
   assert.match(prompt, /title.*at most 80 characters/i);
+});
+
+// 实测 2026-10-16：15 色 × 3 尺寸的商品，要求描述逐个写出「Green bear den / Large」这样的组合，真实修复两次都过不了
+test("copy covers a variant when it names the whole option or each of its option values", () => {
+  const copy = "Colors: Green bear den, Grey stars Blue, Brown bear. Sizes: Small, Medium, Large.";
+  assert.ok(copyCoversVariant(copy, "Green bear den / Large"));
+  assert.ok(copyCoversVariant(copy, "Brown bear - Small"));
+  assert.ok(copyCoversVariant("Choose the Black 2-Piece Set.", "Black 2-Piece Set"));
+  assert.ok(!copyCoversVariant(copy, "Rabbit door curtain / Large"), "a colour missing from the copy is still not covered");
+  assert.ok(!copyCoversVariant(copy, "Green bear den / XL"), "a size missing from the copy is still not covered");
 });
