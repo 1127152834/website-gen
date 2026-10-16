@@ -1,0 +1,68 @@
+# Standalone production definition: DO NOT merge with ../docker-compose.yml.
+# Stable project/volume names are shared by every release and rollback.
+name: website-gen
+services:
+  app:
+    image: website-gen-app:${RELEASE_ID:-local}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    init: true
+    stop_grace_period: 30s
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "8787"
+      DATA_DIR: /app/data
+      DIST_DIR: /app/dist
+      TRUST_PROXY: "1"
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in shared/.env}
+      WEBSITE_GEN_MASTER_KEY: ${WEBSITE_GEN_MASTER_KEY:-}
+      ALLOW_PRIVATE_MODEL_HOSTS: ${ALLOW_PRIVATE_MODEL_HOSTS:-0}
+    volumes:
+      - website-gen-data:/app/data
+    # No `ports`: even localhost:8787 would bypass the trusted proxy boundary.
+    networks: [proxy]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8787/api/me').then(r=>{if(r.status!==401&&r.status!==200)process.exit(1)},()=>process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+      start_period: 30s
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+
+  caddy:
+    image: caddy:2.10.2-alpine
+    restart: unless-stopped
+    depends_on:
+      app: {condition: service_healthy}
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-tool.aoeen.com}
+    # IPv4 ONLY, deliberately. Prevent Docker's IPv6 userland proxy from
+    # sidestepping DOCKER-USER. Cloudflare can connect to an IPv4 origin for
+    # both IPv4 and IPv6 visitors. Do not publish UDP/HTTP3 or an IPv6 wildcard.
+    ports:
+      - "0.0.0.0:80:80/tcp"
+      - "0.0.0.0:443:443/tcp"
+    volumes:
+      - ./deploy/Caddyfile.${CF_SSL_MODE:-full}:/etc/caddy/Caddyfile:ro
+      - /opt/website-gen/shared/cloudflare:/etc/website-gen/cloudflare:ro
+      - /opt/website-gen/shared/certs:/etc/website-gen/certs:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks: [proxy]
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+
+networks:
+  # Not `internal: true`: app requires outbound HTTPS, IMAP 993 and SMTP 465.
+  proxy: {driver: bridge}
+volumes:
+  website-gen-data: {name: website-gen-data}
+  caddy-data: {name: website-gen-caddy-data}
+  caddy-config: {name: website-gen-caddy-config}

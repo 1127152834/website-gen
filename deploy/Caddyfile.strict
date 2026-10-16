@@ -1,0 +1,33 @@
+{
+  auto_https disable_certs
+  servers {
+    import /etc/website-gen/cloudflare/cloudflare.caddy
+    trusted_proxies_strict
+    client_ip_headers CF-Connecting-IP
+    protocols h1 h2
+  }
+}
+
+(app_forward) {
+  header_up X-Forwarded-For {client_ip}
+  header_up X-Forwarded-Proto https
+  header_up -CF-Connecting-IP
+  header_up -X-Real-IP
+  header_up -Forwarded
+}
+
+{$SITE_ADDRESS:tool.aoeen.com} {
+  # Server-only Cloudflare Origin Certificate, never shipped in the archive.
+  tls /etc/website-gen/certs/origin.pem /etc/website-gen/certs/origin.key
+  respond /_origin_health "ready" 200
+  @unresolved expression {client_ip} == {remote_host}
+  respond @unresolved "Unresolved client IP" 400
+  @events path /api/events
+  reverse_proxy @events app:8787 {
+    import app_forward
+    flush_interval -1
+  }
+  reverse_proxy app:8787 {
+    import app_forward
+  }
+}

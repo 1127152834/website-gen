@@ -12,3 +12,12 @@ data
 poc/out
 *.log
 coverage
+.worktrees
+.agents
+.codex
+.aws
+deploy/certs
+deploy/.local-baseline
+deploy/.local-verification
+**/origin.key
+**/origin.pem

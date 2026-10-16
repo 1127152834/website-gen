@@ -110,14 +110,54 @@ test("parallel failed logins cannot race past the five-attempt limit", async () 
   assert.equal((await post("/api/login", { username: "admin", password: "admin password" })).status, 429);
 });
 
-test("forwarded login IPs are used only when TRUST_PROXY is enabled", async () => {
+test("trusted proxy login limits use one validated X-Forwarded-For value and ignore spoofable alternatives", async () => {
+  const { request } = await setup({ TRUST_PROXY: "1" });
+  const attempt = (forwardedFor: string, spoofedIp: string) => request("/api/login", { method: "POST", headers: {
+    "X-Requested-With": "website-gen",
+    "X-Forwarded-For": forwardedFor,
+    "CF-Connecting-IP": spoofedIp,
+    "X-Real-IP": spoofedIp,
+    "Content-Type": "application/json",
+  }, body: JSON.stringify({ username: "admin", password: "wrong password" }) });
+
+  for (let index = 0; index < 5; index++) {
+    assert.equal((await attempt("192.0.2.1", `198.51.100.${index + 1}`)).status, 401);
+  }
+  assert.equal((await attempt("192.0.2.1", "198.51.100.200")).status, 429);
+  assert.equal((await attempt("192.0.2.2", "192.0.2.1")).status, 401);
+});
+
+test("untrusted, malformed, and chained forwarding values fall back to the socket address", async () => {
+  for (const env of [{ TRUST_PROXY: "0" }, { TRUST_PROXY: "1" }]) {
+    const { request } = await setup(env);
+    const attempt = (forwardedFor: string) => request("/api/login", { method: "POST", headers: {
+      "X-Requested-With": "website-gen", "X-Forwarded-For": forwardedFor, "Content-Type": "application/json",
+    }, body: JSON.stringify({ username: "admin", password: "wrong password" }) });
+    const values = env.TRUST_PROXY === "1"
+      ? ["not-an-ip", "192.0.2.10, 192.0.2.11", "2001:db8::10, 2001:db8::11", "", "unknown"]
+      : ["192.0.2.1", "192.0.2.2", "2001:db8::1", "2001:db8::2", "198.51.100.1"];
+    for (const value of values) assert.equal((await attempt(value)).status, 401);
+    assert.equal((await attempt(env.TRUST_PROXY === "1" ? "203.0.113.1, 203.0.113.2" : "203.0.113.1")).status, 429);
+  }
+});
+
+test("trusted proxy login limits keep valid IPv6 visitors independent", async () => {
+  const { request } = await setup({ TRUST_PROXY: "1" });
+  const attempt = (ip: string) => request("/api/login", { method: "POST", headers: {
+    "X-Requested-With": "website-gen", "X-Forwarded-For": ip, "Content-Type": "application/json",
+  }, body: JSON.stringify({ username: "admin", password: "wrong password" }) });
+  for (let index = 0; index < 5; index++) assert.equal((await attempt("2001:db8::1")).status, 401);
+  assert.equal((await attempt("2001:db8::2")).status, 401);
+});
+
+test("trusted HTTPS forwarding sets Secure on the session cookie", async () => {
   for (const trusted of [false, true]) {
     const { request } = await setup({ TRUST_PROXY: trusted ? "1" : "0" });
-    const attempt = (ip: string) => request("/api/login", { method: "POST", headers: {
-      "X-Requested-With": "website-gen", "X-Forwarded-For": `203.0.113.99, ${ip}`, "Content-Type": "application/json",
-    }, body: JSON.stringify({ username: "admin", password: "wrong password" }) });
-    for (let index = 0; index < 5; index++) assert.equal((await attempt("192.0.2.1")).status, 401);
-    assert.equal((await attempt("192.0.2.2")).status, trusted ? 401 : 429);
+    const response = await request("/api/login", { method: "POST", headers: {
+      "X-Requested-With": "website-gen", "X-Forwarded-Proto": "https", "Content-Type": "application/json",
+    }, body: JSON.stringify({ username: "admin", password: "admin password" }) });
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get("set-cookie")?.includes("; Secure") ?? false, trusted);
   }
 });
 

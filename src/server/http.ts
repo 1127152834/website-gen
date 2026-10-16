@@ -86,6 +86,17 @@ function cookieValue(req: IncomingMessage, name: string): string | undefined {
   return undefined;
 }
 
+function clientIp(req: IncomingMessage, env: NodeJS.ProcessEnv): string {
+  const socketIp = req.socket.remoteAddress ?? "unknown";
+  if (env.TRUST_PROXY !== "1") return socketIp;
+  // Production Caddy overwrites this header with its resolved client IP. Requiring
+  // exactly one IP prevents a client-supplied chain from choosing a rate-limit key.
+  const forwarded = req.headers["x-forwarded-for"];
+  if (typeof forwarded !== "string" || forwarded.includes(",")) return socketIp;
+  const ip = forwarded.trim();
+  return isIP(ip) ? ip : socketIp;
+}
+
 function cookieHeader(token: string, req: IncomingMessage, env: NodeJS.ProcessEnv): string {
   const forwardedHttps = env.TRUST_PROXY === "1" && req.headers["x-forwarded-proto"]?.toString().split(",")[0].trim() === "https";
   const directHttps = Boolean((req.socket as typeof req.socket & { encrypted?: boolean }).encrypted);
@@ -217,9 +228,7 @@ export async function createApp(options: CreateAppOptions): Promise<{ server: Se
         if (!/^[\p{L}\p{N}_.-]{1,64}$/u.test(username) || password.length > 1024) {
           apiError(res, 400, "用户名格式或密码长度不正确", "invalid_login"); return;
         }
-        // 只信任显式部署在反向代理后的请求；取最靠近该代理的客户端，忽略前置伪造段。
-        const forwarded = req.headers["x-forwarded-for"]?.toString().split(",").at(-1)?.trim();
-        const ip = env.TRUST_PROXY === "1" && forwarded && isIP(forwarded) ? forwarded : req.socket.remoteAddress ?? "unknown";
+        const ip = clientIp(req, env);
         const now = clock();
         if (activeLogins >= 8) { apiError(res, 429, "登录请求过多，请稍后再试", "rate_limited"); return; }
         if (!admin.beginLogin(ip, username, now)) { apiError(res, 429, "登录失败次数过多，请稍后再试", "rate_limited"); return; }
