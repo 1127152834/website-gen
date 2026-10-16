@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useCallback, useState, type FormEvent } from "react";
 import { KeyRound, LoaderCircle, Plus, Power } from "lucide-react";
 import type { AdminUser, AuthUser } from "../../../shared/auth.ts";
 import { addUser, listUsers, resetUserPassword, setUserDisabled } from "@/lib/auth.ts";
+import { useRpcData } from "@/lib/backend.ts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -20,22 +21,14 @@ function dateTime(timestamp: number | null): string {
 }
 
 export function UsersPage({ currentUser }: { currentUser: AuthUser }) {
-  const [users, setUsers] = useState<AdminUser[] | null>(null);
   const confirm = useConfirm();
   const [adding, setAdding] = useState(false);
   const [resetting, setResetting] = useState<AdminUser | null>(null);
   const [busyId, setBusyId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
-    try {
-      setUsers(await listUsers());
-      setError(null);
-    } catch (reason) {
-      setError((reason as Error).message);
-    }
-  }, []);
-  useEffect(() => { void load(); }, [load]);
+  const loadUsers = useCallback(() => listUsers(), []);
+  const { data: users, loading, refreshing, error: loadError, refresh, invalidate } = useRpcData<AdminUser[]>("admin.users.list", undefined, { loader: loadUsers });
 
   const toggle = async (user: AdminUser) => {
     if (!await confirm({ title: `${user.disabled ? "启用" : "停用"}用户「${user.username}」？`, description: user.disabled ? "启用后该用户可以重新登录并继续使用自己的工作区。" : "该用户会立即退出登录，后台工作区将关闭；数据会保留。", destructive: !user.disabled })) return;
@@ -44,7 +37,7 @@ export function UsersPage({ currentUser }: { currentUser: AuthUser }) {
     try {
       await setUserDisabled(user.id, !user.disabled);
       toast(user.disabled ? "用户已启用" : "用户已停用");
-      await load();
+      invalidate(); await refresh();
     } catch (reason) {
       setError((reason as Error).message);
     } finally {
@@ -62,8 +55,9 @@ export function UsersPage({ currentUser }: { currentUser: AuthUser }) {
         <Button onClick={() => setAdding(true)}><Plus aria-hidden />添加用户</Button>
       </div>
 
-      {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
-      {users === null && !error && <Skeleton label="正在读取用户" />}
+      {refreshing && users && <p role="status" className="fixed right-4 bottom-4 text-xs text-muted-foreground">刷新中…</p>}
+      {(error || loadError) && <p role="alert" className="text-sm text-destructive">{error ?? loadError?.message}</p>}
+      {loading && !error && <Skeleton label="正在读取用户" />}
       {users && (
         <div className="rounded-lg border">
           <Table>
@@ -94,8 +88,8 @@ export function UsersPage({ currentUser }: { currentUser: AuthUser }) {
         </div>
       )}
 
-      <AddUserDialog open={adding} onClose={() => setAdding(false)} onSaved={() => void load()} />
-      <ResetPasswordDialog user={resetting} onClose={() => setResetting(null)} onSaved={() => void load()} />
+      <AddUserDialog open={adding} onClose={() => setAdding(false)} onSaved={() => { invalidate(); void refresh().catch((reason: Error) => setError(reason.message)); }} />
+      <ResetPasswordDialog user={resetting} onClose={() => setResetting(null)} onSaved={() => { invalidate(); void refresh().catch((reason: Error) => setError(reason.message)); }} />
     </div>
   );
 }

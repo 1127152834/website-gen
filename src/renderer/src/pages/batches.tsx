@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { ExternalLink, LoaderCircle, Plus, Rocket, RotateCcw } from "lucide-react";
 import { PROVISION_STEPS, type BatchSummary, type QaView, type RunEvent, type SiteProgress, type SiteStatus, type StepState } from "../../../shared/protocol.ts";
 import { toast, useConfirm } from "@/components/feedback";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { call, onChanged, onConnect, onEvent } from "@/lib/backend.ts";
+import { call, onEvent, useRpcData } from "@/lib/backend.ts";
 import { cn } from "@/lib/utils";
 import { LogViewer, StepTimeline } from "./site-operations.tsx";
 import { QaReport } from "./qa-report.tsx";
@@ -37,64 +37,49 @@ function BatchSkeleton() {
 
 export function BatchesPage({ initialBatch, onNew, onNavigate }: BatchesPageProps) {
   const confirm = useConfirm();
-  const [batches, setBatches] = useState<BatchSummary[] | null>(null);
   const [batchId, setBatchId] = useState<number | null>(initialBatch);
-  const [sites, setSites] = useState<SiteProgress[]>([]);
   const [siteId, setSiteId] = useState<number | null>(null);
-  const [steps, setSteps] = useState<StepState[]>([]);
-  const [events, setEvents] = useState<RunEvent[]>([]);
-  const [qa, setQa] = useState<QaView | null>(null);
   const [busySite, setBusySite] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const selected = useRef({ batchId, siteId, siteIds: new Set<string>() });
-  selected.current = { batchId, siteId, siteIds: new Set(sites.map((site) => String(site.id))) };
-
   const fail = useCallback((reason: Error) => setError(reason.message), []);
-  const loadBatches = useCallback(() => call<BatchSummary[]>("batches.list").then(setBatches, fail), [fail]);
-  const loadSites = useCallback(() => {
-    const id = selected.current.batchId;
-    if (id != null) void call<SiteProgress[]>("batches.sites", { batchId: id }).then((value) => { if (selected.current.batchId === id) setSites(value); }, fail);
-  }, [fail]);
-  const loadSite = useCallback(() => {
-    const id = selected.current.siteId;
-    if (id == null) return;
-    void call<StepState[]>("sites.steps", { siteId: id }).then((value) => { if (selected.current.siteId === id) setSteps(value); }, fail);
-    void call<RunEvent[]>("sites.events", { siteId: id }).then((value) => { if (selected.current.siteId === id) setEvents(value); }, fail);
-    void call<QaView | null>("sites.qa", { siteId: id }).then((value) => { if (selected.current.siteId === id) setQa(value); }, fail);
-  }, [fail]);
+  const { data: batches, loading: batchesLoading, refreshing: batchesRefreshing, error: batchesError, refresh: refreshBatches, invalidate: invalidateBatches } = useRpcData<BatchSummary[]>("batches.list");
+  const effectiveBatchId = batchId ?? batches?.[0]?.id ?? null;
+  const { data: sites = [], error: sitesError, refresh: refreshSites, invalidate: invalidateSites } = useRpcData<SiteProgress[]>("batches.sites", effectiveBatchId == null ? null : { batchId: effectiveBatchId }, { topics: ["batches"] });
+  const effectiveSiteId = siteId ?? sites[0]?.id ?? null;
+  const { data: steps = [], error: stepsError, refresh: refreshSteps, invalidate: invalidateSteps } = useRpcData<StepState[]>("sites.steps", effectiveSiteId == null ? null : { siteId: effectiveSiteId }, { topics: ["batches"] });
+  const { data: events = [], error: eventsError, refresh: refreshEvents, invalidate: invalidateEvents } = useRpcData<RunEvent[]>("sites.events", effectiveSiteId == null ? null : { siteId: effectiveSiteId }, { topics: ["batches"] });
+  const { data: qa = null, error: qaError, refresh: refreshQa, invalidate: invalidateQa } = useRpcData<QaView | null>("sites.qa", effectiveSiteId == null ? null : { siteId: effectiveSiteId }, { topics: ["batches"] });
+  const loadBatches = useCallback(() => refreshBatches().catch(fail), [fail, refreshBatches]);
+  const loadSites = useCallback(() => { void refreshSites().catch(fail); }, [fail, refreshSites]);
+  const loadSite = useCallback(() => { void Promise.all([refreshSteps(), refreshEvents(), refreshQa()]).catch(fail); }, [fail, refreshEvents, refreshQa, refreshSteps]);
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined;
     const refreshSoon = () => {
       clearTimeout(timer);
-      timer = setTimeout(() => { void loadBatches(); loadSites(); }, 500);
+      timer = setTimeout(() => { void loadBatches(); loadSites(); }, 200);
     };
-    const off = [
-      onConnect(() => { void loadBatches(); loadSites(); loadSite(); }),
-      onChanged("batches", refreshSoon),
-      onEvent((event) => {
-        if (!event.siteId || !selected.current.siteIds.has(event.siteId)) return;
+    const off = [onEvent((event) => {
+        if (!event.siteId || !sites.some((item) => String(item.id) === event.siteId)) return;
         if (event.kind === "step") refreshSoon();
-        if (event.siteId !== String(selected.current.siteId)) return;
-        setEvents((current) => current.some((item) => item.seq === event.seq) ? current : [...current, event]);
-        if (event.kind === "step") void call<StepState[]>("sites.steps", { siteId: Number(event.siteId) }).then(setSteps, fail);
-        if (event.kind === "step" && event.payload.step === "qa") void call<QaView | null>("sites.qa", { siteId: Number(event.siteId) }).then(setQa, fail);
-      }),
-    ];
+        if (event.siteId !== String(effectiveSiteId)) return;
+        invalidateEvents(); void refreshEvents().catch(fail);
+        if (event.kind === "step") { invalidateSteps(); void refreshSteps().catch(fail); }
+        if (event.kind === "step" && event.payload.step === "qa") { invalidateQa(); void refreshQa().catch(fail); }
+      })];
     return () => { clearTimeout(timer); off.forEach((dispose) => dispose()); };
-  }, [fail, loadBatches, loadSite, loadSites]);
+  }, [effectiveSiteId, fail, invalidateEvents, invalidateQa, invalidateSteps, loadBatches, loadSites, refreshEvents, refreshQa, refreshSteps, sites]);
 
-  useEffect(() => { if (initialBatch != null) setBatchId(initialBatch); }, [initialBatch]);
-  useEffect(() => { if (batches && !batches.some((batch) => batch.id === batchId)) setBatchId(batches[0]?.id ?? null); }, [batchId, batches]);
-  useEffect(() => { setSites([]); setSiteId(null); setSteps([]); setEvents([]); setQa(null); loadSites(); }, [batchId, loadSites]);
-  useEffect(() => { if (!sites.some((site) => site.id === siteId)) setSiteId(sites[0]?.id ?? null); }, [siteId, sites]);
-  useEffect(() => { setSteps([]); setEvents([]); setQa(null); loadSite(); }, [loadSite, siteId]);
+  useLayoutEffect(() => { if (initialBatch != null) setBatchId(initialBatch); }, [initialBatch]);
+  useEffect(() => { const reason = sitesError ?? stepsError ?? eventsError ?? qaError; if (reason) fail(reason); }, [eventsError, fail, qaError, sitesError, stepsError]);
+  useLayoutEffect(() => { if (batches && !batches.some((batch) => batch.id === batchId)) setBatchId(batches[0]?.id ?? null); }, [batchId, batches]);
+  useLayoutEffect(() => { if (!sites.some((item) => item.id === siteId)) setSiteId(sites[0]?.id ?? null); }, [siteId, sites]);
 
   const chooseBatch = (id: number) => { setBatchId(id); onNavigate?.(`/batches/${id}`); };
   const retry = async (site: SiteProgress) => {
     if (!await confirm({ title: `重试 ${site.domain}？`, description: "将从失败的步骤继续执行，并再次调用外部服务。", confirmText: "重试" })) return;
     setBusySite(site.id); setError(null);
-    try { await call("sites.retry", { siteId: site.id }); toast("已重新加入执行队列", "success"); loadSites(); loadSite(); }
+    try { await call("sites.retry", { siteId: site.id }); toast("已重新加入执行队列", "success"); invalidateBatches(); invalidateSites(); invalidateSteps(); invalidateEvents(); invalidateQa(); void loadBatches(); loadSites(); loadSite(); }
     catch (reason) { fail(reason as Error); toast((reason as Error).message, "error"); }
     finally { setBusySite(null); }
   };
@@ -105,17 +90,19 @@ export function BatchesPage({ initialBatch, onNew, onNavigate }: BatchesPageProp
     const warningText = warnings.length > 0 ? ` 尚有 ${warnings.length} 项未解决：${warnings.slice(0, 3).join("；")}${warnings.length > 3 ? "；…" : ""}。` : " 当前 QA 没有未解决项。";
     if (!await confirm({ title: `上线 ${site.domain}？`, description: `将关闭维护模式和“即将上线”页面，并允许搜索引擎收录。访客之后可以浏览和下单。${warningText}`, confirmText: warnings.length > 0 ? "仍然上线" : "确认上线" })) return;
     setBusySite(site.id); setError(null);
-    try { const result = await call<{ detail: string }>("sites.launch", { siteId: site.id }); toast(result.detail, "success"); loadSites(); }
+    try { const result = await call<{ detail: string }>("sites.launch", { siteId: site.id }); toast(result.detail, "success"); invalidateBatches(); invalidateSites(); void loadBatches(); loadSites(); }
     catch (reason) { fail(reason as Error); toast((reason as Error).message, "error"); }
     finally { setBusySite(null); }
   };
-  const site = sites.find((item) => item.id === siteId) ?? null;
+  const site = sites.find((item) => item.id === effectiveSiteId) ?? null;
 
-  if (batches === null) return <div className="flex flex-col gap-6"><header><h1 className="text-2xl font-semibold tracking-tight">批次</h1><p className="mt-1 text-sm text-muted-foreground">查看建站任务、步骤和复核结果。</p></header>{error && <div role="alert" className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive"><p>{error}</p><Button variant="outline" size="sm" className="mt-3" onClick={() => void loadBatches()}>重新加载</Button></div>}<BatchSkeleton /></div>;
+  if (batchesLoading) return <div className="flex flex-col gap-6"><header><h1 className="text-2xl font-semibold tracking-tight">批次</h1><p className="mt-1 text-sm text-muted-foreground">查看建站任务、步骤和复核结果。</p></header>{(error || batchesError) && <div role="alert" className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive"><p>{error ?? batchesError?.message}</p><Button variant="outline" size="sm" className="mt-3" onClick={() => void loadBatches()}>重新加载</Button></div>}<BatchSkeleton /></div>;
+  if (!batches) return <p role="alert" className="text-sm text-destructive">{batchesError?.message ?? error ?? "无法读取批次"}</p>;
   if (batches.length === 0) return <div className="flex max-w-3xl flex-col gap-6"><header><h1 className="text-2xl font-semibold tracking-tight">批次</h1><p className="mt-1 text-sm text-muted-foreground">查看建站任务、步骤和复核结果。</p></header><div className="rounded-lg border border-dashed p-8 text-center text-sm"><p className="font-medium">还没有建站批次</p><p className="mt-1 text-muted-foreground">先在「建站」页填写经营主体和域名。提交后，实时进度会出现在这里。</p><Button className="mt-4" onClick={onNew}><Plus aria-hidden />新建批次</Button></div></div>;
 
   return (
     <div className="flex flex-col gap-6">
+      {batchesRefreshing && <p role="status" className="fixed right-4 bottom-4 text-xs text-muted-foreground">刷新中…</p>}
       <header className="flex flex-wrap items-end justify-between gap-3"><div><h1 className="text-2xl font-semibold tracking-tight">批次</h1><p className="mt-1 text-sm text-muted-foreground">查看建站任务、步骤和复核结果。</p></div><Button onClick={onNew}><Plus aria-hidden />新建批次</Button></header>
       {error && <p role="alert" className="rounded-md border border-destructive/40 bg-destructive/5 px-3 py-2 text-sm text-destructive">{error}</p>}
       <div className="grid gap-6 lg:grid-cols-[14rem_minmax(0,1fr)]">

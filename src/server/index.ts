@@ -20,7 +20,7 @@ export async function startServer(env = process.env) {
   try {
     const masterKey = loadMasterKey(dataDir, env.WEBSITE_GEN_MASTER_KEY);
     const workspaceManager = new WorkspaceManager({ dataDir, masterKey, resourcesDir: resolve(repoRoot, "resources") });
-    app = await createApp({ dataDir, distDir, workspaceManager, env, releaseLock });
+    app = await createApp({ dataDir, distDir, workspaceManager, env, releaseLock, masterKey });
   } catch (error) {
     releaseLock(); throw error;
   }

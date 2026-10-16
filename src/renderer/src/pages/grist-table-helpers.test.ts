@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { canEditGristColumn, gristCellDisplay, gristColumnChoices, gristDateInput, gristDocUrl, gristMcpCommand, parseGristCellInput, visibleGristRecords, type GristColumn } from "./grist-table-helpers.ts";
+import { attachmentKind, canEditGristColumn, collectAttachmentIds, formatFileSize, gristAttachmentUrl, gristCellDisplay, gristColumnChoices, gristDateInput, gristDocUrl, gristMcpCommand, parseAttachmentIds, parseGristCellInput, rowDetailColumns, sectionColumnToGristColumn, visibleGristRecords, type GristColumn } from "./grist-table-helpers.ts";
 
 const column = (type: string, isFormula = false): GristColumn => ({ id: "A", fields: { type, isFormula } });
 
@@ -48,4 +48,39 @@ test("Grist records only render 1000 with exact overflow indication", () => {
   assert.equal(visibleGristRecords(records).truncated, true);
   assert.equal(visibleGristRecords(records.slice(0, 1000)).truncated, false);
   assert.equal(gristMcpCommand("https://console.example", "secret"), 'claude mcp add --transport http grist https://console.example/api/mcp --header "Authorization: Bearer secret"');
+});
+
+test("Grist attachment list cells are parsed defensively and batched once per page", () => {
+  assert.deepEqual(parseAttachmentIds(["L", 12, 13, 12]), [12, 13]);
+  for (const value of [null, ["l", 1], ["L", 0, -1, 1.5, "2"], { id: 1 }]) {
+    assert.deepEqual(parseAttachmentIds(value), []);
+  }
+  const records = [
+    { id: 1, fields: { docs: ["L", 12, 13], ignored: ["L", 99] } },
+    { id: 2, fields: { docs: ["L", 13, 14] } },
+  ];
+  assert.deepEqual(collectAttachmentIds(records, ["docs"]), [12, 13, 14]);
+});
+
+test("attachment presentation keeps URLs local and only previews safe image and PDF types", () => {
+  assert.equal(gristAttachmentUrl("doc/a", 12), "/api/grist/attachment?docId=doc%2Fa&id=12");
+  assert.equal(attachmentKind("scan.JPEG"), "image");
+  assert.equal(attachmentKind("contract.pdf"), "pdf");
+  for (const name of ["payload.svg", "page.html", "data.xml", "script.js", "archive.zip"]) assert.equal(attachmentKind(name), "file");
+  assert.equal(formatFileSize(0), "0 B");
+  assert.equal(formatFileSize(1536), "1.5 KB");
+  assert.equal(formatFileSize(undefined), "大小未知");
+});
+
+test("section columns retain Grist component ordering and labels", () => {
+  const converted = sectionColumnToGristColumn({ colRef: 7, colId: "Legal_Name", label: "公司名称", type: "Text", isFormula: false, widgetOptions: "{}", parentPos: 2 });
+  assert.deepEqual(converted, { id: "Legal_Name", fields: { label: "公司名称", type: "Text", isFormula: false, widgetOptions: "{}" } });
+});
+
+test("whole row details preserve component order then include fields hidden in that component", () => {
+  const a = { colRef: 1, colId: "A", label: "A", type: "Text", isFormula: false };
+  const b = { colRef: 2, colId: "B", label: "B", type: "Attachments", isFormula: false };
+  const c = { colRef: 3, colId: "C", label: "C", type: "Text", isFormula: true };
+  assert.deepEqual(rowDetailColumns([c, a], [a, b, c]).map((column) => column.colId), ["C", "A", "B"]);
+  assert.deepEqual(rowDetailColumns([a], undefined), [a]);
 });

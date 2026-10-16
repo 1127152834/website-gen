@@ -2,12 +2,14 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import { assertGristSelectSql, type GristClient } from "./grist.ts";
+import { getGristDocStructure } from "./grist-structure.ts";
 
 export type GetGristClient = () => GristClient | Promise<GristClient>;
 
 export const GRIST_TOOL_NAMES = [
   "grist_help", "grist_get_user_profile", "grist_list_orgs", "grist_list_workspaces", "grist_list_docs", "grist_get_doc_info",
   "grist_get_tables", "grist_get_table_columns", "grist_list_records", "grist_query_document", "grist_list_snapshots", "grist_list_attachments",
+  "grist_get_pages", "grist_get_attachment_url",
   "grist_add_records", "grist_update_records", "grist_remove_records", "grist_create_doc", "grist_create_table", "grist_add_table_column",
   "grist_update_table_column", "grist_rename_table", "grist_remove_table", "grist_remove_table_column",
 ] as const;
@@ -49,7 +51,7 @@ function boundedRows(value: unknown, max: number): unknown {
 }
 
 /** New server per HTTP request; resolving the user client is lazy and repeated per tool call. */
-export function createGristMcpServer(getClient: GetGristClient): McpServer {
+export function createGristMcpServer(getClient: GetGristClient, getAttachmentUrl?: (input: { docId: string; attachmentId: number }) => { url: string; expiresAt: number } | Promise<{ url: string; expiresAt: number }>): McpServer {
   const server = new McpServer({ name: "website-gen-grist", version: "1.0.0" }, { maxToolInputElements: 25_000 });
 
   function register<S extends z.ZodRawShape>(
@@ -72,14 +74,14 @@ export function createGristMcpServer(getClient: GetGristClient): McpServer {
   }, async () => jsonResult({
     overview: "REST-backed Grist connector. Tools use the authenticated website-gen user's saved Grist API key and inherit that key's permissions. Discover orgs -> workspaces -> docs -> tables -> columns before accessing records.",
     tools: GRIST_TOOL_NAMES,
-    records: "list_records and query_document default to 100 rows and allow at most 1000. Read column metadata before writing. Dates use UTC Unix seconds. Formula, reference, attachment and encoded list values follow the Grist REST API format.",
+    records: "list_records and query_document default to 100 rows and allow at most 1000. Read column metadata before writing. Dates use UTC Unix seconds. Attachment cells use [\"L\", attachmentId, ...]; use grist_list_attachments for metadata and grist_get_attachment_url for a temporary download URL.",
     query: "grist_query_document accepts a single read-only SQL SELECT, not natural language. The calling AI must translate the user's request into SQL. Queries are wrapped with LIMIT. WITH statements are not supported.",
     unsupported: [
-      "grist_get_pages", "grist_update_page", "grist_remove_page", "grist_add_page_widget", "grist_get_page_widgets",
+      "grist_update_page", "grist_remove_page", "grist_add_page_widget", "grist_get_page_widgets",
       "grist_update_page_widget", "grist_remove_page_widget", "grist_get_page_widget_select_by_options", "grist_set_page_widget_select_by",
-      "grist_get_attachment_url", "grist_get_grist_access_rules_reference", "grist_get_available_custom_widgets",
+      "grist_get_grist_access_rules_reference", "grist_get_available_custom_widgets",
     ],
-    limitations: "No page/widget management, attachment download URLs, access-rules reference, custom-widget catalog, natural-language query translation, OAuth, or Grist-native MCP service is provided. Destructive tools delete data; confirm user intent before calling.",
+    limitations: "No page/widget mutation, access-rules reference, custom-widget catalog, natural-language query translation, OAuth, or Grist-native MCP service is provided. Destructive tools delete data; confirm user intent before calling.",
   }));
 
   register("grist_get_user_profile", "Return the active Grist session profile containing user name, email and available organization context. No parameters.", {}, (client) => client.getUserProfile());
@@ -91,6 +93,19 @@ export function createGristMcpServer(getClient: GetGristClient): McpServer {
   register("grist_get_doc_info", "Return metadata, workspace and access information for docId. Does not return table row data.", { docId }, (client, args) => client.getDocInfo(args.docId));
   register("grist_get_tables", "List tables and their IDs in docId. Returns Grist table metadata; use table IDs for later column and record tools.", { docId }, (client, args) => client.getTables(args.docId));
   register("grist_get_table_columns", "List column IDs and fields (type, label, isFormula, formula, widgetOptions) for a table. Use before writing records or schema.", { docId, tableId }, (client, args) => client.getTableColumns(args.docId, args.tableId));
+  register("grist_get_pages", "Return document pages in Grist sidebar order with indentation, components, underlying table IDs, visible component columns, full table metadata, and raw tables not placed on a page.", { docId }, (client, args) => getGristDocStructure(client, args.docId));
+  server.registerTool("grist_get_attachment_url", {
+    description: "Create a signed download URL for one attachment ID. The URL expires in 10 minutes and is revoked when this MCP token is revoked or replaced.",
+    inputSchema: z.object({ docId, attachmentId: z.number().int().positive() }),
+    annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: true },
+  }, async (args) => {
+    try {
+      if (!getAttachmentUrl) throw new Error("附件下载链接服务不可用");
+      return jsonResult(await getAttachmentUrl(args));
+    } catch (error) {
+      return { content: [{ type: "text", text: error instanceof Error ? error.message : String(error) }], isError: true };
+    }
+  });
   register("grist_list_records", "Read records in one table, returning {records:[{id,fields}]}. filter maps column IDs to arrays of allowed values (AND across columns); sort is comma-separated column IDs with '-' for descending. Default limit 100, maximum 1000.", {
     docId, tableId,
     filter: z.record(z.string(), z.array(z.unknown())).optional().describe("Example: {Status:[\"Open\"],Owner:[3,4]}. Values use Grist REST JSON encoding."),

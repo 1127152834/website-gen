@@ -1,6 +1,7 @@
 // Per-user Grist REST client. Never follows redirects with a user's API key.
 import { lookup } from "node:dns/promises";
 import { isIP } from "node:net";
+import { setTimeout as delay } from "node:timers/promises";
 import { assertPublicBaseUrl } from "./net-guard.ts";
 
 export type GristFields = Record<string, unknown>;
@@ -27,7 +28,7 @@ export type GristRecords = { records: GristRecord[] };
 export type GristRecordIds = { records: { id: number }[] };
 export type GristSqlResult = { statement: string; records: GristRecordInput[] };
 export type GristSnapshots = { snapshots: { snapshotId: string; lastModified: string; docId: string }[] };
-export type GristListOptions = { filter?: Record<string, unknown[]>; sort?: string | string[]; limit?: number };
+export type GristListOptions = { filter?: Record<string, unknown[]>; sort?: string | string[]; limit?: number; signal?: AbortSignal };
 
 export class GristError extends Error {
   readonly status: number | null;
@@ -134,6 +135,21 @@ type GristClientOptions = {
 const RESPONSE_MAX_BYTES = 16 * 1024 * 1024;
 const ERROR_MAX_BYTES = 64 * 1024;
 
+function errorField(error: unknown, field: "name" | "code" | "message"): string {
+  if (!error || typeof error !== "object") return "";
+  const value = (error as Record<string, unknown>)[field];
+  return typeof value === "string" ? value : "";
+}
+
+function isNetworkFailure(error: unknown): boolean {
+  const reasons = [error, error instanceof Error ? error.cause : undefined];
+  if (error instanceof GristError || reasons.some((reason) =>
+    /Abort|Timeout/i.test(errorField(reason, "name")) || /ABORT|TIMEOUT|TIMEDOUT/i.test(errorField(reason, "code"))
+    || /\b(?:timeout|timed[\s-]+out)\b|超时/i.test(errorField(reason, "message")))) return false;
+  return reasons.some((reason) => /^(ECONNRESET|ECONNREFUSED|EPIPE|ENETDOWN|ENETRESET|ENETUNREACH|EHOSTDOWN|EHOSTUNREACH|ENOTFOUND|EAI_AGAIN|UND_ERR_SOCKET)$/.test(errorField(reason, "code")))
+    || error instanceof TypeError && /^(fetch failed|failed to fetch)$/i.test(error.message);
+}
+
 /** Bound decompressed stream bytes as well as advertised length, before JSON parsing.
  * Upstream row limits are not trusted: a single cell or an error response may be enormous.
  */
@@ -192,11 +208,33 @@ export function gristClient(options: GristClientOptions) {
   if (!apiKey || /[\r\n]/.test(apiKey)) throw new GristError("Grist API Key 不能为空或包含换行符");
   if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) throw new GristError("Grist 请求超时设置无效");
   const redact = (message: string) => message.replaceAll(apiKey, "[已隐藏]").slice(0, 800);
+  const failureDetail = (error: unknown) => {
+    const cause = error instanceof Error ? error.cause : undefined;
+    const detail = errorField(cause, "code") || errorField(cause, "message");
+    const suffix = detail ? `（${redact(detail).slice(0, 400)}）` : "";
+    return redact(error instanceof Error ? error.message : String(error)).slice(0, 800 - suffix.length) + suffix;
+  };
 
-  async function request<T>(path: string, method = "GET", body?: unknown, query?: URLSearchParams): Promise<T> {
+  /** Retry only before fetch returns a Response; never replay body reads or writes. */
+  async function fetchResponse(url: string, init: RequestInit & { signal: AbortSignal }, readOnly: boolean): Promise<Response> {
+    for (let attempt = 0; ; attempt++) {
+      init.signal.throwIfAborted();
+      try { return await fetch(url, init); }
+      catch (error) {
+        if (!readOnly || attempt !== 0 || init.signal.aborted || !isNetworkFailure(error)) throw error;
+        // Both attempts share the original deadline and cancellation signal.
+        await delay(150, undefined, { signal: init.signal });
+      }
+    }
+  }
+
+  async function request<T>(path: string, method = "GET", body?: unknown, query?: URLSearchParams, externalSignal?: AbortSignal): Promise<T> {
     const controller = new AbortController();
     const timeoutError = new GristError(`Grist 请求超时（${timeoutMs / 1000} 秒）`);
     const timer = setTimeout(() => controller.abort(timeoutError), timeoutMs);
+    const onExternalAbort = () => controller.abort(externalSignal?.reason instanceof GristError ? externalSignal.reason : new GristError("Grist 请求已取消"));
+    if (externalSignal?.aborted) onExternalAbort();
+    else externalSignal?.addEventListener("abort", onExternalAbort, { once: true });
     let abortListener: (() => void) | undefined;
     const aborted = new Promise<never>((_resolve, reject) => {
       abortListener = () => reject(controller.signal.reason instanceof GristError ? controller.signal.reason : timeoutError);
@@ -207,13 +245,13 @@ export function gristClient(options: GristClientOptions) {
         await assertGristBaseUrl(baseUrl);
         if (controller.signal.aborted) throw controller.signal.reason;
         const suffix = query?.size ? `?${query}` : "";
-        const response = await fetch(`${baseUrl}/api${path}${suffix}`, {
+        const response = await fetchResponse(`${baseUrl}/api${path}${suffix}`, {
           method,
           headers: { Authorization: `Bearer ${apiKey}`, Accept: "application/json", ...(body === undefined ? {} : { "Content-Type": "application/json" }) },
           body: body === undefined ? undefined : JSON.stringify(body),
           signal: controller.signal,
           redirect: "error",
-        });
+        }, method === "GET" || (method === "POST" && path.endsWith("/sql")));
         const raw = await readBoundedResponse(response, controller);
         let parsed: unknown;
         try { parsed = raw ? JSON.parse(raw) : undefined; }
@@ -235,9 +273,10 @@ export function gristClient(options: GristClientOptions) {
     } catch (error) {
       if (error instanceof GristError) throw error;
       if (controller.signal.aborted) throw controller.signal.reason instanceof GristError ? controller.signal.reason : timeoutError;
-      throw new GristError(`Grist 请求失败：${redact(error instanceof Error ? error.message : String(error))}`);
+      throw new GristError(`Grist 请求失败：${failureDetail(error)}`);
     } finally {
       clearTimeout(timer);
+      externalSignal?.removeEventListener("abort", onExternalAbort);
       if (abortListener) controller.signal.removeEventListener("abort", abortListener);
     }
   }
@@ -264,7 +303,7 @@ export function gristClient(options: GristClientOptions) {
         if (!Number.isSafeInteger(options.limit) || options.limit < 1) throw new GristError("Grist limit 必须是正整数");
         query.set("limit", String(options.limit));
       }
-      return request<GristRecords>(`${tablePath(docId, tableId)}/records`, "GET", undefined, query);
+      return request<GristRecords>(`${tablePath(docId, tableId)}/records`, "GET", undefined, query, options.signal);
     },
     async addRecords(docId: string, tableId: string, records: GristRecordInput[]) {
       return request<GristRecordIds>(`${tablePath(docId, tableId)}/records`, "POST", { records });
@@ -287,6 +326,32 @@ export function gristClient(options: GristClientOptions) {
         query.set("limit", String(options.limit));
       }
       return request<GristRecords>(`${docPath(docId)}/attachments`, "GET", undefined, query);
+    },
+    /** Returns the upstream body untouched so the HTTP layer can stream it with its own byte cap. */
+    async downloadAttachment(docId: string, attachmentId: number, options: { signal?: AbortSignal } = {}) {
+      if (!Number.isSafeInteger(attachmentId) || attachmentId <= 0) throw new GristError("Grist 附件 ID 无效");
+      const signal = options.signal ? AbortSignal.any([options.signal, AbortSignal.timeout(timeoutMs)]) : AbortSignal.timeout(timeoutMs);
+      let response: Response;
+      try {
+        let onAbort: (() => void) | undefined;
+        const aborted = new Promise<never>((_resolve, reject) => {
+          if (signal.aborted) reject(signal.reason);
+          else { onAbort = () => reject(signal.reason); signal.addEventListener("abort", onAbort, { once: true }); }
+        });
+        try { await Promise.race([assertGristBaseUrl(baseUrl), aborted]); }
+        finally { if (onAbort) signal.removeEventListener("abort", onAbort); }
+        if (signal.aborted) throw signal.reason;
+        response = await fetchResponse(`${baseUrl}/api${docPath(docId)}/attachments/${segment(attachmentId)}/download`, {
+          method: "GET", headers: { Authorization: `Bearer ${apiKey}`, Accept: "*/*", "Accept-Encoding": "identity" }, signal, redirect: "error",
+        }, true);
+      } catch (error) {
+        throw new GristError(`Grist 附件下载失败：${failureDetail(error)}`);
+      }
+      if (!response.ok) {
+        void response.body?.cancel().catch(() => {});
+        throw new GristError(`Grist 附件下载失败（HTTP ${response.status}）`, response.status);
+      }
+      return response;
     },
     async createDoc(workspaceId: string | number, name: string) { return request<string>(`/workspaces/${segment(workspaceId)}/docs`, "POST", { name }); },
     async createTable(docId: string, tableId: string, columns: GristColumnInput[] = []) {

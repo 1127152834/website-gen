@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { call, onChanged, onConnect, onMail } from "@/lib/backend.ts";
+import { call, onMail, useRpcData } from "@/lib/backend.ts";
 import { cn } from "@/lib/utils";
 import { folderUnread, MailOpenState, mailSelectionRedirect } from "@/lib/mail-open-state.ts";
 
@@ -35,10 +35,6 @@ function mailboxStatusText(mailbox: MailboxSummary): string {
 
 export function MailPage({ mailboxId, folder, uid, onNavigate }: { mailboxId?: number; folder?: string; uid?: number; onNavigate: (path: string) => void }) {
   const confirm = useConfirm();
-  const [mailboxes, setMailboxes] = useState<MailboxSummary[] | null>(null);
-  const [folders, setFolders] = useState<MailFolder[]>([]);
-  const [messages, setMessages] = useState<MailListResult | null>(null);
-  const [message, setMessage] = useState<MailMessageDetail | null>(null);
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
@@ -46,60 +42,54 @@ export function MailPage({ mailboxId, folder, uid, onNavigate }: { mailboxId?: n
   const [retryingDefaultFor, setRetryingDefaultFor] = useState<number | null>(null);
   const [credentialFor, setCredentialFor] = useState<MailboxSummary | null>(null);
   const [compose, setCompose] = useState<{ mailbox: MailboxSummary; mode: ComposeMode; original?: MailMessageDetail } | null>(null);
-  const folderRequest = useRef(0);
-  const listRequest = useRef(0);
-  const detailRequest = useRef(0);
   const openState = useRef(new MailOpenState());
+  const { data: mailboxes, loading: mailboxesLoading, refreshing: mailboxesRefreshing, error: mailboxesError, refresh: refreshMailboxes, invalidate: invalidateMailboxes } = useRpcData<MailboxSummary[]>("mail.list", undefined, { topics: ["mail"] });
   const activeMailbox = mailboxes?.find((item) => item.id === mailboxId) ?? null;
   const credentialSaved = activeMailbox?.credentialSaved ?? false;
   const activeFolder = folder ?? "INBOX";
+  const { data: folders = [], error: foldersError, refresh: refreshFolders, invalidate: invalidateFolders } = useRpcData<MailFolder[]>("mail.folders", !mailboxId || !credentialSaved ? null : { mailboxId }, { topics: ["mail"] });
+  const messageParams = !mailboxId || !credentialSaved ? null : { mailboxId, folder: activeFolder, query: query.trim() || undefined, page, pageSize: PAGE_SIZE };
+  const { data: messages = null, error: messagesError, refresh: refreshMessages, invalidate: invalidateMessages } = useRpcData<MailListResult>("mail.messages", messageParams, { topics: ["mail"] });
+  const detailParams = !mailboxId || uid == null || !credentialSaved ? null : { mailboxId, folder: activeFolder, uid };
+  const { data: message = null, error: messageError, refresh: refreshMessage, invalidate: invalidateMessage } = useRpcData<MailMessageDetail>("mail.message", detailParams, { topics: ["mail"] });
 
-  const loadMailboxes = useCallback(() => {
-    void call<MailboxSummary[]>("mail.list").then((items) => {
-      setMailboxes(items);
-      setError(null);
-      const redirect = mailSelectionRedirect(mailboxId, items.map((item) => item.id));
-      if (redirect) onNavigate(redirect);
-    }, (reason: Error) => setError(reason.message));
-  }, [mailboxId, onNavigate]);
+  const loadMailboxes = useCallback(() => { invalidateMailboxes(); void refreshMailboxes().catch((reason: Error) => setError(reason.message)); }, [invalidateMailboxes, refreshMailboxes]);
+  useEffect(() => {
+    if (!mailboxes) return;
+    const redirect = mailSelectionRedirect(mailboxId, mailboxes.map((item) => item.id));
+    if (redirect) onNavigate(redirect);
+  }, [mailboxId, mailboxes, onNavigate]);
 
   const loadFolders = useCallback(() => {
     if (!mailboxId || !credentialSaved) return;
-    const request = ++folderRequest.current;
-    void call<MailFolder[]>("mail.folders", { mailboxId }).then((items) => { if (request === folderRequest.current) setFolders(items); }, (reason: Error) => { if (request === folderRequest.current) setError(reason.message); });
-  }, [credentialSaved, mailboxId]);
+    invalidateFolders(); void refreshFolders().catch((reason: Error) => setError(reason.message));
+  }, [credentialSaved, invalidateFolders, mailboxId, refreshFolders]);
 
   const loadMessages = useCallback(() => {
     if (!mailboxId || !credentialSaved) return;
-    const request = ++listRequest.current;
-    void call<MailListResult>("mail.messages", { mailboxId, folder: activeFolder, query: query.trim() || undefined, page, pageSize: PAGE_SIZE }).then((result) => { if (request === listRequest.current) setMessages(result); }, (reason: Error) => { if (request === listRequest.current) setError(reason.message); });
-  }, [activeFolder, credentialSaved, mailboxId, page, query]);
+    invalidateMessages(); void refreshMessages().catch((reason: Error) => setError(reason.message));
+  }, [credentialSaved, invalidateMessages, mailboxId, refreshMessages]);
 
-  useEffect(() => onConnect(loadMailboxes), [loadMailboxes]);
-  useEffect(() => { folderRequest.current++; listRequest.current++; detailRequest.current++; setPage(1); setFolders([]); setMessages(null); setMessage(null); setError(null); }, [activeFolder, mailboxId]);
-  useEffect(() => { loadFolders(); }, [loadFolders]);
-  useEffect(() => { setMessages(null); loadMessages(); }, [loadMessages]);
+  useEffect(() => { setPage(1); setError(null); }, [activeFolder, mailboxId]);
+  useEffect(() => { const reason = mailboxesError ?? foldersError ?? messagesError ?? messageError; if (reason) setError(reason.message); }, [foldersError, mailboxesError, messageError, messagesError]);
   useEffect(() => {
-    if (!mailboxId || uid == null || !credentialSaved) { setMessage(null); if (uid == null) openState.current.leaveMessage(); return; }
-    const request = ++detailRequest.current;
-    void call<MailMessageDetail>("mail.message", { mailboxId, folder: activeFolder, uid }).then((item) => {
-      if (request !== detailRequest.current) return;
-      setMessage(item);
-      if (openState.current.shouldAutoMark(mailboxId, activeFolder, uid, item.seen)) {
+    if (!mailboxId || uid == null || !credentialSaved || !message) { if (uid == null) openState.current.leaveMessage(); return; }
+      if (openState.current.shouldAutoMark(mailboxId, activeFolder, uid, message.seen)) {
         void call("mail.seen", { mailboxId, folder: activeFolder, uid, seen: true }).then(() => {
-          setMessage((current) => current?.uid === uid && current.folder === activeFolder ? { ...current, seen: true } : current);
-          setMessages((current) => current ? { ...current, items: current.items.map((entry) => entry.uid === uid ? { ...entry, seen: true } : entry) } : current);
+          invalidateMessage(); invalidateMessages(); void refreshMessage().catch((reason: Error) => setError(reason.message)); void refreshMessages().catch((reason: Error) => setError(reason.message));
           loadMailboxes();
           loadFolders();
         });
       }
-    }, (reason: Error) => { if (request === detailRequest.current) setError(reason.message); });
-  }, [activeFolder, credentialSaved, loadFolders, loadMailboxes, mailboxId, uid]);
-  useEffect(() => onMail((event) => {
-    loadMailboxes();
-    if (event.mailboxId === mailboxId) { loadFolders(); loadMessages(); }
-  }), [loadFolders, loadMailboxes, loadMessages, mailboxId]);
-  useEffect(() => onChanged("mail", () => { loadMailboxes(); loadFolders(); loadMessages(); }), [loadFolders, loadMailboxes, loadMessages]);
+  }, [activeFolder, credentialSaved, invalidateMessage, invalidateMessages, loadFolders, loadMailboxes, mailboxId, message, refreshMessage, refreshMessages, uid]);
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const dispose = onMail((event) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => { loadMailboxes(); if (event.mailboxId === mailboxId) { loadFolders(); loadMessages(); } }, 200);
+    });
+    return () => { clearTimeout(timer); dispose(); };
+  }, [loadFolders, loadMailboxes, loadMessages, mailboxId]);
 
   const sync = async () => {
     setSyncing(true); setError(null);
@@ -129,7 +119,7 @@ export function MailPage({ mailboxId, folder, uid, onNavigate }: { mailboxId?: n
   };
   const setSeen = async (seen: boolean) => {
     if (!message || !mailboxId) return;
-    try { await call("mail.seen", { mailboxId, folder: activeFolder, uid: message.uid, seen }); setMessage({ ...message, seen }); setMessages((current) => current ? { ...current, items: current.items.map((entry) => entry.uid === message.uid ? { ...entry, seen } : entry) } : current); loadMailboxes(); loadFolders(); }
+    try { await call("mail.seen", { mailboxId, folder: activeFolder, uid: message.uid, seen }); invalidateMessage(); invalidateMessages(); void refreshMessage().catch((reason: Error) => setError(reason.message)); void refreshMessages().catch((reason: Error) => setError(reason.message)); loadMailboxes(); loadFolders(); }
     catch (reason) { toast((reason as Error).message, "error"); }
   };
   const trash = async () => {
@@ -144,13 +134,15 @@ export function MailPage({ mailboxId, folder, uid, onNavigate }: { mailboxId?: n
     return [...groups];
   }, [mailboxes]);
 
-  if (mailboxes === null) return <div className="space-y-4"><header><h1 className="text-2xl font-semibold">邮箱</h1><p className="text-sm text-muted-foreground">正在读取邮箱…</p></header><div className="h-[34rem] animate-pulse rounded-lg bg-muted" /></div>;
+  if (mailboxesLoading) return <div className="space-y-4"><header><h1 className="text-2xl font-semibold">邮箱</h1><p className="text-sm text-muted-foreground">正在读取邮箱…</p></header><div className="h-[34rem] animate-pulse rounded-lg bg-muted" /></div>;
+  if (!mailboxes) return <p role="alert" className="text-sm text-destructive">{mailboxesError?.message ?? "无法读取邮箱"}</p>;
   if (mailboxes.length === 0) return <div className="space-y-6"><header className="flex items-start justify-between gap-4"><div><h1 className="text-2xl font-semibold">邮箱</h1><p className="mt-1 text-sm text-muted-foreground">集中收发所有已接入 Hostinger 账号下的邮件。</p></div><Button variant="outline" onClick={() => void sync()} disabled={syncing}>{syncing ? <LoaderCircle className="animate-spin" aria-hidden /> : <RefreshCw aria-hidden />}同步</Button></header>{error && <p role="alert" className="text-sm text-destructive">{error}</p>}<div className="rounded-lg border border-dashed p-10 text-center text-sm"><Mail className="mx-auto mb-3 size-8 text-muted-foreground" aria-hidden /><p className="font-medium">还没有邮箱</p><p className="mt-1 text-muted-foreground">先在「账号」接入 Hostinger 账号并同步；账号下的邮箱会自动出现在这里。</p></div></div>;
 
   const showMailboxPane = !mailboxId;
   const showListPane = Boolean(mailboxId) && uid == null;
   const showReaderPane = Boolean(mailboxId) && uid != null;
   return <div className="space-y-4">
+    {mailboxesRefreshing && <p role="status" className="fixed right-4 bottom-4 text-xs text-muted-foreground">刷新中…</p>}
     <header className="flex flex-wrap items-start justify-between gap-3"><div><h1 className="text-2xl font-semibold">邮箱</h1><p className="mt-1 text-sm text-muted-foreground">邮件正文只显示纯文本；应用不会访问邮件中的链接、图片或其他远程资源。</p></div><div className="flex gap-2"><Button variant="outline" onClick={() => void sync()} disabled={syncing}>{syncing ? <LoaderCircle className="animate-spin" aria-hidden /> : <RefreshCw aria-hidden />}同步</Button>{activeMailbox?.credentialSaved && <Button onClick={() => setCompose({ mailbox: activeMailbox, mode: "new" })}><PenLine aria-hidden />写邮件</Button>}</div></header>
     {error && <p role="alert" className="rounded-md border border-destructive/30 bg-destructive/5 p-2 text-sm text-destructive">{error}</p>}
     <div className="grid min-h-[calc(100dvh-12rem)] overflow-hidden rounded-xl border bg-card xl:grid-cols-[17rem_minmax(18rem,24rem)_minmax(22rem,1fr)]">

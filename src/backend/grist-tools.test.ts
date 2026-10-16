@@ -8,12 +8,13 @@ import { createGristMcpServer, GRIST_TOOL_NAMES } from "./grist-tools.ts";
 const expectedTools = [
   "grist_help", "grist_get_user_profile", "grist_list_orgs", "grist_list_workspaces", "grist_list_docs", "grist_get_doc_info",
   "grist_get_tables", "grist_get_table_columns", "grist_list_records", "grist_query_document", "grist_list_snapshots", "grist_list_attachments",
+  "grist_get_pages", "grist_get_attachment_url",
   "grist_add_records", "grist_update_records", "grist_remove_records", "grist_create_doc", "grist_create_table", "grist_add_table_column",
   "grist_update_table_column", "grist_rename_table", "grist_remove_table", "grist_remove_table_column",
 ];
 
-async function setup(getClient: () => GristClient | Promise<GristClient>) {
-  const server = createGristMcpServer(getClient);
+async function setup(getClient: () => GristClient | Promise<GristClient>, getAttachmentUrl?: (input: { docId: string; attachmentId: number }) => { url: string; expiresAt: number }) {
+  const server = createGristMcpServer(getClient, getAttachmentUrl);
   const client = new Client({ name: "grist-test", version: "1" });
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
   await server.connect(serverTransport);
@@ -25,7 +26,7 @@ function fakeClient(run: (method: string, args: unknown[]) => unknown): GristCli
   return new Proxy({} as GristClient, { get: (_target, method) => method === "then" ? undefined : (...args: unknown[]) => run(String(method), args) });
 }
 
-test("Grist MCP lists exactly the 22 REST tools without accessing user configuration", async () => {
+test("Grist MCP lists exactly the supported REST tools without accessing user configuration", async () => {
   let accesses = 0;
   const { client, close } = await setup(() => { accesses++; throw new Error("not configured"); });
   try {
@@ -39,6 +40,29 @@ test("Grist MCP lists exactly the 22 REST tools without accessing user configura
     assert.match(JSON.stringify(help.content), /grist_get_grist_access_rules_reference/);
     assert.match(JSON.stringify(help.content), /grist_get_available_custom_widgets/);
     assert.equal(accesses, 0);
+  } finally { await close(); }
+});
+
+test("Grist MCP exposes page structure and revocable attachment URL tools", async () => {
+  const calls: string[] = [];
+  const client = fakeClient((method, args) => {
+    assert.equal(method, "queryDocument");
+    const sql = String(args[1]);
+    calls.push(sql);
+    if (sql.includes("_grist_Pages")) return { statement: sql, records: [{ fields: { pageId: 1, viewRef: 2, name: "4", indentation: 0, pagePos: 0.5 } }] };
+    if (sql.includes("_grist_Views_section AS")) return { statement: sql, records: [{ fields: { sectionId: 3, viewRef: 2, tableRef: 4, tableId: "Sheet1_2", title: "", parentKey: "record" } }] };
+    if (sql.includes("_grist_Tables AS c") || sql.includes("_grist_Tables_column")) return { statement: sql, records: [{ fields: { colRef: 5, tableRef: 4, colId: "Name", label: "姓名", type: "Text", isFormula: 0, widgetOptions: "{}", sectionId: 3, parentPos: 1 } }] };
+    return { statement: sql, records: [{ fields: { tableRef: 4, tableId: "Sheet1_2", primaryViewId: 2, rawViewSectionRef: 6 } }] };
+  });
+  const { client: mcp, close } = await setup(() => client, ({ docId, attachmentId }) => ({ url: `https://site.test/signed/${docId}/${attachmentId}`, expiresAt: 123 }));
+  try {
+    const pages = await mcp.callTool({ name: "grist_get_pages", arguments: { docId: "doc" } });
+    assert.equal(pages.isError, undefined);
+    assert.match(JSON.stringify(pages.content), /Sheet1_2/);
+    assert.equal(calls.length, 4);
+    const attachment = await mcp.callTool({ name: "grist_get_attachment_url", arguments: { docId: "doc", attachmentId: 12 } });
+    assert.equal(attachment.isError, undefined);
+    assert.match(JSON.stringify(attachment.content), /signed\/doc\/12/);
   } finally { await close(); }
 });
 

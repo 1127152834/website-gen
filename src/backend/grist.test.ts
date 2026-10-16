@@ -207,6 +207,39 @@ test("Grist 附件列表通过 REST limit 限制读取数量", async () => {
   assert.equal(fake.calls.length, 1);
 });
 
+test("Grist 附件下载保留响应流而不整包读取", async () => {
+  let pulled = 0;
+  const body = new ReadableStream<Uint8Array>({ pull(controller) { pulled++; controller.enqueue(new Uint8Array([1])); controller.close(); } }, { highWaterMark: 0 });
+  const calls: { url: string; init?: RequestInit }[] = [];
+  const client = gristClient({ baseUrl: publicBase, apiKey: "key", fetch: async (input, init) => {
+    calls.push({ url: String(input), init });
+    return new Response(body, { headers: { "Content-Type": "application/pdf", "Content-Length": "1" } });
+  } });
+  const response = await client.downloadAttachment("doc", 12);
+  assert.equal(pulled, 0);
+  assert.equal(new URL(calls[0]!.url).pathname, "/api/docs/doc/attachments/12/download");
+  assert.equal(calls[0]!.init?.redirect, "error");
+  assert.equal(new Headers(calls[0]!.init?.headers).get("Authorization"), "Bearer key");
+  assert.equal(new Headers(calls[0]!.init?.headers).get("Accept-Encoding"), "identity");
+  assert.deepEqual([...new Uint8Array(await response.arrayBuffer())], [1]);
+  assert.equal(pulled, 1);
+  await assert.rejects(client.downloadAttachment("doc", 0), /附件 ID/);
+});
+
+test("Grist 记录读取把外部取消信号传给 fetch", async () => {
+  let fetchSignal: AbortSignal | undefined;
+  const client = gristClient({ baseUrl: publicBase, apiKey: "key", fetch: async (_input, init) => {
+    fetchSignal = init?.signal ?? undefined;
+    return await new Promise<Response>((_resolve, reject) => init?.signal?.addEventListener("abort", () => reject(init.signal!.reason), { once: true }));
+  } });
+  const controller = new AbortController();
+  const pending = client.listRecords("d", "T", { limit: 1, signal: controller.signal });
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  controller.abort(new Error("aggregate failed"));
+  await assert.rejects(pending, /取消/);
+  assert.equal(fetchSignal?.aborted, true);
+});
+
 test("Grist 根据 Content-Length 提前拒绝超限成功/错误响应，不读取正文且取消请求", async () => {
   for (const [status, cap] of [[200, 16 * 1024 * 1024], [401, 64 * 1024]] as const) {
     let pulls = 0, cancels = 0;

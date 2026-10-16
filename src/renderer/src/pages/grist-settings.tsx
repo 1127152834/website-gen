@@ -1,6 +1,6 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useCallback, useLayoutEffect, useState, type FormEvent } from "react";
 import { Check, Copy, LoaderCircle, RefreshCw, Table2, Trash2 } from "lucide-react";
-import { call } from "@/lib/backend.ts";
+import { call, invalidateRpcData, useRpcData } from "@/lib/backend.ts";
 import { toast, useConfirm } from "@/components/feedback";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,25 +19,24 @@ export function GristSettingsSection() {
   const [status, setStatus] = useState<TokenStatus>({ createdAt: null, lastUsedAt: null });
   const [token, setToken] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [test, setTest] = useState<ConnectionResult | null>(null);
 
-  const load = async () => {
-    setLoading(true); setError(null);
-    try {
+  const loadSettings = useCallback(async () => {
       const [next, tokenStatus] = await Promise.all([call<GristSettings>("grist.settings.get"), call<TokenStatus>("grist.mcpToken.status")]);
-      setSettings(next); setBaseUrl(next.baseUrl); setStatus(tokenStatus);
-    } catch (reason) { setError((reason as Error).message); }
-    finally { setLoading(false); }
-  };
-  useEffect(() => { void load(); }, []);
+      return { settings: next, status: tokenStatus };
+  }, []);
+  const { data, loading, refreshing, error: loadError, refresh, invalidate } = useRpcData<{ settings: GristSettings; status: TokenStatus }>("grist.settings.firstScreen", undefined, { loader: loadSettings });
+  useLayoutEffect(() => { if (data) { setSettings(data.settings); setBaseUrl(data.settings.baseUrl); setStatus(data.status); } }, [data]);
 
   const save = async (event: FormEvent) => {
     event.preventDefault(); setBusy("save"); setError(null); setTest(null);
     try {
       const next = await call<GristSettings>("grist.settings.save", { baseUrl: baseUrl.trim(), ...(apiKey.trim() ? { apiKey: apiKey.trim() } : {}) });
-      setSettings(next); setBaseUrl(next.baseUrl); setApiKey(""); toast("Grist 设置已保存", "success");
+      setSettings(next); setBaseUrl(next.baseUrl); setApiKey("");
+      invalidate();
+      for (const method of ["grist.settings.get", "grist.listOrgs", "grist.listWorkspaces", "grist.listDocs", "grist.getDocStructure", "grist.getPageRecords", "grist.getAttachments"]) invalidateRpcData(method);
+      void refresh().catch((reason: Error) => setError(reason.message)); toast("Grist 设置已保存", "success");
     } catch (reason) { setError((reason as Error).message); }
     finally { setBusy(null); }
   };
@@ -54,14 +53,14 @@ export function GristSettingsSection() {
     setBusy("generate"); setError(null);
     try {
       const next = await call<{ token: string; createdAt: number }>("grist.mcpToken.generate");
-      setToken(next.token); setStatus({ createdAt: next.createdAt, lastUsedAt: null });
+      setToken(next.token); setStatus({ createdAt: next.createdAt, lastUsedAt: null }); invalidate(); void refresh().catch((reason: Error) => setError(reason.message));
     } catch (reason) { setError((reason as Error).message); }
     finally { setBusy(null); }
   };
   const revoke = async () => {
     if (!await confirm({ title: "撤销 MCP 令牌？", description: "使用此令牌的 AI 客户端将立即无法访问 Grist。之后可以生成新令牌。", confirmText: "撤销令牌", destructive: true })) return;
     setBusy("revoke"); setError(null);
-    try { await call("grist.mcpToken.revoke"); setToken(null); setStatus({ createdAt: null, lastUsedAt: null }); toast("MCP 令牌已撤销"); }
+    try { await call("grist.mcpToken.revoke"); setToken(null); setStatus({ createdAt: null, lastUsedAt: null }); invalidate(); void refresh().catch((reason: Error) => setError(reason.message)); toast("MCP 令牌已撤销"); }
     catch (reason) { setError((reason as Error).message); }
     finally { setBusy(null); }
   };
@@ -72,7 +71,8 @@ export function GristSettingsSection() {
   };
   return <section id="grist" className="scroll-mt-6 space-y-5" aria-labelledby="grist-title">
     <div><h2 id="grist-title" className="flex items-center gap-2 text-base font-semibold tracking-tight"><Table2 className="size-4" aria-hidden />Grist 表格</h2><p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">连接自己的 Grist，浏览和编辑表格。地址与加密密钥仅保存在当前用户的工作区。</p></div>
-    {error && <p role="alert" className="text-sm text-destructive">{error}{!settings && <Button variant="link" size="sm" onClick={() => void load()}>重新读取</Button>}</p>}
+    {refreshing && settings && <p role="status" className="fixed right-4 bottom-4 text-xs text-muted-foreground">刷新中…</p>}
+    {(error || loadError) && <p role="alert" className="text-sm text-destructive">{error ?? loadError?.message}{!settings && <Button variant="link" size="sm" onClick={() => void refresh().catch((reason: Error) => setError(reason.message))}>重新读取</Button>}</p>}
     {loading ? <Skeleton label="正在读取 Grist 设置" /> : settings && <div className="divide-y rounded-xl border bg-card">
       <form onSubmit={(event) => void save(event)} className="space-y-4 p-4 sm:p-5">
         <div className="space-y-2"><Label htmlFor="grist-url">Grist 地址</Label><Input id="grist-url" type="url" autoComplete="url" placeholder="https://grist.example.com" value={baseUrl} onChange={(event) => { setBaseUrl(event.target.value); setTest(null); }} disabled={busy !== null} /><p className="text-xs text-muted-foreground">仅支持公网 HTTP / HTTPS 地址，不接受回环或内网地址。</p></div>

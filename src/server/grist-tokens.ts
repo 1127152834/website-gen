@@ -26,6 +26,10 @@ export class GristTokenStore {
 
   revoke(userId: number): void { this.admin.db.prepare("DELETE FROM grist_mcp_tokens WHERE user_id = ?").run(userId); }
 
+  tokenHashForUser(userId: number): string | undefined {
+    return (this.admin.db.prepare("SELECT token_hash FROM grist_mcp_tokens WHERE user_id = ?").get(userId) as { token_hash: string } | undefined)?.token_hash;
+  }
+
   authenticate(token: string, now: number, touch = true): AdminUser | undefined {
     if (!/^[A-Za-z0-9_-]{43}$/.test(token)) return undefined;
     const hash = tokenHash(token);

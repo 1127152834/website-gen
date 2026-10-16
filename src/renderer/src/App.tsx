@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronDown, Globe, KeyRound, Layers, LogOut, Settings, Store, Users, LayoutDashboard, PanelLeftClose, PanelLeftOpen, Sun, Moon, Monitor, Plus, Mail, Table2 } from "lucide-react";
 import { DropdownMenu } from "radix-ui";
 import type { AuthUser } from "../../shared/auth.ts";
-import { call, onChanged, onConnectionStatus, onMail, startBackendTransport, stopBackendTransport } from "@/lib/backend.ts";
+import { onConnectionStatus, onMail, startBackendTransport, stopBackendTransport, useRpcData } from "@/lib/backend.ts";
 import { AUTH_SYNC_KEY, getCurrentUser, HttpError, invalidateApiRequests, logout } from "@/lib/auth.ts";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -151,6 +151,7 @@ function WorkspaceShell({ user, onUserChange, onLogout }: { user: AuthUser; onUs
   const [mobileOpen, setMobileOpen] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
   const [mailUnread, setMailUnread] = useState(0);
+  const { data: mailboxSummary, invalidate: invalidateMailboxes, refresh: refreshMailboxes } = useRpcData<{ unreadCount: number }[] | { unread: number }>("mail.list", undefined, { topics: ["mail"] });
   const contentRef = useRef<HTMLDivElement>(null);
   const navToggle = useRef<HTMLButtonElement>(null);
   const navigate = useCallback((path: string) => {
@@ -163,18 +164,18 @@ function WorkspaceShell({ user, onUserChange, onLogout }: { user: AuthUser; onUs
   useEffect(() => onConnectionStatus(setConnected), []);
   useEffect(() => { startBackendTransport(user.id, true); return () => stopBackendTransport(true); }, [user.id]);
   useEffect(() => {
-    const loadUnread = () => void call<{ unreadCount: number }[] | { unread: number }>("mail.list").then((result) => {
-      const count = Array.isArray(result) ? result.reduce((sum, mailbox) => sum + (mailbox.unreadCount ?? 0), 0) : result.unread;
-      setMailUnread(count);
-    }).catch(() => {});
-    loadUnread();
+    if (!mailboxSummary) return;
+    setMailUnread(Array.isArray(mailboxSummary) ? mailboxSummary.reduce((sum, mailbox) => sum + (mailbox.unreadCount ?? 0), 0) : mailboxSummary.unread);
+  }, [mailboxSummary]);
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
     const offMail = onMail((event) => {
       if (event.type === "new") toast("收到新邮件");
-      loadUnread();
+      clearTimeout(timer);
+      timer = setTimeout(() => { invalidateMailboxes(); void refreshMailboxes().catch(() => undefined); }, 200);
     });
-    const offChanged = onChanged("mail", loadUnread);
-    return () => { offMail(); offChanged(); };
-  }, [user.id]);
+    return () => { clearTimeout(timer); offMail(); };
+  }, [invalidateMailboxes, refreshMailboxes]);
   const signOut = async () => {
     try { await logout(); stopBackendTransport(true); onLogout(); }
     catch (error) { if (error instanceof HttpError && error.status === 401) { stopBackendTransport(true); onLogout(); } else toast(`退出失败：${(error as Error).message}`, "error"); }
