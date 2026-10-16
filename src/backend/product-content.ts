@@ -60,7 +60,7 @@ const supplierCodeName = (value: string) => /^(?:(?:set|style|option|type|model|
 const sourceText = (p: CjProduct) => [p.name, p.category, p.description, ...p.materials, ...p.variants.map((v) => v.key)].join("\n");
 const sourceHas = (source: string, value: string) => compact(source).includes(compact(value));
 
-export function reconcileActualVariations(product: CjProduct, analysis: ProductAnalysis, variations: WooVariationFacts[]): ActualVariationContext {
+export function reconcileActualVariations(product: CjProduct, analysis: ProductAnalysis, variations: WooVariationFacts[], options: { trustSkuOrder?: boolean } = {}): ActualVariationContext {
   const attrs = splitVariants(product.keyNames, product.variants.map((v) => v.key));
   const analyzed = new Map(analysis.variants.map((v) => [v.sourceKey, v]));
   const allRows = product.variants.flatMap((variant, index) => {
@@ -83,18 +83,23 @@ export function reconcileActualVariations(product: CjProduct, analysis: ProductA
     const actual = Object.fromEntries(variation.attributes.map((x) => [x.name, x.option]));
     const option = variation.attributes.length === 1 && compact(variation.attributes[0].name) === "option" ? variation.attributes[0].option : undefined;
     const skuIndex = variation.sku?.startsWith(`${expectedBaseSku}-`) ? Number(variation.sku.slice(expectedBaseSku.length + 1)) - 1 : -1;
-    const skuMatches = Number.isInteger(skuIndex) && skuIndex >= 0 && skuIndex < rows.length ? [rows[skuIndex]] : [];
+    const skuMatches = options.trustSkuOrder !== false && Number.isInteger(skuIndex) && skuIndex >= 0 && skuIndex < rows.length ? [rows[skuIndex]] : [];
     const attrMatches = allRows.filter((row) => variation.attributes.length > 0 && variation.attributes.every(({ name, option: value }) => {
       if (compact(name) === "option") return false;
       const sourceValue = Object.entries(row.input.attrs).find(([key]) => compact(key) === compact(name))?.[1];
       return sourceValue !== undefined && compact(sourceValue) === compact(value);
     }));
-    const buyerMatches = option === undefined ? [] : allRows.filter((row) => compact(row.analysis.buyerName) === compact(option));
-    if (attrMatches.length > 1 || buyerMatches.length > 1) {
+    // 恢复出的分析名称不是历史上架顺序证据；恢复模式只接受 CJ 原始规格键或原始 Option 属性的唯一精确值。
+    const rawOptionMatches = options.trustSkuOrder === false && option !== undefined ? allRows.filter((row) => {
+      const rawOption = Object.entries(row.input.attrs).find(([name]) => compact(name) === "option")?.[1];
+      return compact(row.input.key) === compact(option) || rawOption !== undefined && compact(rawOption) === compact(option);
+    }) : [];
+    const buyerMatches = options.trustSkuOrder === false || option === undefined ? [] : allRows.filter((row) => compact(row.analysis.buyerName) === compact(option));
+    if (attrMatches.length > 1 || rawOptionMatches.length > 1 || buyerMatches.length > 1) {
       problems.push(`variation ${variation.id} has an ambiguous CJ source mapping`);
       continue;
     }
-    const exactSignals = [skuMatches[0], attrMatches[0], buyerMatches[0]].filter((row): row is (typeof rows)[number] => Boolean(row));
+    const exactSignals = [skuMatches[0], attrMatches[0], rawOptionMatches[0], buyerMatches[0]].filter((row): row is (typeof rows)[number] => Boolean(row));
     if (new Set(exactSignals.map((row) => row.input.key)).size > 1) {
       problems.push(`variation ${variation.id} has conflicting exact CJ source mappings`);
       continue;

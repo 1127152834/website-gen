@@ -52,7 +52,7 @@ function reviewIssue(key: string, fields: Record<string, unknown>) {
   }] });
 }
 
-function fixture() {
+function fixture(legacy = false) {
   const { db, siteId } = setup();
   const site = db.prepare("SELECT * FROM sites WHERE id = ?").get(siteId) as unknown as SiteRow;
   const source = {
@@ -107,19 +107,42 @@ function fixture() {
     { id: 91, sku: "WG-source-123-1", attributes: [{ name: "Option", option: "Cloud Grey" }], image: { src: "https://img.test/overlay.jpg" } },
     { id: 92, sku: "WG-source-123-2", attributes: [{ name: "Option", option: "Warm Brown" }], image: { src: "https://img.test/overlay.jpg" } },
   ];
+  if (legacy) {
+    product.attributes = [
+      { name: "Color", variation: true, options: ["Grey", "Brown"] },
+      { name: "Size", variation: true, options: ["S", "L"] },
+    ];
+    variations[0].attributes = [{ name: "Color", option: "Grey" }, { name: "Size", option: "S" }];
+    variations[1].attributes = [{ name: "Color", option: "Brown" }, { name: "Size", option: "L" }];
+  }
   const oldCopy = { ...goodStoreCopy, tagline: "Dog beds for loyal companions", hero: { heading: "Better rest for dogs", subheading: "Dog beds for every nap." }, about: goodStoreCopy.about.map((p) => p.replaceAll("cat", "dog").replaceAll("Cat", "Dog")) };
-  site.picks_json = JSON.stringify([{ productId: 9, source }]);
+  if (legacy) product.meta_data = [];
+  site.picks_json = JSON.stringify([{ pid: "source-123", name: "Cat Bed", keyword: "cat beds", costMin: 5, costMax: 7, listed: 10, status: "done", productId: 9, ...(!legacy ? { source } : {}) }]);
+  db.prepare("UPDATE sites SET picks_json = ? WHERE id = ?").run(site.picks_json, siteId);
   site.spec_json = JSON.stringify({ copy: oldCopy, policies: { shipping: "shipping", returns: "returns", privacy: "privacy", terms: "terms" } });
   site.qa_json = null;
   const siteState = { options: { blogname: "Harbor Cat Goods", blogdescription: oldCopy.tagline, custom_logo: 10, site_icon: 11 }, info: {} as Record<string, unknown> };
   const emitted: { type: string; data: unknown }[] = [];
   let clock = 0;
+  const cjCalls: string[] = [];
 
   const pageNumber = (path: string) => Number(new URLSearchParams(path.split("?")[1] ?? "").get("page") ?? 1);
   const ctx = {
     d: {
       db,
       now: () => ++clock,
+      cj: async (path: string) => {
+        cjCalls.push(path);
+        return {
+          pid: "source-123", productNameEn: "Cat Bed", categoryName: "Cat Beds",
+          description: "A cat bed offered in grey and brown options.", productKeyEn: "Color-Size",
+          productImageSet: ["https://img.test/overlay.jpg", "https://img.test/clean-cat-bed.jpg"],
+          variants: [
+            { variantKey: "Grey-S", variantSellPrice: 5, variantWeight: 500, variantLength: 40, variantWidth: 30, variantHeight: 10, variantImage: "https://img.test/grey-small.jpg" },
+            { variantKey: "Brown-L", variantSellPrice: 7, variantWeight: 700, variantLength: 55, variantWidth: 45, variantHeight: 12, variantImage: "https://img.test/brown-large.jpg" },
+          ],
+        };
+      },
       workDir: ".tmp/review-autofix",
       browse: async (input: { pages: { name: string; path: string }[]; origin: string }) => ({
         shots: [],
@@ -133,15 +156,17 @@ function fixture() {
         }),
       }),
       ai: async (_role: string, prompt: string) => {
+        if (prompt.startsWith("Review dimension units only")) return { text: '{"questionable":[]}', cost: 0 };
         if (prompt.startsWith("You write the website copy")) return { text: JSON.stringify(goodStoreCopy), cost: 0 };
+        if (prompt.startsWith("You are preparing one factual WooCommerce product listing") && !prompt.includes("QA COPY REPAIR:")) return { text: JSON.stringify(source.analysis), cost: 0 };
         if (prompt.startsWith("You are preparing one factual WooCommerce product listing")) return { text: JSON.stringify({
           ...source.analysis,
           title: "Cozy Cat Bed",
-          short_description: "A cat bed available in Cloud Grey and Warm Brown.",
-          description_html: "<p>This cat bed is available in Cloud Grey and Warm Brown.</p>",
+          short_description: legacy ? "A cat bed available in Grey / S and Brown / L." : "A cat bed available in Cloud Grey and Warm Brown.",
+          description_html: legacy ? "<p>This cat bed is available in Grey / S and Brown / L.</p>" : "<p>This cat bed is available in Cloud Grey and Warm Brown.</p>",
           variants: [
-            { ...source.analysis.variants[0], buyerName: "Cloud Grey" },
-            { ...source.analysis.variants[1], buyerName: "Warm Brown" },
+            { ...source.analysis.variants[0], buyerName: legacy ? "Grey / S" : "Cloud Grey" },
+            { ...source.analysis.variants[1], buyerName: legacy ? "Brown / L" : "Warm Brown" },
           ],
         }), cost: 0 };
         if (prompt.startsWith("You are the final compliance reviewer") && prompt.includes("PAGE URL:\nhttps://shop.test/product/cat-bed/")) {
@@ -156,7 +181,11 @@ function fixture() {
     domain: "shop.test",
     form: { brand: "Harbor Cat Goods", categories: "cat beds" },
     entity: { kind: "company", name: "Harbor Cat Goods LLC", address: "7428 Harbor Avenue, Portland, OR 97205", supportEmail: "support@shop.test", phone: "+1 503 555 0142", processingDays: [1, 3], transitDays: [5, 10] },
-    save: (column: string, value: string) => { (site as unknown as Record<string, unknown>)[column] = value; },
+    save: (column: string, value: string) => {
+      assert(["picks_json", "spec_json", "qa_json"].includes(column));
+      db.prepare(`UPDATE sites SET ${column} = ? WHERE id = ?`).run(value, siteId);
+      (site as unknown as Record<string, unknown>)[column] = value;
+    },
     emit: (type: string, data: unknown) => emitted.push({ type, data }),
     wp: async (method: string, path: string, body?: Record<string, unknown>) => {
       if (path.startsWith("wp/v2/pages?")) {
@@ -211,8 +240,217 @@ function fixture() {
     }
     return { text: emptyReview, cost: 0 };
   };
-  return { ctx, db, siteId, product, variations, pages, siteState, emitted, vision };
+  return { ctx, db, siteId, product, variations, pages, siteState, emitted, vision, source, cjCalls };
 }
+
+test("legacy published picks backfill CJ once and repair real-option copy and variation images with changesets", async () => {
+  const f = fixture(true);
+  const report = await runFullSiteReview(f.ctx, { loginUrl: "https://login.test", vision: f.vision });
+  assert.doesNotMatch(f.product.description, /Navy|Extra Large/, "missing source must not leave product-copy planning undefined");
+  assert.match(f.product.description, /Grey \/ S.*Brown \/ L/);
+  assert.deepEqual(f.variations.map((v) => v.image.src), ["https://img.test/grey-small.jpg", "https://img.test/brown-large.jpg"]);
+  assert.equal(report.rounds, 1);
+  assert.deepEqual(f.cjCalls, ["/product/query?pid=source-123"]);
+  const saved = f.db.prepare("SELECT picks_json FROM sites WHERE id = ?").get(f.siteId) as { picks_json: string };
+  const [pick] = JSON.parse(saved.picks_json);
+  assert.equal(pick.status, "done");
+  assert.equal(pick.source.product.pid, "source-123");
+  assert.equal(pick.source.product.variants[1].image, "https://img.test/brown-large.jpg");
+  assert(pick.source.analysis && pick.source.unitReview);
+  const changes = listChanges(f.db, f.siteId);
+  assert(changes.some((c) => c.summary.includes("product-copy")));
+  assert(changes.some((c) => c.summary.includes("variation-images")));
+  await runFullSiteReview(f.ctx, { loginUrl: "https://login.test", vision: f.vision });
+  assert.equal(f.cjCalls.length, 1, "persisted source is reused across QA invocations");
+});
+
+function copyOnlyFixture(legacy = false) {
+  const f = fixture(legacy);
+  f.ctx.site.spec_json = JSON.stringify({ copy: goodStoreCopy });
+  f.siteState.options.blogdescription = goodStoreCopy.tagline;
+  return { ...f, vision: async () => ({ text: emptyReview, cost: 0 }) };
+}
+
+test("a valid model product-copy action also hydrates legacy source before grounded write validation", async () => {
+  const f = copyOnlyFixture(true);
+  const ai = f.ctx.d.ai;
+  f.ctx.d.ai = async (role, prompt) => {
+    if (prompt.startsWith("You are the final compliance reviewer") && prompt.includes("PAGE URL:\nhttps://shop.test/product/cat-bed/") && /Navy/.test(f.product.description)) {
+      return { text: reviewIssue("variation-option-copy", {
+        evidence: "The description variant names differ from the actual variation options Grey / S and Brown / L.",
+        why: "Product description options mismatch the real variants.",
+        fix: "Use actual variation option names.",
+        action: { tool: "update_product", params: { id: 9, summary: "修复真实规格文案", name: "Cat Bed", short_description: "A cat bed in Grey / S and Brown / L.", description_html: "<p>A cat bed in Grey / S and Brown / L.</p>" } },
+      }), cost: 0 };
+    }
+    return ai(role, prompt);
+  };
+  await runFullSiteReview(f.ctx, { loginUrl: "https://login.test", vision: f.vision });
+  assert.doesNotMatch(f.product.description, /Navy|Extra Large/);
+  assert.deepEqual(f.cjCalls, ["/product/query?pid=source-123"]);
+  assert(listChanges(f.db, f.siteId).some((c) => c.summary === "修复真实规格文案"), "preserve the valid model action, but hydrate its factual authority first");
+});
+
+test("source recovery failure explicitly clears the model fallback action and keeps its exact warning", async () => {
+  const f = copyOnlyFixture(true);
+  const ai = f.ctx.d.ai;
+  f.ctx.d.cj = async (path) => { f.cjCalls.push(path); throw new Error("HTTP 404: removed product"); };
+  f.ctx.d.ai = async (role, prompt) => {
+    if (prompt.startsWith("You are the final compliance reviewer") && prompt.includes("PAGE URL:\nhttps://shop.test/product/cat-bed/")) {
+      return { text: reviewIssue("variation-option-copy", {
+        evidence: "The description variant names differ from the real variation options.",
+        why: "Product description options mismatch the real variants.",
+        action: { tool: "update_product", params: { id: 9, summary: "删除多余文字", description_html: "<p>Choose Navy.</p>" } },
+      }), cost: 0 };
+    }
+    return ai(role, prompt);
+  };
+  const report = await runFullSiteReview(f.ctx, { loginUrl: "https://login.test", vision: f.vision });
+  assert.equal(f.product.description, "<p>Choose Navy or Extra Large.</p>");
+  assert.equal(listChanges(f.db, f.siteId).length, 0, "even a deletion-only model fallback must be cleared after recovery fails");
+  assert.equal(f.cjCalls.length, 1);
+  assert(report.issues.some((i) => i.status === "open" && i.evidence.includes("description variant names")));
+  assert(f.emitted.some((e) => e.type === "warn" && /product-copy.*source-123.*HTTP 404: removed product/.test(JSON.stringify(e.data))));
+});
+
+for (const failure of [
+  { name: "removed", response: null, reason: /source-123.*已移除|source-123.*空资料/ },
+  { name: "CJ error", error: "HTTP 404: product removed", reason: /source-123.*HTTP 404: product removed/ },
+  { name: "wrong product", response: { pid: "another-product", productNameEn: "Different item" }, reason: /source-123.*不匹配.*another-product/ },
+]) {
+  test(`missing-source ${failure.name} stays open and logs the exact CJ reason without unsafe writes`, async () => {
+    const f = copyOnlyFixture(true);
+    f.ctx.d.cj = async (path) => {
+      f.cjCalls.push(path);
+      if (failure.error) throw new Error(failure.error);
+      return failure.response;
+    };
+    const report = await runFullSiteReview(f.ctx, { loginUrl: "https://login.test", vision: f.vision });
+    assert.match(f.product.description, /Navy/);
+    assert(report.issues.some((i) => i.status === "open" && i.evidence.includes("description lists")));
+    assert(f.emitted.some((e) => e.type === "warn" && /product-copy/.test(JSON.stringify(e.data)) && failure.reason.test(JSON.stringify(e.data))));
+    assert.equal(f.cjCalls.length, 1);
+    assert.equal(JSON.parse(f.ctx.site.picks_json!)[0].source, undefined);
+    assert.equal(listChanges(f.db, f.siteId).length, 0);
+  });
+}
+
+for (const invalid of [
+  { name: "copy contract", title: "A".repeat(81), reason: /checkProductCopy: title is too long/ },
+  { name: "ungrounded claim", title: "Waterproof Cat Bed", reason: /grounded-claims: claim.*waterproof.*not supported/i },
+]) {
+  test(`product-copy diagnoses ${invalid.name} after exactly two failed generations`, async () => {
+    const f = copyOnlyFixture();
+    const ai = f.ctx.d.ai;
+    let attempts = 0;
+    f.ctx.d.ai = async (role, prompt) => {
+      const reply = await ai(role, prompt);
+      if (!prompt.includes("QA COPY REPAIR:")) return reply;
+      attempts++;
+      return { ...reply, text: JSON.stringify({ ...JSON.parse(reply.text), title: invalid.title }) };
+    };
+    const report = await runFullSiteReview(f.ctx, { loginUrl: "https://login.test", vision: f.vision });
+    assert.equal(attempts, 2);
+    assert.match(f.product.description, /Navy/);
+    assert(report.issues.some((i) => i.status === "open" && i.evidence.includes("description lists")));
+    const warnings = f.emitted.filter((e) => e.type === "warn").map((e) => JSON.stringify(e.data)).join("\n");
+    assert.match(warnings, invalid.reason);
+    assert.match(warnings, /product-copy.*AI 两次/);
+    assert.equal(listChanges(f.db, f.siteId).length, 0);
+    assert.equal(f.cjCalls.length, 0);
+  });
+}
+
+test("failed source analysis caches raw facts, shares failures across findings and retries without refetching CJ", async () => {
+  const f = fixture(true);
+  const ai = f.ctx.d.ai;
+  let attempts = 0;
+  f.ctx.d.ai = async (role, prompt) => {
+    if (prompt.startsWith("You are preparing one factual WooCommerce product listing") && !prompt.includes("QA COPY REPAIR:")) {
+      attempts++;
+      return { text: JSON.stringify({ ...f.source.analysis, title: "Waterproof Cat Bed" }), cost: 0 };
+    }
+    return ai(role, prompt);
+  };
+  const report = await runFullSiteReview(f.ctx, { loginUrl: "https://login.test", vision: f.vision });
+  assert.equal(attempts, 2, "different findings must share one two-attempt source-analysis failure");
+  assert.equal(f.cjCalls.length, 1);
+  const cached = JSON.parse(f.ctx.site.picks_json!)[0].source;
+  assert.equal(cached.product.pid, "source-123");
+  assert.equal(cached.analysis, undefined, "unvalidated model output is not authoritative source analysis");
+  assert(report.issues.some((i) => i.status === "open" && i.evidence.includes("description lists")));
+  assert(f.emitted.some((e) => e.type === "warn" && /product-copy.*文案事实分析失败/.test(JSON.stringify(e.data))));
+  assert(f.emitted.some((e) => e.type === "warn" && /variation-images.*文案事实分析失败/.test(JSON.stringify(e.data))));
+  f.ctx.d.ai = ai;
+  await runFullSiteReview(f.ctx, { loginUrl: "https://login.test", vision: f.vision });
+  assert.equal(f.cjCalls.length, 1);
+  assert.doesNotMatch(f.product.description, /Navy|Extra Large/);
+});
+
+test("failed unit review preserves only validated stages and resumes without a second CJ fetch", async () => {
+  const f = copyOnlyFixture(true);
+  const ai = f.ctx.d.ai;
+  let attempts = 0;
+  f.ctx.d.ai = async (role, prompt) => {
+    if (prompt.startsWith("Review dimension units only")) {
+      attempts++;
+      return { text: '{"questionable":[{"sourceKey":"missing","fields":[],"reason":""}]}', cost: 0 };
+    }
+    return ai(role, prompt);
+  };
+  await runFullSiteReview(f.ctx, { loginUrl: "https://login.test", vision: f.vision });
+  const cached = JSON.parse(f.ctx.site.picks_json!)[0].source;
+  assert(cached.product && cached.analysis);
+  assert.equal(cached.unitReview, undefined);
+  assert.equal(attempts, 2);
+  assert(f.emitted.some((e) => e.type === "warn" && /product-copy.*尺寸单位复核失败/.test(JSON.stringify(e.data))));
+  assert.equal(listChanges(f.db, f.siteId).length, 0);
+  f.ctx.d.ai = ai;
+  await runFullSiteReview(f.ctx, { loginUrl: "https://login.test", vision: f.vision });
+  assert.equal(f.cjCalls.length, 1);
+  assert.doesNotMatch(f.product.description, /Navy|Extra Large/);
+});
+
+test("missing pick pid is diagnosed without guessing a CJ identifier", async () => {
+  const f = copyOnlyFixture(true);
+  f.ctx.site.picks_json = JSON.stringify([{ productId: 9, status: "done" }]);
+  await runFullSiteReview(f.ctx, { loginUrl: "https://login.test", vision: f.vision });
+  assert(f.emitted.some((e) => e.type === "warn" && /product-copy.*找不到带 pid/.test(JSON.stringify(e.data))));
+  assert.equal(f.cjCalls.length, 0);
+  assert.equal(listChanges(f.db, f.siteId).length, 0);
+});
+
+test("exhausted QA rounds never fetch or regenerate missing legacy source", async () => {
+  const f = fixture(true);
+  f.ctx.site.qa_json = JSON.stringify({ review: { at: 1, rounds: 2, passed: false, issues: [] } });
+  const report = await runFullSiteReview(f.ctx, { loginUrl: "https://login.test", vision: f.vision });
+  assert.equal(report.rounds, 2);
+  assert.equal(f.cjCalls.length, 0);
+  assert.equal(JSON.parse(f.ctx.site.picks_json!)[0].source, undefined);
+  assert.equal(listChanges(f.db, f.siteId).length, 0);
+});
+
+test("product-copy refuses incomplete live variation options and names the read failure", async () => {
+  const f = copyOnlyFixture();
+  const wp = f.ctx.wp;
+  f.ctx.wp = async (method, path, body) => path.startsWith("wc/v3/products/9/variations?") ? [] : wp(method, path, body);
+  const report = await runFullSiteReview(f.ctx, { loginUrl: "https://login.test", vision: f.vision });
+  assert.match(f.product.description, /Navy/);
+  assert(report.issues.some((i) => i.status === "open" && i.evidence.includes("description lists")));
+  assert(f.emitted.some((e) => e.type === "warn" && /product-copy.*完整且唯一的真实规格选项/.test(JSON.stringify(e.data))));
+  assert.equal(listChanges(f.db, f.siteId).length, 0);
+});
+
+test("variation-images names the missing CJ variant image and leaves it unresolved", async () => {
+  const f = fixture();
+  Reflect.deleteProperty(f.source.product.variants[1], "image");
+  f.ctx.site.picks_json = JSON.stringify([{ productId: 9, source: f.source }]);
+  const report = await runFullSiteReview(f.ctx, { loginUrl: "https://login.test", vision: f.vision });
+  assert(f.emitted.some((e) => e.type === "warn" && /variation-images.*缺少对应规格图片.*Brown-L/.test(JSON.stringify(e.data))));
+  assert(report.issues.some((i) => i.status === "open" && i.evidence.includes("share the same product image")));
+  assert(f.variations.every((v) => v.image.src === "https://img.test/overlay.jpg"));
+  assert(!listChanges(f.db, f.siteId).some((c) => c.summary.includes("variation-images")));
+});
 
 test("full-site review code-fixes image, variation, real-option copy and catalog copy without model actions", async () => {
   const f = fixture();

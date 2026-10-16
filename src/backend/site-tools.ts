@@ -23,7 +23,7 @@ interface Spec { copy: SiteCopy; policies: Policies; design?: { completed: boole
 const POLICY_SLUG = { shipping: "shipping", returns: "returns", privacy: "privacy-policy", terms: "terms" } as const;
 const summary = Type.String({ description: "一句中文，说明这次改了什么（会显示在变更记录里）" });
 const metadataTargetTypes = ["home", "shop", "page", "product", "product_cat"] as const;
-interface ProductSource { product: CjProduct; analysis: ProductAnalysis; unitReview: UnitReview }
+interface ProductSource { product: CjProduct; analysis?: ProductAnalysis; unitReview?: UnitReview; variationMapping?: "exact" }
 const sourceValue = (value: unknown): ProductSource | undefined => {
   try { return (typeof value === "string" ? JSON.parse(value) : value) as ProductSource; } catch { return undefined; }
 };
@@ -266,7 +266,7 @@ export function siteTools(ctx: StepCtx): SiteTool[] {
             if (variations.length !== actualIds.size || expectedIds.size !== actualIds.size || [...expectedIds].some((id) => !actualIds.has(id))) {
               problems.push("Woo variation pagination did not return the product's complete exact variation set");
             }
-            const actual = reconcileActualVariations(source.product, source.analysis, variations);
+            const actual = reconcileActualVariations(source.product, source.analysis, variations, { trustSkuOrder: source.variationMapping !== "exact" });
             problems.push(...actual.problems);
             inputs = actual.inputs;
             baseAnalysis = actual.analysis;
@@ -312,7 +312,7 @@ export function siteTools(ctx: StepCtx): SiteTool[] {
           const source = storedProductSource(p.id, product.meta_data);
           const allowed = new Set([...(source?.product.images ?? []), ...(source?.product.variants.flatMap((v) => v.image ? [v.image] : []) ?? [])]);
           if (!/^https:\/\//i.test(p.image_url) || !allowed.has(p.image_url)) return { ok: false, problems: ["image_url must be HTTPS and in this product's persisted CJ source facts"] };
-          selected = images.find((x) => x.src === p.image_url) ?? { src: p.image_url, alt: source?.analysis.image_alt ?? images[0]?.alt ?? "" };
+          selected = images.find((x) => x.src === p.image_url) ?? { src: p.image_url, alt: source?.analysis?.image_alt ?? images[0]?.alt ?? "" };
         }
         if (!selected) return { ok: false, problems: ["main image could not be selected"] };
         const ordered = [selected, ...images.filter((x) => x !== selected && (selected!.id === undefined || x.id !== selected!.id) && x.src !== selected!.src)];
@@ -343,7 +343,7 @@ export function siteTools(ctx: StepCtx): SiteTool[] {
         if (variations.length !== actualIds.size || expectedIds.size !== actualIds.size || [...expectedIds].some((id) => !actualIds.has(id))) {
           return { ok: false, problems: ["Woo variation pagination did not return the product's complete exact variation set"] };
         }
-        const actual = reconcileActualVariations(source.product, source.analysis, variations);
+        const actual = reconcileActualVariations(source.product, source.analysis, variations, { trustSkuOrder: source.variationMapping !== "exact" });
         const problems = [...actual.problems];
         const edits: { target: Target; patch: Record<string, unknown> }[] = [];
         for (const variation of variations) {

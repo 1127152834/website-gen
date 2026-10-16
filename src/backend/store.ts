@@ -23,8 +23,9 @@ import { paymentGatewayState, runFullSiteReview } from "./review.ts";
 import { ensureBranding, type BrandingRecord } from "./branding.ts";
 import { siteTools } from "./site-tools.ts";
 
-export interface ProductSource { product: CjProduct; analysis: ProductAnalysis; unitReview: UnitReview }
-export type Pick = Candidate & { status: "pending" | "done" | "skipped"; productId?: number; reason?: string; source?: ProductSource };
+export interface ProductSourceFacts { product: CjProduct; analysis?: ProductAnalysis; unitReview?: UnitReview; variationMapping?: "exact" }
+export interface ProductSource extends ProductSourceFacts { analysis: ProductAnalysis; unitReview: UnitReview }
+export type Pick = Candidate & { status: "pending" | "done" | "skipped"; productId?: number; reason?: string; source?: ProductSourceFacts };
 interface Spec { copy: SiteCopy; policies: Policies; aiStyle?: AiStyleProposal; branding?: BrandingRecord; design?: { completed: boolean; categories: CategoryDesign[]; home: HomepageDesign; products: DesignProduct[]; fingerprint: string } }
 
 export interface QaCheck {
@@ -126,6 +127,123 @@ export async function ask<T>(ctx: StepCtx, task: string, prompt: string, parse: 
     extra = `\n\nYour previous reply had these problems. Fix all of them and reply again in full:\n- ${problems.join("\n- ")}`;
   }
   throw new Error(`${task}：AI 两次都没写对（${problems.slice(0, 3).join("; ")}）`);
+}
+
+const reviewSourceInputs = (product: CjProduct) => {
+  const attrs = splitVariants(product.keyNames, product.variants.map((variant) => variant.key));
+  return product.variants.map((variant, index) => ({ ...variant, attrs: attrs[index] }));
+};
+
+const validReviewProduct = (value: unknown, pid: string): value is CjProduct => {
+  if (!value || typeof value !== "object") return false;
+  const product = value as Partial<CjProduct>;
+  return product.pid === pid && typeof product.name === "string" && product.name.trim().length > 0
+    && typeof product.category === "string" && typeof product.description === "string"
+    && Array.isArray(product.materials) && product.materials.every((material) => typeof material === "string")
+    && Array.isArray(product.images) && product.images.length > 0 && product.images.every((image) => typeof image === "string" && image.startsWith("https://"))
+    && Array.isArray(product.keyNames) && product.keyNames.every((name) => typeof name === "string")
+    && Array.isArray(product.variants) && product.variants.length > 0 && product.variants.every((variant) => variant && typeof variant === "object"
+      && typeof variant.key === "string" && variant.key.trim().length > 0 && Number.isFinite(variant.cost) && variant.cost > 0
+      && (variant.image === undefined || typeof variant.image === "string" && variant.image.startsWith("https://")));
+};
+
+const sourceCheckFailed = (check: () => string[]) => {
+  try { return check().length > 0; }
+  catch { return true; }
+};
+
+/** 旧站点缺少上架时的 CJ 资料时补齐一次；每个已验证阶段立即落库，模型失败重试也不会重复请求 CJ。 */
+export async function ensureReviewProductSource(ctx: StepCtx, productId: number): Promise<ProductSource> {
+  const readPicks = () => {
+    try { return JSON.parse(ctx.site.picks_json ?? "[]") as Pick[]; }
+    catch { throw new Error(`商品 ${productId} 的 picks_json 无法解析`); }
+  };
+  const findPick = (picks: Pick[]) => picks.find((pick) => pick.productId === productId && typeof pick.pid === "string" && pick.pid.trim());
+  let picks = readPicks();
+  let pick = findPick(picks);
+  if (!pick) throw new Error(`商品 ${productId} 找不到带 pid 的已发布选品记录`);
+  const pid = pick.pid;
+  const startedIncomplete = !pick.source?.analysis || !pick.source?.unitReview;
+  let variationMapping = pick.source?.variationMapping;
+
+  // 每次写入都重读站点当前值，只替换目标商品，避免覆盖同轮 QA 对其他选品的更新。
+  const persist = (source: ProductSourceFacts) => {
+    picks = readPicks();
+    const index = picks.findIndex((candidate) => candidate.productId === productId && candidate.pid === pid);
+    if (index < 0) throw new Error(`商品 ${productId} 的选品记录在保存 CJ 资料前已变化（pid ${pid}）`);
+    picks[index] = { ...picks[index], source };
+    const value = JSON.stringify(picks);
+    ctx.save("picks_json", value);
+    ctx.site.picks_json = value;
+    pick = picks[index];
+  };
+
+  let product = validReviewProduct(pick.source?.product, pid) ? pick.source.product : undefined;
+  if (!product) {
+    let raw: unknown;
+    try { raw = await ctx.d.cj(`/product/query?pid=${encodeURIComponent(pid)}`); }
+    catch (error) {
+      const reason = error instanceof Error ? error.message : String(error);
+      throw new Error(`CJ 商品 ${pid} 获取失败：${reason}`);
+    }
+    if (raw == null) throw new Error(`CJ 商品 ${pid} 已移除或返回空资料`);
+    try { product = parseDetail(raw); }
+    catch (error) {
+      const reason = error instanceof Error ? error.message : String(error);
+      throw new Error(`CJ 商品 ${pid} 返回资料无法解析：${reason}`);
+    }
+    product.images = [...new Set([...product.images, ...product.variants.flatMap((variant) => variant.image ? [variant.image] : [])])];
+    if (product.pid !== pid) throw new Error(`CJ 商品 ${pid} 返回了不匹配的 pid ${product.pid || "（空）"}`);
+    if (!product.name.trim()) throw new Error(`CJ 商品 ${pid} 已移除或缺少商品名称`);
+    if (!product.variants.length) throw new Error(`CJ 商品 ${pid} 已移除或没有有效变体`);
+    if (!product.images.length) throw new Error(`CJ 商品 ${pid} 没有可验证的 HTTPS 图片`);
+    variationMapping = "exact";
+    persist({ product, variationMapping });
+  }
+
+  if (!variationMapping && startedIncomplete) {
+    variationMapping = "exact";
+    persist({ product, ...(pick.source?.analysis ? { analysis: pick.source.analysis } : {}), ...(pick.source?.unitReview ? { unitReview: pick.source.unitReview } : {}), variationMapping });
+  }
+
+  const currentImages = product.images;
+  const normalizedImages = [...new Set([...currentImages, ...product.variants.flatMap((variant) => variant.image ? [variant.image] : [])])];
+  if (normalizedImages.length !== currentImages.length || normalizedImages.some((image, index) => image !== currentImages[index])) {
+    product = { ...product, images: normalizedImages };
+    persist({ product, ...(pick.source?.analysis ? { analysis: pick.source.analysis } : {}), ...(pick.source?.unitReview ? { unitReview: pick.source.unitReview } : {}), ...(variationMapping ? { variationMapping } : {}) });
+  }
+
+  const sourceProduct = product;
+  const inputs = reviewSourceInputs(sourceProduct);
+  let analysis = pick.source?.analysis;
+  if (!analysis || sourceCheckFailed(() => checkProductAnalysis(analysis!, sourceProduct, inputs))) {
+    if (!variationMapping) {
+      variationMapping = "exact";
+      persist({ product: sourceProduct, ...(analysis ? { analysis } : {}), ...(pick.source?.unitReview ? { unitReview: pick.source.unitReview } : {}), variationMapping });
+    }
+    try {
+      analysis = await ask(ctx, `QA 补齐商品分析 ${pid}`, productAnalysisPrompt(facts(ctx), sourceProduct, inputs), parseProductAnalysis,
+        (value) => checkProductAnalysis(value, sourceProduct, inputs));
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : String(error);
+      throw new Error(`CJ 商品 ${pid} 的文案事实分析失败：${reason}`);
+    }
+    persist({ product: sourceProduct, analysis, ...(variationMapping ? { variationMapping } : {}) });
+  }
+
+  let unitReview = pick.source?.unitReview;
+  if (!unitReview || sourceCheckFailed(() => checkUnitReview(unitReview!, inputs))) {
+    try {
+      unitReview = await ask(ctx, `QA 补齐商品尺寸单位复核 ${pid}`, unitReviewPrompt(sourceProduct, analysis, inputs), parseUnitReview,
+        (value) => checkUnitReview(value, inputs), "review");
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : String(error);
+      throw new Error(`CJ 商品 ${pid} 的尺寸单位复核失败：${reason}`);
+    }
+    persist({ product: sourceProduct, analysis, unitReview, ...(variationMapping ? { variationMapping } : {}) });
+  }
+
+  return { product: sourceProduct, analysis, unitReview, ...(variationMapping ? { variationMapping } : {}) };
 }
 
 const spec = (ctx: StepCtx): Spec => {
