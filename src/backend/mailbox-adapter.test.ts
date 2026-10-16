@@ -299,3 +299,36 @@ test("SMTP connects to a pre-resolved IP, keeps certificate checks on the real h
   assert.equal(options.secure, true);
   assert.equal(options.port, 465);
 });
+
+// 实测 2026-10-15：在网页邮箱/手机上改了已读状态，应用要等下一封新邮件才更新，未读数和服务器对不上
+test("IDLE resyncs when another client changes flags or deletes a message, not only on new mail", async () => {
+  for (const event of ["flags", "expunge"] as const) {
+    const { state } = setup();
+    let idleStartedResolve!: () => void;
+    const idleStarted = new Promise<void>((resolve) => { idleStartedResolve = resolve; });
+    let idleResolve!: () => void;
+    class IdleImap extends FakeImap {
+      override async idle() {
+        idleStartedResolve();
+        await new Promise<void>((resolve) => { idleResolve = resolve; });
+        return undefined;
+      }
+      override close() { super.close(); idleResolve?.(); }
+    }
+    let client!: IdleImap;
+    const transport = createMailTransport({
+      createImap: () => (client = new IdleImap(state)),
+      buildRaw: async () => ({ raw: Buffer.alloc(0), messageId: message.messageId }),
+      sendRaw: async () => ({ messageId: message.messageId }),
+    });
+    const controller = new AbortController();
+    let calls = 0;
+    const running = transport.idle(credentials, async () => { calls++; }, controller.signal);
+    await idleStarted;
+    client.emit(event, { uid: 5 });
+    await new Promise((resolve) => setImmediate(resolve));
+    assert.equal(calls, 1, `${event} must trigger a resync`);
+    controller.abort();
+    await running;
+  }
+});

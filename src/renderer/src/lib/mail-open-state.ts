@@ -18,3 +18,8 @@ export class MailOpenState {
 export function mailSelectionRedirect(mailboxId: number | undefined, mailboxIds: number[]): "/mail" | null {
   return mailboxId !== undefined && !mailboxIds.includes(mailboxId) ? "/mail" : null;
 }
+
+/** 收件箱未读数与左侧邮箱共用同一个数据源（同一条数据库查询），不会出现两边不一致；其他文件夹用各自的计数。 */
+export function folderUnread(folder: { path: string; unread: number }, mailbox: { unreadCount: number } | null | undefined): number {
+  return folder.path.toUpperCase() === "INBOX" && mailbox ? mailbox.unreadCount : folder.unread;
+}

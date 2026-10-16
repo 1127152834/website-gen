@@ -30,9 +30,9 @@ export interface ImapClient {
   download(range: number, part: string, options: { uid: boolean; maxBytes: number; binary: boolean }): Promise<{ content?: NodeJS.ReadableStream; meta?: { expectedSize?: number } }>;
   append(path: string, content: Buffer, flags?: string[], idate?: Date): Promise<unknown>;
   idle(): Promise<boolean | undefined>;
-  on(event: "exists", listener: ExistsListener): this;
+  on(event: "exists" | "flags" | "expunge", listener: ExistsListener): this;
   on(event: "error", listener: ErrorListener): this;
-  off(event: "exists", listener: ExistsListener): this;
+  off(event: "exists" | "flags" | "expunge", listener: ExistsListener): this;
   off(event: "error", listener: ErrorListener): this;
 }
 
@@ -360,7 +360,8 @@ export function createMailTransport(overrides: Partial<MailAdapterDeps> = {}): M
       };
       const abort = () => client.close();
       signal.addEventListener("abort", abort, { once: true });
-      client.on("exists", exists);
+      // 新邮件、别的客户端改了已读等标记、删了邮件，都重新同步收件箱，未读数才跟服务器一致
+      for (const event of ["exists", "flags", "expunge"] as const) client.on(event, exists);
       client.on("error", onError);
       let idleError: unknown;
       try {
@@ -373,7 +374,7 @@ export function createMailTransport(overrides: Partial<MailAdapterDeps> = {}): M
         if (!signal.aborted) idleError = error;
       } finally {
         signal.removeEventListener("abort", abort);
-        client.off("exists", exists);
+        for (const event of ["exists", "flags", "expunge"] as const) client.off(event, exists);
         // 先阻止新回调并关闭连接，再等待已开始的索引回调；stopDomain/close 返回时不留后台写入。
         client.close();
         await callbackTask;
