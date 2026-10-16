@@ -164,7 +164,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
       try {
         const parsed = JSON.parse(unseal(deps.key, site.mailbox_ciphertext)) as MailCredentials;
         if (parsed.address.toLowerCase() !== address.toLowerCase() || !parsed.password) continue;
-        deps.db.prepare("UPDATE mailboxes SET credential_ciphertext = ? WHERE id = ? AND credential_ciphertext IS NULL").run(site.mailbox_ciphertext, mailboxId);
+        deps.db.prepare("UPDATE mailboxes SET credential_ciphertext = ?, monitoring = 1 WHERE id = ? AND credential_ciphertext IS NULL").run(site.mailbox_ciphertext, mailboxId);
         writeState(mailboxId, { credentialSource: "pipeline" });
         return;
       } catch { /* 旧密文坏了不能阻断账号同步。 */ }
@@ -346,7 +346,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
     await transportFactory().verify(creds);
     await exclusive(() => {
       row(input.mailboxId);
-      deps.db.prepare("UPDATE mailboxes SET credential_ciphertext=? WHERE id=?").run(seal(deps.key, JSON.stringify(creds)), input.mailboxId);
+      deps.db.prepare("UPDATE mailboxes SET credential_ciphertext=?, monitoring=1 WHERE id=?").run(seal(deps.key, JSON.stringify(creds)), input.mailboxId);
       writeState(input.mailboxId, { credentialSource: source, lastError: null, pendingReset: undefined });
       saveSiteCredential(row(input.mailboxId), creds);
     });

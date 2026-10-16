@@ -252,11 +252,14 @@ test("大文件夹逐封解析落库，不调用全量 MIME 数组接口", async
   fake.passwords.set("support@nordicpaws.com", "Mail1!");
   const total = 600;
   fake.fetchMessages = async () => { throw new Error("不得物化全文件夹 MIME"); };
+  // 保存密码会自动开启监听，后台也会同步一次；假邮箱不按范围返回，只对首次全量同步检查逐封落库
+  let streams = 0;
   fake.streamMessages = async function* (credentials, folder) {
     await this.verify(credentials);
+    const first = streams++ === 0;
     yield { kind: "mailbox" as const, uidValidity: "large-1" };
     for (let uid = 1; uid <= total; uid++) {
-      if (uid > 1) {
+      if (first && uid > 1) {
         const count = (db.prepare("SELECT count(*) AS n FROM mail_messages").get() as { n: number }).n;
         assert.equal(count, uid - 1, "上一封应在请求下一封 MIME 前落库");
       }
