@@ -1,9 +1,10 @@
 // 界面侧的后台客户端：RPC 走同源 HTTP，后台推送走按用户隔离的 SSE。
 // SSE 每次重连都会带上最后收到的 seq，让服务端补发断线期间的消息。
 import type { AssistantEvent, BackendMessage, ChatEvent, Request, Response, RunEvent } from "../../../shared/protocol.ts";
-import { useCallback, useEffect, useMemo, useSyncExternalStore } from "react";
+import { useCallback, useMemo, useSyncExternalStore } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { apiRequest, getCurrentUser, HttpError } from "./auth.ts";
-import { RpcCache, stableRpcParams, type RpcCacheSnapshot } from "./rpc-cache.ts";
+import { clearRpcQueries, invalidatePush, matchesRpc, queryClient, rpcQueryKey, stableRpcParams } from "./query-client.ts";
 
 type AuthProblem = "unauthenticated" | "password_required" | "identity_changed";
 type SseEnvelope = { seq: number; reset?: boolean; message?: BackendMessage } & Partial<BackendMessage>;
@@ -16,6 +17,7 @@ let retryDelay = 500;
 let generation = 0;
 let connected = false;
 let expectedUserId: number | null = null;
+let suspended = false;
 
 const eventListeners = new Set<(e: RunEvent) => void>();
 const changedListeners = new Set<(topic: string) => void>();
@@ -35,19 +37,27 @@ function setConnected(value: boolean): void {
   if (connected === value) return;
   connected = value;
   for (const listener of statusListeners) listener(value);
-  if (value) for (const listener of connectListeners) listener();
+  if (value) {
+    void queryClient.invalidateQueries({ predicate: q => q.queryKey[0] === "rpc" });
+    for (const listener of connectListeners) listener();
+  }
 }
 
 function dispatch(message: BackendMessage): void {
   if (message.kind === "event") {
+    invalidatePush({ kind: "event", siteId: message.event.siteId, batchId: message.event.batchId });
     for (const listener of eventListeners) listener(message.event);
   } else if (message.kind === "changed") {
+    invalidatePush({ kind: "changed", topic: message.topic });
     for (const listener of changedListeners) listener(message.topic);
   } else if (message.kind === "chat") {
+    if (message.event.type === "settled") invalidatePush({ kind: "chat", siteId: message.siteId });
     for (const listener of chatListeners) listener(message.siteId, message.event);
   } else if (message.kind === "assistant") {
+    if (message.event.type === "settled") invalidatePush({ kind: "assistant" });
     for (const listener of assistantListeners) listener(message.event);
   } else if (message.kind === "mail") {
+    invalidatePush({ kind: "mail", mailboxId: message.event.mailboxId });
     for (const listener of mailListeners) listener(message.event);
   }
 }
@@ -119,36 +129,43 @@ function openEvents(currentGeneration: number): void {
 }
 
 // 页面组件的 effect 比外层启动传输的 effect 先跑：深链接直接打开时，首批请求在这里等传输启动
-let startWaiters: (() => void)[] = [];
+let startWaiters: { done: () => void; fail: (error: Error) => void }[] = [];
 function waitForStart(ms = 5000): Promise<void> {
   return new Promise((resolve, reject) => {
     const done = () => { clearTimeout(timer); resolve(); };
+    const fail = (error: Error) => { clearTimeout(timer); reject(error); };
     const timer = window.setTimeout(() => {
-      startWaiters = startWaiters.filter((waiter) => waiter !== done);
+      startWaiters = startWaiters.filter((waiter) => waiter.done !== done);
       reject(new Error("后台还没连上"));
     }, ms);
-    startWaiters.push(done);
+    startWaiters.push({ done, fail });
   });
 }
 
 /** 登录成功后启动；resetSeq 确保新会话绝不会收到上个用户的补发游标。 */
-export function startBackendTransport(userId: number, resetSeq = false): void {
-  stopBackendTransport(resetSeq);
+export function startBackendTransport(userId: number, resetSeq = false, preserveCache = false): void {
+  stopBackendTransport(resetSeq, !preserveCache, false);
   expectedUserId = userId;
-  rpcCache.setUser(userId);
+
   for (const listener of readyListeners) listener();
   const currentGeneration = generation;
   openEvents(currentGeneration);
   const waiters = startWaiters;
   startWaiters = [];
-  for (const waiter of waiters) waiter();
+  for (const waiter of waiters) waiter.done();
 }
 
 /** 注销或会话失效时立即切断推送，并清空用户相关传输状态。 */
-export function stopBackendTransport(resetSeq = true): void {
+export function stopBackendTransport(resetSeq = true, clearCache = true, cancelWaiters = true): void {
   generation++;
+  suspended = false;
   expectedUserId = null;
-  rpcCache.setUser(null);
+  if (clearCache) clearRpcQueries();
+  if (cancelWaiters) {
+    const waiters = startWaiters; startWaiters = [];
+    for (const waiter of waiters) waiter.fail(new Error("登录状态已变化，请重试"));
+  }
+  for (const listener of readyListeners) listener();
   source?.close();
   source = null;
   if (retryTimer != null) window.clearTimeout(retryTimer);
@@ -161,7 +178,19 @@ export function stopBackendTransport(resetSeq = true): void {
   }
 }
 
+/** Freeze requests while rechecking shared-cookie identity, without discarding same-user drafts. */
+export function pauseBackendTransport(): void {
+  generation++;
+  suspended = true;
+  source?.close(); source = null;
+  if (retryTimer != null) window.clearTimeout(retryTimer);
+  retryTimer = null;
+  setConnected(false);
+  void queryClient.cancelQueries();
+}
+
 export async function call<T>(method: string, params?: unknown): Promise<T> {
+  if (suspended) throw new Error("正在复核登录身份，请稍后重试");
   if (expectedUserId == null) await waitForStart();
   const requestGeneration = generation;
   const requestUserId = expectedUserId;
@@ -186,74 +215,45 @@ export async function call<T>(method: string, params?: unknown): Promise<T> {
   }
 }
 
-const rpcCache = new RpcCache((method, params) => call(method, params));
-const DISABLED_RPC_SNAPSHOT: RpcCacheSnapshot = Object.freeze({ data: undefined, error: null, refreshing: false });
-
 export type RpcDataOptions<T> = {
   topics?: readonly string[];
   enabled?: boolean;
   debounceMs?: number;
-  /** 复用同一套按用户隔离的缓存承载少量非 RPC 读接口（例如管理员用户列表）。 */
   loader?: () => Promise<T>;
 };
-
-export type RpcDataResult<T> = RpcCacheSnapshot<T> & {
+export type RpcDataResult<T> = {
+  data: T | undefined;
+  error: Error | null;
+  refreshing: boolean;
   loading: boolean;
   refresh: () => Promise<T | undefined>;
   invalidate: () => void;
 };
-
-/**
- * 按当前登录用户、方法和稳定参数缓存首屏读取。再次进入页面时同步返回旧值，随后后台校准。
- * params=null 或 enabled=false 时不发请求；同 key 的并发刷新由 RpcCache 合并。
- */
+function subscribeIdentity(listener: () => void): () => void {
+  readyListeners.add(listener);
+  return () => { readyListeners.delete(listener); };
+}
+/** Existing call() contract, now observed and deduplicated by TanStack Query. */
 export function useRpcData<T>(method: string, params?: unknown | null, options: RpcDataOptions<T> = {}): RpcDataResult<T> {
-  const paramsKey = stableRpcParams(params);
-  const stableParams = useMemo(() => params, [paramsKey]);
-  const enabled = options.enabled !== false && params !== null;
-  const loader = options.loader;
-  const fetcher = useMemo(() => loader ? () => loader() : undefined, [loader]);
-  const subscribe = useCallback((listener: () => void) => enabled ? rpcCache.subscribe(method, stableParams, listener) : () => undefined, [enabled, method, paramsKey]);
-  const getSnapshot = useCallback(() => enabled ? rpcCache.snapshot<T>(method, stableParams) : DISABLED_RPC_SNAPSHOT as RpcCacheSnapshot<T>, [enabled, method, paramsKey]);
-  const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
-  const refresh = useCallback(() => enabled
-    ? rpcCache.refresh<T>(method, stableParams, fetcher).then((value) => value as T | undefined)
-    : Promise.resolve(undefined), [enabled, method, paramsKey, fetcher]);
-  const invalidate = useCallback(() => {
-    if (enabled) rpcCache.invalidate(method, stableParams);
-  }, [enabled, method, paramsKey]);
-  const topicsKey = (options.topics ?? []).join("\u0000");
-  const debounceMs = options.debounceMs ?? 200;
-
-  useEffect(() => {
-    if (!enabled) return;
-    const refreshQuietly = () => { void refresh().catch(() => undefined); };
-    let primed = false;
-    const disposers = [onBackendReady(() => {
-      primed = true;
-      void refresh().catch(() => { primed = false; });
-    }), onConnect(() => {
-      if (primed) { primed = false; return; }
-      refreshQuietly();
-    })];
-    for (const topic of options.topics ?? []) {
-      disposers.push(onChanged(topic, () => {
-        rpcCache.invalidate(method, stableParams);
-        rpcCache.scheduleRefresh(method, stableParams, debounceMs, fetcher);
-      }));
-    }
-    return () => disposers.forEach((dispose) => dispose());
-  }, [enabled, method, paramsKey, topicsKey, debounceMs, fetcher, refresh]);
-
-  return { ...snapshot, loading: enabled && snapshot.data === undefined && snapshot.error === null, refresh, invalidate };
+  const userId=useSyncExternalStore(subscribeIdentity,()=>expectedUserId,()=>null);
+  const paramsKey=stableRpcParams(params);
+  const stableParams=useMemo(()=>params,[paramsKey]);
+  const enabled=options.enabled!==false && params!==null && userId!==null;
+  const queryKey=rpcQueryKey(userId,method,stableParams);
+  const query=useQuery<T,Error>({queryKey,queryFn:()=>options.loader ? options.loader() : call<T>(method,stableParams),enabled,meta:{topics:options.topics ?? []}});
+  const refresh=useCallback(async()=>{
+    if(!enabled)return undefined;
+    const result=await query.refetch();
+    if(result.error)throw result.error;
+    return result.data;
+  },[enabled,query.refetch]);
+  const invalidate=useCallback(()=>{if(enabled)void queryClient.invalidateQueries({queryKey,exact:true});},[enabled,userId,method,paramsKey]);
+  return {data:query.data,error:query.error,refreshing:query.isFetching,loading:enabled && query.isPending,refresh,invalidate};
 }
-
-/** params 省略时使该方法的所有参数变体过期；传入 params 时只使精确 key 过期。 */
+/** Omitted params invalidates all variants; explicit params is an exact query key. */
 export function invalidateRpcData(method?: string, ...params: [unknown?]): void {
-  if (params.length === 0) rpcCache.invalidate(method);
-  else rpcCache.invalidate(method, params[0]);
+  void queryClient.invalidateQueries({predicate:q=>matchesRpc(q,method,params[0],params.length>0)});
 }
-
 export function onEvent(listener: (e: RunEvent) => void): () => void {
   eventListeners.add(listener);
   return () => eventListeners.delete(listener);

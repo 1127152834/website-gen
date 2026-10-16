@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
-const css = readFileSync(new URL("../index.css", import.meta.url), "utf8");
+const css = readFileSync(new URL("../styles/app.css", import.meta.url), "utf8");
 const component = readFileSync(new URL("./global-assistant.tsx", import.meta.url), "utf8");
 
 test("assistant motion is explicitly disabled for reduced-motion users", () => {

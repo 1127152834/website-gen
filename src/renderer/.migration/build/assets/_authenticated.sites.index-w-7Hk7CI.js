@@ -1,0 +1,1 @@
+import{t as e}from"./jsx-runtime-DyZJNswf.js";import{B as t}from"./index-58OD1QGu.js";import{t as n}from"./sites-B1375sER.js";var r=e(),i=()=>{let e=t();return t=>{e({to:t})}},a=()=>{let e=i();return(0,r.jsx)(n,{onNavigate:e})};export{a as component};

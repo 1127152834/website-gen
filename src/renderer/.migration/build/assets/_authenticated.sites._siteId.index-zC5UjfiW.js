@@ -1,0 +1,1 @@
+import{t as e}from"./jsx-runtime-DyZJNswf.js";import{t}from"./route-params-DRQYX86F.js";import{B as n,s as r}from"./index-58OD1QGu.js";import{t as i}from"./sites-B1375sER.js";var a=e(),o=()=>{let e=n();return t=>{e({to:t})}},s=()=>{let{siteId:e}=r.useParams(),n=o();return(0,a.jsx)(i,{siteId:t(e),tab:`overview`,onNavigate:n})};export{s as component};

@@ -7,9 +7,9 @@ import type { QaRun, QaRunEvent, QaView, ReviewIssue, RunEvent } from "../../../
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { call, onEvent } from "@/lib/backend.ts";
+import { call, onEvent, useRpcData } from "@/lib/backend.ts";
 import { cn } from "@/lib/utils";
-import { activeQaRun, groupQaIssues, issueTitle, latestQaRun, needsYouGuidance, qaCounts, qaPassed } from "./qa-report-model.ts";
+import { activeQaRun, groupQaIssues, issueTitle, latestQaRun, needsYouGuidance, qaCounts, qaPassed } from "@/features/sites/components/qa-report-model.ts";
 
 const SHOT_TEXT: Record<string, string> = {
   home: "首页", shop: "商店", product: "商品页", contact: "联系我们", cart: "购物车", checkout: "结账页", "home-mobile": "首页（手机）",
@@ -44,6 +44,21 @@ function runEventFromPush(event: RunEvent): { runId: string; item: QaRunEvent } 
       ...(typeof payload.changesetId === "number" ? { changesetId: payload.changesetId } : {}),
     },
   };
+}
+
+function sameRunEvent(left: QaRunEvent, right: QaRunEvent): boolean {
+  return left.at === right.at && left.stage === right.stage && left.message === right.message;
+}
+
+/** Server state is authoritative, while local push/optimistic items bridge invalidation latency. */
+function mergeQaRuns(server: QaRun[], current: QaRun[]): QaRun[] {
+  const local = new Map(current.map((run) => [run.id, run]));
+  const merged = server.map((run) => {
+    const pending = local.get(run.id)?.events.filter((event) => !run.events.some((saved) => sameRunEvent(saved, event))) ?? [];
+    return pending.length ? { ...run, events: [...run.events, ...pending].sort((left, right) => left.at - right.at) } : run;
+  });
+  const savedIds = new Set(server.map((run) => run.id));
+  return [...merged, ...current.filter((run) => !savedIds.has(run.id))];
 }
 
 function SummaryMetric({ value, label, tone }: { value: number; label: string; tone?: "danger" | "warning" | "success" }) {
@@ -133,6 +148,7 @@ function RunPanel({ run, open, onOpenChange }: { run: QaRun | undefined; open: b
 
 export function QaReport({ siteId, qa, onRefresh = NOOP }: { siteId?: number; qa: QaView | null; onRefresh?: () => void }) {
   const [runs, setRuns] = useState<QaRun[]>([]);
+  const runsRef = useRef<QaRun[]>([]);
   const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
   const [panelOpen, setPanelOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -140,6 +156,7 @@ export function QaReport({ siteId, qa, onRefresh = NOOP }: { siteId?: number; qa
   const [submitting, setSubmitting] = useState<QaRun["kind"] | null>(null);
   const submittingRef = useRef(false);
   const [zoom, setZoom] = useState<{ src: string; title: string } | null>(null);
+  const { data: serverRuns, error: runsError, refresh: refreshRuns, invalidate: invalidateRuns } = useRpcData<QaRun[]>("qa.runs", siteId == null ? null : { siteId });
   const issues = qa?.review?.issues ?? [];
   const groups = useMemo(() => groupQaIssues(issues), [issues]);
   const counts = useMemo(() => qaCounts(issues), [issues]);
@@ -149,18 +166,34 @@ export function QaReport({ siteId, qa, onRefresh = NOOP }: { siteId?: number; qa
   const passed = qaPassed(qa);
   const runBusy = Boolean(activeRun) || submitting !== null;
 
-  const loadRuns = useCallback(async () => {
+  const reloadRuns = useCallback(async () => {
     if (siteId == null) return [];
-    try {
-      const next = await call<QaRun[]>("qa.runs", { siteId });
-      setRuns(next);
-      const active = activeQaRun(next);
-      if (active) { setSelectedRunId(active.id); setPanelOpen(true); }
-      return next;
-    } catch (reason) { setError((reason as Error).message); return []; }
+    try { return await refreshRuns() ?? []; }
+    catch (reason) { setError((reason as Error).message); return []; }
+  }, [refreshRuns, siteId]);
+
+  useEffect(() => {
+    runsRef.current = [];
+    setRuns([]);
+    setSelectedRunId(null);
+    setPanelOpen(false);
+    setError(null);
   }, [siteId]);
 
-  useEffect(() => { void loadRuns(); }, [loadRuns]);
+  useEffect(() => {
+    if (!serverRuns) return;
+    const previous = runsRef.current;
+    const completed = serverRuns.some((run) => {
+      const old = previous.find((item) => item.id === run.id);
+      return Boolean(old && (old.status === "queued" || old.status === "running") && (run.status === "done" || run.status === "error"));
+    });
+    const next = mergeQaRuns(serverRuns, previous);
+    runsRef.current = next;
+    setRuns(next);
+    const active = activeQaRun(next);
+    if (active) { setSelectedRunId(active.id); setPanelOpen(true); }
+    if (completed) onRefresh();
+  }, [onRefresh, serverRuns]);
   useEffect(() => onEvent((event) => {
     if (siteId == null) return;
     if (event.siteId !== String(siteId)) return;
@@ -168,22 +201,17 @@ export function QaReport({ siteId, qa, onRefresh = NOOP }: { siteId?: number; qa
     if (!pushed) return;
     setSelectedRunId(pushed.runId);
     setPanelOpen(true);
-    setRuns((current) => current.map((run) => run.id !== pushed.runId || run.events.some((item) => item.at === pushed.item.at && item.stage === pushed.item.stage && item.message === pushed.item.message) ? run : { ...run, status: run.status === "queued" ? "running" : run.status, events: [...run.events, pushed.item] }));
-    void loadRuns().then((next) => {
-      const run = next.find((item) => item.id === pushed.runId);
-      if (run?.status === "done" || run?.status === "error") onRefresh();
+    setRuns((current) => {
+      const next = current.map((run) => run.id !== pushed.runId || run.events.some((item) => sameRunEvent(item, pushed.item)) ? run : { ...run, status: run.status === "queued" ? "running" as const : run.status, events: [...run.events, pushed.item] });
+      runsRef.current = next;
+      return next;
     });
-  }), [loadRuns, onRefresh, siteId]);
+  }), [siteId]);
   useEffect(() => {
     if (!activeRun) return;
-    const timer = window.setInterval(() => {
-      void loadRuns().then((next) => {
-        const run = next.find((item) => item.id === activeRun.id);
-        if (run?.status === "done" || run?.status === "error") onRefresh();
-      });
-    }, 2_000);
+    const timer = window.setInterval(() => { void reloadRuns(); }, 2_000);
     return () => window.clearInterval(timer);
-  }, [activeRun, loadRuns, onRefresh]);
+  }, [activeRun, reloadRuns]);
 
   const startRun = async (method: "qa.fixIssue" | "qa.fixAll" | "qa.recheck", issueId?: string) => {
     if (siteId == null || submittingRef.current || activeRun) return;
@@ -195,10 +223,11 @@ export function QaReport({ siteId, qa, onRefresh = NOOP }: { siteId?: number; qa
     try {
       const result = await call<{ runId: string }>(method, { siteId, ...(issueId ? { issueId } : {}) });
       const placeholder: QaRun = { id: result.runId, siteId, kind, status: "queued", createdAt: Date.now(), events: [] };
-      setRuns((current) => current.some((run) => run.id === result.runId) ? current : [placeholder, ...current]);
+      setRuns((current) => { const next = current.some((run) => run.id === result.runId) ? current : [placeholder, ...current]; runsRef.current = next; return next; });
       setSelectedRunId(result.runId);
       setPanelOpen(true);
-      void loadRuns();
+      invalidateRuns();
+      void reloadRuns();
     } catch (reason) {
       setError((reason as Error).message);
       setRetryRequest({ method, ...(issueId ? { issueId } : {}) });
@@ -240,7 +269,7 @@ export function QaReport({ siteId, qa, onRefresh = NOOP }: { siteId?: number; qa
           </div>
         </section>
 
-        {error && <div role="alert" className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive"><AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden /><div className="min-w-0"><p>{error}</p><div className="mt-2 flex flex-wrap gap-2"><Button variant="outline" size="sm" disabled={runBusy} onClick={() => retryRequest ? void startRun(retryRequest.method, retryRequest.issueId) : void loadRuns()}>{retryRequest ? "重试操作" : "重新加载"}</Button><Button variant="ghost" size="sm" onClick={() => setError(null)}>关闭</Button></div></div></div>}
+        {(error || runsError) && <div role="alert" className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive"><AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden /><div className="min-w-0"><p>{error ?? runsError?.message}</p><div className="mt-2 flex flex-wrap gap-2"><Button variant="outline" size="sm" disabled={runBusy} onClick={() => retryRequest ? void startRun(retryRequest.method, retryRequest.issueId) : void reloadRuns()}>{retryRequest ? "重试操作" : "重新加载"}</Button>{error && <Button variant="ghost" size="sm" onClick={() => setError(null)}>关闭</Button>}</div></div></div>}
 
         {qa ? (
           <section aria-labelledby="rules-title">

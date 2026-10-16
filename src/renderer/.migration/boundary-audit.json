@@ -1,0 +1,12 @@
+﻿{
+    "branch":  "ui-shadcn-admin",
+    "protectedFiles":  135,
+    "protectedMismatches":  [
+
+                            ],
+    "outOfScopeChanges":  [
+
+                          ],
+    "noticeBundled":  true,
+    "noticeMatches":  true
+}
