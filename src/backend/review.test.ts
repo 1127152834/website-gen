@@ -668,3 +668,13 @@ test("truncated product card titles on category pages are not read as addresses 
   addToFooters(snapshot, " | 99 Other Road, Salem, OR 97301");
   assert.equal(deterministicUnderwritingFindings(snapshot).filter((row) => row.semanticKey === "underwriting-address-mismatch").length, 1);
 });
+
+// 实测 2026-10-15：标准措辞「Available payment methods are shown at checkout.」在未接网关时被反复判 P1，和全站「接入支付网关」待办重复
+test("the mandated payment wording is not reported page by page; payment setup stays one site-level to-do", () => {
+  const reply = JSON.stringify({ issues: [{
+    key: "terms-payment", level: "P1", kind: "policy", page: "Terms", url: "https://shop.test/terms/",
+    evidence: "Visible text: \"Available payment methods are shown at checkout.\" All gateways are disabled.",
+    why: "No gateway is enabled.", fix: "Enable a gateway.", needs_real_data: false,
+  }] });
+  assert.deepEqual(parseReviewIssues(reply), []);
+});

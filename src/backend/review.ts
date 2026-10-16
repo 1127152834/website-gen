@@ -78,11 +78,14 @@ const validActionParams = (tool: ActionName, p: Record<string, unknown>) => {
 };
 
 /** 严格解析模型结果；不接受缺证据、未知级别/类型/动作，避免“复核成功”来自宽松容错。 */
+const STANDARD_PAYMENT_WORDING = "Available payment methods are shown at checkout.";
+
 export function parseReviewIssues(text: string, shot?: string): ReviewFinding[] {
   const root = jsonReply(text);
   if (!object(root) || !Array.isArray(root.issues)) throw new Error("复核模型必须返回 {issues:[...]}");
   const levels = new Set(["P1", "P2", "P3"]), kinds = new Set(["copy", "policy", "product", "visual", "seo", "config", "other"]);
-  return root.issues.map((value, index) => {
+  // 标准支付措辞是强制要求的写法；未接网关由全站「接入支付网关」待办单独跟踪，不在各页重复报
+  return root.issues.filter((value) => !(object(value) && string(value.evidence) && value.evidence.includes(STANDARD_PAYMENT_WORDING))).map((value, index) => {
     if (!object(value)) throw new Error(`复核问题 #${index + 1} 不是对象`);
     for (const field of ["key", "level", "kind", "page", "url", "evidence", "why", "fix"] as const) {
       if (!string(value[field])) throw new Error(`复核问题 #${index + 1} 缺少 ${field}`);
@@ -218,7 +221,7 @@ const redactSecrets = (text: string) => text.replace(/\b(password|api[_ -]?key|a
 
 const PRELAUNCH = "The store is intentionally hidden in maintenance / coming-soon mode until the owner launches it, and pages are captured while logged in as an administrator. Do not report coming-soon or maintenance banners, the admin toolbar, or other admin-only notices.";
 
-const FOCUS = `Apply the perspective of a strict payment-gateway merchant underwriter (Stripe, PayPal or similar): authenticity, data consistency and completeness. Exact matching of the legal business name, email, phone and address across pages, footer links, and placeholder/demo text are checked separately by code: do not report those. This is a website evidence review, not a guarantee of gateway approval. Review ONLY whether this looks like a real, trustworthy operating independent business, not a demo or template. Report at most 5 issues per page, most important first. Only these focus areas may produce P1 or P2 (and do not report anything else):
+const FOCUS = `Apply the perspective of a strict payment-gateway merchant underwriter (Stripe, PayPal or similar): authenticity, data consistency and completeness. Exact matching of the legal business name, email, phone and address across pages, footer links, and placeholder/demo text are checked separately by code: do not report those. Whether a payment gateway is enabled is tracked as one separate site-level to-do: do not report missing or disabled gateways on individual pages, and do not report the standard sentence "Available payment methods are shown at checkout." This is a website evidence review, not a guarantee of gateway approval. Review ONLY whether this looks like a real, trustworthy operating independent business, not a demo or template. Report at most 5 issues per page, most important first. Only these focus areas may produce P1 or P2 (and do not report anything else):
 (a) Returns/refund policy, About us, Contact, shipping, privacy and terms: concrete, believable, store-specific operator name, address, email, phone, legal identity, return steps and timelines consistent with the supplied shared rules. The About story must describe the business that actually sells the supplied catalog, not an unrelated business. Never invent real operator/contact facts.
 (b) Product pages: title, description, variant names and images must agree with each other and the CJ source facts. Flag a different item pictured, unsupported features, or variant/title mismatches; never guess missing measurements, materials or set contents.
 (c) Real-store trust: brand logo visible in the header, site icon (favicon), accepted payment methods consistent with enabled checkout gateways (including whether credit cards are actually accepted), contact details, no placeholder/demo leftovers such as Test Store, Lorem ipsum, Sample Page, example.com or 1 Main St, and no WordPress default content.
