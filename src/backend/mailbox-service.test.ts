@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
+import { mkdtempSync, readFileSync, rmSync, statSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { DatabaseSync } from "node:sqlite";
+import { migrate, openDb } from "./db.ts";
 import { MailboxMonitor } from "./mailbox-monitor.ts";
 import { parseMailText } from "./mailbox-parser.ts";
 import { createMailboxService } from "./mailbox-service.ts";
@@ -57,6 +62,57 @@ test("邮箱清单跨两个账号，并复用流水线密文", async () => {
   assert.equal(boxes[0].credentialSaved, true);
   assert.equal(boxes[0].credentialSource, "pipeline");
   await service.close();
+});
+
+test("只读邮箱查询只使用缓存，不解析凭据、不连接传输层且不改数据库", async () => {
+  const directory = mkdtempSync(join(tmpdir(), "mailbox-readonly-"));
+  const filename = join(directory, "workspace.sqlite");
+  const writable = openDb(filename);
+  migrate(writable);
+  writable.prepare("INSERT INTO hostinger_accounts(id,label,token_ciphertext,token_hint,status,created_at) VALUES(1,'只读账号',X'00','none','ok',0)").run();
+  writable.prepare(`INSERT INTO mailboxes(id,account_id,order_id,remote_id,address,domain,status,credential_ciphertext,monitoring,sync_state_json,last_synced_at)
+    VALUES(1,1,'order-1','remote-1','cached@example.test','example.test','active',NULL,0,?,0)`)
+    .run(JSON.stringify({ folders: { Archive: { syncedAt: 0 } } }));
+  writable.prepare(`INSERT INTO mail_messages(mailbox_id,folder,uid,from_json,to_json,cc_json,subject,date,snippet,seen,has_attachments,size,body_text,attachments_json,references_json)
+    VALUES(1,'INBOX',7,?,?,'[]','cached subject',123,'cached snippet',0,0,12,'cached body','[]','[]')`)
+    .run(JSON.stringify("sender@example.test"), JSON.stringify(["cached@example.test"]));
+  writable.prepare("INSERT INTO mail_messages(mailbox_id,folder,uid,subject,body_text) VALUES(1,'Sent',8,'sent cache','sent body')").run();
+  const beforeTables = JSON.stringify({
+    mailboxes: writable.prepare("SELECT * FROM mailboxes ORDER BY id").all(),
+    messages: writable.prepare("SELECT * FROM mail_messages ORDER BY folder,uid").all(),
+  });
+  writable.close();
+  const beforeHash = createHash("sha256").update(readFileSync(filename)).digest("hex");
+  const beforeMtime = statSync(filename).mtimeMs;
+
+  const db = new DatabaseSync(filename, { readOnly: true });
+  const forbidden = () => { throw new Error("只读查询不得访问外部账号或邮件传输层"); };
+  const service = createMailboxService({
+    db,
+    key: Buffer.alloc(32),
+    accounts: forbidden,
+    transport: forbidden,
+    push: forbidden,
+    readOnly: true,
+  });
+  try {
+    assert.equal(service.list()[0]?.address, "cached@example.test");
+    assert.deepEqual((await service.folders(1)).map((folder) => folder.path), ["Archive", "INBOX", "Sent"]);
+    assert.equal((await service.messages({ mailboxId: 1, folder: "INBOX" })).items[0]?.subject, "cached subject");
+    assert.equal((await service.message({ mailboxId: 1, folder: "INBOX", uid: 7 })).text, "cached body");
+    await assert.rejects(service.message({ mailboxId: 1, folder: "INBOX", uid: 999 }), /只读.*未缓存.*没有自动同步/);
+    const afterTables = JSON.stringify({
+      mailboxes: db.prepare("SELECT * FROM mailboxes ORDER BY id").all(),
+      messages: db.prepare("SELECT * FROM mail_messages ORDER BY folder,uid").all(),
+    });
+    assert.equal(afterTables, beforeTables);
+  } finally {
+    await service.close();
+    db.close();
+  }
+  assert.equal(createHash("sha256").update(readFileSync(filename)).digest("hex"), beforeHash);
+  assert.equal(statSync(filename).mtimeMs, beforeMtime);
+  rmSync(directory, { recursive: true, force: true });
 });
 
 test("凭据先 IMAP 验证再保存，重置后复用同一密码并更新站点密文", async () => {

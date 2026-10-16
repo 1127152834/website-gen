@@ -11,9 +11,12 @@ import { acquireServerLock } from "./lock.ts";
 import type { GristClient } from "../backend/grist.ts";
 import { handleGristMcp } from "./grist-mcp.ts";
 import { GristTokenStore } from "./grist-tokens.ts";
+import type { AssistantAdminCapability } from "../backend/assistant.ts";
+import { createAssistantAdminAccess } from "./assistant-access.ts";
 
 export interface WorkspaceLike {
   handlers: Handlers;
+  setAssistantAdminCapability?(capability: AssistantAdminCapability | undefined): void;
   gristClient?(): GristClient;
   /** 只在通过会话鉴权的显式附件下载中调用，绝不解析消息中的 URL。 */
   mailAttachment?(input: { mailboxId: number; folder: string; uid: number; partId: string }): Promise<{ name: string; type: string; size: number; data: Buffer }>;
@@ -25,6 +28,7 @@ export interface WorkspaceManagerLike {
   get(userId: number): WorkspaceLike | undefined;
   close(userId: number): Promise<void>;
   closeAll(): Promise<void>;
+  withReadOnly?<T>(userId: number, read: (workspace: WorkspaceLike) => Promise<T>): Promise<T>;
 }
 export interface CreateAppOptions {
   dataDir: string;
@@ -124,8 +128,19 @@ export async function createApp(options: CreateAppOptions): Promise<{ server: Se
 
   const hubs = new Map<number, UserHub>();
   const gristTokens = new GristTokenStore(admin);
+  const assistantAdminAccess = new Map<number, AssistantAdminCapability>();
   const attachWorkspace = (userId: number): WorkspaceLike => {
     const workspace = options.workspaceManager.get(userId) ?? options.workspaceManager.open(userId);
+    const user = admin.getUser(userId);
+    let capability: AssistantAdminCapability | undefined;
+    if (user?.role === "admin" && !user.disabled) {
+      capability = assistantAdminAccess.get(userId);
+      if (!capability) {
+        capability = createAssistantAdminAccess({ actorId: userId, admin, workspaceManager: options.workspaceManager });
+        assistantAdminAccess.set(userId, capability);
+      }
+    } else assistantAdminAccess.delete(userId);
+    workspace.setAssistantAdminCapability?.(capability);
     if (!hubs.has(userId)) {
       // 用时间作为序列基点，服务重启后不会从 1 开始，让仍打开的浏览器误判为旧消息。
       const hub: UserHub = { nextSeq: Math.max(1, clock() * 1000), replay: [], listeners: new Set(), unsubscribe: () => {} };
@@ -140,6 +155,8 @@ export async function createApp(options: CreateAppOptions): Promise<{ server: Se
     return workspace;
   };
   const detachWorkspace = (userId: number): void => {
+    options.workspaceManager.get(userId)?.setAssistantAdminCapability?.(undefined);
+    assistantAdminAccess.delete(userId);
     const hub = hubs.get(userId);
     if (hub) {
       hub.unsubscribe();
@@ -269,7 +286,7 @@ export async function createApp(options: CreateAppOptions): Promise<{ server: Se
         if (body.method !== "mail.send" && Buffer.byteLength(JSON.stringify(body)) > 1024 * 1024) throw new Error("请求内容过大");
         session = requireReady(req, res); if (!session) return;
         const request: Request = { kind: "req", id: Number(body.id ?? 0), method: String(body.method ?? ""), params: body.params };
-        const workspace = options.workspaceManager.get(session.user.id) ?? attachWorkspace(session.user.id);
+        const workspace = attachWorkspace(session.user.id);
         const tokenHandlers: Handlers = {
           "grist.mcpToken.status": () => gristTokens.status(session!.user.id),
           "grist.mcpToken.generate": () => gristTokens.generate(session!.user.id, clock()),

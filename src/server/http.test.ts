@@ -9,8 +9,11 @@ import { WorkspaceManager } from "../backend/workspaces.ts";
 import type { Push } from "../shared/protocol.ts";
 import { createApp, type WorkspaceLike, type WorkspaceManagerLike } from "./http.ts";
 import { loadMasterKey } from "./keys.ts";
+import type { AssistantAdminCapability } from "../backend/assistant.ts";
 
 class FakeWorkspace implements WorkspaceLike {
+  assistantAdmin: AssistantAdminCapability | undefined;
+  setAssistantAdminCapability(value: AssistantAdminCapability | undefined) { this.assistantAdmin = value; }
   handlers;
   listeners = new Set<(push: Push) => void>();
   closed = false;
@@ -29,6 +32,22 @@ class FakeManager implements WorkspaceManagerLike {
 
 const cleanups: (() => Promise<void> | void)[] = [];
 afterEach(async () => { while (cleanups.length) await cleanups.pop()!(); });
+
+test("server grants cross-user assistant access only to admins and revokes cached access on demotion", async () => {
+  const { app, manager, post, login } = await setup();
+  const admin = await login("admin", "admin password");
+  await post("/api/password", { old: "admin password", new: "changed password" }, admin.cookie);
+  const adminWorkspace = manager.open(1);
+  assert.ok(adminWorkspace.assistantAdmin);
+  const added = await post("/api/admin/users", { username: "reader", password: "reader password" }, admin.cookie);
+  const other = (await added.json() as { user: { id: number } }).user;
+  assert.equal(manager.open(other.id).assistantAdmin, undefined);
+  const cached = adminWorkspace.assistantAdmin;
+  app.admin.db.prepare("UPDATE users SET role='user' WHERE id=1").run();
+  await assert.rejects(cached.listUsers(), /管理员/);
+  await post("/api/rpc", { method: "test.owner" }, admin.cookie);
+  assert.equal(adminWorkspace.assistantAdmin, undefined);
+});
 
 test("mail attachment downloads require a ready session and are attachment-only, isolated and nosniff", async () => {
   const { manager, request, post, login } = await setup();

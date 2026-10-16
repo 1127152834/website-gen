@@ -1,6 +1,6 @@
 // 界面侧的后台客户端：RPC 走同源 HTTP，后台推送走按用户隔离的 SSE。
 // SSE 每次重连都会带上最后收到的 seq，让服务端补发断线期间的消息。
-import type { BackendMessage, ChatEvent, Request, Response, RunEvent } from "../../../shared/protocol.ts";
+import type { AssistantEvent, BackendMessage, ChatEvent, Request, Response, RunEvent } from "../../../shared/protocol.ts";
 import { apiRequest, getCurrentUser, HttpError } from "./auth.ts";
 
 type AuthProblem = "unauthenticated" | "password_required" | "identity_changed";
@@ -20,6 +20,7 @@ const changedListeners = new Set<(topic: string) => void>();
 const connectListeners = new Set<() => void>();
 const statusListeners = new Set<(connected: boolean) => void>();
 const chatListeners = new Set<(siteId: number, e: ChatEvent) => void>();
+const assistantListeners = new Set<(event: AssistantEvent) => void>();
 export type MailPushEvent = { type: "new" | "changed"; mailboxId: number; folder?: string; uid?: number; unreadCount?: number };
 const mailListeners = new Set<(event: MailPushEvent) => void>();
 
@@ -41,6 +42,8 @@ function dispatch(message: BackendMessage): void {
     for (const listener of changedListeners) listener(message.topic);
   } else if (message.kind === "chat") {
     for (const listener of chatListeners) listener(message.siteId, message.event);
+  } else if (message.kind === "assistant") {
+    for (const listener of assistantListeners) listener(message.event);
   } else if (message.kind === "mail") {
     for (const listener of mailListeners) listener(message.event);
   }
@@ -195,6 +198,12 @@ export function onChanged(topic: string, listener: () => void): () => void {
 export function onChat(listener: (siteId: number, e: ChatEvent) => void): () => void {
   chatListeners.add(listener);
   return () => chatListeners.delete(listener);
+}
+
+/** 当前用户全局助手的流式输出与确认请求。 */
+export function onAssistant(listener: (event: AssistantEvent) => void): () => void {
+  assistantListeners.add(listener);
+  return () => assistantListeners.delete(listener);
 }
 
 /** 邮件监听的新信/状态推送。正文永远不进入 SSE。 */

@@ -22,6 +22,7 @@ import { TablesPage } from "./pages/tables.tsx";
 import { FeedbackProvider, toast } from "@/components/feedback";
 import { Skeleton } from "@/components/page-state";
 import { parseRoute, type Page } from "@/lib/routes.ts";
+import { GlobalAssistant } from "@/components/global-assistant.tsx";
 
 const NAV: { label: string; icon: typeof Store; page: Page; admin?: boolean }[] = [
   { label: "总览", icon: LayoutDashboard, page: "overview" },
@@ -215,6 +216,7 @@ function WorkspaceShell({ user, onUserChange, onLogout }: { user: AuthUser; onUs
         </div>
       </div>
     </main>
+    <GlobalAssistant onNavigate={navigate} />
     <Dialog open={passwordOpen} onOpenChange={setPasswordOpen}><DialogContent><DialogHeader><DialogTitle>修改密码</DialogTitle><DialogDescription>修改后，当前设备以外的登录会话都会退出。</DialogDescription></DialogHeader><ChangePasswordForm onCancel={() => setPasswordOpen(false)} onChanged={(changed) => { setPasswordOpen(false); onUserChange(changed); }} /></DialogContent></Dialog>
   </div>;
 }

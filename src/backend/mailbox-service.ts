@@ -44,6 +44,7 @@ export interface MailboxServiceDeps {
   transport?: MailTransportFactory;
   push(event: MailEvent): void;
   monitor?: { idleLimit?: number; pollMs?: number; backoffMs?: number };
+  readOnly?: boolean;
 }
 
 export interface MailboxService {
@@ -95,6 +96,9 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
   let closed = false;
   const deleting = new Set<number>();
   const deletedRemote = new Set<string>();
+  const assertWritable = () => {
+    if (deps.readOnly) throw new Error("当前工作区是只读模式，不能执行会连接邮箱或修改数据的操作");
+  };
 
   const exclusive = <T>(work: () => Promise<T> | T): Promise<T> => {
     const task = serial.then(work, work);
@@ -172,6 +176,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
   }
 
   async function inventory(accountId?: number): Promise<MailboxSummary[]> {
+    assertWritable();
     if (closed) throw new Error("工作区已关闭");
     const accounts = deps.accounts().filter((account) => accountId == null || account.id === accountId);
     for (const account of accounts) {
@@ -236,6 +241,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
   }
 
   async function syncFolder(mailboxId: number, requestedFolder: string): Promise<void> {
+    assertWritable();
     const folder = normalizeFolder(requestedFolder);
     await exclusive(async () => {
       const box = row(mailboxId);
@@ -328,10 +334,12 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
   });
 
   async function getMessage(input: { mailboxId: number; folder: string; uid: number }): Promise<MailMessageDetail> {
-    credentials(row(input.mailboxId));
+    const box = row(input.mailboxId);
+    if (!deps.readOnly) credentials(box);
     const folder = normalizeFolder(input.folder);
     let found = deps.db.prepare("SELECT * FROM mail_messages WHERE mailbox_id=? AND folder=? AND uid=?").get(input.mailboxId, folder, input.uid) as Record<string, unknown> | undefined;
     if (!found) {
+      if (deps.readOnly) throw new Error("只读查询未缓存这封邮件；为避免连接邮箱或写入数据，没有自动同步");
       await syncFolder(input.mailboxId, folder);
       found = deps.db.prepare("SELECT * FROM mail_messages WHERE mailbox_id=? AND folder=? AND uid=?").get(input.mailboxId, folder, input.uid) as Record<string, unknown> | undefined;
     }
@@ -340,6 +348,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
   }
 
   async function saveCredential(input: { mailboxId: number; password: string }, source: Exclude<MailCredentialSource, "pipeline" | null> = "user") {
+    assertWritable();
     const box = row(input.mailboxId);
     if (!input.password) throw new Error("请输入邮箱密码");
     const creds = { address: box.address, password: input.password };
@@ -358,9 +367,19 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
   return {
     list,
     sync: inventory,
-    async reconcile() { if (!closed) await monitor.reconcile(); },
+    async reconcile() { if (!closed && !deps.readOnly) await monitor.reconcile(); },
     async folders(mailboxId) {
       const box = row(mailboxId);
+      if (deps.readOnly) {
+        const cached = deps.db.prepare("SELECT DISTINCT folder FROM mail_messages WHERE mailbox_id=?").all(mailboxId) as unknown as { folder: string }[];
+        const paths = [...new Set([...Object.keys(parseState(box).folders ?? {}), ...cached.map((item) => item.folder), "INBOX"])]
+          .sort((left, right) => left.localeCompare(right));
+        return paths.map((path): MailFolder => {
+          const counts = deps.db.prepare("SELECT count(*) AS total,sum(CASE WHEN seen=0 THEN 1 ELSE 0 END) AS unread FROM mail_messages WHERE mailbox_id=? AND folder=?")
+            .get(mailboxId, path) as { total: number; unread: number | null };
+          return { name: path, path, total: Number(counts.total), unread: Number(counts.unread ?? 0), specialUse: path.toUpperCase() === "INBOX" ? "\\Inbox" : null };
+        });
+      }
       const folders = await transportFactory().listFolders(credentials(box));
       return folders.map((folder): MailFolder => {
         const counts = deps.db.prepare("SELECT count(*) AS total,sum(CASE WHEN seen=0 THEN 1 ELSE 0 END) AS unread FROM mail_messages WHERE mailbox_id=? AND folder=?")
@@ -369,10 +388,10 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
       });
     },
     async messages(input) {
-      row(input.mailboxId);
+      const box = row(input.mailboxId);
       const folder = normalizeFolder(input.folder);
-      const latest = parseState(row(input.mailboxId)).folders?.[folder]?.syncedAt ?? 0;
-      if (Date.now() - latest > 30_000) await syncFolder(input.mailboxId, folder);
+      const latest = parseState(box).folders?.[folder]?.syncedAt ?? 0;
+      if (!deps.readOnly && Date.now() - latest > 30_000) await syncFolder(input.mailboxId, folder);
       const page = Math.max(1, Math.floor(input.page ?? 1));
       const pageSize = Math.max(1, Math.min(100, Math.floor(input.pageSize ?? 50)));
       const query = input.query?.trim() ?? "";
@@ -386,6 +405,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
     message: getMessage,
     saveCredential,
     async resetCredential(input) {
+      assertWritable();
       if (!input.confirmed) throw new Error("重置密码会让其他邮件客户端停止工作，必须明确确认");
       const box = row(input.mailboxId);
       const state = parseState(box);
@@ -406,6 +426,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
       return saveCredential({ mailboxId: input.mailboxId, password: creds.password }, "reset");
     },
     async setMonitoring(input) {
+      assertWritable();
       const box = row(input.mailboxId);
       if (input.enabled) credentials(box);
       deps.db.prepare("UPDATE mailboxes SET monitoring=? WHERE id=?").run(input.enabled ? 1 : 0, input.mailboxId);
@@ -415,6 +436,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
       return { ok: true };
     },
     async markSeen(input) {
+      assertWritable();
       const box = row(input.mailboxId);
       const folder = normalizeFolder(input.folder);
       await transportFactory().setSeen(credentials(box), folder, input.uid, input.seen);
@@ -423,6 +445,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
       return { ok: true };
     },
     async trash(input) {
+      assertWritable();
       if (!input.confirmed) throw new Error("删除邮件前必须确认");
       const box = row(input.mailboxId);
       const folder = normalizeFolder(input.folder);
@@ -432,6 +455,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
       return { ok: true };
     },
     async deleteMailbox(input) {
+      assertWritable();
       if (!input.confirmed) throw new Error("删除邮箱前必须确认");
       const box = row(input.mailboxId);
       deleting.add(input.mailboxId);
@@ -453,6 +477,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
       }
     },
     async send(input) {
+      assertWritable();
       const box = row(input.mailboxId);
       const creds = credentials(box);
       const attachments = (input.attachments ?? []).map((attachment) => {
@@ -484,6 +509,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
       return transportFactory().send(creds, { from: box.address, to, cc, bcc: normalizeEmailList(input.bcc), subject, text, messageId, inReplyTo, references, attachments });
     },
     async attachment(input) {
+      assertWritable();
       const box = row(input.mailboxId);
       const detail = await getMessage(input);
       const attachment = detail.attachments.find((item) => item.partId === input.partId);
@@ -494,6 +520,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
       return { name: attachment.name, type: attachment.type, size: data.byteLength, data };
     },
     async stopDomain(domain) {
+      assertWritable();
       await monitor.stopDomain(domain);
       await exclusive(() => undefined);
     },

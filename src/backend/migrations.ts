@@ -240,4 +240,16 @@ export const MIGRATIONS: string[] = [
      value TEXT NOT NULL,
      updated_at INTEGER NOT NULL
    );`,
+  // Global assistant tool audit. Never stores credentials: callers must pass sanitized params.
+  `CREATE TABLE assistant_tool_audit (
+     id           INTEGER PRIMARY KEY,
+     created_at   INTEGER NOT NULL,
+     tool         TEXT NOT NULL,
+     params_json  TEXT NOT NULL CHECK (json_valid(params_json)),
+     risk         TEXT NOT NULL CHECK (risk IN ('write','confirm')),
+     confirmed    INTEGER NOT NULL CHECK (confirmed IN (0,1)),
+     success      INTEGER NOT NULL CHECK (success IN (0,1)),
+     error        TEXT
+   );
+   CREATE INDEX assistant_tool_audit_created ON assistant_tool_audit (created_at DESC);`,
 ];

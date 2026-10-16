@@ -37,6 +37,21 @@ export class WorkspaceManager {
     return workspace;
   }
 
+  /** 跨用户查询永远使用独立 SQLite 只读连接，不复用目标的可写工作区。 */
+  async withReadOnly<T>(userId: number | string, read: (workspace: Workspace) => Promise<T>): Promise<T> {
+    const id = this.id(userId);
+    if (this.closing.has(id)) throw new Error("工作区正在关闭");
+    const workspace = createWorkspace({
+      userDir: join(this.options.dataDir, "users", id),
+      key: deriveUserKey(this.options.masterKey, id),
+      resourcesDir: this.options.resourcesDir,
+      backgroundTasks: false,
+      readOnly: true,
+    });
+    try { return await read(workspace); }
+    finally { await workspace.close(); }
+  }
+
   async close(userId: number | string): Promise<void> {
     const id = this.id(userId);
     const workspace = this.workspaces.get(id);

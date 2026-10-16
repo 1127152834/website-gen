@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import type { GristClient } from "./grist.ts";
-import { createGristMcpServer, GRIST_TOOL_NAMES } from "./grist-tools.ts";
+import { createGristMcpServer, gristToolDefinitions, GRIST_TOOL_NAMES } from "./grist-tools.ts";
 
 const expectedTools = [
   "grist_help", "grist_get_user_profile", "grist_list_orgs", "grist_list_workspaces", "grist_list_docs", "grist_get_doc_info",
@@ -147,4 +147,23 @@ test("Grist MCP dispatches schema and record writes with validated REST shapes",
       assert.deepEqual(calls.at(-1), { method, args: expected }, name);
     }
   } finally { await close(); }
+});
+
+test("Grist MCP 与助手复用同一份 22 工具定义、中文说明和风险等级", async () => {
+  const definitions = gristToolDefinitions(() => fakeClient(() => ({ ok: true })));
+  assert.deepEqual(definitions.map((tool) => tool.name), expectedTools);
+  assert.ok(definitions.every((tool) => /[\u3400-\u9fff]/u.test(tool.description)), "所有助手说明应为中文");
+  const risks = Object.fromEntries(definitions.map((tool) => [tool.name, tool.risk]));
+  for (const name of ["grist_remove_records", "grist_update_table_column", "grist_remove_table", "grist_remove_table_column"])
+    assert.equal(risks[name], "confirm", name);
+  assert.equal(risks.grist_add_records, "write");
+  assert.equal(risks.grist_list_records, "read");
+  const listRecords = definitions.find((tool) => tool.name === "grist_list_records")!;
+  assert.deepEqual((listRecords.parameters as { required?: string[] }).required, ["docId", "tableId"], "助手 schema 应保留 Zod 输入默认值");
+});
+
+test("助手 Grist 工具缺少配置时返回中文提示而不是抛错", async () => {
+  const tool = gristToolDefinitions(() => { throw new Error("请先在设置页配置 Grist 地址和 API Key"); })
+    .find((item) => item.name === "grist_list_orgs")!;
+  assert.deepEqual(await tool.run({}), { ok: false, error: "请先在设置页配置 Grist 地址和 API Key" });
 });

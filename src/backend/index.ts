@@ -1,6 +1,7 @@
 // 每个用户一个工作区：数据库、凭据、连接池、任务和对话都只在这个闭包里。
 import { mkdirSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { DatabaseSync } from "node:sqlite";
 import type { ModelRole, Push, RunEvent } from "../shared/protocol.ts";
 import type { BatchForm } from "../shared/forms.ts";
 import { accountToken, addAccount, listAccounts, listDomains, removeAccount, syncWithStoredToken } from "./accounts.ts";
@@ -42,9 +43,13 @@ import type { MailTransportFactory } from "./mailbox-transport.ts";
 import { createMailboxService } from "./mailbox-service.ts";
 import { createGristService } from "./grist-settings.ts";
 import type { GristClient } from "./grist.ts";
+import { createAssistant, type AssistantAdminCapability } from "./assistant.ts";
+import { assistantRpcToolByMethod, assistantRpcToolDefinitions } from "./assistant-tools.ts";
+import { gristToolDefinitions } from "./grist-tools.ts";
 
 export interface Workspace {
   handlers: Handlers;
+  setAssistantAdminCapability(capability: AssistantAdminCapability | undefined): void;
   gristClient(): GristClient;
   mailAttachment(input: { mailboxId: number; folder: string; uid: number; partId: string }): Promise<{ name: string; type: string; size: number; data: Buffer }>;
   subscribe(listener: (msg: Push) => void): () => void;
@@ -53,15 +58,22 @@ export interface Workspace {
 
 export function createWorkspace(opts: {
   userDir: string; key: Buffer; resourcesDir?: string;
+  /** 服务器跨用户查看停用工作区时，不得恢复建站、监听、同步或定时回滚。 */
+  backgroundTasks?: boolean;
+  /** 管理员跨用户查询：SQLite 只读，不迁移、不创建目录，邮件仅查本地缓存。 */
+  readOnly?: boolean;
   /** 测试只注入进程内替身，不触发 MCP 子进程或真实 IMAP / SMTP。 */
   dependencies?: { hostingerPool?: ReturnType<typeof createHostingerPool>; mailTransport?: MailTransportFactory };
 }): Workspace {
   const userData = resolve(opts.userDir);
+  const backgroundEnabled = opts.backgroundTasks !== false && !opts.readOnly;
   const resourcesDir = opts.resourcesDir ?? resolve(import.meta.dirname, "../../resources");
   if (opts.key.length !== 32) throw new Error("用户密钥必须为 32 字节");
-  mkdirSync(userData, { recursive: true });
-  mkdirSync(join(userData, "work", "qa"), { recursive: true });
-  mkdirSync(join(userData, "pi"), { recursive: true });
+  if (!opts.readOnly) {
+    mkdirSync(userData, { recursive: true });
+    mkdirSync(join(userData, "work", "qa"), { recursive: true });
+    mkdirSync(join(userData, "pi"), { recursive: true });
+  }
   let closing = false;
   const background = new Set<Promise<unknown>>();
   const siteWork = new Map<number, Set<Promise<unknown>>>();
@@ -95,8 +107,8 @@ export function createWorkspace(opts: {
     return task;
   };
   const dbPath = join(userData, "website-gen.sqlite");
-  const db = openDb(dbPath);
-  migrate(db);
+  const db = opts.readOnly ? new DatabaseSync(dbPath, { readOnly: true }) : openDb(dbPath);
+  if (!opts.readOnly) migrate(db);
   const grist = createGristService({ db, key: opts.key });
 
   const listeners = new Set<(msg: Push) => void>();
@@ -107,6 +119,7 @@ export function createWorkspace(opts: {
     }
   };
   const emit = (e: Parameters<typeof appendEvent>[1]) => {
+    if (opts.readOnly) return; // 查询不能为目标用户追加运行日志。
     const event: RunEvent = appendEvent(db, e);
     push({ kind: "event", event });
   };
@@ -116,12 +129,13 @@ export function createWorkspace(opts: {
   const hostinger = opts.dependencies?.hostingerPool ?? createHostingerPool();
   const mailboxes = createMailboxService({
     db, key: opts.key,
+    readOnly: opts.readOnly,
     accounts: () => listAccounts(db).map(({ id }) => ({ id, exec: hostinger.forAccount(id, accountToken(db, requireKey(), id)) })),
     transport: opts.dependencies?.mailTransport,
     push: (event) => push({ kind: "mail", event }),
   });
   // 服务启动会打开所有启用用户的工作区；已保存的监听开关不依赖浏览器在线。
-  void track(mailboxes.reconcile()).catch(() => {});
+  if (backgroundEnabled) void track(mailboxes.reconcile()).catch(() => {});
   const syncing = new Map<number, Promise<unknown>>();
   function sync(id: number) {
     if (closing) return Promise.resolve();
@@ -149,8 +163,8 @@ export function createWorkspace(opts: {
     } // 失败已记录在账号状态里
   };
   // 定时同步不依赖用户是否在线。
-  const initialSync = setTimeout(() => void track(syncAll()), 15_000);
-  const syncTimer = setInterval(() => void track(syncAll()), 30 * 60_000);
+  const initialSync = backgroundEnabled ? setTimeout(() => void track(syncAll()), 15_000) : undefined;
+  const syncTimer = backgroundEnabled ? setInterval(() => void track(syncAll()), 30 * 60_000) : undefined;
 
   // CJ 限速是整个账号每秒 1 次，所有建站任务共用一个客户端
   let cj: CjGet | null = null;
@@ -174,7 +188,7 @@ export function createWorkspace(opts: {
   }
 
   // ---- 建站任务队列：每个工作区一个消费者，启动时重新排队上次没跑完的任务 ----
-  recoverStale(db, Number.MAX_SAFE_INTEGER);
+  if (backgroundEnabled) recoverStale(db, Number.MAX_SAFE_INTEGER);
   const runner = createRunner({
     db,
     concurrency: 3,
@@ -223,9 +237,9 @@ export function createWorkspace(opts: {
     },
   });
   const tick = () => {
-    if (!closing) void track(runner.tick()).catch(() => {});
+    if (!closing && backgroundEnabled) void track(runner.tick()).catch(() => {});
   };
-  const jobTimer = setInterval(tick, 2000);
+  const jobTimer = backgroundEnabled ? setInterval(tick, 2000) : undefined;
 
   // ---- pi 对话改内容 ----
   const chats = createChats({
@@ -256,7 +270,7 @@ export function createWorkspace(opts: {
     }
   }
   let reverting = false;
-  const revertTimer = setInterval(() => {
+  const revertTimer = !backgroundEnabled ? undefined : setInterval(() => {
     if (reverting || closing) return;
     reverting = true;
     void track(runDueReverts()).catch(() => {}).finally(() => { reverting = false; });
@@ -271,6 +285,20 @@ export function createWorkspace(opts: {
 
   const handlers: Handlers = {
     ...grist.handlers,
+    "assistant.history": () => assistant.history(),
+    "assistant.send": async (p) => {
+      const input = p as { text?: unknown; page?: unknown } | undefined;
+      if (typeof input?.text !== "string" || input.text.length > 100_000) throw new Error("请输入有效的助手消息（不超过 100000 字）");
+      await assistant.send(input.text, typeof input.page === "string" ? input.page : undefined);
+      return { ok: true };
+    },
+    "assistant.abort": async () => { await assistant.abort(); return { ok: true }; },
+    "assistant.reset": async () => { await assistant.reset(); return { ok: true }; },
+    "assistant.confirm": async (p) => {
+      const input = p as { id?: unknown; approve?: unknown } | undefined;
+      if (typeof input?.id !== "string" || typeof input.approve !== "boolean") throw new Error("确认参数无效");
+      return { ok: await assistant.confirm(input.id, input.approve) };
+    },
     "overview.get": () => getOverview(db),
     "templates.list": () => listTemplates(db),
     "templates.save": (p) => saveTemplate(db, p),
@@ -521,28 +549,39 @@ export function createWorkspace(opts: {
 
   const guarded: Handlers = Object.fromEntries(Object.entries(handlers).map(([method, handler]) => [method, (params: unknown) => {
     if (closing) throw new Error("工作区已关闭");
+    if ((opts.readOnly || opts.backgroundTasks === false) && assistantRpcToolByMethod(method)?.risk !== "read") throw new Error("临时工作区只允许已登记的只读查询");
     const siteId = Number((params as { siteId?: number } | undefined)?.siteId);
     const mailboxId = Number((params as { mailboxId?: number } | undefined)?.mailboxId);
     let task = Promise.resolve().then(() => handler(params));
     if (method.startsWith("mail.") && Number.isSafeInteger(mailboxId) && mailboxId > 0) task = trackMailbox(mailboxId, task);
     return track(Number.isSafeInteger(siteId) && siteId > 0 && !method.startsWith("abandon.") ? trackSite(siteId, task) : task);
   }]));
+  function workspaceGristClient(): GristClient {
+    if (closing) throw new Error("工作区已关闭");
+    return new Proxy(grist.client(), {
+      get(target, property, receiver) {
+        const value = Reflect.get(target, property, receiver);
+        if (typeof value !== "function") return value;
+        return (...args: unknown[]) => {
+          if (closing) throw new Error("工作区已关闭");
+          return track(Promise.resolve().then(() => value.apply(target, args)));
+        };
+      },
+    });
+  }
+  const assistant = createAssistant({
+    userDir: userData, db, key: requireKey,
+    getToolDefinitions: () => [...assistantRpcToolDefinitions(guarded), ...gristToolDefinitions(workspaceGristClient)],
+    onEvent: (event) => {
+      push({ kind: "assistant", event });
+      if (event.type === "tool_end") for (const topic of ["accounts", "batches", "changes", "mail"] as const) push({ kind: "changed", topic });
+    },
+  });
   let closeTask: Promise<void> | undefined;
   return {
     handlers: guarded,
-    gristClient() {
-      if (closing) throw new Error("工作区已关闭");
-      return new Proxy(grist.client(), {
-        get(target, property, receiver) {
-          const value = Reflect.get(target, property, receiver);
-          if (typeof value !== "function") return value;
-          return (...args: unknown[]) => {
-            if (closing) throw new Error("工作区已关闭");
-            return track(Promise.resolve().then(() => value.apply(target, args)));
-          };
-        },
-      });
-    },
+    setAssistantAdminCapability: (capability) => { void assistant.setAdminCapability(capability); },
+    gristClient: workspaceGristClient,
     mailAttachment(input) {
       if (closing) return Promise.reject(new Error("工作区已关闭"));
       return track(trackMailbox(input.mailboxId, mailboxes.attachment(input)));
@@ -561,6 +600,7 @@ export function createWorkspace(opts: {
       clearInterval(revertTimer);
       listeners.clear();
       closeTask = (async () => {
+        await assistant.close();
         await mailboxes.close();
         await chats.close();
         await runner.stop();

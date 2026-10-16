@@ -11,11 +11,9 @@ import { cn } from "@/lib/utils";
 import { LogViewer, StepTimeline } from "./site-operations.tsx";
 import { QaReport } from "./qa-report.tsx";
 import { AbandonSiteButton } from "@/components/abandon-site.tsx";
+import { ChatMessage, LiveChatMessage } from "@/components/chat-messages.tsx";
+import { applyChatEvent, emptyLiveChat, type LiveChat } from "@/components/assistant-state.ts";
 
-const TOOL_TEXT: Record<string, string> = {
-  get_site: "查看站点概况", get_copy: "读取文案", get_policy: "读取政策页", list_products: "查看商品列表", get_product: "读取商品", list_changes: "查看变更记录",
-  update_copy: "修改文案", update_policy: "修改政策页", update_announcement: "修改公告栏", update_style: "切换风格", update_product: "修改商品", revert_change: "回滚变更", schedule_revert: "设置定时恢复",
-};
 const INITIATOR = { pi: "pi", you: "你", schedule: "定时恢复" } as const;
 const SUGGESTIONS = ["把顶部公告改成冬季上新的提示，12 月 1 日恢复", "首页大标题写得更有温度一点", "把 FAQ 里关于退货的回答写得更清楚"];
 const TABS = [{ key: "overview", label: "概况" }, { key: "chat", label: "对话" }, { key: "mail", label: "邮箱" }, { key: "changes", label: "变更记录" }, { key: "qa", label: "复核报告" }] as const;
@@ -41,24 +39,6 @@ function siteBadge(site: SiteProgress) {
   if (site.launchedAt) return <Badge variant="secondary" className="status-launched">已上线</Badge>;
   const value = STATUS[site.status];
   return <Badge variant={value.variant} className={value.className}>{value.text}</Badge>;
-}
-
-function toolOutcome(result: string): string {
-  try { const value = JSON.parse(result) as { ok?: boolean; note?: string; problems?: string[]; error?: string }; return value.ok === false ? value.error ?? (value.problems ?? []).join("; ") : value.note ?? ""; }
-  catch { return ""; }
-}
-const rich = (text: string) => text.split(/(\*\*[^*\n]+\*\*)/g).map((part, index) => part.startsWith("**") && part.endsWith("**") && part.length > 4 ? <strong key={index}>{part.slice(2, -2)}</strong> : part);
-type Live = { text: string; thinking: string; tools: Extract<ChatItem, { role: "tool" }>[] };
-const emptyLive = (): Live => ({ text: "", thinking: "", tools: [] });
-
-function ToolLine({ item }: { item: Extract<ChatItem, { role: "tool" }> }) {
-  const outcome = item.ok === null ? "" : toolOutcome(item.result);
-  return <div className="flex items-start gap-2 text-xs text-muted-foreground">{item.ok === null ? <LoaderCircle className="mt-0.5 size-3.5 shrink-0 motion-safe:animate-spin" aria-hidden /> : item.ok ? <Wrench className="mt-0.5 size-3.5 shrink-0" aria-hidden /> : <CircleAlert className="mt-0.5 size-3.5 shrink-0 text-amber-600" aria-hidden />}<span>{TOOL_TEXT[item.name] ?? item.name}{outcome && <span className={cn("ml-1", item.ok === false && "text-amber-700 dark:text-amber-400")}>：{outcome}</span>}</span></div>;
-}
-function Message({ item }: { item: ChatItem }) {
-  if (item.role === "user") return <div className="ml-auto max-w-[88%] rounded-lg bg-primary px-3 py-2 text-sm whitespace-pre-wrap text-primary-foreground">{item.text}</div>;
-  if (item.role === "tool") return <ToolLine item={item} />;
-  return <div className="max-w-[94%] text-sm">{item.thinking && <details className="mb-1 text-xs text-muted-foreground"><summary className="cursor-pointer select-none">思考过程</summary><p className="mt-1 whitespace-pre-wrap">{item.thinking}</p></details>}{item.text && <p className="whitespace-pre-wrap">{rich(item.text)}</p>}{item.error && <p role="alert" className="text-destructive">模型出错：{item.error}</p>}</div>;
 }
 
 type SitesPageProps = { siteId?: number; tab?: string; onNavigate?: (path: string) => void };
@@ -153,31 +133,24 @@ function SiteDetail({ siteId, tab, onNavigate }: { siteId: number; tab: SiteTab;
 function ChatPanel({ siteId, domain }: { siteId: number; domain: string }) {
   const confirm = useConfirm();
   const [items, setItems] = useState<ChatItem[]>([]);
-  const [live, setLive] = useState<Live | null>(null);
+  const [live, setLive] = useState<LiveChat | null>(null);
   const [draft, setDraft] = useState("");
   const [error, setError] = useState<string | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
-  const load = useCallback(() => void call<{ items: ChatItem[]; busy: boolean }>("chat.history", { siteId }).then((history) => { setItems(history.items); setLive((current) => history.busy ? current ?? emptyLive() : null); }, (reason: Error) => setError(reason.message)), [siteId]);
+  const load = useCallback(() => void call<{ items: ChatItem[]; busy: boolean }>("chat.history", { siteId }).then((history) => { setItems(history.items); setLive((current) => history.busy ? current ?? emptyLiveChat() : null); }, (reason: Error) => setError(reason.message)), [siteId]);
   useEffect(() => {
     const off = [onConnect(load), onChat((id, event: ChatEvent) => {
       if (id !== siteId) return;
       if (event.type === "settled") { load(); return; }
       if (event.type === "error") { setError(`pi 出错：${event.message}`); return; }
-      setLive((current) => {
-        const next = { ...(current ?? emptyLive()) };
-        if (event.type === "text") next.text += event.delta;
-        else if (event.type === "thinking") next.thinking += event.delta;
-        else if (event.type === "tool_start") next.tools = [...next.tools, { role: "tool", id: event.id, name: event.name, args: event.args, ok: null, result: "" }];
-        else if (event.type === "tool_end") next.tools = next.tools.map((tool) => tool.id === event.id ? { ...tool, ok: event.ok, result: event.result } : tool);
-        return next;
-      });
+      setLive((current) => applyChatEvent(current ?? emptyLiveChat(), event));
     })];
     return () => off.forEach((dispose) => dispose());
   }, [load, siteId]);
   useEffect(() => { void endRef.current?.scrollIntoView({ block: "end" }); }, [items.length, live?.text.length, live?.tools.length]);
   const send = async (text: string) => {
     if (!text.trim() || live) return;
-    setError(null); setItems((current) => [...current, { role: "user", text: text.trim() }]); setLive(emptyLive()); setDraft("");
+    setError(null); setItems((current) => [...current, { role: "user", text: text.trim() }]); setLive(emptyLiveChat()); setDraft("");
     try { await call("chat.send", { siteId, text }); }
     catch (reason) { setLive(null); setError((reason as Error).message); toast((reason as Error).message, "error"); load(); }
   };
@@ -187,7 +160,7 @@ function ChatPanel({ siteId, domain }: { siteId: number; domain: string }) {
     catch (reason) { setError((reason as Error).message); toast((reason as Error).message, "error"); }
   };
   const onKey = (event: KeyboardEvent<HTMLTextAreaElement>) => { if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); void send(draft); } };
-  return <section aria-label={`和 pi 对话：${domain}`} className="flex min-h-[34rem] min-w-0 flex-col overflow-hidden rounded-lg border bg-card"><header className="flex items-center justify-between gap-2 border-b px-4 py-3"><div><h2 className="text-sm font-medium">和 pi 对话</h2><p className="mt-0.5 text-xs text-muted-foreground">修改会直接应用到 {domain}，并记录为可回滚的变更集。</p></div><Button variant="ghost" size="sm" disabled={live !== null} onClick={() => void reset()}><MessageSquarePlus aria-hidden />新对话</Button></header>{error && <p role="alert" className="border-b bg-destructive/5 px-4 py-2 text-sm text-destructive">{error}</p>}<ScrollArea className="min-h-0 flex-1"><div className="flex flex-col gap-4 p-4">{items.length === 0 && !live && <div className="py-8 text-center text-sm text-muted-foreground"><p className="font-medium text-foreground">告诉 pi 你想怎么改这个站</p><p className="mt-1">每次修改都会保存快照，可以在「变更记录」里回滚。</p><div className="mt-4 flex flex-wrap justify-center gap-2">{SUGGESTIONS.map((suggestion) => <Button key={suggestion} variant="outline" size="sm" className="h-auto max-w-sm py-1.5 whitespace-normal text-left" onClick={() => setDraft(suggestion)}>{suggestion}</Button>)}</div></div>}{items.map((item, index) => <Message key={index} item={item} />)}{live && <div className="flex flex-col gap-2" aria-live="polite">{live.thinking && !live.text && <p className="text-xs text-muted-foreground">正在思考…</p>}{live.tools.map((tool) => <ToolLine key={tool.id} item={tool} />)}{live.text ? <p className="max-w-[94%] text-sm whitespace-pre-wrap">{rich(live.text)}</p> : !live.thinking && live.tools.length === 0 && <LoaderCircle className="size-4 text-muted-foreground motion-safe:animate-spin" aria-label="pi 正在回复" />}</div>}<div ref={endRef} /></div></ScrollArea><form onSubmit={(event) => { event.preventDefault(); void send(draft); }} className="flex items-end gap-2 border-t p-3"><label htmlFor={`chat-${siteId}`} className="sr-only">给 pi 的消息</label><textarea id={`chat-${siteId}`} rows={2} value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={onKey} placeholder="描述你想修改的内容（Enter 发送，Shift+Enter 换行）" className="min-h-14 flex-1 resize-none rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring" />{live ? <Button type="button" variant="outline" onClick={() => void call("chat.abort", { siteId }).catch((reason: Error) => setError(reason.message))}><Square aria-hidden />停止</Button> : <Button type="submit" disabled={!draft.trim()}><Send aria-hidden />发送</Button>}</form></section>;
+  return <section aria-label={`和 pi 对话：${domain}`} className="flex min-h-[34rem] min-w-0 flex-col overflow-hidden rounded-lg border bg-card"><header className="flex items-center justify-between gap-2 border-b px-4 py-3"><div><h2 className="text-sm font-medium">和 pi 对话</h2><p className="mt-0.5 text-xs text-muted-foreground">修改会直接应用到 {domain}，并记录为可回滚的变更集。</p></div><Button variant="ghost" size="sm" disabled={live !== null} onClick={() => void reset()}><MessageSquarePlus aria-hidden />新对话</Button></header>{error && <p role="alert" className="border-b bg-destructive/5 px-4 py-2 text-sm text-destructive">{error}</p>}<ScrollArea className="min-h-0 flex-1"><div className="flex flex-col gap-4 p-4">{items.length === 0 && !live && <div className="py-8 text-center text-sm text-muted-foreground"><p className="font-medium text-foreground">告诉 pi 你想怎么改这个站</p><p className="mt-1">每次修改都会保存快照，可以在「变更记录」里回滚。</p><div className="mt-4 flex flex-wrap justify-center gap-2">{SUGGESTIONS.map((suggestion) => <Button key={suggestion} variant="outline" size="sm" className="h-auto max-w-sm py-1.5 whitespace-normal text-left" onClick={() => setDraft(suggestion)}>{suggestion}</Button>)}</div></div>}{items.map((item, index) => <ChatMessage key={index} item={item} />)}{live && <LiveChatMessage {...live} />}<div ref={endRef} /></div></ScrollArea><form onSubmit={(event) => { event.preventDefault(); void send(draft); }} className="flex items-end gap-2 border-t p-3"><label htmlFor={`chat-${siteId}`} className="sr-only">给 pi 的消息</label><textarea id={`chat-${siteId}`} rows={2} value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={onKey} placeholder="描述你想修改的内容（Enter 发送，Shift+Enter 换行）" className="min-h-14 flex-1 resize-none rounded-lg border border-input bg-background px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring" />{live ? <Button type="button" variant="outline" onClick={() => void call("chat.abort", { siteId }).catch((reason: Error) => setError(reason.message))}><Square aria-hidden />停止</Button> : <Button type="submit" disabled={!draft.trim()}><Send aria-hidden />发送</Button>}</form></section>;
 }
 
 function ChangesPanel({ siteId }: { siteId: number }) {

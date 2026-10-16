@@ -186,6 +186,19 @@ export type ChatEvent =
   | { type: "settled"; aborted: boolean }
   | { type: "error"; message: string };
 
+/** 高风险动作只在当前用户的助手面板里授权；参数已经过敏感字段清理。 */
+export interface AssistantConfirmation {
+  id: string;
+  name: string;
+  description: string;
+  args: unknown;
+  expiresAt: number;
+}
+
+export type AssistantEvent = ChatEvent
+  | ({ type: "confirm" } & AssistantConfirmation)
+  | { type: "confirm_resolved"; id: string; approved: boolean };
+
 /** 一条内容变更集 */
 export interface ChangeSummary {
   id: number;
@@ -260,6 +273,7 @@ export type Push =
   | { kind: "changed"; topic: "accounts" | "batches" | "changes" | "mail" }
   // 邮件只推送索引变动；正文始终通过当前用户的工作区读取。
   | { kind: "mail"; event: MailEvent }
+  | { kind: "assistant"; event: AssistantEvent }
   // pi 对话的流式输出，只推不存（历史在 pi 的会话文件里）
   | { kind: "chat"; siteId: number; event: ChatEvent };
 
