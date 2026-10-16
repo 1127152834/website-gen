@@ -3,7 +3,7 @@ import { EventEmitter } from "node:events";
 import { Readable } from "node:stream";
 import test from "node:test";
 import type { FetchMessageObject, ImapFlowOptions, ListResponse, MailboxObject } from "imapflow";
-import { buildRawMessage, createMailTransport, MailSentAppendError, type ImapClient, type MailAdapterDeps } from "./mailbox-adapter.ts";
+import { buildRawMessage, createMailTransport, MailSentAppendError, smtpTransportOptions, type ImapClient, type MailAdapterDeps } from "./mailbox-adapter.ts";
 import type { OutgoingMessage } from "./mailbox-transport.ts";
 
 const credentials = { address: "support@example.com", password: "Secret1!" };
@@ -288,3 +288,14 @@ test("发件人与认证邮箱必须一致，附件总量硬限制为 20 MB", as
   }), /20 MB/);
 });
 
+
+// 实测 2026-10-15：nodemailer 自己做 DNS 解析，在本机代理的假 IP DNS 下卡 15 秒超时；且没有超时设置时界面无限转圈
+test("SMTP connects to a pre-resolved IP, keeps certificate checks on the real host, and has timeouts", () => {
+  const options = smtpTransportOptions({ address: "support@shop.test", password: "x" }, "203.0.113.5");
+  assert.equal(options.host, "203.0.113.5");
+  assert.equal(options.tls?.servername, "smtp.hostinger.com");
+  assert.notEqual(options.tls?.rejectUnauthorized, false);
+  assert.ok(options.connectionTimeout && options.greetingTimeout && options.socketTimeout);
+  assert.equal(options.secure, true);
+  assert.equal(options.port, 465);
+});

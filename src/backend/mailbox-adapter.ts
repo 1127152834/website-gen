@@ -1,6 +1,7 @@
 // Hostinger 邮件生产适配器。服务器地址是常量；任何邮件正文、头部或附件内容都不会成为网络目标。
 import { ImapFlow, type FetchMessageObject, type ImapFlowOptions, type ListResponse, type MailboxObject } from "imapflow";
 import nodemailer from "nodemailer";
+import { lookup } from "node:dns/promises";
 import type SMTPTransport from "nodemailer/lib/smtp-transport/index.js";
 import type { MailAttachment } from "../shared/mail-types.ts";
 import type { MailCredentials, MailTransport, OutgoingMessage, RemoteFolder, RemoteFolderEvent, RemoteMessage, SendResult } from "./mailbox-transport.ts";
@@ -52,18 +53,29 @@ export class MailSentAppendError extends Error {
   }
 }
 
+/** 连预先解析好的 IP，证书仍按真实主机名校验；连接、握手、传输都有超时，避免界面无限转圈。 */
+export function smtpTransportOptions(credentials: MailCredentials, ip: string): SMTPTransport.Options {
+  return {
+    host: ip,
+    port: 465,
+    secure: true,
+    tls: { servername: SMTP_HOST },
+    auth: { user: credentials.address, pass: credentials.password },
+    connectionTimeout: 20_000,
+    greetingTimeout: 20_000,
+    socketTimeout: 60_000,
+    disableFileAccess: true,
+    disableUrlAccess: true,
+  };
+}
+
 const defaultDeps: MailAdapterDeps = {
   createImap: (options) => new ImapFlow(options),
   buildRaw: (message) => buildRawMessage(message),
   sendRaw: async (credentials, raw, recipients) => {
-    const transport = nodemailer.createTransport({
-      host: SMTP_HOST,
-      port: 465,
-      secure: true,
-      auth: { user: credentials.address, pass: credentials.password },
-      disableFileAccess: true,
-      disableUrlAccess: true,
-    });
+    // 用系统解析（getaddrinfo）拿 IP：nodemailer 自带的 dns.resolve 在本机代理的假 IP DNS 下会卡死
+    const { address } = await lookup(SMTP_HOST);
+    const transport = nodemailer.createTransport(smtpTransportOptions(credentials, address));
     try {
       const info: SMTPTransport.SentMessageInfo = await transport.sendMail({
         raw,
