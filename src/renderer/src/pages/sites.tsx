@@ -125,7 +125,7 @@ function SiteDetail({ siteId, tab, onNavigate }: { siteId: number; tab: SiteTab;
       {tab === "chat" && site.status !== "abandoned" && <ChatPanel siteId={siteId} domain={site.domain} />}
       {tab === "mail" && site.status !== "abandoned" && <MailPanel siteId={siteId} />}
       {tab === "changes" && <ChangesPanel siteId={siteId} />}
-      {tab === "qa" && <QaReport qa={qa} />}
+      {tab === "qa" && <QaReport siteId={siteId} qa={qa} onRefresh={load} />}
     </div>
   );
 }

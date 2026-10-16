@@ -5,9 +5,9 @@ import { join } from "node:path";
 import { randomBytes } from "node:crypto";
 import { createWorkspace } from "./index.ts";
 import { openDb } from "./db.ts";
-import { qaView } from "./qa-view.ts";
+import { friendlyReviewPageLabel, qaView } from "./qa-view.ts";
 import type { QaReport } from "./store.ts";
-import type { QaView } from "../shared/protocol.ts";
+import type { QaView, ReviewIssue } from "../shared/protocol.ts";
 
 const fixture = () => {
   const root = mkdtempSync(join(import.meta.dirname, "../../.phase3-backup/qa-view-"));
@@ -49,14 +49,42 @@ test("QA view also renders a checkpoint containing only the in-progress review",
   assert.equal(partial.review!.rounds, 2);
 });
 
-test("QA report presents underwriting results by severity and review theme", () => {
+test("QA view maps legacy capture ids to friendly Chinese labels and marks only safe open issues fixable", () => {
+  assert.equal(friendlyReviewPageLabel("page-27-about", "https://shop.test/about/"), "关于我们");
+  assert.equal(friendlyReviewPageLabel("product-8-travel-duffel", "https://shop.test/product/travel-duffel/"), "商品：Travel Duffel");
+  assert.equal(friendlyReviewPageLabel("category-7-travel-1", "https://shop.test/product-category/travel/"), "分类：Travel");
+  assert.equal(friendlyReviewPageLabel("Site-wide", "https://shop.test/"), "全站");
+  assert.equal(friendlyReviewPageLabel("Payment setup", "https://shop.test/wp-admin/admin.php?page=wc-settings"), "支付设置");
+
+  const { work, report } = fixture();
+  report.review!.issues = [
+    { ...report.review!.issues[0], id: "image", page: "product-8-travel-duffel", status: "open", evidence: "Main image has a barcode collage", why: "商品主图包含条码拼图", fix: "换成干净的商品主图" },
+    { ...report.review!.issues[0], id: "facts", page: "product-8-travel-duffel", status: "needs_you", why: "缺少真实尺寸", fix: "请补充商品实际尺寸" },
+  ];
+  const result = qaView(report, work);
+  assert.equal(result.review!.issues[0].page, "商品：Travel Duffel");
+  assert.equal((result.review!.issues[0] as ReviewIssue & { fixable?: boolean }).fixable, true);
+  assert.equal((result.review!.issues[1] as ReviewIssue & { fixable?: boolean }).fixable, false);
+
+  (report as QaReport & { reviewFindings?: unknown[] }).reviewFindings = [{ issue: report.review!.issues[1], needsRealData: false, action: { tool: "update_policy", params: { summary: "坏动作", name: "returns" } } }];
+  report.review!.issues[1] = { ...report.review!.issues[1], status: "open" };
+  assert.equal((qaView(report, work).review!.issues[1] as ReviewIssue & { fixable?: boolean }).fixable, false, "invalid persisted action is not advertised as fixable");
+  report.review!.issues[1] = { ...report.review!.issues[1], page: "商品：Fancy Bed", url: "https://shop.test/product/123/" };
+  (report as QaReport & { reviewFindings?: unknown[] }).reviewFindings = [{ issue: report.review!.issues[1], needsRealData: true, action: { tool: "update_product", params: { summary: "不应执行", id: 123, name: "Fancy Bed" } } }];
+  const guarded = qaView(report, work).review!.issues[1] as ReviewIssue & { fixable?: boolean };
+  assert.equal(guarded.page, "商品：Fancy Bed"); assert.equal(guarded.fixable, false);
+  assert.doesNotThrow(() => friendlyReviewPageLabel("product-8-bad", "https://shop.test/product/%E0%A4%A/"));
+});
+
+test("QA report presents the redesigned Chinese issue groups and one-click actions", () => {
   const source = readFileSync(join(import.meta.dirname, "../renderer/src/pages/qa-report.tsx"), "utf8");
-  assert.match(source, /商户网站审核（规则与 AI）/);
-  assert.match(source, /config: "一致性与完整性"/);
-  assert.match(source, /policy: "政策与法律一致性"/);
-  assert.match(source, /product: "商品与合规"/);
-  assert.match(source, /copy: "业务真实性与声明"/);
-  assert.match(source, /visual: "品牌与视觉"/);
-  assert.match(source, /\["P1", "P2", "P3"\]/);
-  assert.match(source, /KIND_ORDER\.map/);
+  for (const text of ["待处理", "需要你补充", "已修复", "一键修复全部", "重新复核", "页面原文", "查看修复记录"]) assert.match(source, new RegExp(text));
+});
+
+test("persisted real-data guard overrides even a statically supported image fix", () => {
+  const { work, report } = fixture();
+  const issue: ReviewIssue = { ...report.review!.issues[0], status: "open", why: "主图与实际商品不符", fix: "确认真实商品后更换主图", evidence: "Wrong main image" };
+  report.review!.issues = [issue];
+  report.reviewFindings = [{ issue, needsRealData: true }];
+  assert.equal(qaView(report, work).review!.issues[0].fixable, false);
 });

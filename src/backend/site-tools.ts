@@ -2,7 +2,8 @@
 // 文案和政策仍然存在 spec_json 里，页面由代码按它重新渲染，所以事实核对、禁用说法检查和建站时完全一样。
 import { Type, type TSchema } from "@earendil-works/pi-ai";
 import { range, RULES } from "../shared/rules.ts";
-import { applyChange, listChanges, revertChange, scheduleRevert, type MetadataTargetType, type Target } from "./changes.ts";
+import { applyChange as recordChange, listChanges, revertChange, scheduleRevert, type MetadataTargetType, type Target } from "./changes.ts";
+import type { ChangeSummary } from "../shared/protocol.ts";
 import { buildPages, checkCopy, checkPolicies, checkProductCopy, claimProblems, cleanHtml, STYLES, type Policies, type SiteCopy, type Style } from "./content.ts";
 import type { StepCtx } from "./pipeline.ts";
 import { facts } from "./store.ts";
@@ -39,7 +40,9 @@ export const localTime = (ts: number) => {
   return `${t.getFullYear()}-${p(t.getMonth() + 1)}-${p(t.getDate())} ${p(t.getHours())}:${p(t.getMinutes())}`;
 };
 
-export function siteTools(ctx: StepCtx): SiteTool[] {
+export function siteTools(ctx: StepCtx, initiator: ChangeSummary["initiator"] = "pi"): SiteTool[] {
+  // 手动 QA 与对话共用写入校验，只改变变更集的发起者，不另开写入通道。
+  const applyChange: typeof recordChange = (context, summary, edits) => recordChange(context, summary, edits, initiator);
   const { wp, d } = ctx;
   const spec = (): Spec => {
     if (!ctx.site.spec_json) throw new Error("这个站还没有生成文案");

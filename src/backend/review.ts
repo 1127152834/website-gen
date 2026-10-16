@@ -10,8 +10,13 @@ import { siteTools } from "./site-tools.ts";
 import type { VisionComplete } from "./vision.ts";
 import { checkProductAnalysis, deterministicDimensionProblems, parseProductAnalysis, productAnalysisPrompt, productCopyFromAnalysis, reconcileActualVariations, unitReviewCopyProblems, type ProductAnalysis, type UnitReview, type WooVariationFacts } from "./product-content.ts";
 import { splitVariants, type CjProduct } from "./cj.ts";
-import { catalogCopyProblems, checkCopy, checkProductCopy, copyPrompt, parseJsonReply, type SiteCopy } from "./content.ts";
+import { catalogCopyProblems, checkCopy, checkPolicies, checkProductCopy, copyPrompt, parseJsonReply, parsePolicies, policyPrompt, type SiteCopy } from "./content.ts";
 import { ask, chooseProductMainImage, ensureReviewProductSource, facts } from "./store.ts";
+import { friendlyReviewPageLabel, isReviewActionShape, reviewIssueFixKind, reviewIssueFixable, type ReviewFixKind } from "./review-presentation.ts";
+import { checkPageMetadata, metadataPrompt, parsePageMetadata } from "./home-design.ts";
+import { runPool } from "./run-pool.ts";
+
+export { reviewIssueFixKind, reviewIssueFixable } from "./review-presentation.ts";
 
 const PAGE_SIZE = 100;
 const MAX_ISSUES_PER_PAGE = 5;
@@ -25,6 +30,8 @@ export interface ReviewSnapshot {
   /** 发布状态来自 REST，供确定性的完整性检查使用。 */
   pages?: Record<string, unknown>[];
   targets: ReviewTarget[];
+  /** 定向抓取仍保留完整目标目录，用于计算共享文案/商品修改的传播范围。 */
+  allTargets?: ReviewTarget[];
   captures: BrowseCapture[];
   products: Record<string, unknown>[];
   categories: Record<string, unknown>[];
@@ -61,20 +68,12 @@ const needsVerifiedFacts = (v: RawIssue) => {
     && /\b(?:mismatch\w*|differ\w*|inconsisten\w*|does not match)\b/i.test(text);
   const imageOverlay = /\b(?:image|photo|picture)\b/i.test(text) && /\b(?:overlay|size label|barcode|watermark|collage)\b/i.test(text);
   if ((optionMismatch || imageOverlay) && !/\b(?:measurements?|dimensions?|materials?|fabric|leather|set contents?|piece count|certification|proof)\b/i.test(text)) return false;
-  const facts = /\b(dimensions?|measurements?|units?|sizes?|piece count|components?|set contents?|materials?|fabric|leather|certification|proof)\b/i.test(text);
-  const unavailable = /\b(27\s*m|missing|unknown|unclear|ambiguous|unsupported|unverified|verify|confirm|actual|real data|source does not|no (?:source|proof|evidence))\b/i.test(text);
+  const facts = /\b(dimensions?|measurements?|units?|sizes?|piece count|components?|set contents?|materials?|fabric|leather|certification|proof)\b|尺寸|单位|套装(?:数量|内容|组件)?|件数|材质|面料|皮革|认证|证明/i.test(text);
+  const unavailable = /\b(27\s*m|missing|unknown|unclear|ambiguous|unsupported|unverified|verify|confirm|actual|real data|source does not|no (?:source|proof|evidence))\b|缺少|未知|不清楚|无法确认|无法验证|未验证|需要核实|需要确认|真实资料|没有(?:来源|证明|证据)/i.test(text);
   return facts && unavailable;
 };
 const validActionParams = (tool: ActionName, p: Record<string, unknown>) => {
-  if (!string(p.summary)) return false;
-  const id = () => Number.isInteger(p.id) && Number(p.id) > 0;
-  if (tool === "update_copy") return ["tagline", "hero_heading", "hero_subheading", "about", "faq"].some((x) => p[x] !== undefined);
-  if (tool === "update_policy") return ["shipping", "returns", "privacy", "terms"].includes(String(p.name)) && string(p.html);
-  if (tool === "update_product") return id() && ["name", "short_description", "description_html"].some((x) => p[x] !== undefined);
-  if (tool === "update_product_main_image") return id() && Number.isInteger(p.image_id) && Number(p.image_id) > 0;
-  if (tool === "update_product_categories") return id() && Array.isArray(p.category_ids) && p.category_ids.length > 0 && p.category_ids.every((x) => Number.isInteger(x) && Number(x) > 0);
-  return ["home", "shop", "page", "product", "product_cat"].includes(String(p.target_type))
-    && Number.isInteger(p.target_id) && Number(p.target_id) >= 0 && string(p.description) && string(p.og_description);
+  return isReviewActionShape({ tool, params: p });
 };
 
 /** 严格解析模型结果；不接受缺证据、未知级别/类型/动作，避免“复核成功”来自宽松容错。 */
@@ -168,10 +167,16 @@ export async function crawlReviewTargets(ctx: StepCtx): Promise<{
   return { targets: unique, products, categories, pages };
 }
 
-export async function collectReviewSnapshot(ctx: StepCtx, loginUrl: string, outDir: string): Promise<ReviewSnapshot> {
+export async function collectReviewSnapshot(ctx: StepCtx, loginUrl: string, outDir: string, urls?: string[]): Promise<ReviewSnapshot> {
   if (!ctx.d.browse) throw new Error("整站 AI 复核需要浏览器，不能跳过");
-  const { targets, products, categories, pages } = await crawlReviewTargets(ctx);
-  if (targets.length === 0) throw new Error("整站 AI 复核没有找到任何公开页面");
+  const crawled = await crawlReviewTargets(ctx);
+  const { products, categories, pages } = crawled;
+  const requested = new Set((urls ?? []).map((url) => {
+    try { return new URL(url, `https://${ctx.domain}`).pathname.replace(/\/+$/, "") || "/"; }
+    catch { return url.replace(/\/+$/, "") || "/"; }
+  }));
+  const targets = requested.size ? crawled.targets.filter((target) => requested.has(target.path.replace(/\/+$/, "") || "/")) : crawled.targets;
+  if (targets.length === 0) throw new Error(requested.size ? "没有找到需要重新复核的页面" : "整站 AI 复核没有找到任何公开页面");
   const result = await ctx.d.browse({
     loginUrl, origin: `https://${ctx.domain}`, outDir,
     pages: targets.map((x) => ({ name: x.name, path: x.path })),
@@ -193,7 +198,7 @@ export async function collectReviewSnapshot(ctx: StepCtx, loginUrl: string, outD
   const email = ctx.entity.supportEmail === "auto" ? `support@${ctx.domain}` : ctx.entity.supportEmail?.trim();
   return {
     // 浏览器还可能返回移动首页或旧实现的购物车截图；不把这些当成额外复核页面。
-    targets, captures: result.captures.filter((c) => targets.some((t) => t.name === c.name && t.path === c.path)), products, categories, pages,
+    targets, allTargets: crawled.targets, captures: result.captures.filter((c) => targets.some((t) => t.name === c.name && t.path === c.path)), products, categories, pages,
     sourceFacts: JSON.parse(ctx.site.picks_json || "[]"), spec: JSON.parse(ctx.site.spec_json || "{}"),
     config: { site, payments, entity: ctx.entity, domain: ctx.domain, email, currency: object(currency) ? currency.value : currency },
   };
@@ -237,21 +242,25 @@ function textPrompt(snapshot: ReviewSnapshot, capture: BrowseCapture) {
     throw new Error(`Page ${capture.name} facts exceed the safe review context; refusing a partial review`);
   }
   const catalog = /^\/about(?:-us)?\/$/.test(capture.path) ? { categories: snapshot.categories.map((c) => c.name), catalog: snapshot.products.map((p) => ({ name: p.name, categories: p.categories })) } : undefined;
-  return `You are the final compliance reviewer for a US English WooCommerce store. ${PRELAUNCH} ${FOCUS}\n\nReturn strict JSON only: {"issues":[{"key":"stable semantic key scoped to URL","focus":"operator_policy|product_consistency|store_trust|underwriting","level":"P1|P2|P3","kind":"copy|policy|product|visual|config|other","page":"buyer-readable page name","url":"absolute URL","evidence":"exact visible text or precise observed fact","why":"why it conflicts","fix":"specific correction","needs_real_data":true|false,"action":{"tool":"update_copy|update_policy|update_product|update_product_main_image","params":{}}}]}. Omit action when no allowlisted tool can safely fix it. An empty issues array is valid. Missing actual dimensions, set contents, material proof or operator/contact facts MUST use needs_real_data=true and no action. Tool params must be complete and include summary.\n\nSTORE RULES:\n${JSON.stringify({ ...reviewRules(), entity: config.entity })}\nACTUAL CONFIGURATION:\n${configJson}\nBUSINESS CATALOG SUMMARY (no off-page CJ records):\n${JSON.stringify(catalog ?? {})}\nSOURCE FACTS:\n${sourceJson}\nPRODUCT RECORDS:\n${productJson}\nPAGE URL:\n${capture.url}\nPAGE TEXT:\n${redactSecrets(capture.text)}`;
+  return `You are the final compliance reviewer for a US English WooCommerce store. ${PRELAUNCH} ${FOCUS}\n\nIMPORTANT OUTPUT LANGUAGE: page, why and fix MUST be short, concrete Simplified Chinese written for a store operator. Do not use jargon such as “underwriting”, “CTA” or “variation record”. evidence MUST remain the exact verbatim quote from the page and must not be translated. Use friendly page names such as 首页、关于我们、联系我们、常见问题、配送政策、退货与退款、隐私政策、服务条款、商店、分类：名称、商品：标题. When real business facts are missing, fix must say exactly what the operator must provide (for example 真实公司名称和地址、商品实际尺寸、套装内容); for business identity, tell the operator to provide the real facts so a maintainer can correct the existing batch source and sync the pages and footer.\n\nReturn strict JSON only: {"issues":[{"key":"stable semantic key scoped to URL","focus":"operator_policy|product_consistency|store_trust|underwriting","level":"P1|P2|P3","kind":"copy|policy|product|visual|config|other","page":"简体中文友好页面名","url":"absolute URL","evidence":"exact visible text or precise observed fact","why":"简短中文原因","fix":"具体中文改法","needs_real_data":true|false,"action":{"tool":"update_copy|update_policy|update_product|update_product_main_image|update_product_categories|update_meta","params":{}}}]}. Omit action when no allowlisted tool can safely fix it. An empty issues array is valid. Missing actual dimensions, set contents, material proof or operator/contact facts MUST use needs_real_data=true and no action. Tool params must be complete and include summary.\n\nSTORE RULES:\n${JSON.stringify({ ...reviewRules(), entity: config.entity })}\nACTUAL CONFIGURATION:\n${configJson}\nBUSINESS CATALOG SUMMARY (no off-page CJ records):\n${JSON.stringify(catalog ?? {})}\nSOURCE FACTS:\n${sourceJson}\nPRODUCT RECORDS:\n${productJson}\nPAGE URL:\n${capture.url}\nPAGE TEXT:\n${redactSecrets(capture.text)}`;
 }
 
 function visualPrompt(snapshot: ReviewSnapshot, capture: BrowseCapture) {
   const config = object(snapshot.config) ? snapshot.config : {};
-  return `Review this full-page screenshot of ${capture.url}, including the header brand logo. ${PRELAUNCH} ${FOCUS} Compare product imagery only to this page's CJ source facts and the supplied source images. Do not re-review prose. Return strict JSON: {"issues":[{"key":"stable semantic key","focus":"operator_policy|product_consistency|store_trust","level":"P1|P2|P3","kind":"visual|product|other","page":"name","url":"${capture.url}","evidence":"precise visible fact","why":"impact","fix":"specific fix","needs_real_data":true|false}]}. No actions: screenshots do not carry trusted object IDs. Empty issues is valid.\nPAGE FACTS: ${JSON.stringify(reviewContext(snapshot, capture))}\nPAYMENT GATEWAYS: ${JSON.stringify(config.payments)}`;
+  return `Review this full-page screenshot of ${capture.url}, including the header brand logo. ${PRELAUNCH} ${FOCUS} Compare product imagery only to this page's CJ source facts and the supplied source images. Do not re-review prose. page, why and fix MUST be short, concrete Simplified Chinese for a store operator, without jargon such as “underwriting”, “CTA” or “variation record”. evidence MUST remain the exact verbatim visible fact and must not be translated. Use friendly Chinese page names. If real facts are missing, state the exact information the operator must provide; for business identity, tell them a maintainer must correct the existing batch source and sync the pages and footer. Return strict JSON: {"issues":[{"key":"stable semantic key","focus":"operator_policy|product_consistency|store_trust","level":"P1|P2|P3","kind":"visual|product|other","page":"中文友好页面名","url":"${capture.url}","evidence":"precise visible fact","why":"简短中文原因","fix":"具体中文改法","needs_real_data":true|false}]}. No actions: screenshots do not carry trusted object IDs. Empty issues is valid.\nPAGE FACTS: ${JSON.stringify(reviewContext(snapshot, capture))}\nPAYMENT GATEWAYS: ${JSON.stringify(config.payments)}`;
 }
 
 function actionMatchesTarget(action: ReviewAction, target: ReviewTarget | undefined, path: string): boolean {
   const id = Number(action.params.id);
-  if (["update_product", "update_product_main_image", "update_product_categories"].includes(action.tool)) return target?.kind === "product" && target.targetId === id;
+  if (["update_product", "update_product_variation_images", "update_product_main_image", "update_product_categories"].includes(action.tool)) return target?.kind === "product" && target.targetId === id;
   if (action.tool === "update_copy") return ["home", "about", "faq"].includes(path === "/" ? "home" : path.replace(/^\/+|\/+$/g, ""));
   if (action.tool === "update_policy") {
-    const expected: Record<string, string> = { shipping: "shipping", returns: "returns", privacy: "privacy-policy", terms: "terms" };
-    return target?.kind === "page" && path.replace(/^\/+|\/+$/g, "") === expected[String(action.params.name)];
+    const slug = path.replace(/^\/+|\/+$/g, "");
+    const expected: Record<string, RegExp> = {
+      shipping: /^shipping(?:-policy)?$/, returns: /^(?:returns?|refund)(?:-policy)?$|^returns-refund$/,
+      privacy: /^privacy(?:-policy)?$/, terms: /^terms(?:-of-service|-and-conditions)?$/,
+    };
+    return target?.kind === "page" && Boolean(expected[String(action.params.name)]?.test(slug));
   }
   if (action.tool === "update_meta") {
     const type = String(action.params.target_type), targetId = Number(action.params.target_id);
@@ -279,18 +288,18 @@ export function deterministicSourceFindings(snapshot: ReviewSnapshot): ReviewFin
     if (questionable.length || dimensions.length) {
       const key = "source-dimensions-withheld";
       out.push({ semanticKey: key, needsRealData: true, issue: {
-        id: issueId("product", capture.url, key), level: "P2", kind: "product", page: `Product #${productId}`, url: capture.url,
+        id: issueId("product", capture.url, key), level: "P2", kind: "product", page: `商品：${String(snapshot.products.find((product) => Number(product.id) === productId)?.name ?? source.product.name ?? `#${productId}`)}`, url: capture.url,
         evidence: `Questionable source measurements were omitted pending verification: ${[...dimensions, ...questionable.map((x) => `${x.sourceKey}: ${x.reason}`)].join("; ")}`,
-        why: "Publishing a guessed correction would misrepresent the product.", fix: "Provide verified supplier measurements and units, then regenerate the product copy.", status: "needs_you", ...(capture.shot ? { shot: capture.shot } : {}),
+        why: "现有资料里的尺寸可疑，不能猜一个数值直接发布。", fix: "请补充供应商确认过的商品实际尺寸和单位，再重新生成商品文案。", status: "needs_you", ...(capture.shot ? { shot: capture.shot } : {}),
       } });
     }
     const unclear = Array.isArray(source.analysis.variants) ? source.analysis.variants.filter((x) => x.clear === false) : [];
     if (unclear.length) {
       const key = "source-variants-withheld";
       out.push({ semanticKey: key, needsRealData: true, issue: {
-        id: issueId("product", capture.url, key), level: "P2", kind: "product", page: `Product #${productId}`, url: capture.url,
+        id: issueId("product", capture.url, key), level: "P2", kind: "product", page: `商品：${String(snapshot.products.find((product) => Number(product.id) === productId)?.name ?? source.product.name ?? `#${productId}`)}`, url: capture.url,
         evidence: `Unverified variants were excluded from sale: ${unclear.map((x) => x.sourceKey).join(", ")}`,
-        why: "The delivered piece count or components are unclear in the supplier facts.", fix: "Provide verified set contents/components for these variants before publishing them.", status: "needs_you", ...(capture.shot ? { shot: capture.shot } : {}),
+        why: "供应商资料没有说清这些款式实际包含几件或哪些物品。", fix: "请补充供应商确认过的套装数量和内容，再发布这些款式。", status: "needs_you", ...(capture.shot ? { shot: capture.shot } : {}),
       } });
     }
   }
@@ -300,7 +309,7 @@ export function deterministicSourceFindings(snapshot: ReviewSnapshot): ReviewFin
 /** 支付提醒与 QA 共用同一判定和整改文案，不再创建第二种支付检查。 */
 export function paymentGatewayState(gateways: unknown): { enabled: string[]; fix: string } {
   const enabled = Array.isArray(gateways) ? gateways.filter((g) => object(g) && (g.enabled === true || g.enabled === "yes")).map((g) => String(g.id)) : [];
-  return { enabled, fix: "Connect a payment gateway such as Stripe so the store accepts credit cards; complete the provider's account authorization and verify the available checkout methods." };
+  return { enabled, fix: "请在支付设置中连接 Stripe 等真实支付账户，完成服务商授权，并确认结账页可用的付款方式。" };
 }
 
 const paymentSetupUrl = (snapshot: ReviewSnapshot) => {
@@ -319,24 +328,24 @@ function deterministicTrustFindings(snapshot: ReviewSnapshot): ReviewFinding[] {
   const out: ReviewFinding[] = [];
   const add = (key: string, evidence: string, why: string, fix: string, realData: boolean) => out.push({
     semanticKey: key, deterministic: true, needsRealData: realData, issue: {
-      id: issueId("config", home.url, key), level: "P2", kind: "config", page: "Store trust", url: home.url,
+      id: issueId("config", home.url, key), level: "P2", kind: "config", page: "首页", url: home.url,
       evidence, why, fix, status: realData ? "needs_you" : "open", ...(home.shot ? { shot: home.shot } : {}),
     },
   });
   const names = [entity.name, info.entity, options.blogname].filter(string);
   const addresses = [entity.address, info.address].filter(string);
   const placeholders = [...names.filter((x) => /\b(?:test|demo|sample|example)\b/i.test(x)), ...addresses.filter((x) => /\b(?:test|demo|sample|example)\b|\b(?:1|123|1234)\s+(?:main|example|test|sample|fake)\s+(?:st(?:reet)?|rd|road|ave(?:nue)?)\b/i.test(x))];
-  if (placeholders.length) add("placeholder-operator", `Operator/store details look like placeholders: ${[...new Set(placeholders)].join("; ")}`, "Placeholder operator details undermine the store's credibility and cannot be replaced with invented data.", "Provide the real operator name and business/return address, then update the store and policy/contact pages.", true);
-  if (!(Number(options.custom_logo) > 0)) add("missing-custom-logo", "No custom logo is set.", "The header must identify the real store brand.", "Generate and install a brand custom logo, then verify it in the header screenshot.", false);
-  if (!(Number(options.site_icon) > 0)) add("missing-site-icon", "No site icon (favicon) is set.", "The store is missing its browser identity.", "Generate and install the square brand site icon (favicon).", false);
+  if (placeholders.length) add("placeholder-operator", `Operator/store details look like placeholders: ${[...new Set(placeholders)].join("; ")}`, "经营主体或地址看起来是示例内容，不能用编造的信息替换。", "请提供真实公司名称和经营或退货地址，由维护人员修正当前批次来源资料，再同步到联系页、政策页和页脚。", true);
+  if (!(Number(options.custom_logo) > 0)) add("missing-custom-logo", "No custom logo is set.", "页眉没有显示店铺自己的品牌标识。", "生成并设置店铺 Logo，然后检查首页页眉是否正确显示。", false);
+  if (!(Number(options.site_icon) > 0)) add("missing-site-icon", "No site icon (favicon) is set.", "浏览器标签页没有店铺图标。", "生成并设置方形站点图标，然后重新检查浏览器标签页。", false);
   const payment = paymentGatewayState(config.payments);
   if (Array.isArray(config.payments) && !payment.enabled.length) {
     // 复用 QA 的站点级支付待办，指向真正的设置页，不占某个前台页面的五条问题名额。
     const url = paymentSetupUrl(snapshot);
     out.push({ deterministic: true, semanticKey: "payments", needsRealData: true, issue: {
-      id: issueId("config", url, "payments"), level: "P2", kind: "config", page: "Payment setup", url,
+      id: issueId("config", url, "payments"), level: "P2", kind: "config", page: "支付设置", url,
       evidence: "No payment gateway is enabled; the store cannot currently accept credit cards.",
-      why: "Payment acceptance requires the owner's provider account and cannot be fabricated.", fix: payment.fix, status: "needs_you",
+      why: "收款必须由店主连接自己的真实支付账户，系统不能代填或编造。", fix: payment.fix, status: "needs_you",
     } });
   }
   return out;
@@ -357,18 +366,18 @@ function inReviewFocus(finding: ReviewFinding, target: ReviewTarget | undefined,
   if (finding.issue.kind === "seo") return false;
   const text = `${finding.issue.evidence} ${finding.issue.why}`;
   const imageProblem = /\b(?:image|photo|picture)\b/i.test(text) && /\b(?:text overlay|size labels?|watermark|barcode|collage|cropped|unclear|blurry|same|shared|identical|different|dog|cat|species)\b/i.test(text);
-  const discrepancy = imageProblem || /\b(?:missing|absent|generic|vague|perfunctory|boilerplate|placeholder|demo|lorem ipsum|sample page|example\.com|default content|inconsisten\w*|mismatch\w*|contradict\w*|differ\w*|unsupported|unsubstantiated|unauthorized|unlicensed|counterfeit|unrelated|inaccurate|untrue|different (?:item|business)|wrong|omitt?\w*|unavailable|unverified|unverifiable|unknown|fake|fabricated|misleading|exaggerated|prohibited|restricted|trademark|third-party|cannot invent|needs real documentation)\b|lacks concrete detail|does not match|not (?:specific|believable|shown|set|present|confirmed|available|accurate|supported|accepted|enabled)|\bno (?:brand|custom|site|contact|operator|return|refund|logo|favicon|payment|gateway|source|proof|evidence)/i.test(text);
+  const discrepancy = imageProblem || /未说明|没写明|未写明|没有说明|不完整|未列出|未明确/.test(text) || /\b(?:missing|absent|generic|vague|perfunctory|boilerplate|placeholder|demo|lorem ipsum|sample page|example\.com|default content|inconsisten\w*|mismatch\w*|contradict\w*|differ\w*|unsupported|unsubstantiated|unauthorized|unlicensed|counterfeit|unrelated|inaccurate|untrue|different (?:item|business)|wrong|omitt?\w*|unavailable|unverified|unverifiable|unknown|fake|fabricated|misleading|exaggerated|prohibited|restricted|trademark|third-party|cannot invent|needs real documentation)\b|lacks concrete detail|does not match|not (?:specific|believable|shown|set|present|confirmed|available|accurate|supported|accepted|enabled)|\bno (?:brand|custom|site|contact|operator|return|refund|logo|favicon|payment|gateway|source|proof|evidence)|缺少|未显示|没有|不一致|不匹配|不相符|矛盾|不同|错误|不准确|无依据|无法验证|未验证|未知|虚假|编造|误导|夸大|禁售|受限|商标|第三方品牌|不能编造|需要真实资料|不具体|不可信|不相关|看不清|模糊|相同|共用/i.test(text);
   if (!discrepancy) return false;
-  const trustEvidence = /\b(?:logo|favicon|site icon|payment|credit cards?|gateway|placeholder|demo|lorem ipsum|sample page|example\.com|WordPress default|contact details|operator|legal name|legal entity|business name|address|email|phone)\b/i.test(text);
+  const trustEvidence = /\b(?:logo|favicon|site icon|payment|credit cards?|gateway|placeholder|demo|lorem ipsum|sample page|example\.com|WordPress default|contact details|operator|legal name|legal entity|business name|address|email|phone)\b|品牌|标志|图标|支付|信用卡|示例|模板|联系方式|经营主体|公司名称|企业名称|地址|邮箱|电话/i.test(text);
   const focus = finding.focus;
   if (focus === "store_trust") return trustEvidence;
-  const productEvidence = /\b(?:title|description|variant|image|item|product|measurements?|dimensions?|materials?|feature|CJ|source|supplier|proof|trademark|third-party brand)\b/i.test(text);
-  const operatorEvidence = /\b(?:operator|address|email|phone|returns?|refunds?|policy|terms|legal|boilerplate|timelines?|steps?|About|Contact|store-specific)\b/i.test(text);
+  const productEvidence = /\b(?:title|description|variant|image|item|product|measurements?|dimensions?|materials?|feature|CJ|source|supplier|proof|trademark|third-party brand)\b|标题|描述|文案|规格|款式|图片|商品|尺寸|材质|功能|货源|供应商|证明|商标|第三方品牌/i.test(text);
+  const operatorEvidence = /\b(?:operator|address|email|phone|returns?|refunds?|policy|terms|legal|boilerplate|timelines?|steps?|About|Contact|store-specific)\b|经营主体|公司名称|企业名称|地址|邮箱|电话|退货|退款|政策|条款|法律|时间|步骤|关于我们|联系我们|店铺/i.test(text);
   const operatorPage = /^\/(?:about(?:-us)?|contact(?:-us)?|shipping(?:-policy)?|returns?(?:-policy)?|refund(?:-policy)?|returns-refund|privacy(?:-policy)?|terms(?:-of-service|-and-conditions)?)\/$/.test(path);
   if (focus === "underwriting") {
     if (finding.issue.kind === "product") return target?.kind === "product" && productEvidence;
     if (finding.issue.kind === "policy") return operatorPage && operatorEvidence;
-    if (finding.issue.kind === "copy") return /\b(?:claim|business|catalog|story|history|credentials?|operating|origin|template|demo)\b/i.test(text);
+    if (finding.issue.kind === "copy") return /\b(?:claim|business|catalog|story|history|credentials?|operating|origin|template|demo)\b|声明|经营|目录|商品范围|故事|历史|资质|来源|模板|示例/i.test(text);
     return finding.issue.kind === "config" && trustEvidence;
   }
   if (focus === "product_consistency") return (target?.kind === "product" || ["archive", "category"].includes(target?.kind ?? "")) && productEvidence;
@@ -389,39 +398,70 @@ function missingOperatorFacts(finding: ReviewFinding, snapshot: ReviewSnapshot):
   const text = `${finding.issue.evidence} ${finding.issue.why}`;
   const known = (value: unknown) => typeof value === "string" && value.trim().length > 0;
   return [
-    [/\b(?:operator|legal name|business name)\b/i, entity.name, info.entity],
-    [/\baddress\b/i, entity.address, info.address],
-    [/\b(?:email|e-mail)\b/i, entity.supportEmail, info.email],
-    [/\bphone\b/i, entity.phone, info.phone],
+    [/\b(?:operator|legal name|business name)\b|经营主体|公司名称|企业名称/i, entity.name, info.entity],
+    [/\baddress\b|地址/i, entity.address, info.address],
+    [/\b(?:email|e-mail)\b|邮箱|电子邮件/i, entity.supportEmail, info.email],
+    [/\bphone\b|电话/i, entity.phone, info.phone],
   ].some(([pattern, ...values]) => (pattern as RegExp).test(text) && !values.some(known));
 }
 
 /** 模型偶尔回坏 JSON：带上解析错误重试一次；还不行就失败（复核不能跳过）。 */
-export async function reviewWithRetry(call: (extra: string) => Promise<{ text: string; cost: number }>, shot?: string): Promise<ReviewFinding[]> {
+export async function reviewWithRetry(
+  call: (extra: string) => Promise<{ text: string; cost: number }>,
+  shot?: string,
+  options: { requireChinese?: boolean } = {},
+): Promise<ReviewFinding[]> {
   let extra = "";
   for (let attempt = 0; ; attempt++) {
     const { text } = await call(extra);
     try {
-      return parseReviewIssues(text, shot);
+      const findings = parseReviewIssues(text, shot);
+      if (options.requireChinese) validateChineseReview(findings);
+      return findings;
     } catch (error) {
       if (attempt >= 1) throw error;
-      extra = `\n\nYour previous reply was not valid: ${(error as Error).message}. Reply again with the strict JSON object only.`;
+      extra = options.requireChinese
+        ? `\n\n上次回复不合格：${(error as Error).message}。请只返回严格 JSON；page、why、fix 必须使用简短具体的简体中文，evidence 保持页面原文。`
+        : `\n\nYour previous reply was not valid: ${(error as Error).message}. Reply again with the strict JSON object only.`;
     }
   }
 }
 
-async function inspectSnapshot(ctx: StepCtx, snapshot: ReviewSnapshot, vision: VisionComplete): Promise<ReviewFinding[]> {
-  // 逐页复核彼此独立：3 个并发，结果按页面顺序合并
-  const perPage: ReviewFinding[][] = new Array(snapshot.captures.length);
-  let next = 0;
-  const worker = async () => {
-    for (let index = next++; index < snapshot.captures.length; index = next++) perPage[index] = await inspectCapture(ctx, snapshot, snapshot.captures[index], vision);
+function validateChineseReview(findings: ReviewFinding[]): void {
+  const forbidden = /\bunderwriting\b|\bcta\b|\bvariation\s+record\b/i;
+  const meaningfulChinese = (value: string) => {
+    const cjk = value.match(/[\u3400-\u9fff]/g)?.length ?? 0;
+    const latin = value.match(/[A-Za-z]/g)?.length ?? 0;
+    return cjk >= 2 && cjk / Math.max(1, cjk + latin) >= 0.3;
   };
-  await Promise.all([worker(), worker(), worker()]);
+  findings.forEach((finding, index) => {
+    const { why, fix } = finding.issue;
+    if (!meaningfulChinese(why) || !meaningfulChinese(fix) || forbidden.test(why) || forbidden.test(fix)) {
+      throw new Error(`复核问题 #${index + 1} 的 why 和 fix 必须使用简短、具体的简体中文，且不能包含 underwriting、CTA 或 variation record 等术语`);
+    }
+  });
+}
+
+export async function inspectReviewSnapshot(ctx: StepCtx, snapshot: ReviewSnapshot, vision: VisionComplete, options: {
+  targeted?: boolean;
+  onProgress?: (progress: { page: string; index: number; total: number }) => void;
+} = {}): Promise<ReviewFinding[]> {
+  // 逐页复核彼此独立：3 个并发，结果按页面顺序合并；一页出错后其他页不再开工，等在跑的结束再报错
+  let done = 0;
+  const perPage = await runPool(snapshot.captures, 3, async (capture) => {
+    const findings = await inspectCapture(ctx, snapshot, capture, vision);
+    options.onProgress?.({ page: friendlyReviewPageLabel(capture.name, capture.url, snapshot), index: ++done, total: snapshot.captures.length });
+    return findings;
+  });
   const all = perPage.flat();
-  all.push(...deterministicSourceFindings(snapshot), ...deterministicTrustFindings(snapshot), ...deterministicUnderwritingFindings(snapshot), ...catalogFindings(snapshot));
+  all.push(...deterministicSourceFindings(snapshot));
+  if (!options.targeted || snapshot.captures.some((capture) => capture.path === "/")) all.push(...deterministicTrustFindings(snapshot));
+  all.push(...deterministicUnderwritingFindings(snapshot, { siteWide: !options.targeted }), ...catalogFindings(snapshot));
+  for (const finding of all) finding.issue.page = friendlyReviewPageLabel(finding.issue.page, finding.issue.url, snapshot);
   return limitFindings(all);
 }
+
+const inspectSnapshot = inspectReviewSnapshot;
 
 async function inspectCapture(ctx: StepCtx, snapshot: ReviewSnapshot, capture: BrowseCapture, vision: VisionComplete): Promise<ReviewFinding[]> {
   const all: ReviewFinding[] = [];
@@ -436,12 +476,12 @@ async function inspectCapture(ctx: StepCtx, snapshot: ReviewSnapshot, capture: B
       const r = await vision(visualPrompt(snapshot, capture) + extra, [{ name: capture.name, file: capture.shot! }, ...sourceImages.map((url, i) => ({ name: `CJ-source-${i + 1}`, url }))]);
       ctx.emit("ai_text", { task: `整站视觉复核：${capture.name}`, cost: r.cost, preview: r.text.slice(0, 400) });
       return r;
-    }, capture.shot);
+    }, capture.shot, { requireChinese: true });
     pageFindings.push(...await reviewWithRetry(async (extra) => {
         const r = await ctx.d.ai("review", textPrompt(snapshot, capture) + extra);
         ctx.emit("ai_text", { task: `整站文本复核：${capture.name}`, cost: r.cost, preview: r.text.slice(0, 400) });
         return r;
-      }, capture.shot));
+      }, capture.shot, { requireChinese: true }));
     for (const finding of pageFindings) {
       finding.issue.url = capture.url;
       finding.issue.id = issueId(finding.issue.kind, capture.url, finding.semanticKey ?? finding.issue.id);
@@ -451,7 +491,7 @@ async function inspectCapture(ctx: StepCtx, snapshot: ReviewSnapshot, capture: B
         finding.needsRealData = true; finding.issue.status = "needs_you"; finding.action = undefined;
       }
       const action = finding.action;
-      if (action && (["update_meta", "update_product_categories"].includes(action.tool) || !actionMatchesTarget(action, target, capture.path))) finding.action = undefined;
+      if (action && !actionMatchesTarget(action, target, capture.path)) finding.action = undefined;
       all.push(finding);
     }
   }
@@ -479,9 +519,9 @@ function catalogFindings(snapshot: ReviewSnapshot): ReviewFinding[] {
   if (!problems.length || !capture) return [];
   const key = "catalog-copy-mismatch";
   return [{ deterministic: true, needsRealData: false, semanticKey: key, issue: {
-    id: issueId("copy", capture.url, key), kind: "copy", level: "P2", page: "Store catalog copy", url: capture.url,
+    id: issueId("copy", capture.url, key), kind: "copy", level: "P2", page: friendlyReviewPageLabel(capture.name, capture.url, snapshot), url: capture.url,
     evidence: `Store copy: ${JSON.stringify({ tagline: options.blogdescription ?? copy.tagline, hero: copy.hero, about: copy.about })}. Actual catalog: ${JSON.stringify(snapshot.products.map((p) => ({ name: p.name, categories: p.categories })))}`,
-    why: [...new Set(problems)].join("; "), fix: "Regenerate tagline, hero and About from the actual published catalog categories.", status: "open", ...(capture.shot ? { shot: capture.shot } : {}),
+    why: "店铺介绍与当前实际销售的商品范围不一致。", fix: "按已发布商品和分类重新生成标语、首页主文案和关于我们内容。", status: "open", ...(capture.shot ? { shot: capture.shot } : {}),
   } }];
 }
 
@@ -510,16 +550,9 @@ function productForFinding(finding: ReviewFinding, snapshot: ReviewSnapshot): Re
   return matches.length === 1 ? matches[0] : undefined;
 }
 
-type FixKind = "main-image" | "variation-images" | "product-copy" | "store-copy";
-function fixKind(finding: ReviewFinding, product: Record<string, unknown> | undefined): FixKind | undefined {
-  const text = `${finding.semanticKey ?? ""} ${finding.issue.evidence} ${finding.issue.why} ${finding.issue.fix}`;
-  if (product && ["product", "visual", "copy"].includes(finding.issue.kind)) {
-    if (/\b(?:variations?|variants?)\b/i.test(text) && /\b(?:images?|photos?|pictures?)\b/i.test(text) && /\b(?:same|shar\w*|identical|missing|mismatch\w*|wrong|differ\w*)\b/i.test(text)) return "variation-images";
-    if (/\b(?:images?|photos?|pictures?)\b/i.test(text) && /\b(?:main|primary|featured|wrong|different item|animal|species|text overlay|size labels?|watermark|barcode|collage|cropped|unclear|blurry)\b/i.test(text)) return "main-image";
-    if (/\b(?:title|description|copy|variant|variation|options?|colou?rs?|sizes?|features?)\b/i.test(text) && /\b(?:mismatch\w*|inconsisten\w*|contradict\w*|differ\w*|unsupported|unsubstantiated|wrong|inaccurate|does not match|not supported)\b/i.test(text)) return "product-copy";
-  }
-  if (!product && finding.issue.kind === "copy" && /\b(?:catalog|categor\w*|dog beds?|cat beds?)\b/i.test(text) && /\b(?:mismatch\w*|inconsisten\w*|contradict\w*|differ\w*|unrelated|does not match|actual|match)\b/i.test(text)) return "store-copy";
-  return undefined;
+type FixKind = ReviewFixKind;
+function fixKind(finding: ReviewFinding, _product: Record<string, unknown> | undefined): FixKind | undefined {
+  return reviewIssueFixKind(finding.issue);
 }
 
 async function ensureFixSource(ctx: StepCtx, snapshot: ReviewSnapshot, product: Record<string, unknown>, sources: Map<number, Promise<StoredSource>>): Promise<StoredSource> {
@@ -535,9 +568,56 @@ async function ensureFixSource(ctx: StepCtx, snapshot: ReviewSnapshot, product: 
   }
 }
 
+function policyNameForFinding(finding: ReviewFinding): "shipping" | "returns" | "privacy" | "terms" | undefined {
+  const text = `${finding.issue.page} ${finding.issue.url}`;
+  if (/shipping|配送/i.test(text)) return "shipping";
+  if (/returns?|refund|退货|退款/i.test(text)) return "returns";
+  if (/privacy|隐私/i.test(text)) return "privacy";
+  if (/terms|条款/i.test(text)) return "terms";
+  return undefined;
+}
+
+function metadataTargetForFinding(snapshot: ReviewSnapshot, finding: ReviewFinding): {
+  key: string; title: string; facts: string; target_type: "home" | "shop" | "page" | "product" | "product_cat"; target_id: number;
+} | undefined {
+  const capture = snapshot.captures.find((candidate) => candidate.url === finding.issue.url);
+  if (!capture) return undefined;
+  const target = snapshot.targets.find((candidate) => candidate.name === capture.name);
+  if (capture.path === "/") return { key: "home:0", title: "首页", facts: capture.text, target_type: "home", target_id: 0 };
+  if (capture.path.replace(/\/+$/, "") === "/shop") return { key: "shop:0", title: "商店", facts: capture.text, target_type: "shop", target_id: 0 };
+  if (!target?.targetId) return undefined;
+  if (target.kind === "page") return { key: `page:${target.targetId}`, title: friendlyReviewPageLabel(target.name, capture.url, snapshot), facts: capture.text, target_type: "page", target_id: target.targetId };
+  if (target.kind === "product") {
+    const product = snapshot.products.find((candidate) => Number(candidate.id) === target.targetId);
+    const source = reviewContext(snapshot, capture).source;
+    return { key: `product:${target.targetId}`, title: String(product?.name ?? friendlyReviewPageLabel(target.name, capture.url, snapshot)), facts: JSON.stringify({ page: capture.text, product, source }), target_type: "product", target_id: target.targetId };
+  }
+  if (target.kind === "category") {
+    const category = snapshot.categories.find((candidate) => Number(candidate.id) === target.targetId);
+    return { key: `product_cat:${target.targetId}`, title: String(category?.name ?? friendlyReviewPageLabel(target.name, capture.url, snapshot)), facts: JSON.stringify({ page: capture.text, category }), target_type: "product_cat", target_id: target.targetId };
+  }
+  return undefined;
+}
+
 /** 代码选择能力，模型只产出受校验的文案/图片选择；所有远端写入仍由 L1 工具记录变更集。 */
 async function planIssueFix(ctx: StepCtx, snapshot: ReviewSnapshot, finding: ReviewFinding, vision: VisionComplete, kind: FixKind, sources: Map<number, Promise<StoredSource>>, product?: Record<string, unknown>): Promise<ReviewAction> {
   const summary = `QA ${finding.issue.id}：${kind}`;
+  if (kind === "policy-text") {
+    const name = policyNameForFinding(finding);
+    if (!name) throw new Error("无法确定需要修改的政策页面");
+    const f = facts(ctx);
+    const policies = await ask(ctx, summary, policyPrompt(f), parsePolicies, (value) => checkPolicies(value, f));
+    return { tool: "update_policy", params: { summary, name, html: policies[name] } };
+  }
+  if (kind === "metadata") {
+    const target = metadataTargetForFinding(snapshot, finding);
+    if (!target) throw new Error("无法唯一定位需要修改摘要的页面");
+    const page = { key: target.key, title: target.title, facts: target.facts };
+    const metadata = await ask(ctx, summary, metadataPrompt([page]), parsePageMetadata, (value) => checkPageMetadata(value, [page.key], [page]));
+    const value = metadata.find((candidate) => candidate.key === page.key);
+    if (!value) throw new Error("摘要规划没有返回目标页面");
+    return { tool: "update_meta", params: { summary, target_type: target.target_type, target_id: target.target_id, description: value.description, og_description: value.ogDescription } };
+  }
   if (kind === "store-copy") {
     if (!snapshot.products.length) throw new Error("没有已发布商品可作为店铺文案依据");
     const f = facts(ctx);
@@ -592,6 +672,26 @@ async function planIssueFix(ctx: StepCtx, snapshot: ReviewSnapshot, finding: Rev
   return { tool: "update_product", params: { summary, id, name: copy.title, short_description: copy.short_description, description_html: copy.description_html } };
 }
 
+/** 用户触发修复与流水线共用同一套安全映射；只规划，不写站点。 */
+export async function planReviewIssueFix(ctx: StepCtx, snapshot: ReviewSnapshot, finding: ReviewFinding, vision: VisionComplete): Promise<ReviewAction | undefined> {
+  if (finding.issue.status !== "open" || finding.needsRealData) return undefined;
+  const product = productForFinding(finding, snapshot);
+  if (finding.action) {
+    if (!isReviewActionShape(finding.action)) return undefined;
+    const capture = snapshot.captures.find((candidate) => candidate.url === finding.issue.url);
+    const target = snapshot.targets.find((candidate) => candidate.name === capture?.name);
+    if (!capture || !actionMatchesTarget(finding.action, target, capture.path)) return undefined;
+    if (finding.action.tool === "update_product") {
+      if (!product) return undefined;
+      await ensureFixSource(ctx, snapshot, product, new Map());
+    }
+    return finding.action;
+  }
+  const kind = fixKind(finding, product);
+  if (!kind) return undefined;
+  return planIssueFix(ctx, snapshot, finding, vision, kind, new Map(), product);
+}
+
 export interface ReviewLoopDeps {
   now: () => number;
   collect: () => Promise<ReviewSnapshot>;
@@ -599,7 +699,7 @@ export interface ReviewLoopDeps {
   /** 代码根据问题和本轮快照规划修复；模型动作只作为兼容后备。 */
   plan?: (finding: ReviewFinding, snapshot: ReviewSnapshot) => Promise<ReviewAction | undefined>;
   apply: (finding: ReviewFinding) => Promise<boolean>;
-  persist?: (review: SiteReview, factsHash: string, trustHash: string) => void;
+  persist?: (review: SiteReview, factsHash: string, trustHash: string, findings: ReviewFinding[]) => void;
   previous?: SiteReview;
   previousFactsHash?: string;
   previousTrustHash?: string;
@@ -607,7 +707,7 @@ export interface ReviewLoopDeps {
   maxRounds?: number;
 }
 
-const trustFactIssue = (issue: ReviewIssue) => issue.kind === "config" || /operator|address|email|phone|contact details/i.test(`${issue.evidence} ${issue.why}`);
+const trustFactIssue = (issue: ReviewIssue) => issue.kind === "config" || /operator|address|email|phone|contact details|经营主体|公司名称|企业名称|地址|邮箱|电话|联系方式/i.test(`${issue.evidence} ${issue.why}`);
 const combineHistory = (previous: ReviewIssue[], current: ReviewFinding[], reviewedUrls: Set<string>, factsChanged: boolean, trustChanged: boolean): ReviewIssue[] => {
   const now = new Map(current.map((x) => [x.issue.id, x.issue]));
   const history = previous.map((old) => {
@@ -662,13 +762,13 @@ export async function runReviewLoop(deps: ReviewLoopDeps): Promise<SiteReview> {
     if (Array.isArray(config.payments)) reviewedUrls.add(paymentSetupUrl(snapshot));
     history = limitHistory(combineHistory(deps.filterHistory?.(history, snapshot) ?? history, findings, reviewedUrls, factsChanged, trustChanged), findings);
     let review: SiteReview = { at: deps.now(), rounds, passed: !history.some((x) => x.level === "P1" && x.status !== "fixed"), issues: history };
-    deps.persist?.(review, factsHash, trustHash);
+    deps.persist?.(review, factsHash, trustHash, findings);
     previousFactsHash = factsHash; previousTrustHash = trustHash;
     const actionable = findings.filter((x) => x.issue.status === "open" && !x.needsRealData && x.action);
     if (rounds >= maxRounds || actionable.length === 0) return review;
     rounds++;
     review = { ...review, at: deps.now(), rounds };
-    deps.persist?.(review, factsHash, trustHash);
+    deps.persist?.(review, factsHash, trustHash, findings);
     let changed = false;
     let fixFailed = false;
     const seen = new Set<string>();
@@ -678,12 +778,12 @@ export async function runReviewLoop(deps: ReviewLoopDeps): Promise<SiteReview> {
       seen.add(key);
       try {
         changed = await deps.apply(finding) || changed;
-      } catch (e) {
+      } catch {
         fixFailed = true;
-        finding.issue.fix = `${finding.issue.fix} Automatic fix failed: ${e instanceof Error ? e.message : String(e)}`;
+        finding.issue.fix = `${finding.issue.fix} 自动修复未完成，请检查真实资料后重新复核。`;
       }
     }
-    if (fixFailed) deps.persist?.(review, factsHash, trustHash);
+    if (fixFailed) deps.persist?.(review, factsHash, trustHash, findings);
     if (!changed) return review;
     snapshot = await deps.collect();
   }
@@ -697,10 +797,15 @@ function previousFactsHash(ctx: StepCtx): string | undefined {
   try { return (JSON.parse(ctx.site.qa_json || "{}") as { reviewFactsHash?: string }).reviewFactsHash; } catch { return undefined; }
 }
 
-function persistReview(ctx: StepCtx, review: SiteReview, factsHash?: string, trustHash?: string) {
+function persistReview(ctx: StepCtx, review: SiteReview, factsHash?: string, trustHash?: string, findings?: ReviewFinding[]) {
   let report: Record<string, unknown> = {};
   try { report = JSON.parse(ctx.site.qa_json || "{}"); } catch {}
-  const value = JSON.stringify({ ...report, review, ...(factsHash ? { reviewFactsHash: factsHash } : {}), ...(trustHash ? { reviewTrustHash: trustHash } : {}) });
+  const previous = Array.isArray(report.reviewFindings) ? report.reviewFindings.filter(object) as unknown as ReviewFinding[] : [];
+  const merged = new Map(previous.map((finding) => [finding.issue?.id, finding]).filter((entry): entry is [string, ReviewFinding] => typeof entry[0] === "string"));
+  for (const finding of findings ?? []) merged.set(finding.issue.id, finding);
+  const live = new Set(review.issues.filter((issue) => issue.status !== "fixed").map((issue) => issue.id));
+  const reviewFindings = [...merged.values()].filter((finding) => live.has(finding.issue.id));
+  const value = JSON.stringify({ ...report, review, reviewFindings, ...(factsHash ? { reviewFactsHash: factsHash } : {}), ...(trustHash ? { reviewTrustHash: trustHash } : {}) });
   ctx.save("qa_json", value);
   ctx.site.qa_json = value;
 }
@@ -720,7 +825,7 @@ function siteHistoryIdentity(issue: ReviewIssue): string | undefined {
   if (!key) return undefined;
   const semanticKey = `underwriting-${key}`;
   // 只有代码合并出的确定性全站问题能脱离原 URL；模型仅写 Site-wide 不能绕过页面范围。
-  if (SITE_WIDE.has(semanticKey) && issue.page !== "Site-wide") return undefined;
+  if (SITE_WIDE.has(semanticKey) && issue.page !== "Site-wide" && issue.page !== "全站") return undefined;
   return semanticKey;
 }
 
@@ -757,23 +862,23 @@ function filterReviewHistory(issues: ReviewIssue[], snapshot: ReviewSnapshot, de
 /** 生产入口：每轮都重新抓全站；任何缺浏览器、缺视觉模型或缺截图都会抛错，绝不伪装成通过。 */
 export async function runFullSiteReview(
   ctx: StepCtx,
-  input: { loginUrl: string | (() => Promise<string>); outDir?: string; vision?: VisionComplete; maxRounds?: number },
+  input: { loginUrl: string | (() => Promise<string>); outDir?: string; vision?: VisionComplete; maxRounds?: number; urls?: string[]; onProgress?: (progress: { page: string; index: number; total: number }) => void },
 ): Promise<SiteReview> {
   let latestSnapshot: ReviewSnapshot | undefined;
   const failure = (message: string): SiteReview => {
     const old = previousReview(ctx);
     const issue: ReviewIssue = {
-      id: issueId("config", `https://${ctx.domain}/`, "full-review-incomplete"), level: "P1", kind: "config", page: "Full-site review",
-      url: `https://${ctx.domain}/`, evidence: message, why: "The required text and visual review did not complete, so the site cannot be treated as reviewed.",
-      fix: "Restore the browser and review/vision model, then rerun QA.", status: "open",
+      id: issueId("config", `https://${ctx.domain}/`, "full-review-incomplete"), level: "P1", kind: "config", page: "全站",
+      url: `https://${ctx.domain}/`, evidence: message, why: "文字或图片复核没有完整跑完，当前结果不能作为通过依据。",
+      fix: "恢复浏览器和复核模型后，重新运行复核。", status: "open",
     };
     // 模型失败不能抹掉已经抓到的确定性身份/完整性证据。
     const deterministic = latestSnapshot ? [...deterministicSourceFindings(latestSnapshot), ...deterministicTrustFindings(latestSnapshot), ...deterministicUnderwritingFindings(latestSnapshot), ...catalogFindings(latestSnapshot)] : [];
     const ids = new Set(deterministic.map((finding) => finding.issue.id));
-    const history = latestSnapshot ? filterReviewHistory(old?.issues ?? [], latestSnapshot, deterministic) : old?.issues ?? [];
+    const history = latestSnapshot && !input.urls?.length ? filterReviewHistory(old?.issues ?? [], latestSnapshot, deterministic) : old?.issues ?? [];
     const issues = limitHistory([...history.filter((x) => x.id !== issue.id && !ids.has(x.id)), ...deterministic.map((finding) => finding.issue), issue], deterministic);
     const review = { at: ctx.d.now(), rounds: old?.rounds ?? 0, passed: false, issues } satisfies SiteReview;
-    persistReview(ctx, review);
+    persistReview(ctx, review, undefined, undefined, [...deterministic, { issue, needsRealData: false }]);
     return review;
   };
   if (!input.vision) return failure("The vision role is not configured.");
@@ -788,13 +893,13 @@ export async function runFullSiteReview(
       previous: previousReview(ctx),
       previousFactsHash: previousFactsHash(ctx),
       previousTrustHash: (JSON.parse(ctx.site.qa_json || "{}") as { reviewTrustHash?: string }).reviewTrustHash,
-      filterHistory: filterReviewHistory,
+      filterHistory: input.urls?.length ? (issues) => issues : filterReviewHistory,
       maxRounds: input.maxRounds,
       collect: async () => {
-        latestSnapshot = await collectReviewSnapshot(ctx, typeof input.loginUrl === "string" ? input.loginUrl : await input.loginUrl(), input.outDir ?? join(ctx.d.workDir, "qa", ctx.domain, "review"));
+        latestSnapshot = await collectReviewSnapshot(ctx, typeof input.loginUrl === "string" ? input.loginUrl : await input.loginUrl(), input.outDir ?? join(ctx.d.workDir, "qa", ctx.domain, "review"), input.urls);
         return latestSnapshot;
       },
-      inspect: (snapshot) => inspectSnapshot(ctx, snapshot, input.vision!),
+      inspect: (snapshot) => inspectSnapshot(ctx, snapshot, input.vision!, { targeted: Boolean(input.urls?.length), onProgress: input.onProgress }),
       plan: async (finding, snapshot) => {
         if (finding.needsRealData || finding.issue.status !== "open") return undefined;
         const product = productForFinding(finding, snapshot);
@@ -837,7 +942,7 @@ export async function runFullSiteReview(
         ctx.emit(result.ok === true ? "ai_text" : "warn", result.ok === true ? { task: "QA 自动修复", issue: finding.issue.id, tool: action.tool, change_id: result.change_id } : { message: `QA ${finding.issue.id} ${action.tool} 未通过写入校验：${JSON.stringify(result.problems ?? result)}` });
         return result.ok === true && result.change_id !== null;
       },
-      persist: (review, factsHash, trustHash) => persistReview(ctx, review, factsHash, trustHash),
+      persist: (review, factsHash, trustHash, findings) => persistReview(ctx, review, factsHash, trustHash, findings),
     });
   } catch (e) {
     return failure(e instanceof Error ? e.message : String(e));
@@ -941,8 +1046,68 @@ function underwritingLinkKind(link: { url?: unknown; text?: unknown }, origin: s
   } catch { return undefined; }
 }
 
+function localizeUnderwritingFinding(finding: ReviewFinding): ReviewFinding {
+  const key = finding.semanticKey?.replace(/^underwriting-/, "") ?? "";
+  let why = "页面信息不完整或与店铺资料不一致。";
+  let fix = "请由维护人员按当前批次中已确认的真实资料修改页面，然后重新复核。";
+  if (/configured-email-foreign-domain/.test(key)) {
+    why = "客服邮箱不是店铺自己的域名邮箱，无法确认它属于本店。";
+    fix = "请提供店铺域名下的真实客服邮箱，由维护人员修正当前批次来源资料，再同步到全站。";
+  } else if (/legal-name-missing|footer-legal-name-missing/.test(key)) {
+    why = "页面没有完整显示已填写的真实公司名称。";
+    fix = "请由维护人员把当前批次中已确认的真实公司名称原样补到此页面或页脚。";
+  } else if (/legal-name-mismatch/.test(key)) {
+    why = "页面中的公司名称与批次主体资料不一致。";
+    fix = "请由维护人员以当前批次中已确认的真实公司名称为准，统一替换不同写法。";
+  } else if (/contact-details-missing/.test(key)) {
+    why = "联系页或页脚没有完整显示已确认的客服联系方式。";
+    fix = "请提供真实客服邮箱、电话和地址，由维护人员修正当前批次来源资料并同步到页面和页脚。";
+  } else if (/email-mismatch/.test(key)) {
+    why = "页面出现了不同的客服邮箱，顾客无法判断哪个有效。";
+    fix = "请由维护人员统一使用当前批次中已验证的店铺域名邮箱。";
+  } else if (/phone-mismatch/.test(key)) {
+    why = "页面出现了不同的客服电话。";
+    fix = "请由维护人员统一使用当前批次中已确认的真实客服电话。";
+  } else if (/address-mismatch/.test(key)) {
+    why = "页面中的经营地址与批次主体资料不一致。";
+    fix = "请由维护人员统一使用当前批次中已确认的真实经营或退货地址。";
+  } else if (/placeholder-content/.test(key)) {
+    why = "页面仍有示例或模板文字，会让店铺看起来尚未完成。";
+    fix = "请提供对应的真实公司和经营信息，由维护人员修正当前批次来源资料，并同步替换页面和页脚中的示例文字。";
+  } else if (/footer-links-missing/.test(key)) {
+    why = "页脚缺少顾客需要查看的重要店铺或政策页面入口。";
+    fix = "把缺少的已发布页面链接补到页脚，并确认链接指向本站。";
+  } else if (/broken-link/.test(key)) {
+    why = "站内链接打不开或返回了错误结果。";
+    fix = "修正链接或恢复目标页面，确认打开后返回成功状态。";
+  } else if (/page-response-failed/.test(key)) {
+    why = "该页面当前无法正常打开。";
+    fix = "恢复页面访问后重新复核。";
+  } else if (/required-page/.test(key)) {
+    why = "店铺缺少必须公开的重要信息页面。";
+    fix = "创建并发布证据中指出的页面，再把它加入页脚。";
+  } else if (/shipping-timeframe-missing/.test(key)) {
+    why = "配送政策没有写明处理或送达需要多长时间。";
+    fix = "按实际履约安排写清处理时间和运输时间。";
+  } else if (/cancellation-rule-missing/.test(key)) {
+    why = "顾客看不到订单能否取消以及最晚何时可以取消。";
+    fix = "按真实履约流程补充清楚的取消条件和时间点。";
+  } else if (/currency-not-usd/.test(key)) {
+    why = "店铺币种没有正确设置为美元。";
+    fix = "把 WooCommerce 店铺币种设置为 USD，并检查前台价格。";
+  } else if (/usd-price-not-visible/.test(key)) {
+    why = "商品或分类页面没有显示可见的美元价格。";
+    fix = "恢复该页的商品价格，并明确按美元显示。";
+  } else if (/foreign-currency-price/.test(key)) {
+    why = "页面显示了非美元价格，与店铺币种要求不一致。";
+    fix = "把该价格改为美元，并移除其他币种金额。";
+  }
+  return { ...finding, issue: { ...finding.issue, why, fix } };
+}
+
 /** 支付机构预审的确定性检查：仅比较批次中的真实经营资料和浏览器抓取证据。 */
-export function deterministicUnderwritingFindings(snapshot: ReviewSnapshot): ReviewFinding[] {
+export function deterministicUnderwritingFindings(snapshot: ReviewSnapshot, options: { siteWide?: boolean } = {}): ReviewFinding[] {
+  const siteWide = options.siteWide !== false;
   const config = object(snapshot.config) ? snapshot.config : {}, entity = object(config.entity) ? config.entity : {};
   const captures = snapshot.captures as UnderwritingCapture[], home = captures.find((capture) => capture.path === "/") ?? captures[0];
   if (!home) return [];
@@ -975,7 +1140,7 @@ export function deterministicUnderwritingFindings(snapshot: ReviewSnapshot): Rev
     } catch {}
   }
   const storeHost = new URL(origin).hostname.replace(/^www\./, "").toLowerCase();
-  if (expectedEmail && expectedEmail.split("@")[1]?.replace(/^www\./, "").toLowerCase() !== storeHost) underwritingAdd(home, "configured-email-foreign-domain", `Configured customer-service email is not on the store domain: ${expectedEmail}`, "[Consistency] The customer-service email must use the store's own domain.", `Configure a verified address on ${storeHost}, such as support@${storeHost}.`, "needs_you");
+  if (siteWide && expectedEmail && expectedEmail.split("@")[1]?.replace(/^www\./, "").toLowerCase() !== storeHost) underwritingAdd(home, "configured-email-foreign-domain", `Configured customer-service email is not on the store domain: ${expectedEmail}`, "[Consistency] The customer-service email must use the store's own domain.", `Configure a verified address on ${storeHost}, such as support@${storeHost}.`, "needs_you");
 
   for (const capture of captures) {
     const text = underwritingText(capture), kind = pageKind(capture);
@@ -1020,7 +1185,7 @@ export function deterministicUnderwritingFindings(snapshot: ReviewSnapshot): Rev
     if (typeof capture.status === "number" && (capture.status >= 400 || capture.status <= 0)) underwritingAdd(capture, "page-response-failed", `Crawled page returned HTTP ${capture.status}: ${capture.url}`, "[Completeness] Every crawled page must return a successful response.", "Restore this page and verify a successful HTTP response.");
   }
 
-  if (Array.isArray(pages)) {
+  if (siteWide && Array.isArray(pages)) {
     for (const required of underwritingPageKinds) {
       const matches = pages.filter((page) => underwritingPageKind(page) === required);
       if (!matches.some((page) => page.status === "publish" || page.status === "published")) underwritingAdd(home, `required-page-${required}`, `${required === "returns" ? "Returns/refund" : required[0]!.toUpperCase() + required.slice(1)} page is missing or not published.`, "[Completeness] Merchant sites must publish About, Contact, shipping, returns/refund, privacy and terms pages.", `Create and publish the ${required} page.`);
@@ -1031,7 +1196,7 @@ export function deterministicUnderwritingFindings(snapshot: ReviewSnapshot): Rev
     const bodies = captures.map((capture) => typeof capture.sections?.body === "string" ? capture.sections.body : capture.text);
     if (!bodies.some((body) => /(?:\b(?:may|can|cannot|can't|must|unable to|eligible to)\b[^.!?\n]{0,80}\bcancell?\w*\b|\bcancell?\w*\b[^.!?\n]{0,80}\b(?:before|after|until|within|once|only|not|cannot|can't|may|can)\b)/i.test(body))) underwritingAdd(shipping ?? home, "cancellation-rule-missing", "No actionable cancellation rule is stated in the crawled page bodies.", "[Completeness] A merchant site must tell customers whether and when an order can be cancelled.", "Add a clear cancellation rule consistent with actual fulfillment operations.");
   }
-  if (Object.hasOwn(config, "currency") && (!string(config.currency) || config.currency.trim().toUpperCase() !== "USD")) underwritingAdd(home, "currency-not-usd", `Configured store currency is ${string(config.currency) ? config.currency : "blank or unavailable"}, not USD.`, "[Completeness] Prices for this store must be verifiably configured in USD.", "Set the WooCommerce store currency to USD and verify displayed prices.");
+  if (siteWide && Object.hasOwn(config, "currency") && (!string(config.currency) || config.currency.trim().toUpperCase() !== "USD")) underwritingAdd(home, "currency-not-usd", `Configured store currency is ${string(config.currency) ? config.currency : "blank or unavailable"}, not USD.`, "[Completeness] Prices for this store must be verifiably configured in USD.", "Set the WooCommerce store currency to USD and verify displayed prices.");
   for (const capture of captures) {
     const target = snapshot.targets.find((target) => target.name === capture.name);
     const body = typeof capture.sections?.body === "string" ? capture.sections.body : capture.text;
@@ -1040,7 +1205,9 @@ export function deterministicUnderwritingFindings(snapshot: ReviewSnapshot): Rev
     const foreign = underwritingText(capture).match(/(?:€|£|¥)\s*\d[\d,.]*|\b(?:EUR|GBP|CAD|AUD|JPY|CNY)\s*\$?\s*\d[\d,.]*|(?:\$?\s*\d[\d,.]*)\s*(?:EUR|GBP|CAD|AUD|JPY|CNY)\b/i)?.[0];
     if (foreign) underwritingAdd(capture, "foreign-currency-price", `Non-USD price shown: ${underwritingEvidence(foreign)}`, "[Completeness] All displayed prices must be in USD.", "Convert and display this price in USD only.");
   }
-  return mergeSiteWide(findings);
+  return (siteWide ? mergeSiteWide(findings) : findings).map(localizeUnderwritingFinding).map((finding) => ({
+    ...finding, issue: { ...finding.issue, page: friendlyReviewPageLabel(finding.issue.page, finding.issue.url, snapshot) },
+  }));
 }
 
 // 页脚等全站共用的问题会在每一页都命中：同一检查只报一条，证据里列出受影响的页面
@@ -1058,7 +1225,7 @@ function mergeSiteWide(findings: ReviewFinding[]): ReviewFinding[] {
     const first = group[0];
     const pages = [...new Set(group.map((x) => x.issue.url))];
     first.issue.evidence = `${first.issue.evidence} (on ${pages.length} pages: ${pages.slice(0, 5).join(", ")}${pages.length > 5 ? ", …" : ""})`;
-    first.issue.page = "Site-wide";
+    first.issue.page = "全站";
   }
   return out;
 }

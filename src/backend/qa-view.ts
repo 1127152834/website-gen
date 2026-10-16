@@ -3,8 +3,12 @@ import { readFileSync, realpathSync, statSync } from "node:fs";
 import { extname, resolve, sep } from "node:path";
 import type { QaView, ReviewIssue } from "../shared/protocol.ts";
 import type { QaReport } from "./store.ts";
+import { friendlyReviewPageLabel as pageLabel, isReviewActionShape, reviewIssueFixable } from "./review-presentation.ts";
+
+export const friendlyReviewPageLabel = pageLabel;
 
 export function qaView(report: QaReport, workDir: string): QaView {
+  const metadata = new Map(((report as QaReport & { reviewFindings?: { issue: ReviewIssue; action?: unknown; needsRealData?: boolean }[] }).reviewFindings ?? []).map((finding) => [finding.issue.id, finding]));
   const image = (path: string): string | undefined => {
     try {
       const root = realpathSync(resolve(workDir, "qa")) + sep;
@@ -25,7 +29,9 @@ export function qaView(report: QaReport, workDir: string): QaView {
       issues: report.review.issues.map((i): ReviewIssue => {
         const { shot, ...issue } = i;
         const src = shot && image(shot);
-        return src ? { ...issue, shot: src } : issue;
+        const finding = metadata.get(issue.id);
+        const presented = { ...issue, page: pageLabel(issue.page, issue.url), fixable: finding?.needsRealData !== true && reviewIssueFixable(issue, undefined, isReviewActionShape(finding?.action)) };
+        return src ? { ...presented, shot: src } : presented;
       }),
     } } : {}),
   };

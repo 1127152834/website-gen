@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import type { Facts } from "./content.ts";
 import type { CjProduct } from "./cj.ts";
 import {
-  buildPublishableVariants, checkProductAnalysis, checkUnitReview, deterministicDimensionProblems, reconcileActualVariations, type ProductAnalysis, type ProductVariantInput,
+  buildPublishableVariants, checkProductAnalysis, copyCoversVariant, productAnalysisPrompt, checkUnitReview, deterministicDimensionProblems, reconcileActualVariations, type ProductAnalysis, type ProductVariantInput,
 } from "./product-content.ts";
 
 const facts: Facts = {
@@ -203,3 +203,21 @@ test("a source 120 cm measurement does not substring-ground an invented 20 cm cl
 });
 
 void facts;
+
+// 实测 2026-10-16：提示词没说明 evidence 必须逐字摘自资料、件数/组件不能补、标题上限，导致真实商品的修复两次都被校验挡下
+test("the product analysis prompt states the evidence, piece-count/components and title-length rules the checker enforces", () => {
+  const prompt = productAnalysisPrompt({ brand: "B", categories: ["dog beds"] } as unknown as Facts, { name: "Bed", category: "Pet", materials: [], description: "", images: [] } as unknown as CjProduct, []);
+  assert.match(prompt, /evidence must be copied verbatim/i);
+  assert.match(prompt, /pieceCount.*null.*components.*\[\]/is);
+  assert.match(prompt, /title.*at most 80 characters/i);
+});
+
+// 实测 2026-10-16：15 色 × 3 尺寸的商品，要求描述逐个写出「Green bear den / Large」这样的组合，真实修复两次都过不了
+test("copy covers a variant when it names the whole option or each of its option values", () => {
+  const copy = "Colors: Green bear den, Grey stars Blue, Brown bear. Sizes: Small, Medium, Large.";
+  assert.ok(copyCoversVariant(copy, "Green bear den / Large"));
+  assert.ok(copyCoversVariant(copy, "Brown bear - Small"));
+  assert.ok(copyCoversVariant("Choose the Black 2-Piece Set.", "Black 2-Piece Set"));
+  assert.ok(!copyCoversVariant(copy, "Rabbit door curtain / Large"), "a colour missing from the copy is still not covered");
+  assert.ok(!copyCoversVariant(copy, "Green bear den / XL"), "a size missing from the copy is still not covered");
+});

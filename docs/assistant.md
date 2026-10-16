@@ -72,6 +72,10 @@
 | `sites.steps` | `site_steps` | read | 查看一个站点的流水线步骤。 |
 | `sites.events` | `site_events` | read | 查看一个站点的运行事件。 |
 | `sites.qa` | `site_qa_report` | read | 查看一个站点的 QA 报告和本地截图数据。 |
+| `qa.runs` | `site_qa_runs` | read | 查看一个站点的复核与修复任务记录。 |
+| `qa.recheck` | `site_qa_recheck` | confirm | 对一个站点重新整站复核；会调用模型，产生费用。 |
+| `qa.fixIssue` | `site_qa_fix_issue` | confirm | 按复核报告自动修复单个问题，会直接修改线上站点内容。 |
+| `qa.fixAll` | `site_qa_fix_all` | confirm | 按复核报告自动修复全部问题，会直接修改线上站点内容。 |
 | `sites.list` | `sites_ready_list` | read | 列出已经建完且未放弃的站点。 |
 | `sites.launch` | `site_launch` | confirm | 把一个站点正式上线。 |
 | `sites.retry` | `site_retry` | confirm | 重新排队失败的建站任务，可能继续占用 Hostinger 或外部资源。 |
@@ -84,6 +88,7 @@
 | `mail.folders` | `mail_folders` | read | 列出一个邮箱的文件夹。 |
 | `mail.messages` | `mail_messages` | read | 分页查询邮箱中的邮件摘要。 |
 | `mail.message` | `mail_message` | read | 读取一封邮件的正文与附件元数据。 |
+| `mail.credential.retryDefault` | `mail_credential_retry_default` | write | 用设置页保存的默认邮箱密码重新尝试登录一个邮箱，不返回密码。 |
 | `mail.credential.reset` | `mail_credential_reset` | confirm | 重置一个邮箱的密码并保存新凭据。 |
 | `mail.monitor` | `mail_monitor_set` | write | 开启或关闭一个邮箱的新邮件监听。 |
 | `mail.seen` | `mail_seen_set` | write | 标记一封邮件为已读或未读。 |

@@ -1,8 +1,8 @@
-import { randomBytes, randomUUID } from "node:crypto";
+import { createHash, createHmac, randomBytes, randomUUID } from "node:crypto";
 import type { DatabaseSync } from "node:sqlite";
 import type {
   MailAttachment, MailEvent, MailFolder, MailListResult, MailMessageDetail, MailMessageSummary,
-  MailSendInput, MailboxSummary, MailCredentialSource, MailMonitorMode,
+  MailSendInput, MailboxSummary, MailCredentialSource, MailMonitorMode, MailDefaultPasswordResult,
 } from "../shared/mail-types.ts";
 import { listAll, type HostingerExec } from "./hostinger.ts";
 import { parseMailText } from "./mailbox-parser.ts";
@@ -14,6 +14,8 @@ import { createMailTransport } from "./mailbox-adapter.ts";
 const MAX_INCOMING = 25 * 1024 * 1024;
 const MAX_ATTACHMENTS = 20 * 1024 * 1024;
 const DEFAULT_PASSWORD_SECRET = "mail.defaultPassword";
+const DEFAULT_ATTEMPT_DELAY_MS = 200;
+const FOLDER_METADATA_TTL_MS = 10 * 60 * 1000;
 
 interface MailboxRow {
   id: number;
@@ -32,9 +34,11 @@ interface SyncState {
   credentialSource?: MailCredentialSource;
   monitorMode?: MailMonitorMode;
   lastError?: string | null;
-  folders?: Record<string, { uidValidity?: string; syncedAt?: number }>;
+  folders?: Record<string, { uidValidity?: string; syncedAt?: number; nonSeenFlagsDigest?: string }>;
   /** 重置结果未知时保留同一候选密码，后续重试绝不再生成第二个。值本身仍是 AES-GCM 密文。 */
   pendingReset?: string;
+  /** 只记工作区密钥派生的指纹；既不存明文，也不暴露可离线猜测的裸密码哈希。 */
+  failedDefaultPasswordFingerprint?: string;
 }
 
 export interface MailboxServiceDeps {
@@ -55,6 +59,7 @@ export interface MailboxService {
   messages(input: { mailboxId: number; folder: string; query?: string; page?: number; pageSize?: number }): Promise<MailListResult>;
   message(input: { mailboxId: number; folder: string; uid: number }): Promise<MailMessageDetail>;
   saveCredential(input: { mailboxId: number; password: string }): Promise<{ ok: true }>;
+  tryDefaultCredentials(input?: { mailboxId?: number; retry?: boolean; accountId?: number }): Promise<MailDefaultPasswordResult>;
   resetCredential(input: { mailboxId: number; confirmed: boolean }): Promise<{ ok: true }>;
   setMonitoring(input: { mailboxId: number; enabled: boolean }): Promise<{ ok: true }>;
   markSeen(input: { mailboxId: number; folder: string; uid: number; seen: boolean }): Promise<{ ok: true }>;
@@ -90,6 +95,24 @@ const uniqueEmails = (values: string[], except?: string) => [...new Map(values
   .map(emailOf).filter((value): value is string => Boolean(value)).filter((value) => value.toLowerCase() !== except?.toLowerCase())
   .map((value) => [value.toLowerCase(), value])).values()];
 
+const redactPassword = (message: string, password: string) => message.split(password).join("[密码已隐藏]");
+
+/** 只有明确的认证拒绝才记错密码；未知错误保留脱敏诊断，不假称是连接故障。 */
+const defaultFailureKind = (error: unknown, password: string): "rejected" | "unavailable" | "unknown" => {
+  if (!(error instanceof Error)) return "unknown";
+  const detail = error as Error & { code?: string; authenticationFailed?: boolean; serverResponseCode?: string };
+  const code = String(detail.code ?? "");
+  const responseCode = String(detail.serverResponseCode ?? "");
+  const message = redactPassword(error.message, password);
+  if (/^(?:E(?:CONN|HOST|NET|PIPE|AI_|NOTFOUND|TIMEDOUT|SOCKET)|ERR_(?:TLS|SSL)|ETLS)/i.test(code)
+    || /^(?:UNAVAILABLE|SERVERBUG|LIMIT|CONTACTADMIN)$/i.test(responseCode)
+    || /timeout|timed out|rate.?limit|too many|temporar|unavailable|certificate|\bTLS\b/i.test(message)) return "unavailable";
+  if (detail.authenticationFailed === true || /^(?:EAUTH|AUTHENTICATIONFAILED)$/i.test(code)
+    || /^AUTHENTICATIONFAILED$/i.test(responseCode)
+    || /authentication (?:failed|failure)|invalid (?:credentials|password)|login failed|password (?:incorrect|rejected)/i.test(message)) return "rejected";
+  return /connection|socket|network/i.test(message) ? "unavailable" : "unknown";
+};
+
 export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
   const transportFactory = deps.transport ?? createMailTransport;
   let serial = Promise.resolve();
@@ -98,6 +121,47 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
   const deletedRemote = new Set<string>();
   const assertWritable = () => {
     if (deps.readOnly) throw new Error("当前工作区是只读模式，不能执行会连接邮箱或修改数据的操作");
+  };
+
+  // 与索引写入队列分离，避免协调监听时互相等待；并发同步/设置/手动重试仍共用一条尝试队列。
+  let defaultSerial = Promise.resolve();
+  let lastDefaultAttemptAt = 0;
+  const defaultTrying = new Map<number, string>();
+  const defaultUnavailable = new Map<number, { fingerprint: string; error: string }>();
+  const folderSyncs = new Map<string, Promise<void>>();
+  type FolderMetadata = Awaited<ReturnType<MailTransport["listFolders"]>>;
+  const folderMetadataCache = new Map<number, { expiresAt: number; value: FolderMetadata }>();
+  const folderMetadataLoads = new Map<number, Promise<FolderMetadata>>();
+  const folderMetadataGeneration = new Map<number, number>();
+  const defaultFingerprint = (password: string) => createHmac("sha256", deps.key)
+    .update("mail.defaultPassword\0").update(password).digest("hex");
+
+  const invalidateFolderMetadata = (mailboxId: number) => {
+    folderMetadataGeneration.set(mailboxId, (folderMetadataGeneration.get(mailboxId) ?? 0) + 1);
+    folderMetadataCache.delete(mailboxId);
+    folderMetadataLoads.delete(mailboxId);
+  };
+
+  const loadFolderMetadata = (mailboxId: number): Promise<FolderMetadata> => {
+    const box = row(mailboxId);
+    const creds = credentials(box);
+    const cached = folderMetadataCache.get(mailboxId);
+    if (cached && cached.expiresAt > Date.now()) return Promise.resolve(cached.value);
+    const pending = folderMetadataLoads.get(mailboxId);
+    if (pending) return pending;
+    const generation = folderMetadataGeneration.get(mailboxId) ?? 0;
+    const load = Promise.resolve().then(() => transportFactory().listFolders(creds)).then((value) => {
+      if ((folderMetadataGeneration.get(mailboxId) ?? 0) === generation) {
+        folderMetadataCache.set(mailboxId, { expiresAt: Date.now() + FOLDER_METADATA_TTL_MS, value });
+      }
+      return value;
+    });
+    folderMetadataLoads.set(mailboxId, load);
+    void load.then(
+      () => { if (folderMetadataLoads.get(mailboxId) === load) folderMetadataLoads.delete(mailboxId); },
+      () => { if (folderMetadataLoads.get(mailboxId) === load) folderMetadataLoads.delete(mailboxId); },
+    );
+    return load;
   };
 
   const exclusive = <T>(work: () => Promise<T> | T): Promise<T> => {
@@ -125,9 +189,14 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
     return account.exec;
   };
   const writeState = (id: number, patch: Partial<SyncState>) => {
-    const current = deps.db.prepare("SELECT sync_state_json FROM mailboxes WHERE id = ?").get(id) as { sync_state_json: string | null } | undefined;
+    const current = deps.db.prepare("SELECT sync_state_json,credential_ciphertext FROM mailboxes WHERE id = ?").get(id) as Pick<MailboxRow, "sync_state_json" | "credential_ciphertext"> | undefined;
     if (!current) return;
     const state = { ...parseState(current), ...patch };
+    // 默认凭据后续也会用于索引/IDLE；保留诊断，但服务器回显的密码不能写进数据库。
+    if (state.credentialSource === "default" && state.lastError && current.credential_ciphertext) {
+      const creds = JSON.parse(unseal(deps.key, current.credential_ciphertext)) as MailCredentials;
+      state.lastError = redactPassword(state.lastError, creds.password);
+    }
     deps.db.prepare("UPDATE mailboxes SET sync_state_json = ? WHERE id = ?").run(JSON.stringify(state), id);
   };
   const saveSiteCredential = (box: MailboxRow, creds: MailCredentials | null) => {
@@ -169,6 +238,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
         const parsed = JSON.parse(unseal(deps.key, site.mailbox_ciphertext)) as MailCredentials;
         if (parsed.address.toLowerCase() !== address.toLowerCase() || !parsed.password) continue;
         deps.db.prepare("UPDATE mailboxes SET credential_ciphertext = ?, monitoring = 1 WHERE id = ? AND credential_ciphertext IS NULL").run(site.mailbox_ciphertext, mailboxId);
+        invalidateFolderMetadata(mailboxId);
         writeState(mailboxId, { credentialSource: "pipeline" });
         return;
       } catch { /* 旧密文坏了不能阻断账号同步。 */ }
@@ -213,16 +283,20 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
           if (!saved.credential_ciphertext) await importPipelineCredential(saved.id, item.address, item.domain);
         }
         for (const stale of staleRows) {
+          invalidateFolderMetadata(stale.id);
           deps.db.prepare("DELETE FROM mailboxes WHERE id = ?").run(stale.id);
           deleting.delete(stale.id);
         }
       });
     }
+    await tryDefaultCredentials({ accountId });
     await monitor.reconcile();
     return list();
   }
 
   function list(): MailboxSummary[] {
+    const password = getSecret(deps.db, deps.key, DEFAULT_PASSWORD_SECRET);
+    const fingerprint = password ? defaultFingerprint(password) : null;
     const rows = deps.db.prepare(`SELECT m.*, a.label AS account_label,
       (SELECT count(*) FROM mail_messages x WHERE x.mailbox_id=m.id AND x.folder='INBOX' AND x.seen=0) AS unread
       FROM mailboxes m JOIN hostinger_accounts a ON a.id=m.account_id
@@ -234,23 +308,131 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
         id: item.id, accountId: item.account_id, accountLabel: item.account_label, orderId: item.order_id,
         domain: item.domain, address: item.address, credentialSaved: Boolean(item.credential_ciphertext),
         credentialSource: state.credentialSource ?? null, monitoring: Boolean(item.monitoring),
+        defaultPasswordStatus: !fingerprint ? "unconfigured" : defaultTrying.get(item.id) === fingerprint ? "trying"
+          : state.failedDefaultPasswordFingerprint === fingerprint ? "rejected"
+          : defaultUnavailable.get(item.id)?.fingerprint === fingerprint ? "unavailable" : "pending",
         monitorMode: state.monitorMode ?? "off", unreadCount: Number(item.unread), lastSyncAt: item.last_synced_at,
-        lastError: state.lastError ?? null,
+        lastError: !item.credential_ciphertext && defaultUnavailable.get(item.id)?.fingerprint === fingerprint
+          ? defaultUnavailable.get(item.id)!.error : state.lastError ?? null,
       };
     });
   }
 
-  async function syncFolder(mailboxId: number, requestedFolder: string): Promise<void> {
-    assertWritable();
+  function tryDefaultCredentials(input: { mailboxId?: number; retry?: boolean; accountId?: number } = {}): Promise<MailDefaultPasswordResult> {
+    if (deps.readOnly) return Promise.reject(new Error("当前工作区是只读模式，不能执行会连接邮箱或修改数据的操作"));
+    // 指定邮箱必须先验证归属/墓碑；即使未配置默认密码，也不能把别人的 id 当成功处理。
+    if (input.mailboxId != null) row(input.mailboxId);
+    const task = defaultSerial.then(() => attemptDefaultCredentials(input));
+    defaultSerial = task.then(() => undefined, () => undefined);
+    return task;
+  }
+
+  async function attemptDefaultCredentials(input: { mailboxId?: number; retry?: boolean; accountId?: number }): Promise<MailDefaultPasswordResult> {
+    const result: MailDefaultPasswordResult = { succeeded: 0, failed: 0, deferred: 0 };
+    if (closed) return result;
+    const password = getSecret(deps.db, deps.key, DEFAULT_PASSWORD_SECRET);
+    if (!password) return result;
+    const fingerprint = defaultFingerprint(password);
+    const connected = new Set(deps.accounts().map((account) => account.id));
+    const candidates = (deps.db.prepare(`SELECT * FROM mailboxes m WHERE credential_ciphertext IS NULL
+      AND NOT EXISTS (SELECT 1 FROM abandoned_domains a WHERE a.domain=m.domain COLLATE NOCASE) ORDER BY id`).all() as unknown as MailboxRow[])
+      .filter((box) => connected.has(box.account_id) && !deleting.has(box.id) && !monitor.isDomainBlocked(box.domain)
+        && (input.mailboxId == null || box.id === input.mailboxId) && (input.accountId == null || box.account_id === input.accountId)
+        && !parseState(box).pendingReset && (input.retry || parseState(box).failedDefaultPasswordFingerprint !== fingerprint));
+    for (let index = 0; index < candidates.length; index++) {
+      const candidate = candidates[index];
+      if (closed || getSecret(deps.db, deps.key, DEFAULT_PASSWORD_SECRET) !== password) {
+        result.deferred += candidates.length - index;
+        break;
+      }
+      const delay = DEFAULT_ATTEMPT_DELAY_MS - (Date.now() - lastDefaultAttemptAt);
+      if (delay > 0) await new Promise((resolve) => setTimeout(resolve, delay));
+      // 等待期间可能手动输入、重置、删除、放弃或断开账号；不能覆盖或复活凭据。
+      const eligible = (): MailboxRow | null => {
+        if (closed || getSecret(deps.db, deps.key, DEFAULT_PASSWORD_SECRET) !== password
+          || !deps.accounts().some((account) => account.id === candidate.account_id)) return null;
+        try {
+          const current = row(candidate.id);
+          return !current.credential_ciphertext && !parseState(current).pendingReset
+            && !monitor.isDomainBlocked(current.domain) && current.address === candidate.address ? current : null;
+        } catch { return null; }
+      };
+      if (!eligible()) continue;
+      // 用户明确重试就撤销旧结论：这轮若断网，下次同步仍应自动重试，而非沿用上次拒绝。
+      if (input.retry) writeState(candidate.id, { failedDefaultPasswordFingerprint: undefined, lastError: null });
+      defaultTrying.set(candidate.id, fingerprint);
+      defaultUnavailable.delete(candidate.id);
+      deps.push({ type: "changed", mailboxId: candidate.id });
+      lastDefaultAttemptAt = Date.now();
+      let rejected = false;
+      let unavailable = false;
+      let failureMessage = "邮件服务器暂时无法连接，稍后同步时会重试默认密码";
+      try {
+        try { await transportFactory().verify({ address: candidate.address, password }); }
+        catch (error) {
+          const kind = defaultFailureKind(error, password);
+          rejected = kind === "rejected";
+          unavailable = !rejected;
+          if (kind === "unknown") failureMessage = `默认密码验证未完成：${redactPassword(error instanceof Error ? error.message : String(error), password)}`;
+        }
+        await exclusive(() => {
+          const current = eligible();
+          if (!current) return;
+          if (unavailable) {
+            defaultUnavailable.set(current.id, { fingerprint, error: failureMessage });
+            writeState(current.id, { lastError: failureMessage });
+          } else if (rejected) {
+            writeState(current.id, { failedDefaultPasswordFingerprint: fingerprint, lastError: "默认密码不对，请输入这个邮箱的密码" });
+            result.failed++;
+          } else {
+            const creds = { address: current.address, password };
+            deps.db.prepare("UPDATE mailboxes SET credential_ciphertext=?, monitoring=1 WHERE id=? AND credential_ciphertext IS NULL")
+              .run(seal(deps.key, JSON.stringify(creds)), current.id);
+            invalidateFolderMetadata(current.id);
+            writeState(current.id, { credentialSource: "default", lastError: null, failedDefaultPasswordFingerprint: undefined });
+            saveSiteCredential(current, creds);
+            result.succeeded++;
+          }
+        });
+      } finally {
+        defaultTrying.delete(candidate.id);
+        deps.push({ type: "changed", mailboxId: candidate.id });
+      }
+      if (unavailable) {
+        result.deferred += candidates.length - index;
+        // 后续邮箱这轮已不会执行，不能继续把它们显示为“正在登录”。
+        for (const deferred of candidates.slice(index + 1)) {
+          defaultUnavailable.set(deferred.id, { fingerprint, error: "本轮默认密码验证已暂停，将在下次同步时重试" });
+          deps.push({ type: "changed", mailboxId: deferred.id });
+        }
+        break;
+      }
+      // 与手动保存密码一致：立即开启监听，由监听器的首次 INBOX 同步建立索引。
+      if (!rejected) await monitor.reconcile();
+    }
+    return result;
+  }
+
+  function syncFolder(mailboxId: number, requestedFolder: string): Promise<void> {
+    if (deps.readOnly) return Promise.reject(new Error("当前工作区是只读模式，不能执行会连接邮箱或修改数据的操作"));
     const folder = normalizeFolder(requestedFolder);
-    await exclusive(async () => {
+    const syncKey = `${mailboxId}\0${folder}`;
+    const pending = folderSyncs.get(syncKey);
+    if (pending) return pending;
+    const task = exclusive(async () => {
       const box = row(mailboxId);
       const state = parseState(box);
       const previous = state.folders?.[folder]?.uidValidity;
-      const before = new Set((deps.db.prepare("SELECT uid FROM mail_messages WHERE mailbox_id=? AND folder=?").all(mailboxId, folder) as unknown as { uid: number }[]).map((item) => item.uid));
+      const priorRows = deps.db.prepare("SELECT uid,seen,size FROM mail_messages WHERE mailbox_id=? AND folder=?").all(mailboxId, folder) as unknown as { uid: number; seen: number; size: number }[];
+      const prior = new Map(priorRows.map((item) => [item.uid, item]));
+      const before = new Set(prior.keys());
+      const nextFlags = new Map<number, string>();
       const present = new Set<number>();
       const fresh: number[] = [];
       let validity: string | undefined;
+      let reset = false;
+      let metadataChanged = false;
+      let deleted = false;
       try {
         const upsert = deps.db.prepare(`INSERT INTO mail_messages(mailbox_id,folder,uid,message_id,from_json,to_json,cc_json,subject,date,snippet,seen,has_attachments,size,body_text,attachments_json,references_json,in_reply_to)
           VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(mailbox_id,folder,uid) DO UPDATE SET
@@ -265,6 +447,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
           if (event.kind === "mailbox") {
             validity = event.uidValidity;
             if (previous && validity !== previous) {
+              reset = true;
               deps.db.prepare("DELETE FROM mail_messages WHERE mailbox_id=? AND folder=?").run(mailboxId, folder);
               before.clear();
             }
@@ -272,7 +455,14 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
           }
           const message = event.message;
           present.add(message.uid);
+          const flags = [...new Set(message.flags.filter((flag) => flag !== "\\Seen"))].sort().join("\0");
+          nextFlags.set(message.uid, flags);
           if (!before.has(message.uid)) fresh.push(message.uid);
+          else {
+            const old = prior.get(message.uid)!;
+            const seenChanged = old.seen !== (message.flags.includes("\\Seen") ? 1 : 0);
+            if (seenChanged || old.size !== message.size) metadataChanged = true;
+          }
           if (message.source) {
             const parsed = await safeParse(message);
             upsert.run(mailboxId, folder, message.uid, parsed.messageId, JSON.stringify(parsed.from), JSON.stringify(parsed.to), JSON.stringify(parsed.cc),
@@ -285,21 +475,38 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
           }
         }
         if (!validity) throw new Error(`邮件服务器没有返回 ${folder} 的 UIDVALIDITY`);
-        for (const uid of before) if (!present.has(uid)) deps.db.prepare("DELETE FROM mail_messages WHERE mailbox_id=? AND folder=? AND uid=?").run(mailboxId, folder, uid);
+        for (const uid of before) if (!present.has(uid)) {
+          deps.db.prepare("DELETE FROM mail_messages WHERE mailbox_id=? AND folder=? AND uid=?").run(mailboxId, folder, uid);
+          deleted = true;
+        }
+        const nonSeenFlagsDigest = createHash("sha256")
+          .update(JSON.stringify([...nextFlags].sort(([left], [right]) => left - right))).digest("hex");
+        if (state.folders?.[folder]?.nonSeenFlagsDigest
+          && state.folders[folder].nonSeenFlagsDigest !== nonSeenFlagsDigest) metadataChanged = true;
         const syncedAt = Date.now();
-        const nextState: SyncState = { ...state, lastError: null, folders: { ...(state.folders ?? {}), [folder]: { uidValidity: validity, syncedAt } } };
+        const nextState: SyncState = { ...state, lastError: null, folders: { ...(state.folders ?? {}), [folder]: { uidValidity: validity, syncedAt, nonSeenFlagsDigest } } };
         deps.db.prepare("UPDATE mailboxes SET last_synced_at=?,sync_state_json=? WHERE id=?").run(syncedAt, JSON.stringify(nextState), mailboxId);
       } catch (error) {
-        writeState(mailboxId, { lastError: error instanceof Error ? error.message : String(error) });
-        throw error;
+        const safeError = state.credentialSource === "default"
+          ? new Error(redactPassword(error instanceof Error ? error.message : String(error), credentials(box).password)) : error;
+        writeState(mailboxId, { lastError: safeError instanceof Error ? safeError.message : String(safeError) });
+        throw safeError;
       }
       const unread = Number((deps.db.prepare("SELECT count(*) AS n FROM mail_messages WHERE mailbox_id=? AND folder='INBOX' AND seen=0").get(mailboxId) as { n: number }).n);
-      if (folder.toUpperCase() === "INBOX" && fresh.length) {
+      if (reset) deps.push({ type: "changed", mailboxId, folder });
+      else if (folder.toUpperCase() === "INBOX" && fresh.length) {
         if (!previous) deps.push({ type: "changed", mailboxId, folder, unreadCount: unread });
         else deps.push({ type: "new", mailboxId, folder, uid: Math.max(...fresh), unreadCount: unread });
       }
       else if (fresh.length) deps.push({ type: "changed", mailboxId, folder });
+      else if (deleted || metadataChanged) deps.push({ type: "changed", mailboxId, folder });
     });
+    folderSyncs.set(syncKey, task);
+    void task.then(
+      () => { if (folderSyncs.get(syncKey) === task) folderSyncs.delete(syncKey); },
+      () => { if (folderSyncs.get(syncKey) === task) folderSyncs.delete(syncKey); },
+    );
+    return task;
   }
 
   async function safeParse(message: RemoteMessage) {
@@ -355,8 +562,10 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
     await transportFactory().verify(creds);
     await exclusive(() => {
       row(input.mailboxId);
+      invalidateFolderMetadata(input.mailboxId);
       deps.db.prepare("UPDATE mailboxes SET credential_ciphertext=?, monitoring=1 WHERE id=?").run(seal(deps.key, JSON.stringify(creds)), input.mailboxId);
-      writeState(input.mailboxId, { credentialSource: source, lastError: null, pendingReset: undefined });
+      writeState(input.mailboxId, { credentialSource: source, lastError: null, pendingReset: undefined, failedDefaultPasswordFingerprint: undefined });
+      defaultUnavailable.delete(input.mailboxId);
       saveSiteCredential(row(input.mailboxId), creds);
     });
     await monitor.reconcile();
@@ -380,7 +589,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
           return { name: path, path, total: Number(counts.total), unread: Number(counts.unread ?? 0), specialUse: path.toUpperCase() === "INBOX" ? "\\Inbox" : null };
         });
       }
-      const folders = await transportFactory().listFolders(credentials(box));
+      const folders = await loadFolderMetadata(mailboxId);
       return folders.map((folder): MailFolder => {
         const counts = deps.db.prepare("SELECT count(*) AS total,sum(CASE WHEN seen=0 THEN 1 ELSE 0 END) AS unread FROM mail_messages WHERE mailbox_id=? AND folder=?")
           .get(mailboxId, folder.path) as { total: number; unread: number | null };
@@ -390,8 +599,11 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
     async messages(input) {
       const box = row(input.mailboxId);
       const folder = normalizeFolder(input.folder);
-      const latest = parseState(box).folders?.[folder]?.syncedAt ?? 0;
-      if (!deps.readOnly && Date.now() - latest > 30_000) await syncFolder(input.mailboxId, folder);
+      const latest = parseState(box).folders?.[folder]?.syncedAt;
+      if (!deps.readOnly) {
+        if (latest == null) await syncFolder(input.mailboxId, folder);
+        else if (Date.now() - latest > 30_000) void syncFolder(input.mailboxId, folder).catch(() => undefined);
+      }
       const page = Math.max(1, Math.floor(input.page ?? 1));
       const pageSize = Math.max(1, Math.min(100, Math.floor(input.pageSize ?? 50)));
       const query = input.query?.trim() ?? "";
@@ -404,10 +616,12 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
     },
     message: getMessage,
     saveCredential,
+    tryDefaultCredentials,
     async resetCredential(input) {
       assertWritable();
       if (!input.confirmed) throw new Error("重置密码会让其他邮件客户端停止工作，必须明确确认");
       const box = row(input.mailboxId);
+      invalidateFolderMetadata(input.mailboxId);
       const state = parseState(box);
       let creds: MailCredentials;
       if (state.pendingReset) creds = JSON.parse(unseal(deps.key, Buffer.from(state.pendingReset, "base64"))) as MailCredentials;
@@ -459,6 +673,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
       if (!input.confirmed) throw new Error("删除邮箱前必须确认");
       const box = row(input.mailboxId);
       deleting.add(input.mailboxId);
+      invalidateFolderMetadata(input.mailboxId);
       deps.db.prepare("UPDATE mailboxes SET monitoring=0 WHERE id=?").run(input.mailboxId);
       await monitor.stopMailbox(input.mailboxId);
       try {
@@ -527,6 +742,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
     async close() {
       if (closed) return;
       closed = true;
+      await defaultSerial;
       await monitor.close();
       await exclusive(() => undefined);
     },

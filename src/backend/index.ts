@@ -35,6 +35,7 @@ import { browseWithEdge } from "./qa-browser.ts";
 import { secretHint, unseal } from "./secrets.ts";
 import type { QaReport } from "./store.ts";
 import { qaView } from "./qa-view.ts";
+import { QA_JOB, qaRuns, runQaJob, startQaRun } from "./qa-runs.ts";
 import type { Handlers } from "./rpc.ts";
 import { allSites, getOverview } from "./overview.ts";
 import { listTemplates, removeTemplate, saveTemplate } from "./entity-templates.ts";
@@ -193,6 +194,7 @@ export function createWorkspace(opts: {
     db,
     concurrency: 3,
     handlers: {
+      [QA_JOB]: (job) => trackSite(job.siteId!, runQaJob(pipelineDeps(), job)),
       [PROVISION_JOB]: (job) => trackSite(job.siteId!, provisionSite(pipelineDeps(), job.siteId!)),
       [ABANDON_JOB]: async (job) => {
         // 墓碑先阻止新的站点操作，再等此前在途的步骤落定，避免远端资源删除后又被建回来。
@@ -387,6 +389,23 @@ export function createWorkspace(opts: {
     "sites.steps": (p) => siteSteps(db, Number((p as { siteId: number }).siteId)),
     "sites.events": (p) => eventsForSite(db, String((p as { siteId: number }).siteId)),
     // QA 报告；截图转成 data URL 给界面显示（只读 work/qa 目录下的文件）
+    "qa.fixIssue": (p) => {
+      const { siteId, issueId } = p as { siteId: number; issueId: string };
+      const run = startQaRun(pipelineDeps(), { siteId: Number(siteId), issueId, kind: "fixIssue" });
+      tick();
+      return run;
+    },
+    "qa.fixAll": (p) => {
+      const run = startQaRun(pipelineDeps(), { siteId: Number((p as { siteId: number }).siteId), kind: "fixAll" });
+      tick();
+      return run;
+    },
+    "qa.recheck": (p) => {
+      const run = startQaRun(pipelineDeps(), { siteId: Number((p as { siteId: number }).siteId), kind: "recheck" });
+      tick();
+      return run;
+    },
+    "qa.runs": (p) => qaRuns(db, Number((p as { siteId: number }).siteId)),
     "sites.qa": (p) => {
       const row = db.prepare("SELECT qa_json FROM sites WHERE id = ?").get(Number((p as { siteId: number }).siteId)) as { qa_json: string | null } | undefined;
       if (!row?.qa_json) return null;
@@ -432,10 +451,12 @@ export function createWorkspace(opts: {
       return { mailbox: mailbox.detail, dns, smtp };
     },
     "mail.defaultPassword.status": () => ({ set: hasDefaultMailboxPassword(db) }),
-    "mail.defaultPassword.set": (p) => {
+    "mail.defaultPassword.set": async (p) => {
       const password = (p as { password: string | null }).password;
       setDefaultMailboxPassword(db, requireKey(), password ? String(password) : null);
-      return { set: hasDefaultMailboxPassword(db) };
+      const result = await mailboxes.tryDefaultCredentials();
+      push({ kind: "changed", topic: "mail" });
+      return { set: hasDefaultMailboxPassword(db), ...result };
     },
     "mail.password": (p) => {
       const mailboxId = (p as { mailboxId?: number }).mailboxId;
@@ -460,6 +481,7 @@ export function createWorkspace(opts: {
     "mail.messages": (p) => mailboxes.messages(p as Parameters<typeof mailboxes.messages>[0]),
     "mail.message": (p) => mailboxes.message(p as Parameters<typeof mailboxes.message>[0]),
     "mail.credential.save": (p) => mailboxes.saveCredential(p as Parameters<typeof mailboxes.saveCredential>[0]),
+    "mail.credential.retryDefault": (p) => mailboxes.tryDefaultCredentials({ mailboxId: Number((p as { mailboxId: number }).mailboxId), retry: true }),
     "mail.credential.reset": (p) => mailboxes.resetCredential(p as Parameters<typeof mailboxes.resetCredential>[0]),
     "mail.monitor": (p) => mailboxes.setMonitoring(p as Parameters<typeof mailboxes.setMonitoring>[0]),
     "mail.seen": (p) => mailboxes.markSeen(p as Parameters<typeof mailboxes.markSeen>[0]),

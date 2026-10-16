@@ -1,5 +1,13 @@
-export type MailCredentialSource = "pipeline" | "user" | "reset" | null;
+export type MailCredentialSource = "pipeline" | "user" | "reset" | "default" | null;
 export type MailMonitorMode = "idle" | "poll" | "off";
+export type MailDefaultPasswordStatus = "unconfigured" | "pending" | "trying" | "rejected" | "unavailable";
+
+export interface MailDefaultPasswordResult {
+  succeeded: number;
+  failed: number;
+  /** 网络故障或工作区状态变化时暂缓；不等于密码错误。 */
+  deferred: number;
+}
 
 export interface MailboxSummary {
   id: number;
@@ -10,6 +18,7 @@ export interface MailboxSummary {
   address: string;
   credentialSaved: boolean;
   credentialSource?: MailCredentialSource;
+  defaultPasswordStatus: MailDefaultPasswordStatus;
   monitoring: boolean;
   monitorMode?: MailMonitorMode;
   unreadCount: number;

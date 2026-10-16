@@ -19,7 +19,7 @@ import { buildPublishableVariants, checkProductAnalysis, checkUnitReview, parseP
 import { contrastRatio, FALLBACK_STYLE, parseStyleProposal, safeStyleProposal, stylePrompt, toObelGlobalStyles, type AiStyleProposal } from "./style.ts";
 import { buildAiHomepage, categoryDesignPrompt, checkCategoryDesign, checkHomepageDesign, checkPageMetadata, homepageDesignPrompt, metadataPrompt, parseCategoryDesign, parseHomepageDesign, parsePageMetadata, type CategoryDesign, type DesignProduct, type HomepageDesign } from "./home-design.ts";
 import { completeVision, type VisionComplete } from "./vision.ts";
-import { paymentGatewayState, runFullSiteReview } from "./review.ts";
+import { paymentGatewayState, runFullSiteReview, type ReviewFinding } from "./review.ts";
 import { ensureBranding, type BrandingRecord } from "./branding.ts";
 import { siteTools } from "./site-tools.ts";
 
@@ -43,6 +43,8 @@ export interface QaReport {
   /** 仅后端保存，用于区分真实资料补齐与模型暂时漏报；不发给界面。 */
   reviewFactsHash?: string;
   reviewTrustHash?: string;
+  /** 复核规划信息只留在后端，供用户点选修复时复用安全动作。 */
+  reviewFindings?: ReviewFinding[];
 }
 
 /** 商品不能上架（资料不全、价格不在区间、AI 两次都没写对等）：跳过它，换下一个候选。 */
@@ -612,12 +614,12 @@ export function storeSteps(ctx: StepCtx): Record<BackStepKey, () => Promise<Step
   };
 }
 
-export async function runQa(ctx: StepCtx): Promise<QaReport> {
+export async function runQa(ctx: StepCtx, input: { review?: SiteReview; skipBrowse?: boolean } = {}): Promise<QaReport> {
   const { wp } = ctx;
   const f = facts(ctx);
   // 先复核/修复，随后按最终线上状态跑确定性验收，避免把修复前的失败留在最终报告。
   const vision = ctx.d.vision ?? ((prompt, images) => completeVision(ctx.d.db, ctx.d.key, prompt, images, ctx.d.fetch));
-  const review = await runFullSiteReview(ctx, {
+  const review = input.review ?? await runFullSiteReview(ctx, {
     loginUrl: async () => {
       const links = await ctx.hx("wordpress_login_create-links", { username: ctx.site.hostinger_username, software: ctx.site.wp_software_id }) as { login: string };
       return `https://${links.login.replace(/^https?:\/\//, "")}`;
@@ -751,8 +753,12 @@ export async function runQa(ctx: StepCtx): Promise<QaReport> {
   add("images", "商品图片版权", "warn", false, "图片来自 CJ 商品资料，正式上线前建议换成供应商授权或自己拍摄的图片");
 
   // 浏览器里看一遍：管理员登录后绕过维护模式，截图首页、商品列表、商品页，并把一个商品加入购物车走到结账页
-  const shots: QaReport["shots"] = [];
-  if (!ctx.d.browse) {
+  const previousReport = JSON.parse(ctx.site.qa_json ?? "{}") as Partial<QaReport>;
+  const shots: QaReport["shots"] = input.skipBrowse ? previousReport.shots ?? [] : [];
+  if (input.skipBrowse) {
+    // 单项修复只复核受影响页面，其余浏览器验收结果保留，不能冒充重新验收。
+    checks.push(...(previousReport.checks ?? []).filter((check) => check.id === "render"));
+  } else if (!ctx.d.browse) {
     add("render", "页面能正常显示并能加购到结账", "warn", false, "这台电脑上没有可用的浏览器，跳过了页面截图");
   } else {
     await attempt("render", "页面能正常显示并能加购到结账", "block", async () => {
@@ -784,5 +790,6 @@ export async function runQa(ctx: StepCtx): Promise<QaReport> {
   }
   const reviewFactsHash = (JSON.parse(ctx.site.qa_json ?? "{}") as { reviewFactsHash?: string }).reviewFactsHash;
   const reviewTrustHash = (JSON.parse(ctx.site.qa_json ?? "{}") as { reviewTrustHash?: string }).reviewTrustHash;
-  return { at: ctx.d.now(), checks, shots, review, ...(reviewFactsHash ? { reviewFactsHash } : {}), ...(reviewTrustHash ? { reviewTrustHash } : {}) };
+  const reviewFindings = (JSON.parse(ctx.site.qa_json ?? "{}") as Partial<QaReport>).reviewFindings;
+  return { at: ctx.d.now(), checks, shots, review, ...(reviewFactsHash ? { reviewFactsHash } : {}), ...(reviewTrustHash ? { reviewTrustHash } : {}), ...(reviewFindings ? { reviewFindings } : {}) };
 }

@@ -56,6 +56,13 @@ export interface ActualVariationContext {
 }
 
 const compact = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+// 文案写出完整选项名，或分别写到它的每个选项值（颜色、尺寸各自出现）都算覆盖；多色多尺寸商品不必逐个列组合
+export function copyCoversVariant(copy: string, buyerName: string): boolean {
+  const text = ` ${compact(copy)} `;
+  if (text.includes(` ${compact(buyerName)} `)) return true;
+  const parts = buyerName.split(/\s+[|·,-]\s+|\s*\/\s*/).map(compact).filter(Boolean);
+  return parts.length > 1 && parts.every((part) => text.includes(` ${part} `));
+}
 const supplierCodeName = (value: string) => /^(?:(?:set|style|option|type|model|variant)\s*[-#]?\s*[a-z0-9]+|[a-z]?\d+[a-z]?)$/i.test(value.trim());
 const sourceText = (p: CjProduct) => [p.name, p.category, p.description, ...p.materials, ...p.variants.map((v) => v.key)].join("\n");
 const sourceHas = (source: string, value: string) => compact(source).includes(compact(value));
@@ -159,6 +166,10 @@ Analyze every source variant separately. A variant is clear only when the source
 When actualWooAttributes are present, use those exact live option names in the copy, but treat only sourceAttributes and the other CJ fields as evidence for factual claims.
 Use short buyer-readable variant names. The title and copy must accurately cover every clear variant, including differing piece counts or components. If materials or care instructions are absent, return materials_and_care_html=null. Do not repeat questionable dimensions in any copy.
 Choose mainImage only from candidateImages and prefer a clear view of the complete sold product.
+The title must be at most 80 characters.
+In description_html, list every available option value exactly as written in buyerName parts (for example all colors and all sizes), so the copy covers every clear variant without listing every combination.
+For every variant, evidence must be copied verbatim (an exact substring, no paraphrase) from that variant's sourceKey or sourceAttributes, or from a CJ description sentence that names this variant; when nothing more specific exists, use the variant's sourceKey itself.
+Set pieceCount to null and components to [] unless the CJ source explicitly states them for that variant; never assume "1 piece".
 Reply with JSON only matching:
 {"title":string,"short_description":string,"description_html":string,"materials_and_care_html":string|null,"image_alt":string,"mainImage":string,"metaDescription":string,"ogDescription":string,"variants":[{"sourceKey":string,"buyerName":string,"clear":boolean,"pieceCount":number|null,"components":string[],"color":string|null,"evidence":string}]}
 SITE CATEGORIES: ${JSON.stringify(f.categories)}
@@ -221,8 +232,8 @@ export function checkProductAnalysis(a: ProductAnalysis, p: CjProduct, inputs: P
     if (buyerNames.has(name)) out.push(`clear variants must not collapse into duplicate buyerName "${v.buyerName}"`);
     buyerNames.add(name);
   }
-  const copy = compact(`${a.title} ${a.short_description} ${a.description_html}`);
-  for (const v of published) if (!copy.includes(compact(v.buyerName))) out.push(`copy must cover clear variant "${v.buyerName}"`);
+  const copy = `${a.title} ${a.short_description} ${a.description_html}`;
+  for (const v of published) if (!copyCoversVariant(copy, v.buyerName)) out.push(`copy must cover clear variant "${v.buyerName}"`);
   const clearCounts = [...new Set(published.flatMap((v) => Number.isInteger(v.pieceCount) && v.pieceCount! > 0 ? [v.pieceCount!] : []))].sort((x, y) => x - y);
   const titleCounts = [...a.title.matchAll(/\b(\d+(?:\s*[/,&]\s*\d+)*)\s*[- ]?(?:piece|pc|pcs)\b/gi)]
     .flatMap((match) => match[1].split(/\s*[/,&]\s*/).map(Number)).filter((n) => Number.isInteger(n));
