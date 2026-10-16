@@ -54,13 +54,13 @@ test("RpcCache debounces repeated scheduled refreshes", async () => {
 test("RpcCache invalidates all parameter variants for a method without discarding visible SWR data", async () => {
   const cache = new RpcCache(async (_method, params) => params);
   cache.setUser(4);
-  await cache.refresh("grist.listDocs", { workspaceId: 1 });
-  await cache.refresh("grist.listDocs", { workspaceId: 2 });
+  await cache.refresh("example.listDocs", { workspaceId: 1 });
+  await cache.refresh("example.listDocs", { workspaceId: 2 });
 
-  cache.invalidate("grist.listDocs");
+  cache.invalidate("example.listDocs");
 
-  assert.deepEqual(cache.snapshot("grist.listDocs", { workspaceId: 1 }).data, { workspaceId: 1 });
-  assert.deepEqual(cache.snapshot("grist.listDocs", { workspaceId: 2 }).data, { workspaceId: 2 });
+  assert.deepEqual(cache.snapshot("example.listDocs", { workspaceId: 1 }).data, { workspaceId: 1 });
+  assert.deepEqual(cache.snapshot("example.listDocs", { workspaceId: 2 }).data, { workspaceId: 2 });
 });
 
 test("targeted invalidation prevents a stale response winning without cancelling unrelated reads", async () => {
@@ -113,14 +113,14 @@ test("a queued refresh cannot cross into the next logged-in user", async () => {
     return await new Promise((resolve) => { resolvers.push(resolve); });
   });
   cache.setUser(10);
-  const stale = cache.refresh("grist.listDocs", { workspaceId: 9 });
-  cache.invalidate("grist.listDocs", { workspaceId: 9 });
-  const queued = cache.refresh("grist.listDocs", { workspaceId: 9 });
+  const stale = cache.refresh("example.listDocs", { workspaceId: 9 });
+  cache.invalidate("example.listDocs", { workspaceId: 9 });
+  const queued = cache.refresh("example.listDocs", { workspaceId: 9 });
 
   cache.setUser(11);
   resolvers[0]?.(["old-user"]);
   await assert.rejects(stale, /登录状态已变化/);
   await assert.rejects(queued, /登录状态已变化/);
   assert.equal(calls, 1);
-  assert.equal(cache.snapshot("grist.listDocs", { workspaceId: 9 }).data, undefined);
+  assert.equal(cache.snapshot("example.listDocs", { workspaceId: 9 }).data, undefined);
 });

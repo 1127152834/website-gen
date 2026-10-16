@@ -18,6 +18,11 @@ test("每个 workspace RPC 都被助手登记表或不暴露清单明确分类",
   try {
     const exposed = new Set(ASSISTANT_RPC_TOOLS.map((tool) => tool.method));
     const excluded = new Set(Object.keys(ASSISTANT_EXCLUDED_METHODS));
+    assert.equal(exposed.has("grist.settings.get"), true);
+    for (const method of ["grist.listOrgs", "grist.listWorkspaces", "grist.listDocs", "grist.getDocInfo", "grist.getTables", "grist.getTableColumns", "grist.getDocStructure", "grist.getAttachments", "grist.getPageRecords", "grist.listRecords", "grist.addRecords", "grist.updateRecords"]) {
+      assert.equal(exposed.has(method), false, `${method} 不应登记为助手 RPC`);
+      assert.equal(excluded.has(method), false, `${method} 不应残留在排除清单`);
+    }
     assert.equal(exposed.size, ASSISTANT_RPC_TOOLS.length, "RPC 工具 method 不能重复");
     assert.equal(new Set(ASSISTANT_RPC_TOOLS.map((tool) => tool.name)).size, ASSISTANT_RPC_TOOLS.length, "RPC 工具 name 不能重复");
     for (const method of Object.keys(workspace.handlers)) {
@@ -42,19 +47,6 @@ test("敏感 RPC 不暴露，清单写明原因", () => {
   }
   assert.match(ASSISTANT_EXCLUDED_METHODS["grist.mcpToken.status"] ?? "", /内部|令牌/);
   assert.match(ASSISTANT_EXCLUDED_METHODS["grist.mcpToken.revoke"] ?? "", /页面|令牌/);
-});
-
-test("共用 Grist 工具已替代重复 RPC，并保留设置状态入口", () => {
-  const duplicateMethods = [
-    "grist.listOrgs", "grist.listWorkspaces", "grist.listDocs", "grist.getDocInfo", "grist.getTables",
-    "grist.getTableColumns", "grist.listRecords", "grist.addRecords", "grist.updateRecords",
-  ];
-  const exposed = new Set(ASSISTANT_RPC_TOOLS.map((tool) => tool.method));
-  assert.equal(exposed.has("grist.settings.get"), true);
-  for (const method of duplicateMethods) {
-    assert.equal(exposed.has(method), false, `${method} 不应重复注册`);
-    assert.equal(ASSISTANT_EXCLUDED_METHODS[method], "与共用的 grist_* 工具重复");
-  }
 });
 
 test("经营主体天数范围使用 OpenAI 兼容的定长数组 schema", () => {

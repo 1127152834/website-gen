@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { DatabaseSync } from "node:sqlite";
-import { assembleGristDocStructure, getGristAttachments, getGristPageRecords, GRIST_STRUCTURE_SQL } from "./grist-structure.ts";
+import { assembleGristDocStructure, GRIST_STRUCTURE_SQL } from "./grist-structure.ts";
 
 test("文档结构 SQL 只使用实测元数据列", () => {
   const db = new DatabaseSync(":memory:");
@@ -52,71 +52,4 @@ test("文档结构按页面/缩进/多组件组装，组件只保留可见列顺
   assert.deepEqual(structure.tables[0]!.columns.map((column) => column.colId), ["Hidden", "Name", "Files"]);
   assert.deepEqual(structure.rawTables.map((table) => table.tableId), ["RawOnly"]);
   assert.deepEqual(structure.rawTables[0]!.columns.map((column) => column.colId), ["Raw", "RawHidden"], "原始视图 field 顺序不能隐藏全表列元数据");
-});
-
-test("当前页多个表并行读取且附件 ID 合并成一次 SQL 查询", async () => {
-  const calls: unknown[][] = [];
-  const client = {
-    async listRecords(_docId: string, tableId: string, options: unknown) {
-      calls.push(["records", tableId, options]);
-      return { records: tableId === "A" ? [{ id: 1, fields: { Files: ["L", 12, 13] } }] : [{ id: 2, fields: { Docs: ["L", 13] } }] };
-    },
-    async queryDocument(_docId: string, sql: string, args: unknown[]) {
-      calls.push(["sql", sql, args]);
-      return { statement: sql, records: [{ fields: { id: 12, fileName: "a.pdf", fileSize: 3, imageHeight: null, imageWidth: null, timeUploaded: 4 } }] };
-    },
-  } as never;
-  const result = await getGristPageRecords(client, { docId: "d", tableIds: ["A", "B"], attachmentColumns: { A: ["Files"], B: ["Docs"] }, limit: 1000 });
-  assert.deepEqual(Object.keys(result.tables), ["A", "B"]);
-  assert.deepEqual((calls.find((call) => call[0] === "sql") as unknown[])[2], [12, 13]);
-  assert.equal(calls.filter((call) => call[0] === "sql").length, 1);
-  assert.equal(result.attachments[0]!.fileName, "a.pdf");
-});
-
-test("空附件 ID 不调用 SQL", async () => {
-  let called = false;
-  const result = await getGristAttachments({ queryDocument: async () => { called = true; throw new Error("unexpected"); } } as never, "d", []);
-  assert.deepEqual(result, { attachments: [] });
-  assert.equal(called, false);
-});
-
-test("页面多表读取最多两并发且任一错误会取消其余请求", async () => {
-  let active = 0, maximum = 0;
-  const signals: AbortSignal[] = [];
-  const client = { listRecords: async (_doc: string, tableId: string, options: { signal: AbortSignal }) => {
-    active++; maximum = Math.max(maximum, active); signals.push(options.signal);
-    try {
-      if (tableId === "bad") throw new Error("bad table");
-      await new Promise<void>((resolve, reject) => {
-        const timer = setTimeout(resolve, 20);
-        options.signal.addEventListener("abort", () => { clearTimeout(timer); reject(options.signal.reason); }, { once: true });
-      });
-      return { records: [] };
-    } finally { active--; }
-  } } as never;
-  await assert.rejects(getGristPageRecords(client, { docId: "d", tableIds: ["a", "b", "c", "bad", "e", "f"], limit: 1000 }), /bad table/);
-  assert.ok(maximum <= 2);
-  assert.ok(signals.every((signal) => signal.aborted));
-});
-
-test("页面多表聚合超过 16 MiB 会终止并取消共享信号", async () => {
-  const signals: AbortSignal[] = [];
-  const large = "x".repeat(4_300_000);
-  const client = { listRecords: async (_doc: string, tableId: string, options: { signal: AbortSignal }) => {
-    signals.push(options.signal);
-    return { records: [{ id: 1, fields: { [tableId]: large } }] };
-  } } as never;
-  await assert.rejects(getGristPageRecords(client, { docId: "d", tableIds: ["a", "b", "c", "d"], limit: 1000 }), /16 MiB/);
-  assert.ok(signals.every((signal) => signal.aborted));
-});
-
-test("页面附件 ID 去重后仍限制为一万，超限前不发 SQL", async () => {
-  let sqlCalls = 0;
-  const ids = Array.from({ length: 10_001 }, (_, index) => index + 1);
-  const client = {
-    async listRecords() { return { records: [{ id: 1, fields: { Files: ["L", ...ids] } }] }; },
-    async queryDocument() { sqlCalls++; return { statement: "", records: [] }; },
-  } as never;
-  await assert.rejects(getGristPageRecords(client, { docId: "d", tableIds: ["A"], attachmentColumns: { A: ["Files"] }, limit: 1000 }), /10000/);
-  assert.equal(sqlCalls, 0);
 });

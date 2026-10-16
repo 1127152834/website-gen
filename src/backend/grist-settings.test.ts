@@ -23,8 +23,8 @@ test("Grist settings encrypt keys, show only last four characters and preserve b
   const service = createGristService({ db, key, validateBaseUrl: async () => {} });
   try {
     assert.deepEqual(await service.handlers["grist.settings.get"]({}), { baseUrl: "", apiKeyHint: null, configured: false });
-    const saved = await service.handlers["grist.settings.save"]({ baseUrl: "https://grist.example/", apiKey: "sensitive-secret-1234" });
-    assert.deepEqual(saved, { baseUrl: "https://grist.example", apiKeyHint: "1234", configured: true });
+    const saved = await service.handlers["grist.settings.save"]({ baseUrl: "https://8.8.8.8/", apiKey: "sensitive-secret-1234" });
+    assert.deepEqual(saved, { baseUrl: "https://8.8.8.8", apiKeyHint: "1234", configured: true });
     assert.equal(getSecret(db, key, "grist.apiKey"), "sensitive-secret-1234");
     const row = db.prepare("SELECT * FROM secrets WHERE name = 'grist.apiKey'").get()!;
     assert.ok(!Buffer.from(row.ciphertext as Uint8Array).includes(Buffer.from("sensitive-secret-1234")));
@@ -68,5 +68,23 @@ test("Grist connection tests can use unsaved fields without persisting them or r
     assert.deepEqual(seen[1], { url: "https://8.8.8.8/api/session/access/active", authorization: "Bearer stored-key-abcd" });
     assert.deepEqual(service.handlers["grist.settings.get"]({}), { baseUrl: "https://8.8.8.8", apiKeyHint: "abcd", configured: true });
     assert.equal(getSecret(db, key, "grist.apiKey"), "stored-key-abcd");
+  } finally { db.close(); }
+});
+
+test("Grist service keeps only settings RPCs while its shared client remains usable", async () => {
+  const db = openDb(":memory:"); migrate(db);
+  const key = Buffer.alloc(32, 7);
+  const seen: string[] = [];
+  const service = createGristService({ db, key, validateBaseUrl: async () => {}, fetch: async (url) => {
+    seen.push(String(url));
+    return Response.json(String(url).endsWith("/tables") ? { tables: [{ id: "People", fields: {} }] } : { records: [] });
+  } });
+  try {
+    await service.handlers["grist.settings.save"]({ baseUrl: "https://8.8.8.8", apiKey: "client-key" });
+    assert.deepEqual(Object.keys(service.handlers).sort(), ["grist.settings.get", "grist.settings.save", "grist.testConnection"]);
+    const client = service.client();
+    assert.deepEqual(await client.getTables("doc"), { tables: [{ id: "People", fields: {} }] });
+    assert.deepEqual(await client.listRecords("doc", "People"), { records: [] });
+    assert.deepEqual(seen, ["https://8.8.8.8/api/docs/doc/tables", "https://8.8.8.8/api/docs/doc/tables/People/records"]);
   } finally { db.close(); }
 });
