@@ -7,6 +7,7 @@ import { openAICompletionsApi } from "@earendil-works/pi-ai/api/openai-completio
 import { DEEPSEEK_MODELS } from "@earendil-works/pi-ai/providers/deepseek.models";
 import type { ModelRole, ProviderSummary, RoleSummary } from "../shared/protocol.ts";
 import { seal, unseal } from "./secrets.ts";
+import { withModelRetry } from "./model-retry.ts";
 
 export const ROLES: ModelRole[] = ["agent", "vision", "bulk", "review"];
 type Protocol = ProviderSummary["protocol"];
@@ -428,12 +429,14 @@ export async function completeText(db: DatabaseSync, key: Buffer, role: ModelRol
   const secrets = providerRows(db).flatMap((row) => row.api_key_ciphertext ? [unseal(key, row.api_key_ciphertext)] : []);
   let message: Awaited<ReturnType<typeof runtime.models.completeSimple>>;
   try {
-    message = await runtime.models.completeSimple(model, { messages: [{ role: "user", content: prompt, timestamp: Date.now() }] }, { reasoning: thinking === "off" ? undefined : (thinking as Exclude<ModelThinkingLevel, "off">), maxTokens: Math.min(16_000, model.maxTokens), signal: AbortSignal.timeout(5 * 60_000) });
+    // 网络中断、超时、限流、5xx 自动重试；返回 stopReason=error 的同样按错误内容判断
+    message = await withModelRetry(async () => {
+      const m = await runtime.models.completeSimple(model, { messages: [{ role: "user", content: prompt, timestamp: Date.now() }] }, { reasoning: thinking === "off" ? undefined : (thinking as Exclude<ModelThinkingLevel, "off">), maxTokens: Math.min(16_000, model.maxTokens), signal: AbortSignal.timeout(5 * 60_000) });
+      if (m.stopReason === "error" || m.stopReason === "aborted") throw new Error(m.errorMessage ?? m.stopReason);
+      return m;
+    });
   } catch (error) {
     throw new Error(`模型调用失败：${redactRemoteText((error as Error).message || "请求失败", secrets)}`);
-  }
-  if (message.stopReason === "error" || message.stopReason === "aborted") {
-    throw new Error(`模型调用失败：${redactRemoteText(message.errorMessage ?? message.stopReason, secrets)}`);
   }
   return { text: message.content.filter((part) => part.type === "text").map((part) => part.text).join(""), cost: message.usage.cost.total };
 }

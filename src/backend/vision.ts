@@ -6,6 +6,7 @@ import type { DatabaseSync } from "node:sqlite";
 import type { ImageContent, ModelThinkingLevel, TextContent } from "@earendil-works/pi-ai";
 import { buildRuntime, roleChoice } from "./models.ts";
 import { assertPublicBaseUrl } from "./net-guard.ts";
+import { withModelRetry } from "./model-retry.ts";
 
 const MAX_IMAGE_BYTES = 12 * 1024 * 1024;
 
@@ -83,11 +84,15 @@ export async function completeVision(
   const { model, thinking } = runtime.resolve("vision");
   if (!model.input.includes("image")) throw new Error(`Vision model ${model.id} does not accept images`);
   const content = await buildVisionUserContent(prompt, images, fetchImpl);
-  const msg = await runtime.models.completeSimple(
-    model,
-    { messages: [{ role: "user", content, timestamp: Date.now() }] },
-    { reasoning: thinking === "off" ? undefined : (thinking as Exclude<ModelThinkingLevel, "off">), maxTokens: 16_000, signal: AbortSignal.timeout(5 * 60_000) },
-  );
-  if (msg.stopReason === "error" || msg.stopReason === "aborted") throw new Error(`视觉模型调用失败：${msg.errorMessage ?? msg.stopReason}`);
+  // 网络中断、超时、限流、5xx 自动重试
+  const msg = await withModelRetry(async () => {
+    const m = await runtime.models.completeSimple(
+      model,
+      { messages: [{ role: "user", content, timestamp: Date.now() }] },
+      { reasoning: thinking === "off" ? undefined : (thinking as Exclude<ModelThinkingLevel, "off">), maxTokens: 16_000, signal: AbortSignal.timeout(5 * 60_000) },
+    );
+    if (m.stopReason === "error" || m.stopReason === "aborted") throw new Error(`视觉模型调用失败：${m.errorMessage ?? m.stopReason}`);
+    return m;
+  });
   return { text: msg.content.filter((c) => c.type === "text").map((c) => c.text).join(""), cost: msg.usage.cost.total };
 }
