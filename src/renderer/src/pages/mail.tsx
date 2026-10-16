@@ -17,6 +17,7 @@ const MAX_ATTACHMENTS = 20 * 1024 * 1024;
 
 type ComposeMode = "new" | "reply" | "reply-all" | "forward";
 type Upload = { name: string; type: string; size: number; dataBase64: string };
+type SeenQueue = { confirmed: boolean; pending: { id: number; seen: boolean }[]; chain: Promise<void> };
 
 const date = (value: number) => new Date(value).toLocaleString("zh-CN", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
 const emailOnly = (value: string) => value.match(/<([^<>\s]+@[^<>\s]+)>/)?.[1] ?? value.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i)?.[0] ?? value.trim();
@@ -35,24 +36,35 @@ function mailboxStatusText(mailbox: MailboxSummary): string {
 
 export function MailPage({ mailboxId, folder, uid, onNavigate }: { mailboxId?: number; folder?: string; uid?: number; onNavigate: (path: string) => void }) {
   const confirm = useConfirm();
+  const activeFolder = folder ?? "INBOX";
+  const listScope = `${mailboxId ?? ""}\u0000${activeFolder}`;
   const [mailboxes, setMailboxes] = useState<MailboxSummary[] | null>(null);
   const [folders, setFolders] = useState<MailFolder[]>([]);
   const [messages, setMessages] = useState<MailListResult | null>(null);
   const [message, setMessage] = useState<MailMessageDetail | null>(null);
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [page, setPage] = useState(1);
+  const [listIdentity, setListIdentity] = useState(listScope);
+  const [listBusy, setListBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [retryingDefaultFor, setRetryingDefaultFor] = useState<number | null>(null);
   const [credentialFor, setCredentialFor] = useState<MailboxSummary | null>(null);
   const [compose, setCompose] = useState<{ mailbox: MailboxSummary; mode: ComposeMode; original?: MailMessageDetail } | null>(null);
   const folderRequest = useRef(0);
+  const foldersMailbox = useRef(mailboxId);
   const listRequest = useRef(0);
   const detailRequest = useRef(0);
+  const seenQueues = useRef(new Map<string, SeenQueue>());
+  const seenSequence = useRef(0);
+  const messagesScope = useRef(listScope);
+  const messageIdentity = useRef<string | null>(null);
+  const routeRef = useRef({ mailboxId, folder: activeFolder, uid });
+  routeRef.current = { mailboxId, folder: activeFolder, uid };
   const openState = useRef(new MailOpenState());
   const activeMailbox = mailboxes?.find((item) => item.id === mailboxId) ?? null;
   const credentialSaved = activeMailbox?.credentialSaved ?? false;
-  const activeFolder = folder ?? "INBOX";
 
   const loadMailboxes = useCallback(() => {
     void call<MailboxSummary[]>("mail.list").then((items) => {
@@ -66,39 +78,111 @@ export function MailPage({ mailboxId, folder, uid, onNavigate }: { mailboxId?: n
   const loadFolders = useCallback(() => {
     if (!mailboxId || !credentialSaved) return;
     const request = ++folderRequest.current;
-    void call<MailFolder[]>("mail.folders", { mailboxId }).then((items) => { if (request === folderRequest.current) setFolders(items); }, (reason: Error) => { if (request === folderRequest.current) setError(reason.message); });
+    void call<MailFolder[]>("mail.folders", { mailboxId }).then((items) => { if (request === folderRequest.current) { foldersMailbox.current = mailboxId; setFolders(items); } }, (reason: Error) => { if (request === folderRequest.current) setError(reason.message); });
   }, [credentialSaved, mailboxId]);
 
   const loadMessages = useCallback(() => {
-    if (!mailboxId || !credentialSaved) return;
+    if (!mailboxId || !credentialSaved || listIdentity !== listScope) return;
     const request = ++listRequest.current;
-    void call<MailListResult>("mail.messages", { mailboxId, folder: activeFolder, query: query.trim() || undefined, page, pageSize: PAGE_SIZE }).then((result) => { if (request === listRequest.current) setMessages(result); }, (reason: Error) => { if (request === listRequest.current) setError(reason.message); });
-  }, [activeFolder, credentialSaved, mailboxId, page, query]);
+    const requestScope = listScope;
+    setListBusy(true);
+    void call<MailListResult>("mail.messages", { mailboxId, folder: activeFolder, query: debouncedQuery.trim() || undefined, page, pageSize: PAGE_SIZE }).then((result) => {
+      if (request !== listRequest.current || requestScope !== messagesScope.current) return;
+      setMessages({ ...result, items: result.items.map((entry) => {
+        const pending = seenQueues.current.get(`${mailboxId}\u0000${activeFolder}\u0000${entry.uid}`)?.pending.at(-1);
+        return pending ? { ...entry, seen: pending.seen } : entry;
+      }) });
+      setListBusy(false);
+    }, (reason: Error) => {
+      if (request !== listRequest.current || requestScope !== messagesScope.current) return;
+      setError(reason.message);
+      setListBusy(false);
+    });
+  }, [activeFolder, credentialSaved, debouncedQuery, listIdentity, listScope, mailboxId, page]);
+
+  const updateSeen = useCallback((targetMailboxId: number, targetFolder: string, targetUid: number, seen: boolean, previousSeen: boolean) => {
+    const key = `${targetMailboxId}\u0000${targetFolder}\u0000${targetUid}`;
+    const id = ++seenSequence.current;
+    const queue = seenQueues.current.get(key) ?? { confirmed: previousSeen, pending: [], chain: Promise.resolve() };
+    seenQueues.current.set(key, queue);
+    queue.pending.push({ id, seen });
+    const apply = (value: boolean) => {
+      setMessage((current) => routeRef.current.mailboxId === targetMailboxId && routeRef.current.folder === targetFolder && routeRef.current.uid === targetUid && current?.uid === targetUid && current.folder === targetFolder ? { ...current, seen: value } : current);
+      setMessages((current) => messagesScope.current === `${targetMailboxId}\u0000${targetFolder}` && current ? { ...current, items: current.items.map((entry) => entry.uid === targetUid ? { ...entry, seen: value } : entry) } : current);
+    };
+    apply(seen);
+    queue.chain = queue.chain.then(() => call("mail.seen", { mailboxId: targetMailboxId, folder: targetFolder, uid: targetUid, seen })).then(() => {
+      queue.confirmed = seen;
+    }, (reason: Error) => {
+      toast(reason.message, "error");
+    }).then(() => {
+      queue.pending = queue.pending.filter((entry) => entry.id !== id);
+      apply(queue.pending.at(-1)?.seen ?? queue.confirmed);
+      if (queue.pending.length === 0) seenQueues.current.delete(key);
+    });
+  }, []);
 
   useEffect(() => onConnect(loadMailboxes), [loadMailboxes]);
-  useEffect(() => { folderRequest.current++; listRequest.current++; detailRequest.current++; setPage(1); setFolders([]); setMessages(null); setMessage(null); setError(null); }, [activeFolder, mailboxId]);
-  useEffect(() => { loadFolders(); }, [loadFolders]);
-  useEffect(() => { setMessages(null); loadMessages(); }, [loadMessages]);
+  useEffect(() => { folderRequest.current++; setFolders([]); }, [mailboxId]);
   useEffect(() => {
-    if (!mailboxId || uid == null || !credentialSaved) { setMessage(null); if (uid == null) openState.current.leaveMessage(); return; }
+    listRequest.current++;
+    detailRequest.current++;
+    messagesScope.current = listScope;
+    setListIdentity(listScope);
+    setPage(1);
+    setQuery("");
+    setDebouncedQuery("");
+    setMessages(null);
+    setMessage(null);
+    messageIdentity.current = null;
+    setListBusy(true);
+    setError(null);
+  }, [listScope]);
+  useEffect(() => { loadFolders(); }, [loadFolders]);
+  useEffect(() => {
+    const timer = setTimeout(() => { setDebouncedQuery(query); setPage(1); }, 250);
+    return () => clearTimeout(timer);
+  }, [query]);
+  useEffect(() => { loadMessages(); }, [loadMessages]);
+  useEffect(() => {
     const request = ++detailRequest.current;
+    setMessage(null);
+    messageIdentity.current = null;
+    if (!mailboxId || uid == null || !credentialSaved) { if (uid == null) openState.current.leaveMessage(); return; }
     void call<MailMessageDetail>("mail.message", { mailboxId, folder: activeFolder, uid }).then((item) => {
-      if (request !== detailRequest.current) return;
+      const route = routeRef.current;
+      if (request !== detailRequest.current || route.mailboxId !== mailboxId || route.folder !== activeFolder || route.uid !== uid) return;
+      messageIdentity.current = `${listScope}\u0000${uid}`;
       setMessage(item);
       if (openState.current.shouldAutoMark(mailboxId, activeFolder, uid, item.seen)) {
-        void call("mail.seen", { mailboxId, folder: activeFolder, uid, seen: true }).then(() => {
-          setMessage((current) => current?.uid === uid && current.folder === activeFolder ? { ...current, seen: true } : current);
-          setMessages((current) => current ? { ...current, items: current.items.map((entry) => entry.uid === uid ? { ...entry, seen: true } : entry) } : current);
-          loadMailboxes();
-          loadFolders();
-        });
+        updateSeen(mailboxId, activeFolder, uid, true, item.seen);
       }
-    }, (reason: Error) => { if (request === detailRequest.current) setError(reason.message); });
-  }, [activeFolder, credentialSaved, loadFolders, loadMailboxes, mailboxId, uid]);
-  useEffect(() => onMail((event) => {
-    loadMailboxes();
-    if (event.mailboxId === mailboxId) { loadFolders(); loadMessages(); }
-  }), [loadFolders, loadMailboxes, loadMessages, mailboxId]);
+    }, (reason: Error) => {
+      const route = routeRef.current;
+      if (request === detailRequest.current && route.mailboxId === mailboxId && route.folder === activeFolder && route.uid === uid) setError(reason.message);
+    });
+  }, [activeFolder, credentialSaved, listScope, mailboxId, uid, updateSeen]);
+  const loadMailboxesRef = useRef(loadMailboxes); loadMailboxesRef.current = loadMailboxes;
+  const loadFoldersRef = useRef(loadFolders); loadFoldersRef.current = loadFolders;
+  const loadMessagesRef = useRef(loadMessages); loadMessagesRef.current = loadMessages;
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let pending: { mailboxId: number; folder?: string }[] = [];
+    const off = onMail((event) => {
+      pending.push(event);
+      if (timer !== undefined) return;
+      timer = setTimeout(() => {
+        timer = undefined;
+        const batch = pending;
+        pending = [];
+        const route = routeRef.current;
+        loadMailboxesRef.current();
+        if (batch.some((event) => event.mailboxId === route.mailboxId)) loadFoldersRef.current();
+        if (batch.some((event) => event.mailboxId === route.mailboxId && (!event.folder || event.folder === route.folder))) loadMessagesRef.current();
+      }, 150);
+    });
+    return () => { off(); if (timer !== undefined) clearTimeout(timer); };
+  }, []);
   useEffect(() => onChanged("mail", () => { loadMailboxes(); loadFolders(); loadMessages(); }), [loadFolders, loadMailboxes, loadMessages]);
 
   const sync = async () => {
@@ -129,8 +213,7 @@ export function MailPage({ mailboxId, folder, uid, onNavigate }: { mailboxId?: n
   };
   const setSeen = async (seen: boolean) => {
     if (!message || !mailboxId) return;
-    try { await call("mail.seen", { mailboxId, folder: activeFolder, uid: message.uid, seen }); setMessage({ ...message, seen }); setMessages((current) => current ? { ...current, items: current.items.map((entry) => entry.uid === message.uid ? { ...entry, seen } : entry) } : current); loadMailboxes(); loadFolders(); }
-    catch (reason) { toast((reason as Error).message, "error"); }
+    updateSeen(mailboxId, activeFolder, message.uid, seen, message.seen);
   };
   const trash = async () => {
     if (!message || !mailboxId || !await confirm({ title: "把这封邮件移到废纸篓？", description: `“${message.subject || "（无主题）"}”将移到服务器的废纸篓。`, confirmText: "移到废纸篓", destructive: true })) return;
@@ -143,6 +226,11 @@ export function MailPage({ mailboxId, folder, uid, onNavigate }: { mailboxId?: n
     for (const item of mailboxes ?? []) groups.set(item.domain, [...(groups.get(item.domain) ?? []), item]);
     return [...groups];
   }, [mailboxes]);
+  const visibleMessages = listIdentity === listScope && messagesScope.current === listScope ? messages : null;
+  const visibleFolders = foldersMailbox.current === mailboxId ? folders : [];
+  const currentMessage = message && messageIdentity.current === `${listScope}\u0000${uid}` && message.uid === uid && message.folder === activeFolder ? message : null;
+  const selectedSummary = uid == null ? null : visibleMessages?.items.find((item) => item.uid === uid) ?? null;
+  const readerHeader = currentMessage ?? selectedSummary;
 
   if (mailboxes === null) return <div className="space-y-4"><header><h1 className="text-2xl font-semibold">邮箱</h1><p className="text-sm text-muted-foreground">正在读取邮箱…</p></header><div className="h-[34rem] animate-pulse rounded-lg bg-muted" /></div>;
   if (mailboxes.length === 0) return <div className="space-y-6"><header className="flex items-start justify-between gap-4"><div><h1 className="text-2xl font-semibold">邮箱</h1><p className="mt-1 text-sm text-muted-foreground">集中收发所有已接入 Hostinger 账号下的邮件。</p></div><Button variant="outline" onClick={() => void sync()} disabled={syncing}>{syncing ? <LoaderCircle className="animate-spin" aria-hidden /> : <RefreshCw aria-hidden />}同步</Button></header>{error && <p role="alert" className="text-sm text-destructive">{error}</p>}<div className="rounded-lg border border-dashed p-10 text-center text-sm"><Mail className="mx-auto mb-3 size-8 text-muted-foreground" aria-hidden /><p className="font-medium">还没有邮箱</p><p className="mt-1 text-muted-foreground">先在「账号」接入 Hostinger 账号并同步；账号下的邮箱会自动出现在这里。</p></div></div>;
@@ -159,10 +247,10 @@ export function MailPage({ mailboxId, folder, uid, onNavigate }: { mailboxId?: n
         <div className="max-h-[calc(100dvh-16rem)] overflow-auto p-2">{byDomain.map(([domain, items]) => <section key={domain} className="mb-4"><h2 className="px-2 pb-1 text-xs font-medium text-muted-foreground">{domain}</h2>{items.map((item) => <div key={item.id} className={cn("mb-1 rounded-md p-2", item.id === mailboxId ? "bg-accent" : "hover:bg-muted/60")}><button type="button" className="w-full text-left" onClick={() => onNavigate(routeFor(item.id, "INBOX"))}><span className="flex items-center justify-between gap-2 text-sm font-medium"><span className="truncate">{item.address}</span>{item.unreadCount > 0 && <Badge>{item.unreadCount}</Badge>}</span><span className="mt-1 block text-xs text-muted-foreground">{mailboxStatusText(item)}</span></button><div className="mt-2 flex flex-wrap gap-1">{item.credentialSaved ? <Button size="sm" variant="ghost" onClick={() => void setMonitoring(item, !item.monitoring)}>{item.monitoring ? "停止监听" : "开始监听"}</Button> : canEnterPassword(item) ? <><Button size="sm" variant="ghost" onClick={() => setCredentialFor(item)}>输入密码</Button>{item.defaultPasswordStatus === "rejected" && <Button size="sm" variant="ghost" disabled={retryingDefaultFor === item.id} onClick={() => void retryDefaultPassword(item)}>{retryingDefaultFor === item.id && <LoaderCircle className="animate-spin" aria-hidden />}用默认密码重试</Button>}</> : null}<Button size="icon-sm" variant="ghost" aria-label={`删除邮箱 ${item.address}`} onClick={() => void deleteMailbox(item)}><Trash2 aria-hidden /></Button></div></div>)}</section>)}</div>
       </aside>
       <section aria-label="邮件列表" className={cn("min-w-0 border-r", !showListPane && "hidden xl:block")}>
-        {activeMailbox ? <><div className="border-b p-3"><Button className="mb-2 xl:hidden" size="sm" variant="ghost" onClick={() => onNavigate("/mail")}><ArrowLeft aria-hidden />邮箱</Button><div className="flex items-center justify-between gap-2"><div className="min-w-0"><p className="truncate text-sm font-medium">{activeMailbox.address}</p><p className="text-xs text-muted-foreground">{activeFolder}</p></div>{(activeMailbox.credentialSaved || canEnterPassword(activeMailbox)) && <Button variant="ghost" size="icon-sm" aria-label="邮箱凭据" onClick={() => setCredentialFor(activeMailbox)}><MoreVertical aria-hidden /></Button>}</div>{activeMailbox.credentialSaved && <><div className="mt-3 flex gap-2 overflow-x-auto">{folders.map((item) => <Button key={item.path} size="sm" variant={item.path === activeFolder ? "secondary" : "ghost"} onClick={() => onNavigate(routeFor(activeMailbox.id, item.path))}>{item.name}{folderUnread(item, activeMailbox) > 0 && <span className="tabular-nums">{folderUnread(item, activeMailbox)}</span>}</Button>)}</div><label className="relative mt-3 block"><Search className="absolute top-2.5 left-2.5 size-4 text-muted-foreground" aria-hidden /><Input className="pl-8" value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder="搜索发件人或主题" /></label></>}</div>{!activeMailbox.credentialSaved ? <MailboxCredentialState mailbox={activeMailbox} retrying={retryingDefaultFor === activeMailbox.id} onEnter={() => setCredentialFor(activeMailbox)} onRetry={() => void retryDefaultPassword(activeMailbox)} /> : <><div className="max-h-[calc(100dvh-22rem)] overflow-auto">{messages === null ? <p className="p-6 text-center text-sm text-muted-foreground">正在读取邮件…</p> : messages.items.length === 0 ? <div className="p-8 text-center text-sm"><Inbox className="mx-auto mb-2 size-7 text-muted-foreground" aria-hidden /><p className="font-medium">{query ? "没有匹配的邮件" : "这个文件夹是空的"}</p></div> : messages.items.map((item) => <MessageRow key={item.uid} item={item} active={item.uid === uid} onOpen={() => onNavigate(routeFor(activeMailbox.id, activeFolder, item.uid))} />)}</div>{messages && messages.total > PAGE_SIZE && <div className="flex items-center justify-between border-t p-2 text-xs text-muted-foreground"><span>第 {messages.page} 页，共 {Math.ceil(messages.total / messages.pageSize)} 页</span><div><Button variant="ghost" size="icon-sm" aria-label="上一页" disabled={page <= 1} onClick={() => setPage((value) => value - 1)}><ChevronLeft aria-hidden /></Button><Button variant="ghost" size="icon-sm" aria-label="下一页" disabled={page * PAGE_SIZE >= messages.total} onClick={() => setPage((value) => value + 1)}><ChevronRight aria-hidden /></Button></div></div>}</>}</> : <p className="p-8 text-sm text-muted-foreground">请先选择邮箱。</p>}
+        {activeMailbox ? <><div className="border-b p-3"><Button className="mb-2 xl:hidden" size="sm" variant="ghost" onClick={() => onNavigate("/mail")}><ArrowLeft aria-hidden />邮箱</Button><div className="flex items-center justify-between gap-2"><div className="min-w-0"><p className="truncate text-sm font-medium">{activeMailbox.address}</p><p className="text-xs text-muted-foreground">{activeFolder}</p></div>{(activeMailbox.credentialSaved || canEnterPassword(activeMailbox)) && <Button variant="ghost" size="icon-sm" aria-label="邮箱凭据" onClick={() => setCredentialFor(activeMailbox)}><MoreVertical aria-hidden /></Button>}</div>{activeMailbox.credentialSaved && <><div className="mt-3 flex gap-2 overflow-x-auto">{visibleFolders.map((item) => <Button key={item.path} size="sm" variant={item.path === activeFolder ? "secondary" : "ghost"} onClick={() => onNavigate(routeFor(activeMailbox.id, item.path))}>{item.name}{folderUnread(item, activeMailbox) > 0 && <span className="tabular-nums">{folderUnread(item, activeMailbox)}</span>}</Button>)}</div><label className="relative mt-3 block"><Search className="absolute top-2.5 left-2.5 size-4 text-muted-foreground" aria-hidden /><Input className="pl-8" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索发件人或主题" /></label></>}</div>{!activeMailbox.credentialSaved ? <MailboxCredentialState mailbox={activeMailbox} retrying={retryingDefaultFor === activeMailbox.id} onEnter={() => setCredentialFor(activeMailbox)} onRetry={() => void retryDefaultPassword(activeMailbox)} /> : <><div aria-busy={listBusy} className={cn("max-h-[calc(100dvh-22rem)] overflow-auto transition-opacity", listBusy && visibleMessages !== null && "opacity-60")}>{visibleMessages === null ? <div role="status" aria-label="正在读取邮件">{Array.from({ length: 6 }, (_, index) => <MessageRowSkeleton key={index} />)}</div> : visibleMessages.items.length === 0 ? <div className="p-8 text-center text-sm"><Inbox className="mx-auto mb-2 size-7 text-muted-foreground" aria-hidden /><p className="font-medium">{query ? "没有匹配的邮件" : "这个文件夹是空的"}</p></div> : visibleMessages.items.map((item) => <MessageRow key={item.uid} item={item} active={item.uid === uid} onOpen={() => onNavigate(routeFor(activeMailbox.id, activeFolder, item.uid))} />)}</div>{visibleMessages && visibleMessages.total > PAGE_SIZE && <div className="flex items-center justify-between border-t p-2 text-xs text-muted-foreground"><span>第 {visibleMessages.page} 页，共 {Math.ceil(visibleMessages.total / visibleMessages.pageSize)} 页</span><div><Button variant="ghost" size="icon-sm" aria-label="上一页" disabled={page <= 1} onClick={() => setPage((value) => value - 1)}><ChevronLeft aria-hidden /></Button><Button variant="ghost" size="icon-sm" aria-label="下一页" disabled={page * PAGE_SIZE >= visibleMessages.total} onClick={() => setPage((value) => value + 1)}><ChevronRight aria-hidden /></Button></div></div>}</>}</> : <p className="p-8 text-sm text-muted-foreground">请先选择邮箱。</p>}
       </section>
-      <article aria-label="邮件正文" className={cn("min-w-0", !showReaderPane && "hidden xl:block")}>
-        {message && activeMailbox ? <><header className="border-b p-4"><Button className="mb-3 xl:hidden" size="sm" variant="ghost" onClick={() => onNavigate(routeFor(activeMailbox.id, activeFolder))}><ArrowLeft aria-hidden />邮件列表</Button><div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><h2 className="break-words text-lg font-semibold">{message.subject || "（无主题）"}</h2><p className="mt-2 break-all text-sm">发件人：{message.from}</p><p className="mt-1 break-all text-xs text-muted-foreground">收件人：{message.to.join("、")}{message.cc.length ? ` · 抄送：${message.cc.join("、")}` : ""}</p><p className="mt-1 text-xs text-muted-foreground">{new Date(message.date).toLocaleString("zh-CN")}</p></div><div className="flex flex-wrap gap-1"><Button variant="ghost" size="sm" onClick={() => setCompose({ mailbox: activeMailbox, mode: "reply", original: message })}><Reply aria-hidden />回复</Button><Button variant="ghost" size="sm" onClick={() => setCompose({ mailbox: activeMailbox, mode: "reply-all", original: message })}><ReplyAll aria-hidden />全部回复</Button><Button variant="ghost" size="sm" onClick={() => setCompose({ mailbox: activeMailbox, mode: "forward", original: message })}><Forward aria-hidden />转发</Button><Button variant="ghost" size="icon-sm" aria-label={message.seen ? "标为未读" : "标为已读"} onClick={() => void setSeen(!message.seen)}>{message.seen ? <Mail aria-hidden /> : <MailOpen aria-hidden />}</Button><Button variant="ghost" size="icon-sm" aria-label="移到废纸篓" onClick={() => void trash()}><Trash2 aria-hidden /></Button></div></div></header><div className="p-5"><MailBody text={message.text} />{message.attachments.length > 0 && <Attachments mailboxId={activeMailbox.id} folder={activeFolder} uid={message.uid} items={message.attachments} />}</div></> : <div className="grid h-full min-h-80 place-content-center p-8 text-center text-sm text-muted-foreground">{activeMailbox && <Button className="mb-6 xl:hidden" size="sm" variant="ghost" onClick={() => onNavigate(routeFor(activeMailbox.id, activeFolder))}><ArrowLeft aria-hidden />邮件列表</Button>}<MailOpen className="mx-auto mb-2 size-8" aria-hidden /><p>选择一封邮件阅读。</p><p className="mt-1 max-w-sm">正文始终按纯文本显示，URL 不可点击，也不会加载远程图片或跟踪像素。</p></div>}
+      <article aria-label="邮件正文" aria-busy={showReaderPane && !currentMessage} className={cn("min-w-0", !showReaderPane && "hidden xl:block")}>
+        {activeMailbox && showReaderPane ? <><header className="border-b p-4"><Button className="mb-3 xl:hidden" size="sm" variant="ghost" onClick={() => onNavigate(routeFor(activeMailbox.id, activeFolder))}><ArrowLeft aria-hidden />邮件列表</Button><div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><h2 className="break-words text-lg font-semibold">{readerHeader?.subject || "（无主题）"}</h2><p className="mt-2 break-all text-sm">发件人：{readerHeader?.from || "正在读取…"}</p>{currentMessage && <p className="mt-1 break-all text-xs text-muted-foreground">收件人：{currentMessage.to.join("、")}{currentMessage.cc.length ? ` · 抄送：${currentMessage.cc.join("、")}` : ""}</p>}<p className="mt-1 text-xs text-muted-foreground">{readerHeader ? new Date(readerHeader.date).toLocaleString("zh-CN") : "正在读取…"}</p></div>{currentMessage && <div className="flex flex-wrap gap-1"><Button variant="ghost" size="sm" onClick={() => setCompose({ mailbox: activeMailbox, mode: "reply", original: currentMessage })}><Reply aria-hidden />回复</Button><Button variant="ghost" size="sm" onClick={() => setCompose({ mailbox: activeMailbox, mode: "reply-all", original: currentMessage })}><ReplyAll aria-hidden />全部回复</Button><Button variant="ghost" size="sm" onClick={() => setCompose({ mailbox: activeMailbox, mode: "forward", original: currentMessage })}><Forward aria-hidden />转发</Button><Button variant="ghost" size="icon-sm" aria-label={currentMessage.seen ? "标为未读" : "标为已读"} onClick={() => void setSeen(!currentMessage.seen)}>{currentMessage.seen ? <Mail aria-hidden /> : <MailOpen aria-hidden />}</Button><Button variant="ghost" size="icon-sm" aria-label="移到废纸篓" onClick={() => void trash()}><Trash2 aria-hidden /></Button></div>}</div></header>{currentMessage ? <div className="p-5"><MailBody text={currentMessage.text} />{currentMessage.attachments.length > 0 && <Attachments mailboxId={activeMailbox.id} folder={activeFolder} uid={currentMessage.uid} items={currentMessage.attachments} />}</div> : <MailDetailSkeleton />}</> : <div className="grid h-full min-h-80 place-content-center p-8 text-center text-sm text-muted-foreground">{activeMailbox && <Button className="mb-6 xl:hidden" size="sm" variant="ghost" onClick={() => onNavigate(routeFor(activeMailbox.id, activeFolder))}><ArrowLeft aria-hidden />邮件列表</Button>}<MailOpen className="mx-auto mb-2 size-8" aria-hidden /><p>选择一封邮件阅读。</p><p className="mt-1 max-w-sm">正文始终按纯文本显示，URL 不可点击，也不会加载远程图片或跟踪像素。</p></div>}
       </article>
     </div>
     <CredentialDialog mailbox={credentialFor} onClose={() => setCredentialFor(null)} onSaved={() => { setCredentialFor(null); loadMailboxes(); loadFolders(); loadMessages(); }} />
@@ -178,7 +266,15 @@ function MailboxCredentialState({ mailbox, retrying, onEnter, onRetry }: { mailb
 }
 
 function MessageRow({ item, active, onOpen }: { item: MailMessageSummary; active: boolean; onOpen: () => void }) {
-  return <button type="button" className={cn("block w-full border-b p-3 text-left hover:bg-muted/60", active && "bg-accent", !item.seen && "border-l-2 border-l-primary bg-primary/5")} onClick={onOpen}><span className="flex items-center justify-between gap-2"><span className={cn("truncate text-sm", !item.seen && "font-semibold")}>{item.from || "未知发件人"}</span><span className="shrink-0 text-xs text-muted-foreground">{date(item.date)}</span></span><span className={cn("mt-1 block truncate text-sm", !item.seen && "font-medium")}>{item.subject || "（无主题）"}</span><span className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">{item.hasAttachments && <Paperclip className="size-3" aria-label="有附件" />}<span className="truncate">{item.snippet}</span></span></button>;
+  return <button type="button" className={cn("block min-h-[5.75rem] w-full border-b p-3 text-left hover:bg-muted/60", active && "bg-accent", !item.seen && "border-l-2 border-l-primary bg-primary/5")} onClick={onOpen}><span className="flex items-center justify-between gap-2"><span className={cn("truncate text-sm", !item.seen && "font-semibold")}>{item.from || "未知发件人"}</span><span className="shrink-0 text-xs text-muted-foreground">{date(item.date)}</span></span><span className={cn("mt-1 block truncate text-sm", !item.seen && "font-medium")}>{item.subject || "（无主题）"}</span><span className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">{item.hasAttachments && <Paperclip className="size-3" aria-label="有附件" />}<span className="truncate">{item.snippet}</span></span></button>;
+}
+
+function MessageRowSkeleton() {
+  return <div data-testid="mail-row-skeleton" aria-hidden="true" className="min-h-[5.75rem] animate-pulse border-b p-3"><div className="flex justify-between gap-4"><div className="h-4 w-2/5 rounded bg-muted" /><div className="h-3 w-16 rounded bg-muted" /></div><div className="mt-2 h-4 w-3/4 rounded bg-muted" /><div className="mt-2 h-3 w-full rounded bg-muted" /></div>;
+}
+
+function MailDetailSkeleton() {
+  return <div data-testid="mail-detail-skeleton" aria-hidden="true" className="animate-pulse space-y-3 p-5"><div className="h-4 w-full rounded bg-muted" /><div className="h-4 w-11/12 rounded bg-muted" /><div className="h-4 w-4/5 rounded bg-muted" /><div className="h-4 w-10/12 rounded bg-muted" /></div>;
 }
 
 function Attachments({ mailboxId, folder, uid, items }: { mailboxId: number; folder: string; uid: number; items: MailAttachment[] }) {

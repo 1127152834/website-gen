@@ -1,4 +1,4 @@
-import { createHmac, randomBytes, randomUUID } from "node:crypto";
+import { createHash, createHmac, randomBytes, randomUUID } from "node:crypto";
 import type { DatabaseSync } from "node:sqlite";
 import type {
   MailAttachment, MailEvent, MailFolder, MailListResult, MailMessageDetail, MailMessageSummary,
@@ -15,6 +15,7 @@ const MAX_INCOMING = 25 * 1024 * 1024;
 const MAX_ATTACHMENTS = 20 * 1024 * 1024;
 const DEFAULT_PASSWORD_SECRET = "mail.defaultPassword";
 const DEFAULT_ATTEMPT_DELAY_MS = 200;
+const FOLDER_METADATA_TTL_MS = 10 * 60 * 1000;
 
 interface MailboxRow {
   id: number;
@@ -33,7 +34,7 @@ interface SyncState {
   credentialSource?: MailCredentialSource;
   monitorMode?: MailMonitorMode;
   lastError?: string | null;
-  folders?: Record<string, { uidValidity?: string; syncedAt?: number }>;
+  folders?: Record<string, { uidValidity?: string; syncedAt?: number; nonSeenFlagsDigest?: string }>;
   /** 重置结果未知时保留同一候选密码，后续重试绝不再生成第二个。值本身仍是 AES-GCM 密文。 */
   pendingReset?: string;
   /** 只记工作区密钥派生的指纹；既不存明文，也不暴露可离线猜测的裸密码哈希。 */
@@ -122,8 +123,41 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
   let lastDefaultAttemptAt = 0;
   const defaultTrying = new Map<number, string>();
   const defaultUnavailable = new Map<number, { fingerprint: string; error: string }>();
+  const folderSyncs = new Map<string, Promise<void>>();
+  type FolderMetadata = Awaited<ReturnType<MailTransport["listFolders"]>>;
+  const folderMetadataCache = new Map<number, { expiresAt: number; value: FolderMetadata }>();
+  const folderMetadataLoads = new Map<number, Promise<FolderMetadata>>();
+  const folderMetadataGeneration = new Map<number, number>();
   const defaultFingerprint = (password: string) => createHmac("sha256", deps.key)
     .update("mail.defaultPassword\0").update(password).digest("hex");
+
+  const invalidateFolderMetadata = (mailboxId: number) => {
+    folderMetadataGeneration.set(mailboxId, (folderMetadataGeneration.get(mailboxId) ?? 0) + 1);
+    folderMetadataCache.delete(mailboxId);
+    folderMetadataLoads.delete(mailboxId);
+  };
+
+  const loadFolderMetadata = (mailboxId: number): Promise<FolderMetadata> => {
+    const box = row(mailboxId);
+    const creds = credentials(box);
+    const cached = folderMetadataCache.get(mailboxId);
+    if (cached && cached.expiresAt > Date.now()) return Promise.resolve(cached.value);
+    const pending = folderMetadataLoads.get(mailboxId);
+    if (pending) return pending;
+    const generation = folderMetadataGeneration.get(mailboxId) ?? 0;
+    const load = Promise.resolve().then(() => transportFactory().listFolders(creds)).then((value) => {
+      if ((folderMetadataGeneration.get(mailboxId) ?? 0) === generation) {
+        folderMetadataCache.set(mailboxId, { expiresAt: Date.now() + FOLDER_METADATA_TTL_MS, value });
+      }
+      return value;
+    });
+    folderMetadataLoads.set(mailboxId, load);
+    void load.then(
+      () => { if (folderMetadataLoads.get(mailboxId) === load) folderMetadataLoads.delete(mailboxId); },
+      () => { if (folderMetadataLoads.get(mailboxId) === load) folderMetadataLoads.delete(mailboxId); },
+    );
+    return load;
+  };
 
   const exclusive = <T>(work: () => Promise<T> | T): Promise<T> => {
     const task = serial.then(work, work);
@@ -199,6 +233,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
         const parsed = JSON.parse(unseal(deps.key, site.mailbox_ciphertext)) as MailCredentials;
         if (parsed.address.toLowerCase() !== address.toLowerCase() || !parsed.password) continue;
         deps.db.prepare("UPDATE mailboxes SET credential_ciphertext = ?, monitoring = 1 WHERE id = ? AND credential_ciphertext IS NULL").run(site.mailbox_ciphertext, mailboxId);
+        invalidateFolderMetadata(mailboxId);
         writeState(mailboxId, { credentialSource: "pipeline" });
         return;
       } catch { /* 旧密文坏了不能阻断账号同步。 */ }
@@ -242,6 +277,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
           if (!saved.credential_ciphertext) await importPipelineCredential(saved.id, item.address, item.domain);
         }
         for (const stale of staleRows) {
+          invalidateFolderMetadata(stale.id);
           deps.db.prepare("DELETE FROM mailboxes WHERE id = ?").run(stale.id);
           deleting.delete(stale.id);
         }
@@ -345,6 +381,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
             const creds = { address: current.address, password };
             deps.db.prepare("UPDATE mailboxes SET credential_ciphertext=?, monitoring=1 WHERE id=? AND credential_ciphertext IS NULL")
               .run(seal(deps.key, JSON.stringify(creds)), current.id);
+            invalidateFolderMetadata(current.id);
             writeState(current.id, { credentialSource: "default", lastError: null, failedDefaultPasswordFingerprint: undefined });
             saveSiteCredential(current, creds);
             result.succeeded++;
@@ -369,16 +406,25 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
     return result;
   }
 
-  async function syncFolder(mailboxId: number, requestedFolder: string): Promise<void> {
+  function syncFolder(mailboxId: number, requestedFolder: string): Promise<void> {
     const folder = normalizeFolder(requestedFolder);
-    await exclusive(async () => {
+    const syncKey = `${mailboxId}\0${folder}`;
+    const pending = folderSyncs.get(syncKey);
+    if (pending) return pending;
+    const task = exclusive(async () => {
       const box = row(mailboxId);
       const state = parseState(box);
       const previous = state.folders?.[folder]?.uidValidity;
-      const before = new Set((deps.db.prepare("SELECT uid FROM mail_messages WHERE mailbox_id=? AND folder=?").all(mailboxId, folder) as unknown as { uid: number }[]).map((item) => item.uid));
+      const priorRows = deps.db.prepare("SELECT uid,seen,size FROM mail_messages WHERE mailbox_id=? AND folder=?").all(mailboxId, folder) as unknown as { uid: number; seen: number; size: number }[];
+      const prior = new Map(priorRows.map((item) => [item.uid, item]));
+      const before = new Set(prior.keys());
+      const nextFlags = new Map<number, string>();
       const present = new Set<number>();
       const fresh: number[] = [];
       let validity: string | undefined;
+      let reset = false;
+      let metadataChanged = false;
+      let deleted = false;
       try {
         const upsert = deps.db.prepare(`INSERT INTO mail_messages(mailbox_id,folder,uid,message_id,from_json,to_json,cc_json,subject,date,snippet,seen,has_attachments,size,body_text,attachments_json,references_json,in_reply_to)
           VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(mailbox_id,folder,uid) DO UPDATE SET
@@ -393,6 +439,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
           if (event.kind === "mailbox") {
             validity = event.uidValidity;
             if (previous && validity !== previous) {
+              reset = true;
               deps.db.prepare("DELETE FROM mail_messages WHERE mailbox_id=? AND folder=?").run(mailboxId, folder);
               before.clear();
             }
@@ -400,7 +447,14 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
           }
           const message = event.message;
           present.add(message.uid);
+          const flags = [...new Set(message.flags.filter((flag) => flag !== "\\Seen"))].sort().join("\0");
+          nextFlags.set(message.uid, flags);
           if (!before.has(message.uid)) fresh.push(message.uid);
+          else {
+            const old = prior.get(message.uid)!;
+            const seenChanged = old.seen !== (message.flags.includes("\\Seen") ? 1 : 0);
+            if (seenChanged || old.size !== message.size) metadataChanged = true;
+          }
           if (message.source) {
             const parsed = await safeParse(message);
             upsert.run(mailboxId, folder, message.uid, parsed.messageId, JSON.stringify(parsed.from), JSON.stringify(parsed.to), JSON.stringify(parsed.cc),
@@ -413,9 +467,16 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
           }
         }
         if (!validity) throw new Error(`邮件服务器没有返回 ${folder} 的 UIDVALIDITY`);
-        for (const uid of before) if (!present.has(uid)) deps.db.prepare("DELETE FROM mail_messages WHERE mailbox_id=? AND folder=? AND uid=?").run(mailboxId, folder, uid);
+        for (const uid of before) if (!present.has(uid)) {
+          deps.db.prepare("DELETE FROM mail_messages WHERE mailbox_id=? AND folder=? AND uid=?").run(mailboxId, folder, uid);
+          deleted = true;
+        }
+        const nonSeenFlagsDigest = createHash("sha256")
+          .update(JSON.stringify([...nextFlags].sort(([left], [right]) => left - right))).digest("hex");
+        if (state.folders?.[folder]?.nonSeenFlagsDigest
+          && state.folders[folder].nonSeenFlagsDigest !== nonSeenFlagsDigest) metadataChanged = true;
         const syncedAt = Date.now();
-        const nextState: SyncState = { ...state, lastError: null, folders: { ...(state.folders ?? {}), [folder]: { uidValidity: validity, syncedAt } } };
+        const nextState: SyncState = { ...state, lastError: null, folders: { ...(state.folders ?? {}), [folder]: { uidValidity: validity, syncedAt, nonSeenFlagsDigest } } };
         deps.db.prepare("UPDATE mailboxes SET last_synced_at=?,sync_state_json=? WHERE id=?").run(syncedAt, JSON.stringify(nextState), mailboxId);
       } catch (error) {
         const safeError = state.credentialSource === "default"
@@ -424,12 +485,20 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
         throw safeError;
       }
       const unread = Number((deps.db.prepare("SELECT count(*) AS n FROM mail_messages WHERE mailbox_id=? AND folder='INBOX' AND seen=0").get(mailboxId) as { n: number }).n);
-      if (folder.toUpperCase() === "INBOX" && fresh.length) {
+      if (reset) deps.push({ type: "changed", mailboxId, folder });
+      else if (folder.toUpperCase() === "INBOX" && fresh.length) {
         if (!previous) deps.push({ type: "changed", mailboxId, folder, unreadCount: unread });
         else deps.push({ type: "new", mailboxId, folder, uid: Math.max(...fresh), unreadCount: unread });
       }
       else if (fresh.length) deps.push({ type: "changed", mailboxId, folder });
+      else if (deleted || metadataChanged) deps.push({ type: "changed", mailboxId, folder });
     });
+    folderSyncs.set(syncKey, task);
+    void task.then(
+      () => { if (folderSyncs.get(syncKey) === task) folderSyncs.delete(syncKey); },
+      () => { if (folderSyncs.get(syncKey) === task) folderSyncs.delete(syncKey); },
+    );
+    return task;
   }
 
   async function safeParse(message: RemoteMessage) {
@@ -482,6 +551,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
     await transportFactory().verify(creds);
     await exclusive(() => {
       row(input.mailboxId);
+      invalidateFolderMetadata(input.mailboxId);
       deps.db.prepare("UPDATE mailboxes SET credential_ciphertext=?, monitoring=1 WHERE id=?").run(seal(deps.key, JSON.stringify(creds)), input.mailboxId);
       writeState(input.mailboxId, { credentialSource: source, lastError: null, pendingReset: undefined, failedDefaultPasswordFingerprint: undefined });
       defaultUnavailable.delete(input.mailboxId);
@@ -497,8 +567,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
     sync: inventory,
     async reconcile() { if (!closed) await monitor.reconcile(); },
     async folders(mailboxId) {
-      const box = row(mailboxId);
-      const folders = await transportFactory().listFolders(credentials(box));
+      const folders = await loadFolderMetadata(mailboxId);
       return folders.map((folder): MailFolder => {
         const counts = deps.db.prepare("SELECT count(*) AS total,sum(CASE WHEN seen=0 THEN 1 ELSE 0 END) AS unread FROM mail_messages WHERE mailbox_id=? AND folder=?")
           .get(mailboxId, folder.path) as { total: number; unread: number | null };
@@ -508,8 +577,9 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
     async messages(input) {
       row(input.mailboxId);
       const folder = normalizeFolder(input.folder);
-      const latest = parseState(row(input.mailboxId)).folders?.[folder]?.syncedAt ?? 0;
-      if (Date.now() - latest > 30_000) await syncFolder(input.mailboxId, folder);
+      const latest = parseState(row(input.mailboxId)).folders?.[folder]?.syncedAt;
+      if (latest == null) await syncFolder(input.mailboxId, folder);
+      else if (Date.now() - latest > 30_000) void syncFolder(input.mailboxId, folder).catch(() => undefined);
       const page = Math.max(1, Math.floor(input.page ?? 1));
       const pageSize = Math.max(1, Math.min(100, Math.floor(input.pageSize ?? 50)));
       const query = input.query?.trim() ?? "";
@@ -526,6 +596,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
     async resetCredential(input) {
       if (!input.confirmed) throw new Error("重置密码会让其他邮件客户端停止工作，必须明确确认");
       const box = row(input.mailboxId);
+      invalidateFolderMetadata(input.mailboxId);
       const state = parseState(box);
       let creds: MailCredentials;
       if (state.pendingReset) creds = JSON.parse(unseal(deps.key, Buffer.from(state.pendingReset, "base64"))) as MailCredentials;
@@ -573,6 +644,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
       if (!input.confirmed) throw new Error("删除邮箱前必须确认");
       const box = row(input.mailboxId);
       deleting.add(input.mailboxId);
+      invalidateFolderMetadata(input.mailboxId);
       deps.db.prepare("UPDATE mailboxes SET monitoring=0 WHERE id=?").run(input.mailboxId);
       await monitor.stopMailbox(input.mailboxId);
       try {

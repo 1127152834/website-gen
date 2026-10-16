@@ -42,6 +42,15 @@ function oneMailbox() {
   return { db, fake, state, events, service };
 }
 
+async function eventually(assertion: () => void, attempts = 100): Promise<void> {
+  let failure: unknown;
+  for (let attempt = 0; attempt < attempts; attempt++) {
+    try { assertion(); return; } catch (error) { failure = error; }
+    await new Promise<void>((resolve) => setImmediate(resolve));
+  }
+  throw failure;
+}
+
 test("邮箱清单跨两个账号，并复用流水线密文", async () => {
   const { db } = setup();
   db.prepare("INSERT INTO hostinger_accounts(id,label,token_ciphertext,token_hint,status,created_at) VALUES(2,'副账号',?,'zzzz','ok',0)").run(seal(key, "token"));
@@ -114,13 +123,13 @@ test("超出 HTML 转文本上限的恶意邮件变成安全占位且不阻断�
   const { fake, service } = oneMailbox();
   const [box] = await service.sync();
   fake.passwords.set(box.address, "Mail1!");
-  await service.saveCredential({ mailboxId: box.id, password: "Mail1!" });
   const malicious = fakeRawMail({ from: "bad@example.test", to: [box.address], subject: "large html", html: `<p>${"x".repeat(2 * 1024 * 1024 + 100)}</p>` });
   const normal = fakeRawMail({ from: "good@example.test", to: [box.address], subject: "normal", text: "safe neighbor" });
   fake.seed(box.address, "INBOX", [
     { uid: 1, uidValidity: "html-1", folder: "INBOX", flags: [], size: malicious.length, source: malicious },
     { uid: 2, uidValidity: "html-1", folder: "INBOX", flags: [], size: normal.length, source: normal },
   ]);
+  await service.saveCredential({ mailboxId: box.id, password: "Mail1!" });
   const page = await service.messages({ mailboxId: box.id, folder: "INBOX", pageSize: 10 });
   assert.equal(page.total, 2);
   assert.match((await service.message({ mailboxId: box.id, folder: "INBOX", uid: 1 })).text, /无法安全解析/);
@@ -136,6 +145,7 @@ test("新邮件索引、未读计数、回复/回复全部/转发和 Sent 副本
   fake.seed(box.address, "INBOX", []);
   fake.seed(box.address, "Sent", []);
   await service.messages({ mailboxId: box.id, folder: "INBOX", page: 1, pageSize: 20 });
+  await service.setMonitoring({ mailboxId: box.id, enabled: false });
   fake.seed(box.address, "INBOX", [{
     uid: 9, uidValidity: "1", folder: "INBOX", flags: [], size: 300,
     source: fakeRawMail({ from: '"Doe, Alice" <alice@example.test>', to: [box.address], cc: ['"Smith, Team" <team@example.test>'], subject: "Question", text: "Original body", messageId: "<original@example.test>" }),
@@ -144,6 +154,9 @@ test("新邮件索引、未读计数、回复/回复全部/转发和 Sent 副本
   const syncState = JSON.parse(sync.sync_state_json) as { folders: Record<string, { syncedAt: number }> };
   syncState.folders.INBOX.syncedAt = 0;
   db.prepare("UPDATE mailboxes SET sync_state_json=? WHERE id=?").run(JSON.stringify(syncState), box.id);
+  const stalePage = await service.messages({ mailboxId: box.id, folder: "INBOX", page: 1, pageSize: 20 });
+  assert.equal(stalePage.total, 0);
+  await eventually(() => assert.equal((db.prepare("SELECT count(*) AS n FROM mail_messages WHERE mailbox_id=? AND folder='INBOX'").get(box.id) as { n: number }).n, 1));
   const page = await service.messages({ mailboxId: box.id, folder: "INBOX", page: 1, pageSize: 20 });
   assert.equal(page.total, 1);
   assert.equal(service.list()[0].unreadCount, 1);
@@ -281,10 +294,11 @@ test("已缓存 UID 只同步 flags，不重新下载正文且保留正文索引
   const { db, fake, service } = oneMailbox();
   const [box] = await service.sync();
   fake.passwords.set(box.address, "Mail1!");
-  await service.saveCredential({ mailboxId: box.id, password: "Mail1!" });
   const source = fakeRawMail({ from: "sender@example.test", to: [box.address], subject: "Keep body", text: "do not refetch me" });
   fake.seed(box.address, "INBOX", [{ uid: 1, uidValidity: "flags-1", folder: "INBOX", flags: [], size: source.length, source }]);
+  await service.saveCredential({ mailboxId: box.id, password: "Mail1!" });
   await service.messages({ mailboxId: box.id, folder: "INBOX" });
+  await service.setMonitoring({ mailboxId: box.id, enabled: false });
   const message = fake.folders.get(box.address)?.get("INBOX")?.[0];
   assert.ok(message);
   message.flags = ["\\Seen"];
@@ -292,6 +306,9 @@ test("已缓存 UID 只同步 flags，不重新下载正文且保留正文索引
   const state = JSON.parse(current.sync_state_json) as { folders: Record<string, { uidValidity: string; syncedAt: number }> };
   state.folders.INBOX.syncedAt = 0;
   db.prepare("UPDATE mailboxes SET sync_state_json=? WHERE id=?").run(JSON.stringify(state), box.id);
+  const stalePage = await service.messages({ mailboxId: box.id, folder: "INBOX" });
+  assert.equal(stalePage.items[0].seen, false);
+  await eventually(() => assert.equal((db.prepare("SELECT seen FROM mail_messages WHERE mailbox_id=? AND folder='INBOX' AND uid=1").get(box.id) as { seen: number }).seen, 1));
   const page = await service.messages({ mailboxId: box.id, folder: "INBOX" });
   assert.equal(page.items[0].seen, true);
   assert.equal((await service.message({ mailboxId: box.id, folder: "INBOX", uid: 1 })).text, "do not refetch me");

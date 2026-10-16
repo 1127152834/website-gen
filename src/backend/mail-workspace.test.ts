@@ -8,9 +8,48 @@ import { createWorkspace } from "./index.ts";
 import { openDb, migrate } from "./db.ts";
 import { handleRequest } from "./rpc.ts";
 import { seal } from "./secrets.ts";
-import type { MailTransport } from "./mailbox-transport.ts";
+import type { MailCredentials, MailTransport, RemoteMessage } from "./mailbox-transport.ts";
 import type { HostingerExec } from "./hostinger.ts";
-import { FakeMailTransport } from "./testing.ts";
+import type { Push } from "../shared/protocol.ts";
+import { FakeMailTransport, fakeRawMail } from "./testing.ts";
+
+function deferred<T = void>() {
+  let resolve!: (value: T | PromiseLike<T>) => void;
+  let reject!: (reason?: unknown) => void;
+  const promise = new Promise<T>((ok, fail) => { resolve = ok; reject = fail; });
+  return { promise, resolve, reject };
+}
+
+function seedMailbox(input: {
+  dir: string;
+  key: Buffer;
+  syncedAt?: number;
+  uidValidity?: string;
+  messages?: { uid: number; seen?: boolean; size?: number; subject?: string }[];
+}) {
+  const db = openDb(join(input.dir, "website-gen.sqlite"));
+  migrate(db);
+  const state = input.syncedAt == null ? {} : {
+    folders: { INBOX: { uidValidity: input.uidValidity ?? "1", syncedAt: input.syncedAt } },
+  };
+  db.prepare("INSERT INTO hostinger_accounts(id,label,token_ciphertext,token_hint,created_at) VALUES(1,'mail',?,'hint',0)").run(seal(input.key, "token"));
+  db.prepare("INSERT INTO mailboxes(id,account_id,order_id,remote_id,address,domain,credential_ciphertext,sync_state_json) VALUES(1,1,'o','r','mail@example.test','example.test',?,?)")
+    .run(seal(input.key, JSON.stringify({ address: "mail@example.test", password: "saved" })), JSON.stringify(state));
+  for (const message of input.messages ?? []) {
+    db.prepare("INSERT INTO mail_messages(mailbox_id,folder,uid,subject,seen,size,body_text) VALUES(1,'INBOX',?,?,?,?,?)")
+      .run(message.uid, message.subject ?? `cached-${message.uid}`, message.seen ? 1 : 0, message.size ?? 10, `body-${message.uid}`);
+  }
+  db.close();
+}
+
+const remoteMessage = (uid: number, input: { seen?: boolean; size?: number; uidValidity?: string; source?: boolean } = {}): RemoteMessage => ({
+  uid,
+  folder: "INBOX",
+  uidValidity: input.uidValidity ?? "1",
+  flags: input.seen ? ["\\Seen"] : [],
+  size: input.size ?? 10,
+  source: input.source ? fakeRawMail({ from: "sender@example.test", to: ["mail@example.test"], subject: `remote-${uid}`, text: `body-${uid}` }) : undefined,
+});
 
 test("mail RPC uses only the authenticated workspace: A cannot list, read or reset B's mailbox", async () => {
   const prefix = resolve(tmpdir(), "website-mail-isolation-");
@@ -220,3 +259,486 @@ test("active mixed batches omit abandoned sites while direct detail and history 
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+test("stale messages return cached rows without waiting for the background refresh and publish its flag change", async () => {
+  const prefix = resolve(tmpdir(), "website-mail-stale-cache-");
+  const dir = mkdtempSync(prefix), key = randomBytes(32);
+  seedMailbox({ dir, key, syncedAt: Date.now() - 60_000, messages: [{ uid: 1, seen: false, subject: "cached" }] });
+  const started = deferred(), release = deferred(), changed = deferred<Push>();
+  let calls = 0;
+  class BlockingTransport extends FakeMailTransport {
+    override async *streamMessages(credentials: MailCredentials, folder: string) {
+      await this.verify(credentials);
+      calls++;
+      yield { kind: "mailbox" as const, uidValidity: "1" };
+      started.resolve();
+      await release.promise;
+      yield { kind: "message" as const, message: remoteMessage(1, { seen: true }) };
+    }
+  }
+  const transport = new BlockingTransport();
+  transport.passwords.set("mail@example.test", "saved");
+  const workspace = createWorkspace({ userDir: dir, key, dependencies: { mailTransport: () => transport } });
+  const unsubscribe = workspace.subscribe((event) => {
+    if (event.kind === "mail" && event.event.type === "changed") changed.resolve(event);
+  });
+  try {
+    const request = workspace.handlers["mail.messages"]({ mailboxId: 1, folder: "INBOX" }) as Promise<{ items: { subject: string; seen: boolean }[] }>;
+    const concurrent = workspace.handlers["mail.messages"]({ mailboxId: 1, folder: "INBOX" }) as Promise<{ items: { subject: string; seen: boolean }[] }>;
+    await started.promise;
+    const outcome = await Promise.race([
+      request.then((value) => ({ kind: "result" as const, value })),
+      new Promise<{ kind: "blocked" }>((resolveRace) => setImmediate(() => resolveRace({ kind: "blocked" }))),
+    ]);
+    assert.equal(outcome.kind, "result");
+    if (outcome.kind === "result") assert.deepEqual(outcome.value.items.map((item) => [item.subject, item.seen]), [["cached", false]]);
+    const concurrentOutcome = await Promise.race([
+      concurrent.then((value) => ({ kind: "result" as const, value })),
+      new Promise<{ kind: "blocked" }>((resolveRace) => setImmediate(() => resolveRace({ kind: "blocked" }))),
+    ]);
+    assert.equal(concurrentOutcome.kind, "result");
+    if (concurrentOutcome.kind === "result") assert.deepEqual(concurrentOutcome.value.items.map((item) => [item.subject, item.seen]), [["cached", false]]);
+    assert.equal(calls, 1);
+    release.resolve();
+    const pushed = await changed.promise;
+    assert.deepEqual(pushed, { kind: "mail", event: { type: "changed", mailboxId: 1, folder: "INBOX" } });
+  } finally {
+    release.resolve();
+    unsubscribe();
+    await workspace.close();
+    if (!resolve(dir).startsWith(prefix)) throw new Error("temporary directory escaped prefix");
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("two concurrent cold-cache message reads share one synchronization", async () => {
+  const prefix = resolve(tmpdir(), "website-mail-cold-dedup-");
+  const dir = mkdtempSync(prefix), key = randomBytes(32);
+  seedMailbox({ dir, key });
+  const started = deferred(), release = deferred();
+  let calls = 0;
+  class BlockingTransport extends FakeMailTransport {
+    override async *streamMessages(credentials: MailCredentials, folder: string) {
+      await this.verify(credentials);
+      calls++;
+      started.resolve();
+      await release.promise;
+      yield { kind: "mailbox" as const, uidValidity: "1" };
+      yield { kind: "message" as const, message: remoteMessage(1, { source: true }) };
+    }
+  }
+  const transport = new BlockingTransport();
+  transport.passwords.set("mail@example.test", "saved");
+  const workspace = createWorkspace({ userDir: dir, key, dependencies: { mailTransport: () => transport } });
+  try {
+    const first = workspace.handlers["mail.messages"]({ mailboxId: 1, folder: "INBOX" }) as Promise<{ total: number }>;
+    const second = workspace.handlers["mail.messages"]({ mailboxId: 1, folder: "INBOX" }) as Promise<{ total: number }>;
+    await started.promise;
+    release.resolve();
+    assert.deepEqual((await Promise.all([first, second])).map((result) => result.total), [1, 1]);
+    assert.equal(calls, 1);
+  } finally {
+    release.resolve();
+    await workspace.close();
+    if (!resolve(dir).startsWith(prefix)) throw new Error("temporary directory escaped prefix");
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("folder reads share one request and reuse the result inside the TTL", async () => {
+  const prefix = resolve(tmpdir(), "website-mail-folder-cache-");
+  const dir = mkdtempSync(prefix), key = randomBytes(32);
+  seedMailbox({ dir, key });
+  const started = deferred(), release = deferred();
+  let calls = 0;
+  class BlockingTransport extends FakeMailTransport {
+    override async listFolders(credentials: MailCredentials) {
+      await this.verify(credentials);
+      calls++;
+      started.resolve();
+      await release.promise;
+      return [{ path: "INBOX", name: "Inbox", specialUse: "\\Inbox" }];
+    }
+  }
+  const transport = new BlockingTransport();
+  transport.passwords.set("mail@example.test", "saved");
+  const workspace = createWorkspace({ userDir: dir, key, dependencies: { mailTransport: () => transport } });
+  try {
+    const first = workspace.handlers["mail.folders"]({ mailboxId: 1 });
+    const second = workspace.handlers["mail.folders"]({ mailboxId: 1 });
+    await started.promise;
+    release.resolve();
+    const [a, b] = await Promise.all([first, second]);
+    assert.deepEqual(a, b);
+    assert.equal(calls, 1);
+    const db = openDb(join(dir, "website-gen.sqlite"));
+    db.prepare("INSERT INTO mail_messages(mailbox_id,folder,uid,seen) VALUES(1,'INBOX',99,0)").run();
+    db.close();
+    assert.deepEqual(await workspace.handlers["mail.folders"]({ mailboxId: 1 }), [{ path: "INBOX", name: "Inbox", specialUse: "\\Inbox", total: 1, unread: 1 }]);
+    assert.equal(calls, 1);
+  } finally {
+    release.resolve();
+    await workspace.close();
+    if (!resolve(dir).startsWith(prefix)) throw new Error("temporary directory escaped prefix");
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("saving credentials invalidates the cached folder list", async () => {
+  const prefix = resolve(tmpdir(), "website-mail-folder-invalidate-");
+  const dir = mkdtempSync(prefix), key = randomBytes(32);
+  seedMailbox({ dir, key });
+  let calls = 0;
+  class CountingTransport extends FakeMailTransport {
+    override async listFolders(credentials: MailCredentials) {
+      calls++;
+      return super.listFolders(credentials);
+    }
+  }
+  const transport = new CountingTransport();
+  transport.passwords.set("mail@example.test", "saved");
+  const workspace = createWorkspace({ userDir: dir, key, dependencies: { mailTransport: () => transport } });
+  try {
+    await workspace.handlers["mail.folders"]({ mailboxId: 1 });
+    await workspace.handlers["mail.folders"]({ mailboxId: 1 });
+    assert.equal(calls, 1);
+    await workspace.handlers["mail.credential.save"]({ mailboxId: 1, password: "saved" });
+    const afterSave = calls;
+    await workspace.handlers["mail.folders"]({ mailboxId: 1 });
+    assert.equal(calls, afterSave + 1);
+  } finally {
+    await workspace.close();
+    if (!resolve(dir).startsWith(prefix)) throw new Error("temporary directory escaped prefix");
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("an old in-flight folder load cannot overwrite the cache after credentials change", async () => {
+  const prefix = resolve(tmpdir(), "website-mail-folder-generation-");
+  const dir = mkdtempSync(prefix), key = randomBytes(32);
+  seedMailbox({ dir, key });
+  const oldStarted = deferred(), releaseOld = deferred();
+  let oldCalls = 0, newCalls = 0;
+  class CredentialAwareTransport extends FakeMailTransport {
+    override async listFolders(credentials: MailCredentials) {
+      await this.verify(credentials);
+      if (credentials.password === "saved") {
+        oldCalls++;
+        oldStarted.resolve();
+        await releaseOld.promise;
+        return [{ path: "Old", name: "Old", specialUse: null }];
+      }
+      newCalls++;
+      return [{ path: "New", name: "New", specialUse: null }];
+    }
+  }
+  const transport = new CredentialAwareTransport();
+  transport.passwords.set("mail@example.test", "saved");
+  const workspace = createWorkspace({ userDir: dir, key, dependencies: { mailTransport: () => transport } });
+  try {
+    const oldLoad = workspace.handlers["mail.folders"]({ mailboxId: 1 });
+    await oldStarted.promise;
+    transport.passwords.set("mail@example.test", "replacement");
+    await workspace.handlers["mail.credential.save"]({ mailboxId: 1, password: "replacement" });
+    assert.deepEqual(await workspace.handlers["mail.folders"]({ mailboxId: 1 }), [
+      { path: "New", name: "New", specialUse: null, total: 0, unread: 0 },
+    ]);
+    releaseOld.resolve();
+    assert.deepEqual(await oldLoad, [{ path: "Old", name: "Old", specialUse: null, total: 0, unread: 0 }]);
+    assert.deepEqual(await workspace.handlers["mail.folders"]({ mailboxId: 1 }), [
+      { path: "New", name: "New", specialUse: null, total: 0, unread: 0 },
+    ]);
+    assert.deepEqual([oldCalls, newCalls], [1, 1]);
+  } finally {
+    releaseOld.resolve();
+    await workspace.close();
+    if (!resolve(dir).startsWith(prefix)) throw new Error("temporary directory escaped prefix");
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("folder metadata is loaded again after its TTL expires", async () => {
+  const prefix = resolve(tmpdir(), "website-mail-folder-ttl-");
+  const dir = mkdtempSync(prefix), key = randomBytes(32);
+  seedMailbox({ dir, key });
+  let calls = 0, now = 1_800_000_000_000;
+  const realNow = Date.now;
+  Date.now = () => now;
+  class CountingTransport extends FakeMailTransport {
+    override async listFolders(credentials: MailCredentials) {
+      calls++;
+      return super.listFolders(credentials);
+    }
+  }
+  const transport = new CountingTransport();
+  transport.passwords.set("mail@example.test", "saved");
+  const workspace = createWorkspace({ userDir: dir, key, dependencies: { mailTransport: () => transport } });
+  try {
+    await workspace.handlers["mail.folders"]({ mailboxId: 1 });
+    now += 9 * 60_000;
+    await workspace.handlers["mail.folders"]({ mailboxId: 1 });
+    assert.equal(calls, 1);
+    now += 2 * 60_000;
+    await workspace.handlers["mail.folders"]({ mailboxId: 1 });
+    assert.equal(calls, 2);
+  } finally {
+    Date.now = realNow;
+    await workspace.close();
+    if (!resolve(dir).startsWith(prefix)) throw new Error("temporary directory escaped prefix");
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("a rejected background refresh records lastError and the next stale read retries", async () => {
+  const prefix = resolve(tmpdir(), "website-mail-background-retry-");
+  const dir = mkdtempSync(prefix), key = randomBytes(32);
+  seedMailbox({ dir, key, syncedAt: Date.now() - 60_000, messages: [{ uid: 1 }] });
+  const releaseFailure = deferred();
+  const completed = [deferred(), deferred()];
+  let attempts = 0;
+  class RetryTransport extends FakeMailTransport {
+    override async *streamMessages(credentials: MailCredentials, folder: string) {
+      await this.verify(credentials);
+      const attempt = attempts++;
+      try {
+        if (attempt === 0) {
+          await releaseFailure.promise;
+          throw new Error("controlled refresh failure");
+        }
+        yield { kind: "mailbox" as const, uidValidity: "1" };
+        yield { kind: "message" as const, message: remoteMessage(1) };
+      } finally {
+        completed[attempt]?.resolve();
+      }
+    }
+  }
+  const transport = new RetryTransport();
+  transport.passwords.set("mail@example.test", "saved");
+  const workspace = createWorkspace({ userDir: dir, key, dependencies: { mailTransport: () => transport } });
+  try {
+    const cached = await workspace.handlers["mail.messages"]({ mailboxId: 1, folder: "INBOX" }) as { total: number };
+    assert.equal(cached.total, 1);
+    releaseFailure.resolve();
+    await completed[0].promise;
+    let lastError: string | null = null;
+    for (let turn = 0; turn < 20 && !lastError; turn++) {
+      await new Promise<void>((done) => setImmediate(done));
+      lastError = ((await workspace.handlers["mail.list"](undefined)) as { lastError: string | null }[])[0]?.lastError ?? null;
+    }
+    assert.match(lastError ?? "", /controlled refresh failure/);
+    assert.equal((await workspace.handlers["mail.messages"]({ mailboxId: 1, folder: "INBOX" }) as { total: number }).total, 1);
+    await completed[1].promise;
+    await new Promise<void>((done) => setImmediate(done));
+    assert.equal(attempts, 2);
+    assert.equal(((await workspace.handlers["mail.list"](undefined)) as { lastError: string | null }[])[0]?.lastError, null);
+  } finally {
+    releaseFailure.resolve();
+    await workspace.close();
+    if (!resolve(dir).startsWith(prefix)) throw new Error("temporary directory escaped prefix");
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("a non-Seen flag change publishes changed after an earlier snapshot", async () => {
+  const prefix = resolve(tmpdir(), "website-mail-other-flags-");
+  const dir = mkdtempSync(prefix), key = randomBytes(32);
+  let now = 1_800_000_000_000;
+  seedMailbox({ dir, key, syncedAt: now - 60_000, messages: [{ uid: 1 }] });
+  const realNow = Date.now;
+  Date.now = () => now;
+  const completed = [deferred(), deferred()];
+  let calls = 0, flags: string[] = [];
+  class FlagTransport extends FakeMailTransport {
+    override async *streamMessages(credentials: MailCredentials, folder: string) {
+      await this.verify(credentials);
+      const call = calls++;
+      try {
+        yield { kind: "mailbox" as const, uidValidity: "1" };
+        yield { kind: "message" as const, message: { ...remoteMessage(1), flags: [...flags] } };
+      } finally {
+        completed[call]?.resolve();
+      }
+    }
+  }
+  const transport = new FlagTransport();
+  transport.passwords.set("mail@example.test", "saved");
+  const workspace = createWorkspace({ userDir: dir, key, dependencies: { mailTransport: () => transport } });
+  const events: unknown[] = [];
+  const unsubscribe = workspace.subscribe((event) => { if (event.kind === "mail") events.push(event.event); });
+  try {
+    await workspace.handlers["mail.messages"]({ mailboxId: 1, folder: "INBOX" });
+    await completed[0].promise;
+    await new Promise<void>((done) => setImmediate(done));
+    events.length = 0;
+    flags = ["\\Flagged"];
+    now += 31_000;
+    await workspace.handlers["mail.messages"]({ mailboxId: 1, folder: "INBOX" });
+    await completed[1].promise;
+    await new Promise<void>((done) => setImmediate(done));
+    assert.deepEqual(events, [{ type: "changed", mailboxId: 1, folder: "INBOX" }]);
+  } finally {
+    Date.now = realNow;
+    unsubscribe();
+    await workspace.close();
+    if (!resolve(dir).startsWith(prefix)) throw new Error("temporary directory escaped prefix");
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("a sync after markSeen does not publish a duplicate changed event", async () => {
+  const prefix = resolve(tmpdir(), "website-mail-seen-snapshot-");
+  const dir = mkdtempSync(prefix), key = randomBytes(32);
+  let now = 1_800_000_000_000;
+  seedMailbox({ dir, key, syncedAt: now - 60_000, messages: [{ uid: 1 }] });
+  const realNow = Date.now;
+  Date.now = () => now;
+  const completed = [deferred(), deferred()];
+  let calls = 0, seen = false;
+  class SeenTransport extends FakeMailTransport {
+    override async *streamMessages(credentials: MailCredentials, folder: string) {
+      await this.verify(credentials);
+      const call = calls++;
+      try {
+        yield { kind: "mailbox" as const, uidValidity: "1" };
+        yield { kind: "message" as const, message: remoteMessage(1, { seen }) };
+      } finally {
+        completed[call]?.resolve();
+      }
+    }
+
+    override async setSeen(credentials: MailCredentials, folder: string, uid: number, value: boolean) {
+      await this.verify(credentials);
+      assert.equal(folder, "INBOX");
+      assert.equal(uid, 1);
+      seen = value;
+    }
+  }
+  const transport = new SeenTransport();
+  transport.passwords.set("mail@example.test", "saved");
+  const workspace = createWorkspace({ userDir: dir, key, dependencies: { mailTransport: () => transport } });
+  const events: unknown[] = [];
+  const unsubscribe = workspace.subscribe((event) => { if (event.kind === "mail") events.push(event.event); });
+  try {
+    await workspace.handlers["mail.messages"]({ mailboxId: 1, folder: "INBOX" });
+    await completed[0].promise;
+    await new Promise<void>((done) => setImmediate(done));
+    events.length = 0;
+    await workspace.handlers["mail.seen"]({ mailboxId: 1, folder: "INBOX", uid: 1, seen: true });
+    assert.deepEqual(events, [{ type: "changed", mailboxId: 1, folder: "INBOX", uid: 1 }]);
+    events.length = 0;
+
+    now += 31_000;
+    await workspace.handlers["mail.messages"]({ mailboxId: 1, folder: "INBOX" });
+    await completed[1].promise;
+    await new Promise<void>((done) => setImmediate(done));
+    assert.deepEqual(events, []);
+  } finally {
+    Date.now = realNow;
+    unsubscribe();
+    await workspace.close();
+    if (!resolve(dir).startsWith(prefix)) throw new Error("temporary directory escaped prefix");
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("a non-Seen flag change after workspace restart publishes changed only once", async () => {
+  const prefix = resolve(tmpdir(), "website-mail-restart-flags-");
+  const dir = mkdtempSync(prefix), key = randomBytes(32);
+  let now = 1_800_000_000_000;
+  seedMailbox({ dir, key, syncedAt: now - 60_000, messages: [{ uid: 1 }] });
+  const realNow = Date.now;
+  Date.now = () => now;
+  const completed = [deferred(), deferred(), deferred()];
+  let calls = 0, flags: string[] = [];
+  class RestartFlagTransport extends FakeMailTransport {
+    override async *streamMessages(credentials: MailCredentials, folder: string) {
+      await this.verify(credentials);
+      const call = calls++;
+      try {
+        yield { kind: "mailbox" as const, uidValidity: "1" };
+        yield { kind: "message" as const, message: { ...remoteMessage(1), flags: [...flags] } };
+      } finally {
+        completed[call]?.resolve();
+      }
+    }
+  }
+  const transport = new RestartFlagTransport();
+  transport.passwords.set("mail@example.test", "saved");
+  let first = createWorkspace({ userDir: dir, key, dependencies: { mailTransport: () => transport } });
+  let second: ReturnType<typeof createWorkspace> | undefined;
+  try {
+    await first.handlers["mail.messages"]({ mailboxId: 1, folder: "INBOX" });
+    await completed[0].promise;
+    await new Promise<void>((done) => setImmediate(done));
+    await first.close();
+
+    flags = ["\\Flagged"];
+    now += 31_000;
+    second = createWorkspace({ userDir: dir, key, dependencies: { mailTransport: () => transport } });
+    const events: unknown[] = [];
+    const unsubscribe = second.subscribe((event) => { if (event.kind === "mail") events.push(event.event); });
+    try {
+      await second.handlers["mail.messages"]({ mailboxId: 1, folder: "INBOX" });
+      await completed[1].promise;
+      await new Promise<void>((done) => setImmediate(done));
+      assert.deepEqual(events, [{ type: "changed", mailboxId: 1, folder: "INBOX" }]);
+
+      events.length = 0;
+      now += 31_000;
+      await second.handlers["mail.messages"]({ mailboxId: 1, folder: "INBOX" });
+      await completed[2].promise;
+      await new Promise<void>((done) => setImmediate(done));
+      assert.deepEqual(events, []);
+    } finally {
+      unsubscribe();
+    }
+  } finally {
+    Date.now = realNow;
+    await first.close();
+    await second?.close();
+    if (!resolve(dir).startsWith(prefix)) throw new Error("temporary directory escaped prefix");
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+for (const scenario of [
+  { name: "a remote deletion publishes changed", remote: [] as RemoteMessage[], expected: [{ type: "changed", mailboxId: 1, folder: "INBOX" }] },
+  { name: "a remote seen-flag change publishes changed", remote: [remoteMessage(1, { seen: true })], expected: [{ type: "changed", mailboxId: 1, folder: "INBOX" }] },
+  { name: "a UIDVALIDITY reset publishes changed instead of new", remote: [remoteMessage(1, { uidValidity: "2", source: true })], expected: [{ type: "changed", mailboxId: 1, folder: "INBOX" }] },
+  { name: "an unchanged mailbox publishes no event", remote: [remoteMessage(1)], expected: [] },
+  { name: "a new INBOX message keeps the new event", remote: [remoteMessage(1), remoteMessage(2, { source: true })], expected: [{ type: "new", mailboxId: 1, folder: "INBOX", uid: 2, unreadCount: 2 }] },
+]) {
+  test(scenario.name, async () => {
+    const prefix = resolve(tmpdir(), "website-mail-diff-event-");
+    const dir = mkdtempSync(prefix), key = randomBytes(32);
+    seedMailbox({ dir, key, syncedAt: Date.now() - 60_000, uidValidity: "1", messages: [{ uid: 1 }] });
+    const completed = deferred();
+    class DiffTransport extends FakeMailTransport {
+      override async *streamMessages(credentials: MailCredentials, folder: string) {
+        try {
+          await this.verify(credentials);
+          yield { kind: "mailbox" as const, uidValidity: scenario.remote[0]?.uidValidity ?? "1" };
+          for (const message of scenario.remote) yield { kind: "message" as const, message };
+        } finally {
+          completed.resolve();
+        }
+      }
+    }
+    const transport = new DiffTransport();
+    transport.passwords.set("mail@example.test", "saved");
+    const workspace = createWorkspace({ userDir: dir, key, dependencies: { mailTransport: () => transport } });
+    const events: unknown[] = [];
+    const unsubscribe = workspace.subscribe((event) => { if (event.kind === "mail") events.push(event.event); });
+    try {
+      await workspace.handlers["mail.messages"]({ mailboxId: 1, folder: "INBOX" });
+      await completed.promise;
+      await new Promise<void>((done) => setImmediate(done));
+      assert.deepEqual(events, scenario.expected);
+    } finally {
+      unsubscribe();
+      await workspace.close();
+      if (!resolve(dir).startsWith(prefix)) throw new Error("temporary directory escaped prefix");
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+}
