@@ -104,7 +104,7 @@ log "uploading archive to ${REMOTE}:${remote_archive}"
 scp -q "$archive" "$REMOTE:$remote_archive"
 
 log "activating release and waiting for production health checks"
-remote_ssh "$REMOTE" 'bash -s' -- "$PROD_ROOT" "$release_name" "$remote_archive" <<'REMOTE_DEPLOY'
+remote_output="$(remote_ssh "$REMOTE" 'bash -s' -- "$PROD_ROOT" "$release_name" "$remote_archive" 2>&1 <<'REMOTE_DEPLOY' | tee /dev/stderr
 set -euo pipefail
 umask 077
 root="$1"
@@ -202,6 +202,10 @@ for name in "${releases[@]}"; do
     rm -rf --one-file-system "$candidate"
   fi
 done
+echo "[deploy] REMOTE-DEPLOY-FINISHED"
 REMOTE_DEPLOY
+)"
+# 远端脚本经 stdin 送达；若中途有命令吞掉 stdin，bash 会以 0 退出却没跑完。只认这个结束标记。
+[[ "$remote_output" == *"[deploy] REMOTE-DEPLOY-FINISHED"* ]] || die "remote deploy script did not run to completion; release was not verified"
 
 log "deployment complete"

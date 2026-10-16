@@ -28,7 +28,9 @@ production_init() {
   COMPOSE=(docker compose --project-name website-gen --project-directory "$RELEASE" --env-file "$PROD_ROOT/shared/.env" -f "$RELEASE/deploy/docker-compose.prod.yml")
 }
 
-compose() { "${COMPOSE[@]}" "$@"; }
+# 部署脚本经 `ssh bash -s` 从标准输入送达；compose（尤其 `compose run`）一读 stdin 就会吞掉剩下的脚本，
+# 让后续构建/启动被静默跳过。所以所有 compose 命令都不读标准输入。
+compose() { "${COMPOSE[@]}" "$@" </dev/null; }
 
 production_validate() {
   local mode password
