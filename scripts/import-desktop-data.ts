@@ -249,15 +249,25 @@ async function main(): Promise<void> {
   if (!user) throw new Error(options.username ? `找不到用户：${options.username}` : "找不到可用管理员");
   if (user.disabled) throw new Error("不能向已停用用户导入数据");
 
-  const exported = await exportDesktopKey(options.desktopDir);
+  // 桌面版主密钥解不开时（DPAPI/Local State 丢失），可用 DESKTOP_KEY_FILE 直接给出旧数据的 32 字节密钥（hex 文本或原始字节）
+  const keyFile = process.env.DESKTOP_KEY_FILE;
+  const exported = keyFile ? { dir: "", key: readKeyFile(keyFile) } : await exportDesktopKey(options.desktopDir);
   try {
     const result = await importDesktopData({ desktopDir: options.desktopDir, dataDir: options.dataDir, userId: user.id, oldKey: exported.key });
     console.log(`已导入到用户 ${user.username}（ID ${user.id}），重新加密 ${result.rekeyed} 个字段。`);
     if (result.backupDir) console.log(`导入前的空工作区保留在：${result.backupDir}`);
   } finally {
     exported.key.fill(0);
-    rmSync(exported.dir, { recursive: true, force: true });
+    if (exported.dir) rmSync(exported.dir, { recursive: true, force: true });
   }
+}
+
+function readKeyFile(path: string): Buffer {
+  const raw = readFileSync(path);
+  const text = raw.toString("utf8").trim();
+  const key = /^[0-9a-f]{64}$/i.test(text) ? Buffer.from(text, "hex") : raw;
+  if (key.length !== 32) throw new Error("DESKTOP_KEY_FILE 必须是 32 字节密钥（64 位 hex 文本或原始字节）");
+  return key;
 }
 
 const isDirect = process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url;
