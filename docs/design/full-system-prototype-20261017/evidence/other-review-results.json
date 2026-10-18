@@ -1,0 +1,436 @@
+{
+  "schema_version": 1,
+  "status": "COMPLETE",
+  "as_of": "2026-10-17T20:18:58-07:00",
+  "scope": "non-mail remaining modules plus ES05-ES08 and ES10; ES09 excluded by owner assignment",
+  "summary": {
+    "assigned_ids": 41,
+    "current_images": 41,
+    "missing": 0,
+    "static_review_pass": 8,
+    "static_review_pass_with_minor_dimension_deviation": 33,
+    "substantive_fix_required": 0,
+    "interaction_proven": false
+  },
+  "review_rules": [
+    "静态图片只验证可见业务语义与视觉一致性，不能证明交互或后端实现。",
+    "1490x1056 是生成目标；1px 尺寸偏差且无裁切/风格变化记 minor，不用代码补像素。",
+    "邮件 AI 默认关闭；O-S09/ES08 为独立授权后的配置或历史状态，不与默认实时主态混合。",
+    "权限角色仅管理员/普通用户；运营为职责备注。",
+    "Grist 为全局原生 iframe，不假画客户专属自研表格编辑器。",
+    "规则匹配只提供关联线索，不自动确认身份。",
+    "拟新增索引/并发保护/关联候选只作为静态目标，不声称已实现。"
+  ],
+  "items": [
+    {
+      "id": "R01",
+      "module": "resources",
+      "current_image": "screens/R01-v2.png",
+      "prompt": "prompts/R01-fix-v2.txt",
+      "sha256": "483bcd1194c257a7298536e470196def9b1aae4cfbdf59c972d99ea0a201c55b",
+      "dimensions": "1491x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "单一 northline.example 展示行；网站 1、邮箱 1；当前展示 1/8 条。"
+    },
+    {
+      "id": "R02",
+      "module": "resources",
+      "current_image": "screens/R02-v2.png",
+      "prompt": "prompts/R02-fix-v2.txt",
+      "sha256": "5d7dc1f02aa1857c26706361edba7762fcfe947e4a73061eecfc9d22b3fe9df8",
+      "dimensions": "1491x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "域名详情不显示无基线创建时间。"
+    },
+    {
+      "id": "R03",
+      "module": "resources",
+      "current_image": "screens/R03-v2.png",
+      "prompt": "prompts/R03-fix-v2.txt",
+      "sha256": "1412ed2d5870be03194b824de48a65653371f86a467c207aa0aff3712efcf65a",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "业务边界、角色/操作人、日期与覆盖层语义未见实质冲突。"
+    },
+    {
+      "id": "R04",
+      "module": "resources",
+      "current_image": "screens/R04-v3.png",
+      "prompt": "prompts/R04-fix-v3.txt",
+      "sha256": "14b5b1a0cabf1d28b774ffee68651c92501d980144d24d0384f90e4702424b26",
+      "dimensions": "1489x1056",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "客户关联阻断放弃；无网关状态联动或转移客户功能。"
+    },
+    {
+      "id": "O-R01",
+      "module": "resources",
+      "current_image": "screens/O-R01-v1.png",
+      "prompt": "prompts/O-R01-v1.txt",
+      "sha256": "1d361d4c628336a35050e4e19983a092b4e76206bc2ecd17799b25991e8a8133",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "业务边界、角色/操作人、日期与覆盖层语义未见实质冲突。"
+    },
+    {
+      "id": "O-R02",
+      "module": "resources",
+      "current_image": "screens/O-R02-v1.png",
+      "prompt": "prompts/O-R02-v1.txt",
+      "sha256": "74d140680c47f9516a96eabbfda6411a92c1f2f349c0ffaeecd81d82f0d0738e",
+      "dimensions": "1491x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "业务边界、角色/操作人、日期与覆盖层语义未见实质冲突。"
+    },
+    {
+      "id": "T01",
+      "module": "grist",
+      "current_image": "screens/T01-v2.png",
+      "prompt": "prompts/T01-fix-v2.txt",
+      "sha256": "6bc5d7f5c6d4c13ee7a2418285b5b6a44065232c7db1f429abfdf915f1550136",
+      "dimensions": "1490x1056",
+      "status": "static_review_pass",
+      "review_notes": "全局 Grist 工作区；https://grist.example；原生 iframe 边界。"
+    },
+    {
+      "id": "T02",
+      "module": "grist",
+      "current_image": "screens/T02-v3.png",
+      "prompt": "prompts/T02-fix-v3.txt",
+      "sha256": "08c684627f47b55b266aa50e2ce06f9deee38cba93fd5a09df550e3177052c7e",
+      "dimensions": "1491x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "全局宿主与原生 Grist 边界清晰；示例行仅 APP-002 / PayPal / 待补件。"
+    },
+    {
+      "id": "S01",
+      "module": "settings",
+      "current_image": "screens/S01-v1.png",
+      "prompt": "prompts/S01-v1.txt",
+      "sha256": "a0f2922332676a5d0e69df2ee965f67136d2e775a57564893a91f388a1f56d89",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "业务边界、角色/操作人、日期与覆盖层语义未见实质冲突。"
+    },
+    {
+      "id": "S03",
+      "module": "settings",
+      "current_image": "screens/S03-v1.png",
+      "prompt": "prompts/S03-v1.txt",
+      "sha256": "01e58e685c9265c69826c3b1dc0c8c500f58bfb8a97664a0141eaddd061728d0",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "看截图/合规审查标注阶段一拟用，不新增服务端角色。"
+    },
+    {
+      "id": "S04",
+      "module": "settings",
+      "current_image": "screens/S04-v2.png",
+      "prompt": "prompts/S04-fix-v2.txt",
+      "sha256": "c6771dca314b6d949c2795b487fe0f17b315216ef3fa52e0bfbe3f8add61e534",
+      "dimensions": "1490x1056",
+      "status": "static_review_pass",
+      "review_notes": "CJ 未设置、未验证；无成功记录或商品样例。"
+    },
+    {
+      "id": "S05",
+      "module": "settings",
+      "current_image": "screens/S05-v1.png",
+      "prompt": "prompts/S05-v1.txt",
+      "sha256": "7a241ed90bff5538c3f60eace39f33ba50db675602ce083f37e56063b586a9b7",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "业务边界、角色/操作人、日期与覆盖层语义未见实质冲突。"
+    },
+    {
+      "id": "S06",
+      "module": "settings",
+      "current_image": "screens/S06-v1.png",
+      "prompt": "prompts/S06-v1.txt",
+      "sha256": "dd3ebf2d17766f84e2727b036716c07ef3f47f8fd3f4b59aefd2742941ea0a8a",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "业务边界、角色/操作人、日期与覆盖层语义未见实质冲突。"
+    },
+    {
+      "id": "S08",
+      "module": "settings",
+      "current_image": "screens/S08-v1.png",
+      "prompt": "prompts/S08-v1.txt",
+      "sha256": "23a02c6786ba2c77c998a71f030357b96d4acba6974cc10da4eb8a227305e898",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "权限仅管理员/普通用户；运营仅职责备注。"
+    },
+    {
+      "id": "S09",
+      "module": "settings",
+      "current_image": "screens/S09-v1.png",
+      "prompt": "prompts/S09-v1.txt",
+      "sha256": "7958f2d8c5590923b1b329de370386bd59e157ca8211639ce5acdbbcc90905bf",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "默认关闭/未配置主态。"
+    },
+    {
+      "id": "S10",
+      "module": "settings",
+      "current_image": "screens/S10-v1.png",
+      "prompt": "prompts/S10-v1.txt",
+      "sha256": "9d34520559d57b8ea23f43aa118c404cb5a098d560ebba9a5d414389cf4c6197",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "规则仅给关联线索，不自动确认身份。"
+    },
+    {
+      "id": "S02",
+      "module": "settings",
+      "current_image": "screens/S02-v1.png",
+      "prompt": "prompts/S02-v1.txt",
+      "sha256": "dbe305e31f1e8b5985e05f5ea71e16cedbf22fd42d55529ce277537737213483",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "业务边界、角色/操作人、日期与覆盖层语义未见实质冲突。"
+    },
+    {
+      "id": "O-S02",
+      "module": "settings",
+      "current_image": "screens/O-S02-v1.png",
+      "prompt": "prompts/O-S02-v1.txt",
+      "sha256": "d81a2304973871af457722caec4f41fe9d0d19d672ea004cb939150768d77b17",
+      "dimensions": "1490x1056",
+      "status": "static_review_pass",
+      "review_notes": "业务边界、角色/操作人、日期与覆盖层语义未见实质冲突。"
+    },
+    {
+      "id": "O-S03",
+      "module": "settings",
+      "current_image": "screens/O-S03-v2.png",
+      "prompt": "prompts/O-S03-fix-v2.txt",
+      "sha256": "f4f60165009c75b70c860954f6b2058caeb607efdf3c24f0837ae54199e22d0a",
+      "dimensions": "1489x1056",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "未配置底页与待验证凭据弹窗一致。"
+    },
+    {
+      "id": "O-S04",
+      "module": "settings",
+      "current_image": "screens/O-S04-v1.png",
+      "prompt": "prompts/O-S04-v1.txt",
+      "sha256": "bd5b9746f993bcb421c58b0a99c03cab93e9a71cc2d2cc24c3dda19ce08bf1b7",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "业务边界、角色/操作人、日期与覆盖层语义未见实质冲突。"
+    },
+    {
+      "id": "O-S05",
+      "module": "settings",
+      "current_image": "screens/O-S05-v1.png",
+      "prompt": "prompts/O-S05-v1.txt",
+      "sha256": "14eb13c4bd5672a348cd30ce9234687da30120a882fb1ea2b8e42532a5710d37",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "业务边界、角色/操作人、日期与覆盖层语义未见实质冲突。"
+    },
+    {
+      "id": "O-S06",
+      "module": "settings",
+      "current_image": "screens/O-S06-v1.png",
+      "prompt": "prompts/O-S06-v1.txt",
+      "sha256": "872fda317f148db70c82d30174cea039f0f73b900c9e01fb3718e5031cb293cb",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "业务边界、角色/操作人、日期与覆盖层语义未见实质冲突。"
+    },
+    {
+      "id": "O-S07",
+      "module": "settings",
+      "current_image": "screens/O-S07-v1.png",
+      "prompt": "prompts/O-S07-v1.txt",
+      "sha256": "48344fe3c2fb3722115ef120e29ec999dc8b82c8d7c13cc905913753a4fd9a97",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "业务边界、角色/操作人、日期与覆盖层语义未见实质冲突。"
+    },
+    {
+      "id": "O-S08",
+      "module": "settings",
+      "current_image": "screens/O-S08-v1.png",
+      "prompt": "prompts/O-S08-v1.txt",
+      "sha256": "fc9bfdfc9211271e5fd3978429a5186a9e05c8c47eef7e36e7e146362989c2de",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "业务边界、角色/操作人、日期与覆盖层语义未见实质冲突。"
+    },
+    {
+      "id": "O-S09",
+      "module": "settings",
+      "current_image": "screens/O-S09-v1.png",
+      "prompt": "prompts/O-S09-v1.txt",
+      "sha256": "06bffc2bb281bbd4dc42115414417a97e7a291a404c3e79db96b12a447a2e283",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "独立授权快照；与默认关闭主态分离。"
+    },
+    {
+      "id": "O-S10",
+      "module": "settings",
+      "current_image": "screens/O-S10-v1.png",
+      "prompt": "prompts/O-S10-v1.txt",
+      "sha256": "4dce8cbe5b6eed52c525e30ad8515bd1d6e721ae330bf2f9cb7d6ab9e215059a",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "历史不回写；线索仍需人工确认。"
+    },
+    {
+      "id": "A02",
+      "module": "global",
+      "current_image": "screens/A02-v1.png",
+      "prompt": "prompts/A02-v1.txt",
+      "sha256": "3286ecfbd651e667976a522001b590e9051edace395e00797426c998da815a30",
+      "dimensions": "1490x1056",
+      "status": "static_review_pass",
+      "review_notes": "业务边界、角色/操作人、日期与覆盖层语义未见实质冲突。"
+    },
+    {
+      "id": "A03",
+      "module": "global",
+      "current_image": "screens/A03-v1.png",
+      "prompt": "prompts/A03-v1.txt",
+      "sha256": "a7dd803b74de4d3abfc7e152da7a120e011ed147878c55ad56db93a6f0325d34",
+      "dimensions": "1491x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "业务边界、角色/操作人、日期与覆盖层语义未见实质冲突。"
+    },
+    {
+      "id": "A05",
+      "module": "global",
+      "current_image": "screens/A05-v1.png",
+      "prompt": "prompts/A05-v1.txt",
+      "sha256": "326ed5368461047cc2de0ea57c712cb885dbaf3fbbec011786e290c57b72a8c5",
+      "dimensions": "1489x1056",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "业务边界、角色/操作人、日期与覆盖层语义未见实质冲突。"
+    },
+    {
+      "id": "A06",
+      "module": "global",
+      "current_image": "screens/A06-v1.png",
+      "prompt": "prompts/A06-v1.txt",
+      "sha256": "8d32163ba41d59cab7f22017a9020137884006dd7f876c039eb620239e7bf3a6",
+      "dimensions": "1490x1056",
+      "status": "static_review_pass",
+      "review_notes": "业务边界、角色/操作人、日期与覆盖层语义未见实质冲突。"
+    },
+    {
+      "id": "A07",
+      "module": "global",
+      "current_image": "screens/A07-v1.png",
+      "prompt": "prompts/A07-v1.txt",
+      "sha256": "3c14c47c1f3483b73dbf330338211aa8693c0a9cc28856395abfe0773b842e08",
+      "dimensions": "1490x1056",
+      "status": "static_review_pass",
+      "review_notes": "业务边界、角色/操作人、日期与覆盖层语义未见实质冲突。"
+    },
+    {
+      "id": "A08",
+      "module": "global",
+      "current_image": "screens/A08-v1.png",
+      "prompt": "prompts/A08-v1.txt",
+      "sha256": "ed971b7910ce79e61aa8edc7bfd02f901c46e5d37a6168a31ed97241c7f325db",
+      "dimensions": "1490x1056",
+      "status": "static_review_pass",
+      "review_notes": "客户索引明确为阶段一索引候选。"
+    },
+    {
+      "id": "A09",
+      "module": "global",
+      "current_image": "screens/A09-v1.png",
+      "prompt": "prompts/A09-v1.txt",
+      "sha256": "e4f043c1390f345dbcb877be4270fd9e4cd6696f1fbca6dd2502d51c9b2e3e0d",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "仅本地邮箱摘要与导航；不解析 APP 来源证据。"
+    },
+    {
+      "id": "A04",
+      "module": "global",
+      "current_image": "screens/A04-v1.png",
+      "prompt": "prompts/A04-v1.txt",
+      "sha256": "fec05402dde951a4b1afd4a6258762ae5590b593acea87e3defac8bbc9088a2f",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "业务边界、角色/操作人、日期与覆盖层语义未见实质冲突。"
+    },
+    {
+      "id": "O-A02",
+      "module": "global",
+      "current_image": "screens/O-A02-v1.png",
+      "prompt": "prompts/O-A02-v1.txt",
+      "sha256": "6f39c47c686c2dee6e33c14595f03ea36c3197b292af4e80907dc744a5bac174",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "mail_seen_set 源码支持的写操作在执行前确认，画面明确尚未执行。"
+    },
+    {
+      "id": "O-A03",
+      "module": "global",
+      "current_image": "screens/O-A03-v1.png",
+      "prompt": "prompts/O-A03-v1.txt",
+      "sha256": "74024547c015faef4fcf70bba083058aea7c79a01c1983cc849fa40decffd46b",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "业务边界、角色/操作人、日期与覆盖层语义未见实质冲突。"
+    },
+    {
+      "id": "ES05",
+      "module": "essential_states",
+      "current_image": "screens/ES05-v1.png",
+      "prompt": "prompts/ES05-v1.txt",
+      "sha256": "35d366e3a4426767f6aa4d0cc9bb312d1c34c1f65dfad7ca60d59e4978d386fa",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "业务边界、角色/操作人、日期与覆盖层语义未见实质冲突。"
+    },
+    {
+      "id": "ES06",
+      "module": "essential_states",
+      "current_image": "screens/ES06-v2.png",
+      "prompt": "prompts/ES06-fix-v2.txt",
+      "sha256": "ecbb6b2878d57e42f45a5cb735cd39ca6c98114e569c5498f178593d2add522f",
+      "dimensions": "1491x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "独立未关联 demo-resource.example 部分失败态。"
+    },
+    {
+      "id": "ES07",
+      "module": "essential_states",
+      "current_image": "screens/ES07-v1.png",
+      "prompt": "prompts/ES07-v1.txt",
+      "sha256": "58afe431c7022a7cf9d06acb59a15e7c4a02237e32d98523a0fb498282e813c2",
+      "dimensions": "1491x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "业务边界、角色/操作人、日期与覆盖层语义未见实质冲突。"
+    },
+    {
+      "id": "ES08",
+      "module": "essential_states",
+      "current_image": "screens/ES08-v1.png",
+      "prompt": "prompts/ES08-v1.txt",
+      "sha256": "1c2389fc67f928642a79f024ed5d9e7939f92a171945a4bb24d84cd42827df97",
+      "dimensions": "1490x1056",
+      "status": "static_review_pass",
+      "review_notes": "独立授权后的 paused_audit 历史快照。"
+    },
+    {
+      "id": "ES10",
+      "module": "essential_states",
+      "current_image": "screens/ES10-v1.png",
+      "prompt": "prompts/ES10-v1.txt",
+      "sha256": "0592fb509b3011ac7716bfdda0e8cc051b1e0d1c8d5e8b8da72118b72e81068b",
+      "dimensions": "1490x1055",
+      "status": "static_review_pass_with_minor_dimension_deviation",
+      "review_notes": "拟新增删除并发冲突静态目标，仅比较/重新读取/取消。"
+    }
+  ]
+}

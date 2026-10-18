@@ -1,0 +1,61 @@
+{
+  "checked_at": "2026-10-18T04:32:49.8204867-07:00",
+  "original_document_count": 7,
+  "unchanged_count": 6,
+  "intentional_entry_link_count": 1,
+  "original_readme_only_entry_added": true,
+  "readme_backup_verified": true,
+  "readme_backup": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\evidence\\backups\\module-reader-final\\original-README.before-module-link.md",
+  "unexpected_change_count": 0,
+  "items": [
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\README.md",
+      "before_sha256": "52DDB85272BF8C46BB4F8BCCA2498A3527469BC8A10EC753C50329E25E8F059E",
+      "after_sha256": "DBB085B665FB0268EF337882A0A3A6049D53DD225429FA801147CDFF26CB4E96",
+      "unchanged": false,
+      "intentional_entry_link": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\coverage.json",
+      "before_sha256": "6CC160D1EB37EA9189F243E3640089CAFB1EE21F94ED441324A0D93F40991FE8",
+      "after_sha256": "6CC160D1EB37EA9189F243E3640089CAFB1EE21F94ED441324A0D93F40991FE8",
+      "unchanged": true,
+      "intentional_entry_link": false
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\coverage.md",
+      "before_sha256": "0F61557BD8B9F0FFA5CD87B7C39FF8A435A7D510DE5950E3493171CFEF3E5A9D",
+      "after_sha256": "0F61557BD8B9F0FFA5CD87B7C39FF8A435A7D510DE5950E3493171CFEF3E5A9D",
+      "unchanged": true,
+      "intentional_entry_link": false
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\galleries\\customer.md",
+      "before_sha256": "9E26819214A81C13224BF447C9DA08AD0BB6734F41612B73981273DA7EAFF52E",
+      "after_sha256": "9E26819214A81C13224BF447C9DA08AD0BB6734F41612B73981273DA7EAFF52E",
+      "unchanged": true,
+      "intentional_entry_link": false
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\galleries\\website.md",
+      "before_sha256": "74F47C0B622430031741DF1F0072A94CBC0201CEE61F417152327FEFB8E3B7BE",
+      "after_sha256": "74F47C0B622430031741DF1F0072A94CBC0201CEE61F417152327FEFB8E3B7BE",
+      "unchanged": true,
+      "intentional_entry_link": false
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\galleries\\remaining.md",
+      "before_sha256": "C701D8AF86655184EF410428942671DEE72955A77543F1BD4AB595B86B9C930E",
+      "after_sha256": "C701D8AF86655184EF410428942671DEE72955A77543F1BD4AB595B86B9C930E",
+      "unchanged": true,
+      "intentional_entry_link": false
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\galleries\\continuation-20261018.md",
+      "before_sha256": "D948F6ABD705B0DC46F8E8286F2A6AF8E5834EC070ED941E0E97B96E1027A5D3",
+      "after_sha256": "D948F6ABD705B0DC46F8E8286F2A6AF8E5834EC070ED941E0E97B96E1027A5D3",
+      "unchanged": true,
+      "intentional_entry_link": false
+    }
+  ]
+}

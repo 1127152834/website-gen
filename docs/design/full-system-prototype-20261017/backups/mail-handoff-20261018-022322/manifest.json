@@ -1,0 +1,12 @@
+[
+  {
+    "source": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\evidence\\mail-review-results.json",
+    "backup": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\backups\\mail-handoff-20261018-022322\\mail-review-results.json",
+    "sha256": "6D001D2FA7E86A8F4193A49D067B22023B1F1684960449B41EC09B9008B9390E"
+  },
+  {
+    "source": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\evidence\\mail-module-regression.md",
+    "backup": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\backups\\mail-handoff-20261018-022322\\mail-module-regression.md",
+    "sha256": "818B0401A3D3683D50E529F9F4CEEA20FE7721BAE65C10876CDC7CEDE7CEF48B"
+  }
+]

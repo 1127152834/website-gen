@@ -1,0 +1,239 @@
+{
+  "schema_version": 1,
+  "created_at": "10/17/2026",
+  "mode": "english_scene_prompts_only_no_generation",
+  "style_reference": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/common-style.txt",
+  "existing_prompt_indexes": [
+    {
+      "id": "O-W02",
+      "status": "existing_prompt_reused_not_rewritten",
+      "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/O-W02-v1.txt"
+    },
+    {
+      "id": "O-W03",
+      "status": "existing_prompt_reused_not_rewritten",
+      "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/O-W03-v1.txt"
+    },
+    {
+      "id": "O-W04",
+      "status": "existing_prompt_reused_not_rewritten",
+      "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/O-W04-v1.txt"
+    },
+    {
+      "id": "O-W06",
+      "status": "existing_prompt_reused_not_rewritten",
+      "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/O-W06-v1.txt"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "O-W01",
+      "title": "CSV 站点配置导入结果",
+      "purpose": "逐行核对CSV与本次已选客户，仅将明确有效配置带入未提交清单。",
+      "prompt": "Create one static desktop mockup showing a wide right drawer titled “导入站点配置结果” above a dimmed W03 configuration screen. Retain the established white canvas, navy typography, subtle borders, and Chinese interface. This is a proposed compatibility adaptation, not a claim that customer matching already exists in the application. The current unsent selection contains Jamie Chen/C002/Cedar Living LLC, Taylor Brooks/C003/Paperfield LLC, and Jordan Lee/C004/Harbor Supply LLC.\nShow a compact summary “共 4 行 · 可采用 2 行 · 错误 2 行”. Use a review table with CSV row number, matched customer, company, domain, and result. Row 2 explicitly matches Jamie and cedar-living.example. Row 3 matches Taylor and paperfield.example. Row 4 identifies Jordan but incorrectly repeats paperfield.example; mark “域名重复，不采用”. Row 5 contains C099 and an unknown company; mark “不在本次客户清单，不采用”. Do not automatically create or select another customer.\nBelow the table, explain “仅更新明确匹配的已选客户站点配置；不导入客户资料，不共享企业资料。” Make clear that adopting two valid rows preserves Jordan’s previous unsent configuration and does not silently remove him. Provide “返回修正文件”, “取消”, and a navy “采用 2 行有效配置”. Adoption only updates the pending configuration screen. Display “当前尚未提交建站” near the footer; do not show purchased resources, completed websites, or real import execution. Keep every proposed matching decision visible before adopting configuration rows.",
+      "reference_kind": "drawer_over_W03",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-03-website-management/W03-site-configuration-v1.png"
+      ],
+      "required_content": [
+        "4 行：可采用 2、错误 2",
+        "CSV 行号、匹配客户、企业、域名、结果",
+        "Jamie/C002 与 Taylor/C003 明确匹配",
+        "Jordan 重复域名错误、不覆盖原配置",
+        "未选客户不创建",
+        "采用有效配置不是提交建站"
+      ],
+      "capability": "new_customer_matching_adaptation_design",
+      "status": "prompt_ready_not_generated",
+      "english_word_count": 183
+    },
+    {
+      "id": "O-W05",
+      "title": "上线前网站复核提示",
+      "purpose": "对维护中的Casey网站读取QA并允许人工知悉未解决项后继续上线。",
+      "prompt": "Create a single centered confirmation modal titled “上线前网站复核” over a subdued website overview. The object must be Casey Parker, Meadow Home LLC, meadow-home.example, with separate badges “建成” and “维护中”. Do not copy the failed Jordan scenario or the already published Alex status from other references. Preserve the same restrained white and navy application shell.\nShow a successful latest report read at “10/17/2026 13:40 PT”. This independent fictional report contains one concern identified as CASEY-Q01: “页脚联系方式排版需人工核对”. Present the actual finding, its report source, and “待人工核对” without a score, approval prediction, or fabricated customer task. The report belongs to Casey, not Alex’s Q-001 through Q-003.\nUse an amber note explaining “仍有未解决项；确认后可继续上线。网站复核不等于网关审核。” Offer a visible “查看复核报告” link. A checked acknowledgement states “我已知悉未解决项，仍继续上线。” The footer contains “取消” and “仍然上线”. Their enabled state must agree with the acknowledgement.\nThe background remains in maintenance mode because this is the moment before confirmation, not a successful publication result. Explain that publication applies to this website only and does not change customer materials or gateway outcomes. All dates use American format, all operator text uses “操作人”, and no automatic payment test or resource purchase is introduced. Keep this concern tied to the displayed report rather than inferred from missing customer materials.",
+      "reference_kind": "modal_over_maintenance_site",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W08-v1.png",
+        "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W07-v1.png"
+      ],
+      "required_content": [
+        "Casey Parker · Meadow Home LLC · meadow-home.example",
+        "建成 · 维护中",
+        "最新 QA 已读取，存在 1 项待人工核对",
+        "仍然上线/取消/查看复核报告",
+        "不得用已上线Alex冒充待上线"
+      ],
+      "capability": "existing_function_ui_optimization",
+      "status": "prompt_ready_not_generated",
+      "english_word_count": 191
+    },
+    {
+      "id": "O-W07",
+      "title": "开始新对话确认",
+      "purpose": "重置Alex网站对话上下文，明确已应用的网站修改仍保留。",
+      "prompt": "Create one restrained confirmation dialog above Alex Morgan’s existing northline.example chat screen. Keep the website header visible with Northline LLC and “建成 · 已上线”; the active detail tab is “AI 对话”. Use the same white background, navy heading, thin borders, and modest overlay treatment as the existing customer dialogs. This is a static confirmation state, not a newly executed operation.\nTitle the dialog “开始新对话”. Identify the target website explicitly rather than using a generic warning. Show “当前无执行中的任务”, consistent with the completed chat example. Mention the latest known record: “CHG-014 · 首页标题修改为 Northline Goods · 已应用”. The human initiator remains 李敏, and the underlying website change must not be marked pending merely because a dialog opens.\nThe main explanation reads “只清空当前对话上下文，不撤销已经应用的网站修改。” Add a short supporting sentence telling the user that website change records remain accessible from “变更记录”. Do not invent a conversation archive, automatic website backup, or an undo action inside this dialog.\nPlace “取消” on the left and the navy “开始新对话” on the right. Keep the close icon available. Closing or cancelling retains the current context. Confirming is a future action; the screenshot must still show the existing conversation behind the modal. No stopped-task button, generated success toast, customer owner field, or gateway status belongs here.",
+      "reference_kind": "modal_over_site_chat",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W09-v1.png"
+      ],
+      "required_content": [
+        "Alex Morgan · northline.example",
+        "当前无执行中的任务",
+        "CHG-014 已应用不会撤销",
+        "仅清空当前对话上下文",
+        "取消/开始新对话"
+      ],
+      "capability": "existing_function_ui_optimization",
+      "status": "prompt_ready_not_generated",
+      "english_word_count": 192
+    },
+    {
+      "id": "O-W08",
+      "title": "网站变更详情",
+      "purpose": "展示CHG-014真实可提供的摘要、来源与恢复入口，不捏造前后代码差异。",
+      "prompt": "Create one right-side detail drawer titled “网站变更详情” over the existing northline.example changes tab. Retain Alex Morgan/C001 and Northline LLC in the dimmed background. Keep the drawer flat and legible, using navy section headings, muted labels, restrained separators, and a fixed footer rather than nested dashboard cards.\nThe drawer shows “CHG-014”, “已应用”, and the precise summary “首页标题修改为 Northline Goods”. Present “操作人：李敏”, “执行来源：AI 执行”, and “10/17/2026 13:10 PT” as separate facts. The target is “首页标题”; the confirmed resulting value is “Northline Goods”. Do not invent an earlier title, source code, line numbers, or a before-and-after diff that the underlying record did not supply.\nInclude a plain “恢复信息” section explaining that an applicable restore action uses the recorded change and requires a separate confirmation. State “恢复网站变更不会修改客户档案或既有网关申请定稿。” Any later conflict must be checked at confirmation, rather than claiming that opening this drawer locks the website.\nOffer “返回变更记录”, “查看相关对话”, and “恢复此变更” as clearly differentiated actions. The last opens another dialog; this image must not show restoration already succeeding. Keep the website’s published status unchanged. Do not replace historical operator attribution with the current viewer, provide a customer-material version browser, or introduce an unrestricted force-restore button. Maintain enough spacing for clear labels without replacing factual content with decorative status cards.",
+      "reference_kind": "drawer_over_site_changes",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W11-v1.png"
+      ],
+      "required_content": [
+        "Alex Morgan · northline.example · CHG-014",
+        "首页标题改为 Northline Goods",
+        "操作人李敏 · AI执行",
+        "10/17/2026 13:10 PT · 已应用",
+        "未提供原值不伪造diff",
+        "恢复此变更进入确认"
+      ],
+      "capability": "existing_function_ui_optimization",
+      "status": "prompt_ready_not_generated",
+      "english_word_count": 193
+    },
+    {
+      "id": "O-W09",
+      "title": "整体恢复确认",
+      "purpose": "恢复Alex最新CHG-014需确认范围，出现后置修改则转冲突态。",
+      "prompt": "Create one centered confirmation modal titled “恢复网站变更” for Alex Morgan’s northline.example. The subdued background remains the website changes view, with CHG-014 visible as the latest applied record. Use the established navy and white visual language, a compact object summary, and one clear warning region. Do not redraw the page as a destructive full-site deletion workflow.\nIdentify “CHG-014 · 首页标题修改为 Northline Goods”, applied by 李敏 through AI execution at “10/17/2026 13:10 PT”. Explain that this action restores the contents covered by this saved change record. The visible scope is the homepage-title change; do not invent an unknown previous title or imply that customer files, domains, mailboxes, or unrelated website records are deleted.\nShow the current fictional check as “未发现后续修改记录”, with a supporting note that the system must recheck before executing. Explain “如出现后续修改冲突，将停止恢复并保留原状态。” This is not permission to force restoration through a conflict.\nThe footer contains “取消” and the navy “确认恢复”. A brief boundary states “仅恢复网站变更，不修改客户档案或申请定稿。” Keep this screenshot before execution; no restored-success notification, changed operator history, or new publication result is shown. Website status remains distinct from customer and gateway status. Display any dates in MM/DD/YYYY and identify the current action initiator without rewriting the original change author.",
+      "reference_kind": "modal_over_site_changes",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W11-v1.png"
+      ],
+      "required_content": [
+        "Alex Morgan · northline.example",
+        "目标 CHG-014",
+        "恢复首页标题本次变更记录所含内容",
+        "不改客户档案/申请定稿",
+        "提交前重新核对后置修改",
+        "取消/确认恢复"
+      ],
+      "capability": "existing_function_ui_optimization",
+      "status": "prompt_ready_not_generated",
+      "english_word_count": 189
+    },
+    {
+      "id": "O-W10",
+      "title": "取消定时恢复确认",
+      "purpose": "在独立已设置定时任务的分支中取消未来恢复，不立即恢复网站。",
+      "prompt": "Create one confirmation dialog titled “取消定时恢复” above northline.example’s changes view. This is a separate fictional branch after a scheduled restore has been configured; it must not be presented as the same moment as W11’s empty scheduled-task section. Keep the site identity Alex Morgan/C001, Northline LLC, and the established published website state.\nThe dialog identifies a single pending task for “CHG-014 · 首页标题修改”. Show “计划恢复：10/17/2026 14:30 PT”, “任务状态：待执行”, and “操作人：李敏”. The currently applied title remains Northline Goods. The background scheduled-task area may show this one pending record; do not also display “当前没有待执行的定时恢复任务”.\nPlace the main explanation prominently: “只取消未来的恢复任务，不立即恢复网站，当前已应用内容保持不变。” Add a short note that a task which has already started or completed requires its actual status to be checked rather than reporting cancellation blindly. This note must not become an invented automatic undo operation.\nUse “返回” and “确认取消定时恢复” as the two footer actions, plus a standard close control. Make their scope clearly limited to this scheduled task. Do not cancel a batch, delete a website, disable domain renewal, or affect customer application materials. The screenshot is still before cancellation, so no cancelled-success badge or fabricated service acknowledgement should appear. Retain American dates and a quiet, non-alarmist visual hierarchy.",
+      "reference_kind": "modal_over_site_changes_independent_scenario",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W11-v1.png"
+      ],
+      "required_content": [
+        "独立DEMO分支，已设置定时恢复",
+        "Alex Morgan · northline.example · CHG-014",
+        "计划 10/17/2026 14:30 PT",
+        "取消未来任务，不立即恢复",
+        "返回/确认取消定时恢复"
+      ],
+      "capability": "existing_function_ui_optimization",
+      "status": "prompt_ready_not_generated",
+      "english_word_count": 188
+    },
+    {
+      "id": "O-W11",
+      "title": "网站修复与复核运行面板",
+      "purpose": "按Alex网站Q-001/Q-002/Q-003显示修复执行及人工项，不伪造全通过。",
+      "prompt": "Create one broad running-status panel above Alex Morgan’s northline.example website review tab. Preserve the published site header and make clear that this is a later repair run following the report captured at “10/17/2026 13:30 PT”. Show “操作人：李敏” and a fictional run start of “10/17/2026 13:35 PT”. Keep navy typography, subtle table rules, and readable status labels, without a circular score.\nUse three rows with the established identifiers and exact meanings. Q-001 “联系页面排版溢出” is “已修复 · 待复核”. Q-002 “页脚缺少退换货政策入口” is “正在修复”. Q-003 “商品图片需人工核对” remains “需人工处理”; no automatic repair is queued for it. The summary must match these rows: one completed automatic action, one running action, and one manual item. Do not count the manual item as automatically passed.\nSeparate repair execution from verification. A successful repair operation is not yet evidence that the new site review has passed. Give Q-001 a “查看结果” link, show a subdued progress marker for Q-002, and offer “查看详情” for the manual issue.\nAt the bottom provide “查看当前报告” and “关闭面板”. State “关闭面板不等于取消后台任务；人工项不会被静默标为通过。” Avoid unsupported bulk cancellation, gateway approval claims, or deleting prior completed results when a later operation fails. If the underlying task continues after closing, preserve its identity so reopening shows the same run instead of starting another one.",
+      "reference_kind": "panel_over_site_qa",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W12-v1.png"
+      ],
+      "required_content": [
+        "Alex Morgan · northline.example",
+        "Q-001 已修复待复核",
+        "Q-002 正在修复",
+        "Q-003 需人工处理",
+        "自动完成1/执行中1/人工项1",
+        "关闭不取消后台任务"
+      ],
+      "capability": "existing_function_ui_optimization",
+      "status": "prompt_ready_not_generated",
+      "english_word_count": 186
+    },
+    {
+      "id": "O-W12",
+      "title": "网站复核证据放大",
+      "purpose": "查看Alex Q-001的静态证据及取得时间，不伪装实时网站。",
+      "prompt": "Create a large evidence-view overlay for “Q-001 · 联系页面排版溢出” from Alex Morgan’s northline.example report. Retain a subdued website-review background and a strong but uncluttered header containing the site, issue identifier, and “证据获取：10/17/2026 13:30 PT”. The evidence is an archived fictional capture, not a live browser or a successful fresh inspection.\nIn the main viewing area, show a clearly marked DEMO contact-page fragment with one long text block visibly extending beyond its intended content column. Use the existing navy and white design language. The fragment should communicate the layout problem without resembling a real customer document, exposing private details, or adding unrelated product photography. A modest outlined highlight can identify the overflow region; do not cover the evidence with promotional decorations.\nBelow or beside the image, show “来源：网站复核截图”, “页面：Contact”, and a concise finding explanation. Include “此截图仅代表获取时的页面，不等于网站当前状态。” Keep this warning visually secondary but readable.\nOffer ordinary zoom controls, a fit-to-view action, “查看发现详情”, and “关闭”. Do not place an automatic fix-success button inside the evidence itself or claim that enlarging a screenshot rechecks the website. Opening the overlay must not change the issue status, website publication state, operator history, customer completion status, or gateway outcome. All controls are prototype intent, not demonstrated runtime behavior.",
+      "reference_kind": "evidence_overlay_over_site_qa",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W12-v1.png"
+      ],
+      "required_content": [
+        "Alex Morgan · northline.example · Q-001",
+        "联系页面排版溢出",
+        "证据获取 10/17/2026 13:30 PT",
+        "DEMO Contact 页面证据",
+        "证据非实时页面",
+        "缩放/查看发现/关闭"
+      ],
+      "capability": "existing_function_ui_optimization",
+      "status": "prompt_ready_not_generated",
+      "english_word_count": 194
+    },
+    {
+      "id": "O-W13",
+      "title": "邮箱配置修复与SMTP启用确认",
+      "purpose": "明确Alex站点邮箱修复目标与现有凭据边界，不静默改密码。",
+      "prompt": "Create a confirmation modal titled “修复配置并启用 SMTP” for Alex Morgan’s northline.example, using hello@northline.example. This is an independent later configuration-maintenance branch, not an assertion that W10’s earlier successful setup was false. Preserve the existing website-mail tab structure behind the modal, but show the current branch as needing a specified configuration repair and SMTP enablement.\nPresent a clear target summary with website, mailbox, domain, and “操作人：李敏”. List only the intended actions: repair the displayed missing website-mail DNS configuration, validate the already saved mailbox credentials, and enable the website’s SMTP setting after successful validation. Avoid fabricated DNS record values, undocumented providers, or a promise that every external step must succeed.\nPlace a prominent boundary: “使用已保存凭据，不生成或重置密码，不更换商业邮箱。” Do not reveal the password, provide a newly generated password field, or silently switch to a different sender when verification fails. Explain that credential rejection, network failure, and an unknown external result must remain distinct.\nThe footer contains “取消” and “确认修复并启用”. This screenshot is before execution; the background and summary must not already show a newly completed repair. Explain that SMTP configuration is separate from reading customer-service messages and that successful SMTP setup does not prove final message delivery. Do not send a test email automatically, alter domain renewal, or infer gateway approval.",
+      "reference_kind": "modal_over_site_mail_independent_scenario",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W10-v1.png"
+      ],
+      "required_content": [
+        "Alex Morgan · northline.example · hello@northline.example",
+        "独立待修复/SMTP未启用分支",
+        "修复显示的缺失DNS配置",
+        "使用已保存凭据验证，通过后启用SMTP",
+        "不显示密码、不生成或重置密码",
+        "失败/未知不提前宣称连接成功"
+      ],
+      "capability": "existing_function_ui_optimization",
+      "status": "prompt_ready_not_generated",
+      "english_word_count": 204
+    },
+    {
+      "id": "O-W14",
+      "title": "发送交易测试邮件",
+      "purpose": "由人指定测试收件人，明确发信受理和送达边界，不是付款测试。",
+      "prompt": "Create a centered modal titled “发送交易测试邮件” above Alex Morgan’s northline.example website-mail configuration page. Preserve the white and navy visual style, modest field borders, and the existing site identity. The target sender is hello@northline.example, displayed as a read-only website mailbox, not as the customer’s personal email address.\nInclude a recipient field containing “qa-inbox@example.com” with a small DEMO indication, and a subject field “网站交易邮件测试（DEMO）”. Show a concise read-only description that the message checks the website’s transactional sending configuration. Do not introduce a checkout, payment amount, credit-card field, gateway login, or real purchase. The user must explicitly choose the recipient; the system must not automatically contact a customer or payment platform.\nState “仅发送测试邮件，不附加客户材料，不进行付款测试。” Show “操作人：李敏” without displaying stored mailbox credentials. Use a plain acknowledgement of the external send action rather than inventing a mandatory permission policy.\nAt the footer place “取消” and the navy “发送测试邮件”. The screenshot is the unsent form state; no sent-success toast should appear. Add a quiet delivery boundary: “发送受理不代表收件人已收到；结果未知时先核验，避免重复发送。” Keep the underlying site publication state unchanged. Closing the dialog cancels the unsent draft only, not a mailbox or website configuration. Do not claim that this static form has executed or verified SMTP delivery.",
+      "reference_kind": "modal_over_site_mail",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W10-v1.png"
+      ],
+      "required_content": [
+        "Alex Morgan · northline.example",
+        "发件邮箱 hello@northline.example",
+        "收件人 qa-inbox@example.com（DEMO）",
+        "主题 网站交易邮件测试（DEMO）",
+        "不自动附加客户材料",
+        "发送测试邮件/取消",
+        "SMTP受理不等于送达"
+      ],
+      "capability": "existing_function_ui_optimization",
+      "status": "prompt_ready_not_generated",
+      "english_word_count": 193
+    }
+  ]
+}

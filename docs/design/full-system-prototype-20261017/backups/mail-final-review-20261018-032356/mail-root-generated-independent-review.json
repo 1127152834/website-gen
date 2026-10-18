@@ -1,0 +1,180 @@
+{
+  "scope": "Root-generated mail continuation independent static review",
+  "date": "10/18/2026 PT",
+  "reviewer": "/root/next_module_scope",
+  "image_authorship": "Root or layout agent; this reviewer did not generate reviewed versions",
+  "method": "Direct view_image, read actual prompts and canonical shared-mail-evidence; compare against M03/M04/M08 structure",
+  "status": "PARTIAL_PASS",
+  "interaction_verified": false,
+  "items": [
+    {
+      "id": "O-M06",
+      "image": "screens/O-M06-v1.png",
+      "status": "PASS",
+      "checks": [
+        "Same E101 sender/recipient/09:18/source/zero attachments; full English matches canonical two sentences.",
+        "Chinese translation exact; original remains visible; translation is embedded, no modal or gray scrim.",
+        "Amber historical suggestion and unconfirmed APP002 association remain separate; no E102 months or fabricated translation time."
+      ],
+      "findings": [],
+      "sha256": "202ECB563EC43983CC03E6910E3E97F337AE9B111C170C99A1912EDBCF4001FC"
+    },
+    {
+      "id": "O-M08",
+      "image": "screens/O-M08-v3.png",
+      "status": "PASS",
+      "checks": [
+        "M03 mail-reader backdrop and same centered M04 bounds preserved; not invented fullpage reply view.",
+        "Exact from/to1/cc0/bcc0/subject/draft; attachments0, two reply matters still preparation only; SMTP/delivery/approval warning correct.",
+        "v3 removes input border/chevron from association; readonly snapshot now clear. Comparison with v2 preserves other business values and M03 backdrop."
+      ],
+      "findings": [],
+      "sha256": "E220D9D4F41951EEC01029F7FD984D9F23E15139A3BB1EA5AA6CCAADBC0C1125",
+      "history": [
+        {
+          "image": "screens/O-M08-v2.png",
+          "sha256": "030625411A62C0A11F58741F43034247D9602756A5B840AD2F24D8A4BB0639DE",
+          "status": "needs_fix",
+          "finding": [
+            {
+              "id": "MAIL-CONFIRM-READONLY-01",
+              "severity": "must_fix",
+              "location": "Foreground 回复关联 row",
+              "finding": "Blue bordered select-like field with down-chevron implies association still editable at final read-only confirmation.",
+              "minimal_fix": "Keep APP-002 · PayPal（人工选择） as plain read-only text; remove dropdown chevron and input control border. Keep all other contents/background unchanged.",
+              "reason": "Changing reply association at confirmation bypasses the explicit 返回编辑 boundary and may mismatch reviewed matters."
+            }
+          ],
+          "resolution": "Closed by v3 plain readonly association text"
+        }
+      ]
+    },
+    {
+      "id": "O-M09",
+      "image": "screens/O-M09-v1.png",
+      "status": "PASS",
+      "checks": [
+        "Exact mailbox,7days10/11–10/17,18cached messages across all folders,200limit.",
+        "Configured/auth demo and 尚未入队 are explicit; no model call or queued-success claim.",
+        "Configuration/auth changes require preview again; costs/lowpriorityqueue and confirmation action correct; same M08 gray backdrop."
+      ],
+      "findings": [],
+      "sha256": "044B1CDDDC18D970BEC541BB38E5C5B1840508AA22D6BC6C819397483617CAA4"
+    },
+    {
+      "id": "O-M05",
+      "image": "screens/O-M05-v2.png",
+      "status": "PASS",
+      "checks": [
+        "Exact hello mailbox/AlexC001/Northline/APP002PayPal pending-doc relationship.",
+        "Clear relation-based deletion block, disabled destructive control, no confirmation bypass, no actual deletion.",
+        "M01 backdrop and white modal/gray scrim consistent."
+      ],
+      "findings": [],
+      "sha256": "9D8180B6FC1ECD884487C7E0663D49D7D1E1F2B63E39798E965077223D3568FB"
+    },
+    {
+      "id": "O-M07",
+      "image": "screens/O-M07-v2.png",
+      "status": "PASS",
+      "checks": [
+        "Polling listener running, encrypted credentials,09:42PT sync and no error all match canonical demo.",
+        "Stop-listening/Sync-now/Credentials actions fit running state; no simultaneous start or invented error retry.",
+        "Right drawer, same mailbox and gray backdrop; synchronization not automatic reply.",
+        "Help paragraph only states polling differs from realtime push; no interval or connection assertion."
+      ],
+      "findings": [],
+      "sha256": "DB191D2848EC859820D12C4A1BA59D7E8B180ACA7F93ECD5F0930358D0AE70F7",
+      "history": [
+        {
+          "image": "screens/O-M07-v1.png",
+          "sha256": "D81C006D66B0FE55C22D9BD0A00B39756DDA2476C7F8E08880A7D06589E8EC5D",
+          "status": "PASS",
+          "finding": [
+            {
+              "id": "MAIL-POLLING-HELP-01",
+              "severity": "minor_nonblocking",
+              "location": "About listener/sync help text",
+              "finding": "The extra sentence claiming polling does not keep a long-lived connection is not an implementation fact established by supplied design evidence.",
+              "recommendation": "Prefer only saying polling differs from realtime push; this review does not verify connection implementation."
+            }
+          ],
+          "resolution": "v2 removed unverified long-connection assertion"
+        }
+      ]
+    },
+    {
+      "id": "ES01",
+      "image": "screens/ES01-v2.png",
+      "status": "PASS",
+      "checks": [
+        "Destination hello/inbox visible with known folder12/8/0/1 counts; all old sender/subject/body/attachment/translation/AI content cleared.",
+        "Loading skeleton plus explicit loading and old-content-cleared messages; not an empty-inbox state.",
+        "Reply/delete/read/more/new-mail/pagination visibly disabled; count reads loading; optional cancel present."
+      ],
+      "findings": [],
+      "sha256": "5A333136AEC6546685DC7EC796F292DA76E69B604170D63266294247B450B7E4"
+    },
+    {
+      "id": "ES04",
+      "image": "screens/ES04-v2.png",
+      "status": "PASS",
+      "checks": [
+        "Exact mailbox with AlexC001/Northline and PayPalAPP002pending-doc associations plus internal links.",
+        "Current result labels remote mailbox and local credentials/index/body cache unchanged; no completed-deletion semantics.",
+        "No confirmationphrase/override; destructive control disabled and operation explicitly not performed; gray M01 backdrop."
+      ],
+      "findings": [],
+      "sha256": "7747DAFDEBCE696BDF12C311C2A7E7B42B8B97B8342F4213BF576431AC7B7795"
+    },
+    {
+      "id": "O-M04",
+      "image": "screens/O-M04-v2.png",
+      "status": "PASS",
+      "checks": [
+        "Compared directly with v1: only currentfolder Inbox and sourceE101 metadata added with necessary modalheight adjustment.",
+        "Exact mailbox/sender/subject/09:18PT unchanged; one selectedmail only; moving is not deletingmailbox/customer/application.",
+        "Confirm remains before-action, backdrop count and selection unchanged; no success toast."
+      ],
+      "findings": [],
+      "sha256": "001ADCF849F1CE2FE5E0B465199507BDB0FF52A17E5441E34C83B3463F063EEE"
+    },
+    {
+      "id": "ES02",
+      "image": "screens/ES02-v3.png",
+      "status": "PASS",
+      "checks": [
+        "Foreground preserves exact outbound preparation-only draft, same sender/recipient/subject,0attachments; explicitly readonly.",
+        "Background incoming original is canonical full E101, not outbound draft; visible ending We will continue review after receipt.",
+        "Request submitted but SMTPfinalunknown and local sent-copy not checked; no delivered/accepted claim;2matters uncompleted.",
+        "Send disabled, only viewSent/close; no resend or automatic retry; same source reader gray backdrop."
+      ],
+      "findings": [],
+      "sha256": "A9C279DB516D4B894EB8137FBEE597CD74441F6A77C54A8011891B2EB2B36DC2"
+    }
+  ],
+  "pending_ids": [
+    "ES03"
+  ],
+  "source_refs": [
+    "plans/shared-mail-evidence.md",
+    "plans/other-module-demo-data.md",
+    "prompts/common-style.txt",
+    "prompts/O-M06-v1-mail-render.txt",
+    "prompts/O-M08-v1-mail-render.txt",
+    "prompts/O-M08-v2-fix.txt",
+    "prompts/O-M09-v1-mail-render.txt"
+  ],
+  "expected_ids": [
+    "O-M04",
+    "O-M05",
+    "O-M06",
+    "O-M07",
+    "O-M08",
+    "O-M09",
+    "ES01",
+    "ES02",
+    "ES03",
+    "ES04"
+  ]
+}

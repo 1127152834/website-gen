@@ -64,6 +64,15 @@ test("经营主体天数范围使用 OpenAI 兼容的定长数组 schema", () =>
   }
 });
 
+test("创建批次把客服邮箱放在站点参数而不是共享经营主体参数", () => {
+  const schema = JSON.parse(JSON.stringify(ASSISTANT_RPC_TOOLS.find((tool) => tool.method === "batches.create")!.parameters)) as {
+    properties: { entity: { required?: string[] }; sites: { items: { properties: Record<string, unknown>; required?: string[] } } };
+  };
+  assert.equal(schema.properties.entity.required?.includes("supportEmail") ?? false, false);
+  assert.ok(schema.properties.sites.items.properties.supportEmail);
+  assert.equal(schema.properties.sites.items.required?.includes("supportEmail") ?? false, false, "后端只在实际邮箱唯一时自动选择，多个邮箱必须明确指定");
+});
+
 test("深度清理敏感字段并保留 hint，RPC 工具校验参数且清理结果", async () => {
   const dirty = {
     password: "p", token: "t", apiKey: "k", secret_note: "s", ciphertext: "c", credential: "x",

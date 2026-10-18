@@ -1,0 +1,4681 @@
+{
+  "checked_at": "2026-10-18T04:29:23.7816289-07:00",
+  "scope": "File organization and documentation validation only; no application interaction or live services",
+  "modules": [
+    {
+      "module": "01-客户档案与资料",
+      "image_count": 49,
+      "expected_image_count": 49,
+      "introduction_exists": true,
+      "catalog_exists": true
+    },
+    {
+      "module": "02-网站建设与站点管理",
+      "image_count": 36,
+      "expected_image_count": 36,
+      "introduction_exists": true,
+      "catalog_exists": true
+    },
+    {
+      "module": "03-支付网关申请",
+      "image_count": 27,
+      "expected_image_count": 27,
+      "introduction_exists": true,
+      "catalog_exists": true
+    },
+    {
+      "module": "04-邮箱与邮件跟进",
+      "image_count": 20,
+      "expected_image_count": 20,
+      "introduction_exists": true,
+      "catalog_exists": true
+    },
+    {
+      "module": "05-账号与域名资源",
+      "image_count": 8,
+      "expected_image_count": 8,
+      "introduction_exists": true,
+      "catalog_exists": true
+    },
+    {
+      "module": "06-表格协作",
+      "image_count": 3,
+      "expected_image_count": 3,
+      "introduction_exists": true,
+      "catalog_exists": true
+    },
+    {
+      "module": "07-系统设置",
+      "image_count": 15,
+      "expected_image_count": 15,
+      "introduction_exists": true,
+      "catalog_exists": true
+    },
+    {
+      "module": "08-内部用户与权限",
+      "image_count": 4,
+      "expected_image_count": 4,
+      "introduction_exists": true,
+      "catalog_exists": true
+    },
+    {
+      "module": "09-登录与全局工具",
+      "image_count": 18,
+      "expected_image_count": 18,
+      "introduction_exists": true,
+      "catalog_exists": true
+    }
+  ],
+  "image_count": 180,
+  "unique_source_count": 179,
+  "alias_count": 11,
+  "coverage_id_count": 191,
+  "coverage_id_difference_count": 0,
+  "markdown_link_count": 276,
+  "application_source_checked": 344,
+  "error_count": 0,
+  "errors": [],
+  "images": [
+    {
+      "id": "C01",
+      "destination": "01-客户档案与资料/01-客户列表-搜索与快速查看.png",
+      "expected_sha256": "3ce62a5609dcc158225bf5a926e8c3f0a38f1d10d6167b23ca1e11abb6fe602a",
+      "source_sha256": "3CE62A5609DCC158225BF5A926E8C3F0A38F1D10D6167B23CA1E11ABB6FE602A",
+      "destination_sha256": "3CE62A5609DCC158225BF5A926E8C3F0A38F1D10D6167B23CA1E11ABB6FE602A",
+      "equal": true
+    },
+    {
+      "id": "C02",
+      "destination": "01-客户档案与资料/02-客户档案-资料总览.png",
+      "expected_sha256": "c609e37d3a2c61b2aae69a002b67a193d8aaef633d68ab36155dffbb75efde46",
+      "source_sha256": "C609E37D3A2C61B2AAE69A002B67A193D8AAEF633D68AB36155DFFBB75EFDE46",
+      "destination_sha256": "C609E37D3A2C61B2AAE69A002B67A193D8AAEF633D68AB36155DFFBB75EFDE46",
+      "equal": true
+    },
+    {
+      "id": "C12",
+      "destination": "01-客户档案与资料/03-客户建档-上传驾照正面.png",
+      "expected_sha256": "828e965458f590916f694a82e0351bf7fcaae777e171abaa60ad246173e2955c",
+      "source_sha256": "828E965458F590916F694A82E0351BF7FCAAE777E171ABAA60AD246173E2955C",
+      "destination_sha256": "828E965458F590916F694A82E0351BF7FCAAE777E171ABAA60AD246173E2955C",
+      "equal": true
+    },
+    {
+      "id": "C13",
+      "destination": "01-客户档案与资料/04-客户建档-核对驾照识别结果.png",
+      "expected_sha256": "03512c4bc9787c8daa11bcec04cf88e059a8d1d377f6018e266ae48e630c6ead",
+      "source_sha256": "03512C4BC9787C8DAA11BCEC04CF88E059A8D1D377F6018E266AE48E630C6EAD",
+      "destination_sha256": "03512C4BC9787C8DAA11BCEC04CF88E059A8D1D377F6018E266AE48E630C6EAD",
+      "equal": true
+    },
+    {
+      "id": "C14",
+      "destination": "01-客户档案与资料/05-客户建档-查看建档结果.png",
+      "expected_sha256": "7939202cbd54605b1602f2484d388506e8c3f793ed23870b1cfcaf8041edcae3",
+      "source_sha256": "7939202CBD54605B1602F2484D388506E8C3F793ED23870B1CFCAF8041EDCAE3",
+      "destination_sha256": "7939202CBD54605B1602F2484D388506E8C3F793ED23870B1CFCAF8041EDCAE3",
+      "equal": true
+    },
+    {
+      "id": "O-C02",
+      "destination": "01-客户档案与资料/06-客户建档-重复驾照或同名客户处理.png",
+      "expected_sha256": "0588d8b445e47f54c2397b97efb9f024630d71f191cc7b2a9bd993537722ab7b",
+      "source_sha256": "0588D8B445E47F54C2397B97EFB9F024630D71F191CC7B2A9BD993537722AB7B",
+      "destination_sha256": "0588D8B445E47F54C2397B97EFB9F024630D71F191CC7B2A9BD993537722AB7B",
+      "equal": true
+    },
+    {
+      "id": "O-C03",
+      "destination": "01-客户档案与资料/07-客户建档-确认资料差异侧栏.png",
+      "expected_sha256": "87226ae0fe967e543dd060395ecb591a43b76f87c22c71e43b1fc9c235086384",
+      "source_sha256": "87226AE0FE967E543DD060395ECB591A43B76F87C22C71E43B1FC9C235086384",
+      "destination_sha256": "87226AE0FE967E543DD060395ECB591A43B76F87C22C71E43B1FC9C235086384",
+      "equal": true
+    },
+    {
+      "id": "C12-upload-states",
+      "destination": "01-客户档案与资料/08-客户建档-部分上传成功与失败.png",
+      "expected_sha256": "20f1cd8827537943f84b50f6e7c6faf5c60f72cc89a1aa28b53eae8d5590b951",
+      "source_sha256": "20F1CD8827537943F84B50F6E7C6FAF5C60F72CC89A1AA28B53EAE8D5590B951",
+      "destination_sha256": "20F1CD8827537943F84B50F6E7C6FAF5C60F72CC89A1AA28B53EAE8D5590B951",
+      "equal": true
+    },
+    {
+      "id": "C13-manual-transcription",
+      "destination": "01-客户档案与资料/09-客户建档-识别失败后人工录入.png",
+      "expected_sha256": "8ed27d2f12152efe9323e41dcc66c6d2a074f2a905519658350e293cb1c686c1",
+      "source_sha256": "8ED27D2F12152EFE9323E41DCC66C6D2A074F2A905519658350E293CB1C686C1",
+      "destination_sha256": "8ED27D2F12152EFE9323E41DCC66C6D2A074F2A905519658350E293CB1C686C1",
+      "equal": true
+    },
+    {
+      "id": "C14-unknown-result",
+      "destination": "01-客户档案与资料/10-客户建档-提交结果暂不确定.png",
+      "expected_sha256": "90322c656c78a081d532113bf6156358d774b0358605a8dbe45fa0300f155a72",
+      "source_sha256": "90322C656C78A081D532113BF6156358D774B0358605A8DBE45FA0300F155A72",
+      "destination_sha256": "90322C656C78A081D532113BF6156358D774B0358605A8DBE45FA0300F155A72",
+      "equal": true
+    },
+    {
+      "id": "C03",
+      "destination": "01-客户档案与资料/11-个人资料-基本信息与两个地址.png",
+      "expected_sha256": "461fd963d169852c4558ead342fe7eeab55853fee885e25b743f187fad0a9999",
+      "source_sha256": "461FD963D169852C4558EAD342FE7EEAB55853FEE885E25B743F187FAD0A9999",
+      "destination_sha256": "461FD963D169852C4558EAD342FE7EEAB55853FEE885E25B743F187FAD0A9999",
+      "equal": true
+    },
+    {
+      "id": "O-C04-personal",
+      "destination": "01-客户档案与资料/12-个人资料-编辑侧栏.png",
+      "expected_sha256": "5ffde99df45f793404bc00b21be68ec62f665095065bb8e9e2f6a6af33be9fab",
+      "source_sha256": "5FFDE99DF45F793404BC00B21BE68EC62F665095065BB8E9E2F6A6AF33BE9FAB",
+      "destination_sha256": "5FFDE99DF45F793404BC00B21BE68EC62F665095065BB8E9E2F6A6AF33BE9FAB",
+      "equal": true
+    },
+    {
+      "id": "C04",
+      "destination": "01-客户档案与资料/13-企业资料-企业信息与税号.png",
+      "expected_sha256": "cbde693fca6e014f2097019c4cbe48212ea4ea4a0fccd355aa04be176b41dd3c",
+      "source_sha256": "CBDE693FCA6E014F2097019C4CBE48212EA4EA4A0FCCD355AA04BE176B41DD3C",
+      "destination_sha256": "CBDE693FCA6E014F2097019C4CBE48212EA4EA4A0FCCD355AA04BE176B41DD3C",
+      "equal": true
+    },
+    {
+      "id": "O-C04-company",
+      "destination": "01-客户档案与资料/14-企业资料-编辑侧栏.png",
+      "expected_sha256": "c88a4019d3499340c2d6a43928d043894ec09999face9f381a08645ad97f9667",
+      "source_sha256": "C88A4019D3499340C2D6A43928D043894EC09999FACE9F381A08645AD97F9667",
+      "destination_sha256": "C88A4019D3499340C2D6A43928D043894EC09999FACE9F381A08645AD97F9667",
+      "equal": true
+    },
+    {
+      "id": "O-C05",
+      "destination": "01-客户档案与资料/15-企业资料-更新企业办理状态.png",
+      "expected_sha256": "3ea9715faba58ca5f4cad147b688f9f1792c6a01d8e995c6466e9e6c05ae0f82",
+      "source_sha256": "3EA9715FABA58CA5F4CAD147B688F9F1792C6A01D8E995C6466E9E6C05AE0F82",
+      "destination_sha256": "3EA9715FABA58CA5F4CAD147B688F9F1792C6A01D8E995C6466E9E6C05AE0F82",
+      "equal": true
+    },
+    {
+      "id": "C05",
+      "destination": "01-客户档案与资料/16-银行资料-账户信息与银行文件.png",
+      "expected_sha256": "1e5656822e6cf3cd26636a13511edd86e7076e313ccb3a4597037b47cb78071d",
+      "source_sha256": "1E5656822E6CF3CD26636A13511EDD86E7076E313CCB3A4597037B47CB78071D",
+      "destination_sha256": "1E5656822E6CF3CD26636A13511EDD86E7076E313CCB3A4597037B47CB78071D",
+      "equal": true
+    },
+    {
+      "id": "O-C04-bank",
+      "destination": "01-客户档案与资料/17-银行资料-编辑侧栏.png",
+      "expected_sha256": "6e6ac2a8467c89dbf6bf9a043f83274358c12529ecc324c8db2198e61112d784",
+      "source_sha256": "6E6AC2A8467C89DBF6BF9A043F83274358C12529ECC324C8DB2198E61112D784",
+      "destination_sha256": "6E6AC2A8467C89DBF6BF9A043F83274358C12529ECC324C8DB2198E61112D784",
+      "equal": true
+    },
+    {
+      "id": "O-C07",
+      "destination": "01-客户档案与资料/18-资料附件-上传文件侧栏.png",
+      "expected_sha256": "6ffd1c858cef8b2101ef79d5c40762757ccd8d5b5df130955c8b6ba6b29d62ba",
+      "source_sha256": "6FFD1C858CEF8B2101EF79D5C40762757CCD8D5B5DF130955C8B6BA6B29D62BA",
+      "destination_sha256": "6FFD1C858CEF8B2101EF79D5C40762757CCD8D5B5DF130955C8B6BA6B29D62BA",
+      "equal": true
+    },
+    {
+      "id": "O-C08",
+      "destination": "01-客户档案与资料/19-资料附件-打开当前文件.png",
+      "expected_sha256": "bd7ad2bc7a71578873d0ddcadc3d4d9fab9713988c77cecac550274dbb226360",
+      "source_sha256": "BD7AD2BC7A71578873D0DDCADC3D4D9FAB9713988C77CECAC550274DBB226360",
+      "destination_sha256": "BD7AD2BC7A71578873D0DDCADC3D4D9FAB9713988C77CECAC550274DBB226360",
+      "equal": true
+    },
+    {
+      "id": "O-C09",
+      "destination": "01-客户档案与资料/20-资料附件-替换文件确认.png",
+      "expected_sha256": "19eacc7399c0540a2756d87d21f40312f215d3d9f309e4f9b7b32e5f76bf52a6",
+      "source_sha256": "19EACC7399C0540A2756D87D21F40312F215D3D9F309E4F9B7B32E5F76BF52A6",
+      "destination_sha256": "19EACC7399C0540A2756D87D21F40312F215D3D9F309E4F9B7B32E5F76BF52A6",
+      "equal": true
+    },
+    {
+      "id": "O-C10",
+      "destination": "01-客户档案与资料/21-资料附件-移除文件确认.png",
+      "expected_sha256": "8469d5b03be4c99421b2c0350014697c911d4b1462882e32778013fd2efc8d03",
+      "source_sha256": "8469D5B03BE4C99421B2C0350014697C911D4B1462882E32778013FD2EFC8D03",
+      "destination_sha256": "8469D5B03BE4C99421B2C0350014697C911D4B1462882E32778013FD2EFC8D03",
+      "equal": true
+    },
+    {
+      "id": "O-C07-upload-states",
+      "destination": "01-客户档案与资料/22-资料附件-部分上传成功与失败.png",
+      "expected_sha256": "6ccfea0ac7912de73ffd7240287ebbc4bc5ca38ad12dddb850bd16e6f7219219",
+      "source_sha256": "6CCFEA0AC7912DE73FFD7240287EBBC4BC5CA38AD12DDDB850BD16E6F7219219",
+      "destination_sha256": "6CCFEA0AC7912DE73FFD7240287EBBC4BC5CA38AD12DDDB850BD16E6F7219219",
+      "equal": true
+    },
+    {
+      "id": "O-C08-preview-unavailable",
+      "destination": "01-客户档案与资料/23-资料附件-文件读取失败.png",
+      "expected_sha256": "d2ccf24da343691b210c4fd6d2c564e69613f4d80ea953ce30c11435c4abf7a2",
+      "source_sha256": "D2CCF24DA343691B210C4FD6D2C564E69613F4D80EA953CE30C11435C4ABF7A2",
+      "destination_sha256": "D2CCF24DA343691B210C4FD6D2C564E69613F4D80EA953CE30C11435C4ABF7A2",
+      "equal": true
+    },
+    {
+      "id": "O-C08-preview-unsupported",
+      "destination": "01-客户档案与资料/24-资料附件-格式不支持直接预览.png",
+      "expected_sha256": "494d2821a73471d0459ea0df782efb6f042c2a18dd70c07663cb927343b909a3",
+      "source_sha256": "494D2821A73471D0459EA0DF782EFB6F042C2A18DD70C07663CB927343B909A3",
+      "destination_sha256": "494D2821A73471D0459EA0DF782EFB6F042C2A18DD70C07663CB927343B909A3",
+      "equal": true
+    },
+    {
+      "id": "O-C09-replace-failure",
+      "destination": "01-客户档案与资料/25-资料附件-替换文件失败.png",
+      "expected_sha256": "4ebdc1e774fc392e50ca1088fb155c5629b5a6a82b29064e9701733bb786acaa",
+      "source_sha256": "4EBDC1E774FC392E50CA1088FB155C5629B5A6A82B29064E9701733BB786ACAA",
+      "destination_sha256": "4EBDC1E774FC392E50CA1088FB155C5629B5A6A82B29064E9701733BB786ACAA",
+      "equal": true
+    },
+    {
+      "id": "O-C10-remove-failure",
+      "destination": "01-客户档案与资料/26-资料附件-移除文件失败.png",
+      "expected_sha256": "c4036a387f7c0331822f8f1f8779b6a8388acce2f3b1207b1a11549426197113",
+      "source_sha256": "C4036A387F7C0331822F8F1F8779B6A8388ACCE2F3B1207B1A11549426197113",
+      "destination_sha256": "C4036A387F7C0331822F8F1F8779B6A8388ACCE2F3B1207B1A11549426197113",
+      "equal": true
+    },
+    {
+      "id": "O-C04-save-failure",
+      "destination": "01-客户档案与资料/27-资料编辑-保存失败.png",
+      "expected_sha256": "17c6fd7b3dee0c99317d928e549173a9badc767da70a6138f1554e10dff917fd",
+      "source_sha256": "17C6FD7B3DEE0C99317D928E549173A9BADC767DA70A6138F1554E10DFF917FD",
+      "destination_sha256": "17C6FD7B3DEE0C99317D928E549173A9BADC767DA70A6138F1554E10DFF917FD",
+      "equal": true
+    },
+    {
+      "id": "C07",
+      "destination": "01-客户档案与资料/28-网站与邮箱-查看客户关联.png",
+      "expected_sha256": "d77c945427002cc16f39cbc25fa9330a8f4d26a2e725123a5cb6a0b1770cc662",
+      "source_sha256": "D77C945427002CC16F39CBC25FA9330A8F4D26A2E725123A5CB6A0B1770CC662",
+      "destination_sha256": "D77C945427002CC16F39CBC25FA9330A8F4D26A2E725123A5CB6A0B1770CC662",
+      "equal": true
+    },
+    {
+      "id": "O-C11",
+      "destination": "01-客户档案与资料/29-网站与邮箱-关联或更换已有网站.png",
+      "expected_sha256": "3e7b2c945fd5b19f2765cbd026295b96d81c75859d56b905c228c02d8e9b59f6",
+      "source_sha256": "3E7B2C945FD5B19F2765CBD026295B96D81C75859D56B905C228C02D8E9B59F6",
+      "destination_sha256": "3E7B2C945FD5B19F2765CBD026295B96D81C75859D56B905C228C02D8E9B59F6",
+      "equal": true
+    },
+    {
+      "id": "O-C12",
+      "destination": "01-客户档案与资料/30-网站与邮箱-关联或更换商业邮箱.png",
+      "expected_sha256": "f2aeeec12c2bd91741268e81ed88eabf99b2dcd4270c4a490e991ff827f56193",
+      "source_sha256": "F2AEEEC12C2BD91741268E81ED88EABF99B2DCD4270C4A490E991FF827F56193",
+      "destination_sha256": "F2AEEEC12C2BD91741268E81ED88EABF99B2DCD4270C4A490E991FF827F56193",
+      "equal": true
+    },
+    {
+      "id": "O-C13",
+      "destination": "01-客户档案与资料/31-网站与邮箱-解除关联确认.png",
+      "expected_sha256": "5b31be99d308ae35af0619b8dcde85f128f36fee1158b3bd7fa586c062843101",
+      "source_sha256": "5B31BE99D308AE35AF0619B8DCDE85F128F36FEE1158B3BD7FA586C062843101",
+      "destination_sha256": "5B31BE99D308AE35AF0619B8DCDE85F128F36FEE1158B3BD7FA586C062843101",
+      "equal": true
+    },
+    {
+      "id": "O-C14",
+      "destination": "01-客户档案与资料/32-网站与邮箱-核对网站公开信息.png",
+      "expected_sha256": "e8688047b9c46354ce0ec49de4b3473a7c9009d5adc861a45461d6883f86f4e1",
+      "source_sha256": "E8688047B9C46354CE0EC49DE4B3473A7C9009D5ADC861A45461D6883F86F4E1",
+      "destination_sha256": "E8688047B9C46354CE0EC49DE4B3473A7C9009D5ADC861A45461D6883F86F4E1",
+      "equal": true
+    },
+    {
+      "id": "C08",
+      "destination": "01-客户档案与资料/33-资料审核-查看检查结果.png",
+      "expected_sha256": "623b77f127b0568c2c454d4771ee65e73c884fcbea18e4bf75762fc40400d1a3",
+      "source_sha256": "623B77F127B0568C2C454D4771EE65E73C884FCBEA18E4BF75762FC40400D1A3",
+      "destination_sha256": "623B77F127B0568C2C454D4771EE65E73C884FCBEA18E4BF75762FC40400D1A3",
+      "equal": true
+    },
+    {
+      "id": "O-G01",
+      "destination": "01-客户档案与资料/34-资料审核-确认本次检查范围.png",
+      "expected_sha256": "c31f479182a431bed498c97a7debf01d141168015f259c2dd1a2aefaaa5226f8",
+      "source_sha256": "C31F479182A431BED498C97A7DEBF01D141168015F259C2DD1A2AEFAAA5226F8",
+      "destination_sha256": "C31F479182A431BED498C97A7DEBF01D141168015F259C2DD1A2AEFAAA5226F8",
+      "equal": true
+    },
+    {
+      "id": "O-G02",
+      "destination": "01-客户档案与资料/35-资料审核-查看检查进度.png",
+      "expected_sha256": "6d2cb3a282728d40ac4ed0cc78c75d218ef10d5dbf0eb07e1b2edd5139078db3",
+      "source_sha256": "6D2CB3A282728D40AC4ED0CC78C75D218EF10D5DBF0EB07E1B2EDD5139078DB3",
+      "destination_sha256": "6D2CB3A282728D40AC4ED0CC78C75D218EF10D5DBF0EB07E1B2EDD5139078DB3",
+      "equal": true
+    },
+    {
+      "id": "O-G03",
+      "destination": "01-客户档案与资料/36-资料审核-查看问题详情.png",
+      "expected_sha256": "c16a17676f912fd74912af1208eb23721a6c838a0c41008dad7d4d88dabee71c",
+      "source_sha256": "C16A17676F912FD74912AF1208EB23721A6C838A0C41008DAD7D4D88DABEE71C",
+      "destination_sha256": "C16A17676F912FD74912AF1208EB23721A6C838A0C41008DAD7D4D88DABEE71C",
+      "equal": true
+    },
+    {
+      "id": "C10-personal-page1",
+      "destination": "01-客户档案与资料/37-操作人查询-个人资料第1页.png",
+      "expected_sha256": "daf8977a72192b8ed7d12df24277b5e74b2e548259c221e309bfcc426199bae8",
+      "source_sha256": "DAF8977A72192B8ED7D12DF24277B5E74B2E548259C221E309BFCC426199BAE8",
+      "destination_sha256": "DAF8977A72192B8ED7D12DF24277B5E74B2E548259C221E309BFCC426199BAE8",
+      "equal": true
+    },
+    {
+      "id": "C10-personal-page2",
+      "destination": "01-客户档案与资料/38-操作人查询-个人资料第2页.png",
+      "expected_sha256": "1a5c984ab085daa0d9a170718f42ac8bd2c9e0e3d19bbd37eee00fc354271a44",
+      "source_sha256": "1A5C984AB085DAA0D9A170718F42AC8BD2C9E0E3D19BBD37EEE00FC354271A44",
+      "destination_sha256": "1A5C984AB085DAA0D9A170718F42AC8BD2C9E0E3D19BBD37EEE00FC354271A44",
+      "equal": true
+    },
+    {
+      "id": "C10-company",
+      "destination": "01-客户档案与资料/39-操作人查询-企业资料.png",
+      "expected_sha256": "7a99bfceb49ab37006fa9ef52ed9782aaae4d82b818a17ce853d9bba7193497c",
+      "source_sha256": "7A99BFCEB49AB37006FA9EF52ED9782AAAE4D82B818A17CE853D9BBA7193497C",
+      "destination_sha256": "7A99BFCEB49AB37006FA9EF52ED9782AAAE4D82B818A17CE853D9BBA7193497C",
+      "equal": true
+    },
+    {
+      "id": "C10-bank",
+      "destination": "01-客户档案与资料/40-操作人查询-银行资料.png",
+      "expected_sha256": "b3115e20012ce31e912198dcbc7ee926a8d988de68845b2198175b373438eeee",
+      "source_sha256": "B3115E20012CE31E912198DCBC7EE926A8D988DE68845B2198175B373438EEEE",
+      "destination_sha256": "B3115E20012CE31E912198DCBC7EE926A8D988DE68845B2198175B373438EEEE",
+      "equal": true
+    },
+    {
+      "id": "C10-actor-detail",
+      "destination": "01-客户档案与资料/41-操作人查询-单个字段详情.png",
+      "expected_sha256": "f0bd3a554cea687b168caad24eebf4d3754bcbc1456ec211cd7565fde9771e40",
+      "source_sha256": "F0BD3A554CEA687B168CAAD24EEBF4D3754BCBC1456EC211CD7565FDE9771E40",
+      "destination_sha256": "F0BD3A554CEA687B168CAAD24EEBF4D3754BCBC1456EC211CD7565FDE9771E40",
+      "equal": true
+    },
+    {
+      "id": "O-C15",
+      "destination": "01-客户档案与资料/42-删除客户-确认影响范围.png",
+      "expected_sha256": "ec83fceaf39688e16ea5a2a14da93a21a957bd1d4677996363e3d77f309a1c62",
+      "source_sha256": "EC83FCEAF39688E16EA5A2A14DA93A21A957BD1D4677996363E3D77F309A1C62",
+      "destination_sha256": "EC83FCEAF39688E16EA5A2A14DA93A21A957BD1D4677996363E3D77F309A1C62",
+      "equal": true
+    },
+    {
+      "id": "O-C16",
+      "destination": "01-客户档案与资料/43-删除客户-查看执行结果.png",
+      "expected_sha256": "93d49a72e487fc48ac324cdd5e8d88c94c273043ff28679db61809976db0d911",
+      "source_sha256": "93D49A72E487FC48AC324CDD5E8D88C94C273043FF28679DB61809976DB0D911",
+      "destination_sha256": "93D49A72E487FC48AC324CDD5E8D88C94C273043FF28679DB61809976DB0D911",
+      "equal": true
+    },
+    {
+      "id": "C01-empty",
+      "destination": "01-客户档案与资料/44-客户列表-尚未建档.png",
+      "expected_sha256": "2aaa3ba312518e961e4841dc62939b1806fee89e00f41b0daeba06190fb651f1",
+      "source_sha256": "2AAA3BA312518E961E4841DC62939B1806FEE89E00F41B0DAEBA06190FB651F1",
+      "destination_sha256": "2AAA3BA312518E961E4841DC62939B1806FEE89E00F41B0DAEBA06190FB651F1",
+      "equal": true
+    },
+    {
+      "id": "C01-search-empty",
+      "destination": "01-客户档案与资料/45-客户列表-没有搜索结果.png",
+      "expected_sha256": "3fb4c56d8283d3fdd6493d8dc3f27e49e23a56f1d4eef13fbd871c3ffdaeb11c",
+      "source_sha256": "3FB4C56D8283D3FDD6493D8DC3F27E49E23A56F1D4EEF13FBD871C3FFDAEB11C",
+      "destination_sha256": "3FB4C56D8283D3FDD6493D8DC3F27E49E23A56F1D4EEF13FBD871C3FFDAEB11C",
+      "equal": true
+    },
+    {
+      "id": "C01-loading",
+      "destination": "01-客户档案与资料/46-客户列表-正在加载.png",
+      "expected_sha256": "f637287ca810da4db61b59fc77b3a756be5d039ad03238ad94a1db1c4f6b3c4c",
+      "source_sha256": "F637287CA810DA4DB61B59FC77B3A756BE5D039AD03238AD94A1DB1C4F6B3C4C",
+      "destination_sha256": "F637287CA810DA4DB61B59FC77B3A756BE5D039AD03238AD94A1DB1C4F6B3C4C",
+      "equal": true
+    },
+    {
+      "id": "C01-read-failure",
+      "destination": "01-客户档案与资料/47-客户列表-快速查看读取失败.png",
+      "expected_sha256": "373bc127ac434854a2293540217765f345facf97d69aae64f3459f2c7d3e6143",
+      "source_sha256": "373BC127AC434854A2293540217765F345FACF97D69AAE64F3459F2C7D3E6143",
+      "destination_sha256": "373BC127AC434854A2293540217765F345FACF97D69AAE64F3459F2C7D3E6143",
+      "equal": true
+    },
+    {
+      "id": "C02-not-found",
+      "destination": "01-客户档案与资料/48-客户档案-记录不存在.png",
+      "expected_sha256": "58329ac11ac4442c08c50957fbaf14c25f52e81d4a5223db385b8048007af44e",
+      "source_sha256": "58329AC11AC4442C08C50957FBAF14C25F52E81D4A5223DB385B8048007AF44E",
+      "destination_sha256": "58329AC11AC4442C08C50957FBAF14C25F52E81D4A5223DB385B8048007AF44E",
+      "equal": true
+    },
+    {
+      "id": "C02-forbidden",
+      "destination": "01-客户档案与资料/49-客户档案-没有查看权限.png",
+      "expected_sha256": "a9519237542731b9121df18f17ad64a5eb1304268d1152093f3d986172bb662f",
+      "source_sha256": "A9519237542731B9121DF18F17AD64A5EB1304268D1152093F3D986172BB662F",
+      "destination_sha256": "A9519237542731B9121DF18F17AD64A5EB1304268D1152093F3D986172BB662F",
+      "equal": true
+    },
+    {
+      "id": "W01",
+      "destination": "02-网站建设与站点管理/01-建站总览-查看网站建设情况.png",
+      "expected_sha256": "11e856a51088253da094d44d6b27e95b62addb6153adc2e00cbcdbdcc624ef7d",
+      "source_sha256": "11E856A51088253DA094D44D6B27E95B62ADDB6153ADC2E00CBCDBDCC624EF7D",
+      "destination_sha256": "11E856A51088253DA094D44D6B27E95B62ADDB6153ADC2E00CBCDBDCC624EF7D",
+      "equal": true
+    },
+    {
+      "id": "W02-CUSTOMER-PICKER",
+      "destination": "02-网站建设与站点管理/02-新建网站-选择客户侧栏.png",
+      "expected_sha256": "0dc60f0af37703a57b5d8cb05cabeefe4dd772bb078c1c40db4f3a5633ae0b4b",
+      "source_sha256": "0DC60F0AF37703A57B5D8CB05CABEEFE4DD772BB078C1C40DB4F3A5633AE0B4B",
+      "destination_sha256": "0DC60F0AF37703A57B5D8CB05CABEEFE4DD772BB078C1C40DB4F3A5633AE0B4B",
+      "equal": true
+    },
+    {
+      "id": "W02",
+      "destination": "02-网站建设与站点管理/03-新建网站第1步-客户与经营资料.png",
+      "expected_sha256": "32c7f005ff6d688fca8a2bb2cddf1daaa15e11395d83e826841bf1005252670b",
+      "source_sha256": "32C7F005FF6D688FCA8A2BB2CDDF1DAAA15E11395D83E826841BF1005252670B",
+      "destination_sha256": "32C7F005FF6D688FCA8A2BB2CDDF1DAAA15E11395D83E826841BF1005252670B",
+      "equal": true
+    },
+    {
+      "id": "W02-LONG",
+      "destination": "02-网站建设与站点管理/04-新建网站第1步-多客户工作表.png",
+      "expected_sha256": "d346144523d41233b9cf6434472aa22a6460d228d548e052745cd8a66932da8b",
+      "source_sha256": "D346144523D41233B9CF6434472AA22A6460D228D548E052745CD8A66932DA8B",
+      "destination_sha256": "D346144523D41233B9CF6434472AA22A6460D228D548E052745CD8A66932DA8B",
+      "equal": true
+    },
+    {
+      "id": "W03",
+      "destination": "02-网站建设与站点管理/05-新建网站第2步-站点配置.png",
+      "expected_sha256": "ce0fcc7052fc017fd3733cc0ec6d7a9139c7e772722446dbaeec46379fa4ecde",
+      "source_sha256": "CE0FCC7052FC017FD3733CC0EC6D7A9139C7E772722446DBAEEC46379FA4ECDE",
+      "destination_sha256": "CE0FCC7052FC017FD3733CC0EC6D7A9139C7E772722446DBAEEC46379FA4ECDE",
+      "equal": true
+    },
+    {
+      "id": "W03-RESOURCE-ERROR",
+      "destination": "02-网站建设与站点管理/06-站点配置-资源读取失败.png",
+      "expected_sha256": "38a3ad1c40dc2c6238c76c9dfb21e8bb5049a797d398f8559b9fff34d155f436",
+      "source_sha256": "38A3AD1C40DC2C6238C76C9DFB21E8BB5049A797D398F8559B9FFF34D155F436",
+      "destination_sha256": "38A3AD1C40DC2C6238C76C9DFB21E8BB5049A797D398F8559B9FFF34D155F436",
+      "equal": true
+    },
+    {
+      "id": "W03-NO-RESOURCE",
+      "destination": "02-网站建设与站点管理/07-站点配置-暂无可用资源.png",
+      "expected_sha256": "4fa59973f3cf9d38e066b5f37035abea004304ad91316f69730856896147be2d",
+      "source_sha256": "4FA59973F3CF9D38E066B5F37035ABEA004304AD91316F69730856896147BE2D",
+      "destination_sha256": "4FA59973F3CF9D38E066B5F37035ABEA004304AD91316F69730856896147BE2D",
+      "equal": true
+    },
+    {
+      "id": "O-W01",
+      "destination": "02-网站建设与站点管理/08-站点配置-导入配置文件结果.png",
+      "expected_sha256": "aa7bc2f11695b8385f2a5f62fda124d9523c2c154bff0c9d760c46c326749ace",
+      "source_sha256": "AA7BC2F11695B8385F2A5F62FDA124D9523C2C154BFF0C9D760C46C326749ACE",
+      "destination_sha256": "AA7BC2F11695B8385F2A5F62FDA124D9523C2C154BFF0C9D760C46C326749ACE",
+      "equal": true
+    },
+    {
+      "id": "O-W02",
+      "destination": "02-网站建设与站点管理/09-新建网站-移出本次建站项确认.png",
+      "expected_sha256": "60285e7015e91cd209d04922166365d3b955aa3c1267f9418e354b34682bc71c",
+      "source_sha256": "60285E7015E91CD209D04922166365D3B955AA3C1267F9418E354B34682BC71C",
+      "destination_sha256": "60285E7015E91CD209D04922166365D3B955AA3C1267F9418E354B34682BC71C",
+      "equal": true
+    },
+    {
+      "id": "W04",
+      "destination": "02-网站建设与站点管理/10-新建网站第3步-确认启动.png",
+      "expected_sha256": "ec9934bbaf5f3bf1b58a70d3b97a78f9beb01f850a83935888488df3dcfcc447",
+      "source_sha256": "EC9934BBAF5F3BF1B58A70D3B97A78F9BEB01F850A83935888488DF3DCFCC447",
+      "destination_sha256": "EC9934BBAF5F3BF1B58A70D3B97A78F9BEB01F850A83935888488DF3DCFCC447",
+      "equal": true
+    },
+    {
+      "id": "W04-LONG",
+      "destination": "02-网站建设与站点管理/11-确认启动-多客户长清单.png",
+      "expected_sha256": "65b2ec4e9835b0938ff65c90d6589abd4a3f20760b03aa9a985d6a0bdd06d952",
+      "source_sha256": "65B2EC4E9835B0938FF65C90D6589ABD4A3F20760B03AA9A985D6A0BDD06D952",
+      "destination_sha256": "65B2EC4E9835B0938FF65C90D6589ABD4A3F20760B03AA9A985D6A0BDD06D952",
+      "equal": true
+    },
+    {
+      "id": "O-W03",
+      "destination": "02-网站建设与站点管理/12-确认启动-检查必要条件.png",
+      "expected_sha256": "b36dde284ce47afb6a18358a87ed857c2319816c9e42ec9d034b5afc28b9e6ec",
+      "source_sha256": "B36DDE284CE47AFB6A18358A87ED857C2319816C9E42EC9D034B5AFC28B9E6EC",
+      "destination_sha256": "B36DDE284CE47AFB6A18358A87ED857C2319816C9E42EC9D034B5AFC28B9E6EC",
+      "equal": true
+    },
+    {
+      "id": "W04-SUBMISSION-UNKNOWN",
+      "destination": "02-网站建设与站点管理/13-确认启动-提交结果暂不确定.png",
+      "expected_sha256": "6b4f815ddda06bf4a4a0770b850d425e4d98e408c07cc61f39e5ad0d37e835fc",
+      "source_sha256": "6B4F815DDDA06BF4A4A0770B850D425E4D98E408C07CC61F39E5AD0D37E835FC",
+      "destination_sha256": "6B4F815DDDA06BF4A4A0770B850D425E4D98E408C07CC61F39E5AD0D37E835FC",
+      "equal": true
+    },
+    {
+      "id": "W05",
+      "destination": "02-网站建设与站点管理/14-建站批次-批次列表.png",
+      "expected_sha256": "6b95e18a79a39fbf38f0fc3f2b9ab100d2daa931ed59f895aa955466b3b82385",
+      "source_sha256": "6B95E18A79A39FBF38F0FC3F2B9AB100D2DAA931ED59F895AA955466B3B82385",
+      "destination_sha256": "6B95E18A79A39FBF38F0FC3F2B9AB100D2DAA931ED59F895AA955466B3B82385",
+      "equal": true
+    },
+    {
+      "id": "W06",
+      "destination": "02-网站建设与站点管理/15-建站批次-批次详情.png",
+      "expected_sha256": "1441eae4cac8020285ee50eaf92083132dec55dc82469a93ce3a04ce164f996b",
+      "source_sha256": "1441EAE4CAC8020285EE50EAF92083132DEC55DC82469A93CE3A04CE164F996B",
+      "destination_sha256": "1441EAE4CAC8020285EE50EAF92083132DEC55DC82469A93CE3A04CE164F996B",
+      "equal": true
+    },
+    {
+      "id": "O-W06",
+      "destination": "02-网站建设与站点管理/16-建站批次-运行步骤与日志.png",
+      "expected_sha256": "53e2a35be63b55baf327fd47992c2ff4f8f86d9cbd9a322f697d43f218b0fd47",
+      "source_sha256": "53E2A35BE63B55BAF327FD47992C2FF4F8F86D9CBD9A322F697D43F218B0FD47",
+      "destination_sha256": "53E2A35BE63B55BAF327FD47992C2FF4F8F86D9CBD9A322F697D43F218B0FD47",
+      "equal": true
+    },
+    {
+      "id": "O-W04",
+      "destination": "02-网站建设与站点管理/17-建站批次-重试确认与反馈.png",
+      "expected_sha256": "30e983706446bea4512f8831e42350f6ca6ab7cf3b2560f71e235fe1ebb0d7a1",
+      "source_sha256": "30E983706446BEA4512F8831E42350F6CA6AB7CF3B2560F71E235FE1EBB0D7A1",
+      "destination_sha256": "30E983706446BEA4512F8831E42350F6CA6AB7CF3B2560F71E235FE1EBB0D7A1",
+      "equal": true
+    },
+    {
+      "id": "W07",
+      "destination": "02-网站建设与站点管理/18-站点管理-网站列表.png",
+      "expected_sha256": "ff79ecc9f65f276d7d372a4bdcf7070e5282f33abef3b3f5944e27e09e77c511",
+      "source_sha256": "FF79ECC9F65F276D7D372A4BDCF7070E5282F33ABEF3B3F5944E27E09E77C511",
+      "destination_sha256": "FF79ECC9F65F276D7D372A4BDCF7070E5282F33ABEF3B3F5944E27E09E77C511",
+      "equal": true
+    },
+    {
+      "id": "W08",
+      "destination": "02-网站建设与站点管理/19-站点详情-网站概况.png",
+      "expected_sha256": "b5fb4be961094a199b9651d81da7fdc24cafe257fcc67ac2e39bbfc4edd5d030",
+      "source_sha256": "B5FB4BE961094A199B9651D81DA7FDC24CAFE257FCC67AC2E39BBFC4EDD5D030",
+      "destination_sha256": "B5FB4BE961094A199B9651D81DA7FDC24CAFE257FCC67AC2E39BBFC4EDD5D030",
+      "equal": true
+    },
+    {
+      "id": "W09",
+      "destination": "02-网站建设与站点管理/20-站点详情-AI对话.png",
+      "expected_sha256": "c104872677f2b313724b3dfe44447d8863bd57c54e3b23dfd574b0a03773c6f5",
+      "source_sha256": "C104872677F2B313724B3DFE44447D8863BD57C54E3B23DFD574B0A03773C6F5",
+      "destination_sha256": "C104872677F2B313724B3DFE44447D8863BD57C54E3B23DFD574B0A03773C6F5",
+      "equal": true
+    },
+    {
+      "id": "O-W07",
+      "destination": "02-网站建设与站点管理/21-站点对话-开始新对话确认.png",
+      "expected_sha256": "46dd1f041a04232baeb90e65b3b1b9701db1d72531d59a744736cf426339879d",
+      "source_sha256": "46DD1F041A04232BAEB90E65B3B1B9701DB1D72531D59A744736CF426339879D",
+      "destination_sha256": "46DD1F041A04232BAEB90E65B3B1B9701DB1D72531D59A744736CF426339879D",
+      "equal": true
+    },
+    {
+      "id": "W10",
+      "destination": "02-网站建设与站点管理/22-站点详情-商业邮箱与网站发信.png",
+      "expected_sha256": "c14f0c47d891d9df83161a2d26416f9838d54584d29549032e0acce5c69c8a02",
+      "source_sha256": "C14F0C47D891D9DF83161A2D26416F9838D54584D29549032E0ACCE5C69C8A02",
+      "destination_sha256": "C14F0C47D891D9DF83161A2D26416F9838D54584D29549032E0ACCE5C69C8A02",
+      "equal": true
+    },
+    {
+      "id": "O-W13",
+      "destination": "02-网站建设与站点管理/23-网站发信-邮箱修复与发信启用确认.png",
+      "expected_sha256": "42ec7372ee42cf7cba57b3670a4b0a9c34a1ca4770319d60850ca22f6670409d",
+      "source_sha256": "42EC7372EE42CF7CBA57B3670A4B0A9C34A1CA4770319D60850CA22F6670409D",
+      "destination_sha256": "42EC7372EE42CF7CBA57B3670A4B0A9C34A1CA4770319D60850CA22F6670409D",
+      "equal": true
+    },
+    {
+      "id": "O-W14",
+      "destination": "02-网站建设与站点管理/24-网站发信-发送测试邮件.png",
+      "expected_sha256": "e50d7107f77ba288c76a5298553322be7da79e99966a3066e2342f9fb32ac250",
+      "source_sha256": "E50D7107F77BA288C76A5298553322BE7DA79E99966A3066E2342F9FB32AC250",
+      "destination_sha256": "E50D7107F77BA288C76A5298553322BE7DA79E99966A3066E2342F9FB32AC250",
+      "equal": true
+    },
+    {
+      "id": "O-W14-SEND-UNKNOWN",
+      "destination": "02-网站建设与站点管理/25-网站发信-测试邮件发送结果未知.png",
+      "expected_sha256": "064cc43d5a3d7bd0389832971a2506c9ba77406f7a7a45bb159e10de4152ec4f",
+      "source_sha256": "064CC43D5A3D7BD0389832971A2506C9BA77406F7A7A45BB159E10DE4152EC4F",
+      "destination_sha256": "064CC43D5A3D7BD0389832971A2506C9BA77406F7A7A45BB159E10DE4152EC4F",
+      "equal": true
+    },
+    {
+      "id": "W11",
+      "destination": "02-网站建设与站点管理/26-站点详情-网站变更记录.png",
+      "expected_sha256": "a013da9f3a2c32fcd084bf6c90df76af1cf416fbb14b83f3b76464ff17007428",
+      "source_sha256": "A013DA9F3A2C32FCD084BF6C90DF76AF1CF416FBB14B83F3B76464FF17007428",
+      "destination_sha256": "A013DA9F3A2C32FCD084BF6C90DF76AF1CF416FBB14B83F3B76464FF17007428",
+      "equal": true
+    },
+    {
+      "id": "O-W08",
+      "destination": "02-网站建设与站点管理/27-网站变更-查看改动详情.png",
+      "expected_sha256": "5cf1aee73a29e61dccd4d9f81749c4f058ff15dbb1a6237d1fb39f3ae41eb5ca",
+      "source_sha256": "5CF1AEE73A29E61DCCD4D9F81749C4F058FF15DBB1A6237D1FB39F3AE41EB5CA",
+      "destination_sha256": "5CF1AEE73A29E61DCCD4D9F81749C4F058FF15DBB1A6237D1FB39F3AE41EB5CA",
+      "equal": true
+    },
+    {
+      "id": "O-W09",
+      "destination": "02-网站建设与站点管理/28-网站变更-整体恢复确认.png",
+      "expected_sha256": "19b02d8c93e10ed35282c06788c37594c3145357a736863fe1e8505209e03560",
+      "source_sha256": "19B02D8C93E10ED35282C06788C37594C3145357A736863FE1E8505209E03560",
+      "destination_sha256": "19B02D8C93E10ED35282C06788C37594C3145357A736863FE1E8505209E03560",
+      "equal": true
+    },
+    {
+      "id": "O-W09-LATER-CONFLICT",
+      "destination": "02-网站建设与站点管理/29-网站变更-恢复被后续修改阻止.png",
+      "expected_sha256": "ab18317ce9a67b13c15f199303557453dae67ffc95d211da290bb102b19b9e91",
+      "source_sha256": "AB18317CE9A67B13C15F199303557453DAE67FFC95D211DA290BB102B19B9E91",
+      "destination_sha256": "AB18317CE9A67B13C15F199303557453DAE67FFC95D211DA290BB102B19B9E91",
+      "equal": true
+    },
+    {
+      "id": "O-W10",
+      "destination": "02-网站建设与站点管理/30-网站变更-取消定时恢复确认.png",
+      "expected_sha256": "f84c533545444852e9bee984f65118c6c0ce76650260f5b8538257c16ccac042",
+      "source_sha256": "F84C533545444852E9BEE984F65118C6C0CE76650260F5B8538257C16CCAC042",
+      "destination_sha256": "F84C533545444852E9BEE984F65118C6C0CE76650260F5B8538257C16CCAC042",
+      "equal": true
+    },
+    {
+      "id": "W12",
+      "destination": "02-网站建设与站点管理/31-站点详情-网站复核.png",
+      "expected_sha256": "df17c887e411bae3e66fcfb54b98e89e7916895729035badf3b4a7e109e5aaaf",
+      "source_sha256": "DF17C887E411BAE3E66FCFB54B98E89E7916895729035BADF3B4A7E109E5AAAF",
+      "destination_sha256": "DF17C887E411BAE3E66FCFB54B98E89E7916895729035BADF3B4A7E109E5AAAF",
+      "equal": true
+    },
+    {
+      "id": "O-W05",
+      "destination": "02-网站建设与站点管理/32-网站复核-上线前检查提示.png",
+      "expected_sha256": "ce3f72bb51aa8719ff55df6571c884c5c337b956a5d8b63a39e5b04aff2064d5",
+      "source_sha256": "CE3F72BB51AA8719FF55DF6571C884C5C337B956A5D8B63A39E5B04AFF2064D5",
+      "destination_sha256": "CE3F72BB51AA8719FF55DF6571C884C5C337B956A5D8B63A39E5B04AFF2064D5",
+      "equal": true
+    },
+    {
+      "id": "O-W05-READ-ERROR",
+      "destination": "02-网站建设与站点管理/33-网站复核-上线前检查读取失败.png",
+      "expected_sha256": "7c93c7d40e6497db2eee3d63fcba9a179ad489aa651d35dab6a055d19b25e725",
+      "source_sha256": "7C93C7D40E6497DB2EEE3D63FCBA9A179AD489AA651D35DAB6A055D19B25E725",
+      "destination_sha256": "7C93C7D40E6497DB2EEE3D63FCBA9A179AD489AA651D35DAB6A055D19B25E725",
+      "equal": true
+    },
+    {
+      "id": "O-W11",
+      "destination": "02-网站建设与站点管理/34-网站复核-修复与复核进度.png",
+      "expected_sha256": "e6b54ee8074781acffbbe366820e39b4359735960f584b04f712cc599a94bdfb",
+      "source_sha256": "E6B54EE8074781ACFFBBE366820E39B4359735960F584B04F712CC599A94BDFB",
+      "destination_sha256": "E6B54EE8074781ACFFBBE366820E39B4359735960F584B04F712CC599A94BDFB",
+      "equal": true
+    },
+    {
+      "id": "O-W11-MIXED-RESULT",
+      "destination": "02-网站建设与站点管理/35-网站复核-部分修复成功与人工处理项.png",
+      "expected_sha256": "b2d126f663d86a611156cb08430830be9fab61b589f3cf35406332ba7d04b23c",
+      "source_sha256": "B2D126F663D86A611156CB08430830BE9FAB61B589F3CF35406332BA7D04B23C",
+      "destination_sha256": "B2D126F663D86A611156CB08430830BE9FAB61B589F3CF35406332BA7D04B23C",
+      "equal": true
+    },
+    {
+      "id": "O-W12",
+      "destination": "02-网站建设与站点管理/36-网站复核-放大查看问题证据.png",
+      "expected_sha256": "66107444b153f092f9f81b419809a3b237aec1718c92cfa74a73b507d8f9744a",
+      "source_sha256": "66107444B153F092F9F81B419809A3B237AEC1718C92CFA74A73B507D8F9744A",
+      "destination_sha256": "66107444B153F092F9F81B419809A3B237AEC1718C92CFA74A73B507D8F9744A",
+      "equal": true
+    },
+    {
+      "id": "G01",
+      "destination": "03-支付网关申请/01-网关申请-全部申请工作台.png",
+      "expected_sha256": "99b9e390168a008137f6e7aa062e2bbcbc314effc8661cd493008fea06636082",
+      "source_sha256": "99B9E390168A008137F6E7AA062E2BBCBC314EFFC8661CD493008FEA06636082",
+      "destination_sha256": "99B9E390168A008137F6E7AA062E2BBCBC314EFFC8661CD493008FEA06636082",
+      "equal": true
+    },
+    {
+      "id": "C09-idle",
+      "destination": "03-支付网关申请/02-客户网关面板-尚无进行中的申请.png",
+      "expected_sha256": "c65571154c8e93870d98c9b24c90d682320fc9d6842d097dcc0e8208ec2f28a7",
+      "source_sha256": "C65571154C8E93870D98C9B24C90D682320FC9D6842D097DCC0E8208EC2F28A7",
+      "destination_sha256": "C65571154C8E93870D98C9B24C90D682320FC9D6842D097DCC0E8208EC2F28A7",
+      "equal": true
+    },
+    {
+      "id": "C09-active",
+      "destination": "03-支付网关申请/03-客户网关面板-已有进行中的申请.png",
+      "expected_sha256": "60238df015109cc0adb85b77f6f9d963b0c43689b043d57acf6edf4901f2831f",
+      "source_sha256": "60238DF015109CC0ADB85B77F6F9D963B0C43689B043D57ACF6EDF4901F2831F",
+      "destination_sha256": "60238DF015109CC0ADB85B77F6F9D963B0C43689B043D57ACF6EDF4901F2831F",
+      "equal": true
+    },
+    {
+      "id": "C09-current-proofs",
+      "destination": "03-支付网关申请/04-客户网关面板-管理当前补充证明.png",
+      "expected_sha256": "700ac5e4ab4542def4697aff36d2d68956e5494de50b33c857d8db479ab0889c",
+      "source_sha256": "700AC5E4AB4542DEF4697AFF36D2D68956E5494DE50B33C857D8DB479AB0889C",
+      "destination_sha256": "700AC5E4AB4542DEF4697AFF36D2D68956E5494DE50B33C857D8DB479AB0889C",
+      "equal": true
+    },
+    {
+      "id": "O-G04",
+      "destination": "03-支付网关申请/05-开始申请-确认平台与申请负责人.png",
+      "expected_sha256": "9512d3c610a53b5005530b682358773857b38e853fe45ffc14b59bbd56eef9c6",
+      "source_sha256": "9512D3C610A53B5005530B682358773857B38E853FE45FFC14B59BBD56EEF9C6",
+      "destination_sha256": "9512D3C610A53B5005530B682358773857B38E853FE45FFC14B59BBD56EEF9C6",
+      "equal": true
+    },
+    {
+      "id": "O-G04-concurrent",
+      "destination": "03-支付网关申请/06-开始申请-同时有人已启动申请.png",
+      "expected_sha256": "37dcbb81c0be4d5baf9c894fdc05a9d539e41aa1ed71aa5b598b9491c936def4",
+      "source_sha256": "37DCBB81C0BE4D5BAF9C894FDC05A9D539E41AA1ED71AA5B598B9491C936DEF4",
+      "destination_sha256": "37DCBB81C0BE4D5BAF9C894FDC05A9D539E41AA1ED71AA5B598B9491C936DEF4",
+      "equal": true
+    },
+    {
+      "id": "O-G04-unknown",
+      "destination": "03-支付网关申请/07-开始申请-申请与资料定稿保存结果未知.png",
+      "expected_sha256": "609fe0bd73a2a29a19d8a9ec0d80b65e87724c930c986fe82424e0e4bf397fa0",
+      "source_sha256": "609FE0BD73A2A29A19D8A9EC0D80B65E87724C930C986FE82424E0E4BF397FA0",
+      "destination_sha256": "609FE0BD73A2A29A19D8A9EC0D80B65E87724C930C986FE82424E0E4BF397FA0",
+      "equal": true
+    },
+    {
+      "id": "G02",
+      "destination": "03-支付网关申请/08-申请详情-本次申请概览.png",
+      "expected_sha256": "8fe8b1021c2189ec394af6202d57e38884ecbbeb30d46393e91629941063f6ff",
+      "source_sha256": "8FE8B1021C2189EC394AF6202D57E38884ECBBEB30D46393E91629941063F6FF",
+      "destination_sha256": "8FE8B1021C2189EC394AF6202D57E38884ECBBEB30D46393E91629941063F6FF",
+      "equal": true
+    },
+    {
+      "id": "G02-snapshot",
+      "destination": "03-支付网关申请/09-申请详情-查看申请时保存的资料.png",
+      "expected_sha256": "2f3474513e093693d979788103c47a7777ca30b22e74fabc4d34610fa824208b",
+      "source_sha256": "2F3474513E093693D979788103C47A7777CA30B22E74FABC4D34610FA824208B",
+      "destination_sha256": "2F3474513E093693D979788103C47A7777CA30B22E74FABC4D34610FA824208B",
+      "equal": true
+    },
+    {
+      "id": "O-G-snapshot-preview",
+      "destination": "03-支付网关申请/10-申请资料-打开定稿附件.png",
+      "expected_sha256": "ddc9e65ed8c85fd1b4a3bde08a7819ae08f942cc603be56fbc45cbffb6962f9e",
+      "source_sha256": "DDC9E65ED8C85FD1B4A3BDE08A7819AE08F942CC603BE56FBC45CBFFB6962F9E",
+      "destination_sha256": "DDC9E65ED8C85FD1B4A3BDE08A7819AE08F942CC603BE56FBC45CBFFB6962F9E",
+      "equal": true
+    },
+    {
+      "id": "G03",
+      "destination": "03-支付网关申请/11-申请详情-相关邮件与明确要求.png",
+      "expected_sha256": "b8836d4bf4a7e252f3c78f97fc08e40d8467a041ba870264f5a1c4ae7a676091",
+      "source_sha256": "B8836D4BF4A7E252F3C78F97FC08E40D8467A041BA870264F5A1C4AE7A676091",
+      "destination_sha256": "B8836D4BF4A7E252F3C78F97FC08E40D8467A041BA870264F5A1C4AE7A676091",
+      "equal": true
+    },
+    {
+      "id": "O-G07",
+      "destination": "03-支付网关申请/12-申请邮件-确认邮件所属申请.png",
+      "expected_sha256": "3c986767507f1b1ac2295b3a2c48d7761533297c6eebe36538dad9febd0144b1",
+      "source_sha256": "3C986767507F1B1AC2295B3A2C48D7761533297C6EEBE36538DAD9FEBD0144B1",
+      "destination_sha256": "3C986767507F1B1AC2295B3A2C48D7761533297C6EEBE36538DAD9FEBD0144B1",
+      "equal": true
+    },
+    {
+      "id": "O-G08",
+      "destination": "03-支付网关申请/13-申请要求-查看明确要求与处理记录.png",
+      "expected_sha256": "39ef58f127b545ef2557154a1603e84fabd15db943b2ee8e54c52708a28aec43",
+      "source_sha256": "39EF58F127B545EF2557154A1603E84FABD15DB943B2EE8E54C52708A28AEC43",
+      "destination_sha256": "39EF58F127B545EF2557154A1603E84FABD15DB943B2EE8E54C52708A28AEC43",
+      "equal": true
+    },
+    {
+      "id": "O-G12",
+      "destination": "03-支付网关申请/14-申请要求-记录本次人工处理结果.png",
+      "expected_sha256": "4be87c9c6a7134bda11c2198e8067b4efdc1d328703e1c7bd07d2614655b4dcb",
+      "source_sha256": "4BE87C9C6A7134BDA11C2198E8067B4EFDC1D328703E1C7BD07D2614655B4DCB",
+      "destination_sha256": "4BE87C9C6A7134BDA11C2198E8067B4EFDC1D328703E1C7BD07D2614655B4DCB",
+      "equal": true
+    },
+    {
+      "id": "G04",
+      "destination": "03-支付网关申请/15-申请状态-状态变化与纠正记录.png",
+      "expected_sha256": "5d3e766fa4d36189fc70f8510e0ae123f65b9f579324e0b87866cae766621fe0",
+      "source_sha256": "5D3E766FA4D36189FC70F8510E0AE123F65B9F579324E0B87866CAE766621FE0",
+      "destination_sha256": "5D3E766FA4D36189FC70F8510E0AE123F65B9F579324E0B87866CAE766621FE0",
+      "equal": true
+    },
+    {
+      "id": "O-G05",
+      "destination": "03-支付网关申请/16-申请状态-人工更新或纠正.png",
+      "expected_sha256": "5adc9612fec367effff5a077ae0641edbbde7cb3d4b30d8464b755b9c779b88f",
+      "source_sha256": "5ADC9612FEC367EFFFF5A077AE0641EDBBDE7CB3D4B30D8464B755B9C779B88F",
+      "destination_sha256": "5ADC9612FEC367EFFFF5A077AE0641EDBBDE7CB3D4B30D8464B755B9C779B88F",
+      "equal": true
+    },
+    {
+      "id": "O-G05-approved-correction-result",
+      "destination": "03-支付网关申请/17-申请状态-唯一获批被纠正后的客户状态.png",
+      "expected_sha256": "47329a4253f750b9ffe82ee03b4ebb4649eba634936c2670ae61a0986496a8c2",
+      "source_sha256": "47329A4253F750B9FFE82EE03B4EBB4649EBA634936C2670AE61A0986496A8C2",
+      "destination_sha256": "47329A4253F750B9FFE82EE03B4EBB4649EBA634936C2670AE61A0986496A8C2",
+      "equal": true
+    },
+    {
+      "id": "G04-new-email-after-correction",
+      "destination": "03-支付网关申请/18-申请状态-人工纠正后收到新邮件.png",
+      "expected_sha256": "53d14de6517b036277b347a60b857be0d96ef948d98309092851a6ce3412fed4",
+      "source_sha256": "53D14DE6517B036277B347A60B857BE0D96EF948D98309092851A6CE3412FED4",
+      "destination_sha256": "53D14DE6517B036277B347A60B857BE0D96EF948D98309092851A6CE3412FED4",
+      "equal": true
+    },
+    {
+      "id": "G04-first-valid-approval",
+      "destination": "03-支付网关申请/19-申请状态-首次有效获批与客户完成.png",
+      "expected_sha256": "5b88946566b0190bd2d5cdc4931586614a4012430fca3265f00cd793460bb613",
+      "source_sha256": "5B88946566B0190BD2D5CDC4931586614A4012430FCA3265F00CD793460BB613",
+      "destination_sha256": "5B88946566B0190BD2D5CDC4931586614A4012430FCA3265F00CD793460BB613",
+      "equal": true
+    },
+    {
+      "id": "O-G09",
+      "destination": "03-支付网关申请/20-申请状态-纠错后出现进行中申请冲突.png",
+      "expected_sha256": "1ac859f47cc6875599ce3c9dd0d6e8a9ef6cae142fd6a9ad5780678f6dcec619",
+      "source_sha256": "1AC859F47CC6875599CE3C9DD0D6E8A9EF6CAE142FD6A9AD5780678F6DCEC619",
+      "destination_sha256": "1AC859F47CC6875599CE3C9DD0D6E8A9EF6CAE142FD6A9AD5780678F6DCEC619",
+      "equal": true
+    },
+    {
+      "id": "O-G10",
+      "destination": "03-支付网关申请/21-邮件事项-确认归属与拆分误归组.png",
+      "expected_sha256": "e12cfd672a7d0a00c18f8c6823a5fd64ab40a71481ca03c7632a26309ea7efe0",
+      "source_sha256": "E12CFD672A7D0A00C18F8C6823A5FD64AB40A71481CA03C7632A26309EA7EFE0",
+      "destination_sha256": "E12CFD672A7D0A00C18F8C6823A5FD64AB40A71481CA03C7632A26309EA7EFE0",
+      "equal": true
+    },
+    {
+      "id": "O-G11",
+      "destination": "03-支付网关申请/22-邮件事项-纠正分类或处理标记.png",
+      "expected_sha256": "ef978d5fe8e9fc892d65027bf419d25decc47302bdca889521967ed9bb2bb1e9",
+      "source_sha256": "EF978D5FE8E9FC892D65027BF419D25DECC47302BDCA889521967ED9BB2BB1E9",
+      "destination_sha256": "EF978D5FE8E9FC892D65027BF419D25DECC47302BDCA889521967ED9BB2BB1E9",
+      "equal": true
+    },
+    {
+      "id": "O-G11-revoke-confirm",
+      "destination": "03-支付网关申请/23-邮件事项-撤销单项人工决定确认.png",
+      "expected_sha256": "061e8e03b55d8d95eed8bd8940c05cec2fb23710d8270d3004583a86dd109208",
+      "source_sha256": "061E8E03B55D8D95EED8BD8940C05CEC2FB23710D8270D3004583A86DD109208",
+      "destination_sha256": "061E8E03B55D8D95EED8BD8940C05CEC2FB23710D8270D3004583A86DD109208",
+      "equal": true
+    },
+    {
+      "id": "O-G06",
+      "destination": "03-支付网关申请/24-结束申请-结束本次申请确认.png",
+      "expected_sha256": "a728cd053226f0018f384c324a73d03ee8f8e13f696af8f8abfae1f2ce22ece1",
+      "source_sha256": "A728CD053226F0018F384C324A73D03EE8F8E13F696AF8F8ABFAE1F2CE22ECE1",
+      "destination_sha256": "A728CD053226F0018F384C324A73D03EE8F8E13F696AF8F8ABFAE1F2CE22ECE1",
+      "equal": true
+    },
+    {
+      "id": "G04-ended-mail-guard",
+      "destination": "03-支付网关申请/25-结束申请-再次处理旧邮件不重开申请.png",
+      "expected_sha256": "1c68173a2c5a299ff5aa726b8def99db1c95fd8d49b1116cb6672dfec53fa117",
+      "source_sha256": "1C68173A2C5A299FF5AA726B8DEF99DB1C95FD8D49B1116CB6672DFEC53FA117",
+      "destination_sha256": "1C68173A2C5A299FF5AA726B8DEF99DB1C95FD8D49B1116CB6672DFEC53FA117",
+      "equal": true
+    },
+    {
+      "id": "G01-empty",
+      "destination": "03-支付网关申请/26-网关工作台-筛选后没有申请.png",
+      "expected_sha256": "728d957331e779ce7e0a45021eeca57c3f4c6c8b9bbb74ec63bff3ac9753b94d",
+      "source_sha256": "728D957331E779CE7E0A45021EECA57C3F4C6C8B9BBB74EC63BFF3AC9753B94D",
+      "destination_sha256": "728D957331E779CE7E0A45021EECA57C3F4C6C8B9BBB74EC63BFF3AC9753B94D",
+      "equal": true
+    },
+    {
+      "id": "G02-read-failure",
+      "destination": "03-支付网关申请/27-申请详情-部分内容读取失败.png",
+      "expected_sha256": "18f2a5657d758b6b6dee2a515120e03a1b5b528c3b78d86143ba0a393445f215",
+      "source_sha256": "18F2A5657D758B6B6DEE2A515120E03A1B5B528C3B78D86143BA0A393445F215",
+      "destination_sha256": "18F2A5657D758B6B6DEE2A515120E03A1B5B528C3B78D86143BA0A393445F215",
+      "equal": true
+    },
+    {
+      "id": "M01",
+      "destination": "04-邮箱与邮件跟进/01-邮箱管理-按域名查看商业邮箱.png",
+      "expected_sha256": "5bb5a5bd6037e1222299a50cff25f80f84ed01b49b43dfebe28b3f6680f0c4f2",
+      "source_sha256": "5BB5A5BD6037E1222299A50CFF25F80F84ED01B49B43DFEBE28B3F6680F0C4F2",
+      "destination_sha256": "5BB5A5BD6037E1222299A50CFF25F80F84ED01B49B43DFEBE28B3F6680F0C4F2",
+      "equal": true
+    },
+    {
+      "id": "O-M01",
+      "destination": "04-邮箱与邮件跟进/02-邮箱管理-设置邮箱登录凭据.png",
+      "expected_sha256": "2493271a925f1b87a170f470a512fb5afd5f705c3c207c429e87e98c6330557e",
+      "source_sha256": "2493271A925F1B87A170F470A512FB5AFD5F705C3C207C429E87E98C6330557E",
+      "destination_sha256": "2493271A925F1B87A170F470A512FB5AFD5F705C3C207C429E87E98C6330557E",
+      "equal": true
+    },
+    {
+      "id": "O-M02",
+      "destination": "04-邮箱与邮件跟进/03-邮箱凭据-显示密码确认.png",
+      "expected_sha256": "d8624f5c31a55e743e979b5c1d2933a833e9e1dd763304e9fa33d39e9d8d3600",
+      "source_sha256": "D8624F5C31A55E743E979B5C1D2933A833E9E1DD763304E9FA33D39E9D8D3600",
+      "destination_sha256": "D8624F5C31A55E743E979B5C1D2933A833E9E1DD763304E9FA33D39E9D8D3600",
+      "equal": true
+    },
+    {
+      "id": "O-M07",
+      "destination": "04-邮箱与邮件跟进/04-邮箱管理-监听与同步侧栏.png",
+      "expected_sha256": "db191d2848ec859820d12c4a1ba59d7e8b180aca7f93ecd5f0930358d0ae70f7",
+      "source_sha256": "DB191D2848EC859820D12C4A1BA59D7E8B180ACA7F93ECD5F0930358D0AE70F7",
+      "destination_sha256": "DB191D2848EC859820D12C4A1BA59D7E8B180ACA7F93ECD5F0930358D0AE70F7",
+      "equal": true
+    },
+    {
+      "id": "M02",
+      "destination": "04-邮箱与邮件跟进/05-邮件查看-文件夹与邮件列表.png",
+      "expected_sha256": "24bfc2aad4b08b9a46c4fdc6a3baf902d1a8b320565be8f3d021ca72e4f8328a",
+      "source_sha256": "24BFC2AAD4B08B9A46C4FDC6A3BAF902D1A8B320565BE8F3D021CA72E4F8328A",
+      "destination_sha256": "24BFC2AAD4B08B9A46C4FDC6A3BAF902D1A8B320565BE8F3D021CA72E4F8328A",
+      "equal": true
+    },
+    {
+      "id": "ES01",
+      "destination": "04-邮箱与邮件跟进/06-邮件查看-切换邮箱时加载新内容.png",
+      "expected_sha256": "5a333136aec6546685dc7ec796f292da76e69b604170d63266294247b450b7e4",
+      "source_sha256": "5A333136AEC6546685DC7EC796F292DA76E69B604170D63266294247B450B7E4",
+      "destination_sha256": "5A333136AEC6546685DC7EC796F292DA76E69B604170D63266294247B450B7E4",
+      "equal": true
+    },
+    {
+      "id": "M03",
+      "destination": "04-邮箱与邮件跟进/07-邮件查看-阅读邮件原文.png",
+      "expected_sha256": "55d3f3d174affafc88e7b5c9d40d51571029c2716af22637fd74cb97ef10598f",
+      "source_sha256": "55D3F3D174AFFAFC88E7B5C9D40D51571029C2716AF22637FD74CB97EF10598F",
+      "destination_sha256": "55D3F3D174AFFAFC88E7B5C9D40D51571029C2716AF22637FD74CB97EF10598F",
+      "equal": true
+    },
+    {
+      "id": "O-M06",
+      "destination": "04-邮箱与邮件跟进/08-邮件查看-展开中文译文.png",
+      "expected_sha256": "202ecb563ec43983cc03e6910e3e97f337ae9b111c170c99a1912edbcf4001fc",
+      "source_sha256": "202ECB563EC43983CC03E6910E3E97F337AE9B111C170C99A1912EDBCF4001FC",
+      "destination_sha256": "202ECB563EC43983CC03E6910E3E97F337AE9B111C170C99A1912EDBCF4001FC",
+      "equal": true
+    },
+    {
+      "id": "M04",
+      "destination": "04-邮箱与邮件跟进/09-邮件回复-编辑回复内容.png",
+      "expected_sha256": "b827df5d3a5ef97b38d2df31b992efbc6597212bb7e53b4f18f3bfc9a4d3329a",
+      "source_sha256": "B827DF5D3A5EF97B38D2DF31B992EFBC6597212BB7E53B4F18F3BFC9A4D3329A",
+      "destination_sha256": "B827DF5D3A5EF97B38D2DF31B992EFBC6597212BB7E53B4F18F3BFC9A4D3329A",
+      "equal": true
+    },
+    {
+      "id": "O-M08",
+      "destination": "04-邮箱与邮件跟进/10-邮件回复-发送前确认.png",
+      "expected_sha256": "e220d9d4f41951eec01029f7fd984d9f23e15139a3bb1ea5aa6ccaadbc0c1125",
+      "source_sha256": "E220D9D4F41951EEC01029F7FD984D9F23E15139A3BB1EA5AA6CCAADBC0C1125",
+      "destination_sha256": "E220D9D4F41951EEC01029F7FD984D9F23E15139A3BB1EA5AA6CCAADBC0C1125",
+      "equal": true
+    },
+    {
+      "id": "ES02",
+      "destination": "04-邮箱与邮件跟进/11-邮件回复-发送结果暂不确定.png",
+      "expected_sha256": "a9c279db516d4b894eb8137fbee597cd74441f6a77c54a8011891b2eb2b36dc2",
+      "source_sha256": "A9C279DB516D4B894EB8137FBEE597CD74441F6A77C54A8011891B2EB2B36DC2",
+      "destination_sha256": "A9C279DB516D4B894EB8137FBEE597CD74441F6A77C54A8011891B2EB2B36DC2",
+      "equal": true
+    },
+    {
+      "id": "O-M04",
+      "destination": "04-邮箱与邮件跟进/12-邮件整理-移到废纸篓确认.png",
+      "expected_sha256": "001adcf849f1ce2fe5e0b465199507bdb0ff52a17e5441e34c83b3463f063eee",
+      "source_sha256": "001ADCF849F1CE2FE5E0B465199507BDB0FF52A17E5441E34C83B3463F063EEE",
+      "destination_sha256": "001ADCF849F1CE2FE5E0B465199507BDB0FF52A17E5441E34C83B3463F063EEE",
+      "equal": true
+    },
+    {
+      "id": "M05",
+      "destination": "04-邮箱与邮件跟进/13-邮件预审-查看建议与关联候选.png",
+      "expected_sha256": "5b3810dc710e32d925b2a1cf462823b765a4a5c4a2dac79a366a75de1d9de712",
+      "source_sha256": "5B3810DC710E32D925B2A1CF462823B765A4A5C4A2DAC79A366A75DE1D9DE712",
+      "destination_sha256": "5B3810DC710E32D925B2A1CF462823B765A4A5C4A2DAC79A366A75DE1D9DE712",
+      "equal": true
+    },
+    {
+      "id": "M06",
+      "destination": "04-邮箱与邮件跟进/14-邮件预审-待人工确认事项.png",
+      "expected_sha256": "592609a3e3f0c8de6304d62437a4bcfdc24aecbafb09b29215b9682480a0b440",
+      "source_sha256": "592609A3E3F0C8DE6304D62437A4BCFDC24AECBAFB09B29215B9682480A0B440",
+      "destination_sha256": "592609A3E3F0C8DE6304D62437A4BCFDC24AECBAFB09B29215B9682480A0B440",
+      "equal": true
+    },
+    {
+      "id": "ES03",
+      "destination": "04-邮箱与邮件跟进/15-邮件预审-建议与原文存在冲突.png",
+      "expected_sha256": "aef67b462f9fc060e585ac13a458c9560070151bfff31d661121a662f4b92d94",
+      "source_sha256": "AEF67B462F9FC060E585AC13A458C9560070151BFFF31D661121A662F4B92D94",
+      "destination_sha256": "AEF67B462F9FC060E585AC13A458C9560070151BFFF31D661121A662F4B92D94",
+      "equal": true
+    },
+    {
+      "id": "M07",
+      "destination": "04-邮箱与邮件跟进/16-邮件跟进-按申请查看事项.png",
+      "expected_sha256": "d193c9cc2c9081792af84aa56589ff60bc21124b3420783e673a787bb7b5859e",
+      "source_sha256": "D193C9CC2C9081792AF84AA56589FF60BC21124B3420783E673A787BB7B5859E",
+      "destination_sha256": "D193C9CC2C9081792AF84AA56589FF60BC21124B3420783E673A787BB7B5859E",
+      "equal": true
+    },
+    {
+      "id": "M08",
+      "destination": "04-邮箱与邮件跟进/17-历史邮件-选择补审范围.png",
+      "expected_sha256": "1466bebae249235b5377bfcc20921e1c6803905302e69056e8bd61f45b6dc9d1",
+      "source_sha256": "1466BEBAE249235B5377BFCC20921E1C6803905302E69056E8BD61F45B6DC9D1",
+      "destination_sha256": "1466BEBAE249235B5377BFCC20921E1C6803905302E69056E8BD61F45B6DC9D1",
+      "equal": true
+    },
+    {
+      "id": "O-M09",
+      "destination": "04-邮箱与邮件跟进/18-历史邮件-确认补审入队.png",
+      "expected_sha256": "044b1cdddc18d970bec541bb38e5c5b1840508aa22d6bc6c819397483617caa4",
+      "source_sha256": "044B1CDDDC18D970BEC541BB38E5C5B1840508AA22D6BC6C819397483617CAA4",
+      "destination_sha256": "044B1CDDDC18D970BEC541BB38E5C5B1840508AA22D6BC6C819397483617CAA4",
+      "equal": true
+    },
+    {
+      "id": "O-M05",
+      "destination": "04-邮箱与邮件跟进/19-删除邮箱-有关联时阻止删除.png",
+      "expected_sha256": "9d8180b6fc1ecd884487c7e0663d49d7d1e1f2b63e39798e965077223d3568fb",
+      "source_sha256": "9D8180B6FC1ECD884487C7E0663D49D7D1E1F2B63E39798E965077223D3568FB",
+      "destination_sha256": "9D8180B6FC1ECD884487C7E0663D49D7D1E1F2B63E39798E965077223D3568FB",
+      "equal": true
+    },
+    {
+      "id": "ES04",
+      "destination": "04-邮箱与邮件跟进/20-删除邮箱-查看关联保护详情.png",
+      "expected_sha256": "7747dafdebce696bdf12c311c2a7e7b42b8b97b8342f4213bf576431ac7b7795",
+      "source_sha256": "7747DAFDEBCE696BDF12C311C2A7E7B42B8B97B8342F4213BF576431AC7B7795",
+      "destination_sha256": "7747DAFDEBCE696BDF12C311C2A7E7B42B8B97B8342F4213BF576431AC7B7795",
+      "equal": true
+    },
+    {
+      "id": "R01",
+      "destination": "05-账号与域名资源/01-资源管理-账号与域名总览.png",
+      "expected_sha256": "483bcd1194c257a7298536e470196def9b1aae4cfbdf59c972d99ea0a201c55b",
+      "source_sha256": "483BCD1194C257A7298536E470196DEF9B1AAE4CFBDF59C972D99EA0A201C55B",
+      "destination_sha256": "483BCD1194C257A7298536E470196DEF9B1AAE4CFBDF59C972D99EA0A201C55B",
+      "equal": true
+    },
+    {
+      "id": "O-R01",
+      "destination": "05-账号与域名资源/02-资源管理-添加Hostinger账号.png",
+      "expected_sha256": "1d361d4c628336a35050e4e19983a092b4e76206bc2ecd17799b25991e8a8133",
+      "source_sha256": "1D361D4C628336A35050E4E19983A092B4E76206BC2ECD17799B25991E8A8133",
+      "destination_sha256": "1D361D4C628336A35050E4E19983A092B4E76206BC2ECD17799B25991E8A8133",
+      "equal": true
+    },
+    {
+      "id": "R02",
+      "destination": "05-账号与域名资源/03-资源管理-查看所选账号的域名.png",
+      "expected_sha256": "5d7dc1f02aa1857c26706361edba7762fcfe947e4a73061eecfc9d22b3fe9df8",
+      "source_sha256": "5D7DC1F02AA1857C26706361EDBA7762FCFE947E4A73061EECFC9D22B3FE9DF8",
+      "destination_sha256": "5D7DC1F02AA1857C26706361EDBA7762FCFE947E4A73061EECFC9D22B3FE9DF8",
+      "equal": true
+    },
+    {
+      "id": "R03",
+      "destination": "05-账号与域名资源/04-域名详情-查看域名与关联信息.png",
+      "expected_sha256": "1412ed2d5870be03194b824de48a65653371f86a467c207aa0aff3712efcf65a",
+      "source_sha256": "1412ED2D5870BE03194B824DE48A65653371F86A467C207AA0AFF3712EFCF65A",
+      "destination_sha256": "1412ED2D5870BE03194B824DE48A65653371F86A467C207AA0AFF3712EFCF65A",
+      "equal": true
+    },
+    {
+      "id": "ES05",
+      "destination": "05-账号与域名资源/05-资源管理-账号验证失败与过期信息.png",
+      "expected_sha256": "35d366e3a4426767f6aa4d0cc9bb312d1c34c1f65dfad7ca60d59e4978d386fa",
+      "source_sha256": "35D366E3A4426767F6AA4D0CC9BB312D1C34C1F65DFAD7CA60D59E4978D386FA",
+      "destination_sha256": "35D366E3A4426767F6AA4D0CC9BB312D1C34C1F65DFAD7CA60D59E4978D386FA",
+      "equal": true
+    },
+    {
+      "id": "O-R02",
+      "destination": "05-账号与域名资源/06-资源管理-删除账号确认.png",
+      "expected_sha256": "74d140680c47f9516a96eabbfda6411a92c1f2f349c0ffaeecd81d82f0d0738e",
+      "source_sha256": "74D140680C47F9516A96EABBFDA6411A92C1F2F349C0FFAEECD81D82F0D0738E",
+      "destination_sha256": "74D140680C47F9516A96EABBFDA6411A92C1F2F349C0FFAEECD81D82F0D0738E",
+      "equal": true
+    },
+    {
+      "id": "R04",
+      "destination": "05-账号与域名资源/07-资源清理-放弃站点或域名资源.png",
+      "expected_sha256": "14b5b1a0cabf1d28b774ffee68651c92501d980144d24d0384f90e4702424b26",
+      "source_sha256": "14B5B1A0CABF1D28B774FFEE68651C92501D980144D24D0384F90E4702424B26",
+      "destination_sha256": "14B5B1A0CABF1D28B774FFEE68651C92501D980144D24D0384F90E4702424B26",
+      "equal": true
+    },
+    {
+      "id": "ES06",
+      "destination": "05-账号与域名资源/08-资源清理-部分步骤成功与失败.png",
+      "expected_sha256": "ecbb6b2878d57e42f45a5cb735cd39ca6c98114e569c5498f178593d2add522f",
+      "source_sha256": "ECBB6B2878D57E42F45A5CB735CD39CA6C98114E569C5498F178593D2ADD522F",
+      "destination_sha256": "ECBB6B2878D57E42F45A5CB735CD39CA6C98114E569C5498F178593D2ADD522F",
+      "equal": true
+    },
+    {
+      "id": "T01",
+      "destination": "06-表格协作/01-表格工作区-打开第三方表格入口.png",
+      "expected_sha256": "6bc5d7f5c6d4c13ee7a2418285b5b6a44065232c7db1f429abfdf915f1550136",
+      "source_sha256": "6BC5D7F5C6D4C13EE7A2418285B5B6A44065232C7DB1F429ABFDF915F1550136",
+      "destination_sha256": "6BC5D7F5C6D4C13EE7A2418285B5B6A44065232C7DB1F429ABFDF915F1550136",
+      "equal": true
+    },
+    {
+      "id": "T02",
+      "destination": "06-表格协作/02-表格工作区-Grist原生文档与表格.png",
+      "expected_sha256": "08c684627f47b55b266aa50e2ce06f9deee38cba93fd5a09df550e3177052c7e",
+      "source_sha256": "08C684627F47B55B266AA50E2CE06F9DEEE38CBA93FD5A09DF550E3177052C7E",
+      "destination_sha256": "08C684627F47B55B266AA50E2CE06F9DEEE38CBA93FD5A09DF550E3177052C7E",
+      "equal": true
+    },
+    {
+      "id": "ES07",
+      "destination": "06-表格协作/03-表格工作区-尚未配置连接.png",
+      "expected_sha256": "58afe431c7022a7cf9d06acb59a15e7c4a02237e32d98523a0fb498282e813c2",
+      "source_sha256": "58AFE431C7022A7CF9D06ACB59A15E7C4A02237E32D98523A0FB498282E813C2",
+      "destination_sha256": "58AFE431C7022A7CF9D06ACB59A15E7C4A02237E32D98523A0FB498282E813C2",
+      "equal": true
+    },
+    {
+      "id": "S01",
+      "destination": "07-系统设置/01-AI设置-模型服务商列表.png",
+      "expected_sha256": "a0f2922332676a5d0e69df2ee965f67136d2e775a57564893a91f388a1f56d89",
+      "source_sha256": "A0F2922332676A5D0E69DF2EE965F67136D2E775A57564893A91F388A1F56D89",
+      "destination_sha256": "A0F2922332676A5D0E69DF2EE965F67136D2E775A57564893A91F388A1F56D89",
+      "equal": true
+    },
+    {
+      "id": "S02",
+      "destination": "07-系统设置/02-AI设置-编辑服务商与模型.png",
+      "expected_sha256": "dbe305e31f1e8b5985e05f5ea71e16cedbf22fd42d55529ce277537737213483",
+      "source_sha256": "DBE305E31F1E8B5985E05F5EA71E16CEDBF22FD42D55529CE277537737213483",
+      "destination_sha256": "DBE305E31F1E8B5985E05F5EA71E16CEDBF22FD42D55529CE277537737213483",
+      "equal": true
+    },
+    {
+      "id": "O-S02",
+      "destination": "07-系统设置/03-AI设置-删除服务商确认.png",
+      "expected_sha256": "d81a2304973871af457722caec4f41fe9d0d19d672ea004cb939150768d77b17",
+      "source_sha256": "D81A2304973871AF457722CAEC4F41FE9D0D19D672EA004CB939150768D77B17",
+      "destination_sha256": "D81A2304973871AF457722CAEC4F41FE9D0D19D672EA004CB939150768D77B17",
+      "equal": true
+    },
+    {
+      "id": "S03",
+      "destination": "07-系统设置/04-AI设置-为不同用途选择模型.png",
+      "expected_sha256": "01e58e685c9265c69826c3b1dc0c8c500f58bfb8a97664a0141eaddd061728d0",
+      "source_sha256": "01E58E685C9265C69826C3B1DC0C8C500F58BFB8A97664A0141EADDD061728D0",
+      "destination_sha256": "01E58E685C9265C69826C3B1DC0C8C500F58BFB8A97664A0141EADDD061728D0",
+      "equal": true
+    },
+    {
+      "id": "S04",
+      "destination": "07-系统设置/05-商品资料设置-CJ商品服务.png",
+      "expected_sha256": "c6771dca314b6d949c2795b487fe0f17b315216ef3fa52e0bfbe3f8add61e534",
+      "source_sha256": "C6771DCA314B6D949C2795B487FE0F17B315216EF3FA52E0BFBE3F8ADD61E534",
+      "destination_sha256": "C6771DCA314B6D949C2795B487FE0F17B315216EF3FA52E0BFBE3F8ADD61E534",
+      "equal": true
+    },
+    {
+      "id": "O-S03",
+      "destination": "07-系统设置/06-商品资料设置-填写CJ连接凭据.png",
+      "expected_sha256": "f4f60165009c75b70c860954f6b2058caeb607efdf3c24f0837ae54199e22d0a",
+      "source_sha256": "F4F60165009C75B70C860954F6B2058CAEB607EFDF3C24F0837AE54199E22D0A",
+      "destination_sha256": "F4F60165009C75B70C860954F6B2058CAEB607EFDF3C24F0837AE54199E22D0A",
+      "equal": true
+    },
+    {
+      "id": "S05",
+      "destination": "07-系统设置/07-邮箱设置-默认参数.png",
+      "expected_sha256": "7a241ed90bff5538c3f60eace39f33ba50db675602ce083f37e56063b586a9b7",
+      "source_sha256": "7A241ED90BFF5538C3F60EACE39F33BA50DB675602CE083F37E56063B586A9B7",
+      "destination_sha256": "7A241ED90BFF5538C3F60EACE39F33BA50DB675602CE083F37E56063B586A9B7",
+      "equal": true
+    },
+    {
+      "id": "O-S04",
+      "destination": "07-系统设置/08-邮箱设置-清除默认密码确认.png",
+      "expected_sha256": "bd5b9746f993bcb421c58b0a99c03cab93e9a71cc2d2cc24c3dda19ce08bf1b7",
+      "source_sha256": "BD5B9746F993BCB421C58B0A99C03CAB93E9A71CC2D2CC24C3DDA19CE08BF1B7",
+      "destination_sha256": "BD5B9746F993BCB421C58B0A99C03CAB93E9A71CC2D2CC24C3DDA19CE08BF1B7",
+      "equal": true
+    },
+    {
+      "id": "S06",
+      "destination": "07-系统设置/09-表格设置-Grist连接.png",
+      "expected_sha256": "dd3ebf2d17766f84e2727b036716c07ef3f47f8fd3f4b59aefd2742941ea0a8a",
+      "source_sha256": "DD3EBF2D17766F84E2727B036716C07EF3F47F8FD3F4B59AEFD2742941EA0A8A",
+      "destination_sha256": "DD3EBF2D17766F84E2727B036716C07EF3F47F8FD3F4B59AEFD2742941EA0A8A",
+      "equal": true
+    },
+    {
+      "id": "O-S05",
+      "destination": "07-系统设置/10-表格设置-连接凭据与集成操作确认.png",
+      "expected_sha256": "14eb13c4bd5672a348cd30ce9234687da30120a882fb1ea2b8e42532a5710d37",
+      "source_sha256": "14EB13C4BD5672A348CD30CE9234687DA30120A882FB1EA2B8E42532A5710D37",
+      "destination_sha256": "14EB13C4BD5672A348CD30CE9234687DA30120A882FB1EA2B8E42532A5710D37",
+      "equal": true
+    },
+    {
+      "id": "S09",
+      "destination": "07-系统设置/11-邮件AI设置-预审范围与开关.png",
+      "expected_sha256": "7958f2d8c5590923b1b329de370386bd59e157ca8211639ce5acdbbcc90905bf",
+      "source_sha256": "7958F2D8C5590923B1B329DE370386BD59E157CA8211639CE5ACDBBCC90905BF",
+      "destination_sha256": "7958F2D8C5590923B1B329DE370386BD59E157CA8211639CE5ACDBBCC90905BF",
+      "equal": true
+    },
+    {
+      "id": "O-S09",
+      "destination": "07-系统设置/12-邮件AI设置-授权与配置变更确认.png",
+      "expected_sha256": "06bffc2bb281bbd4dc42115414417a97e7a291a404c3e79db96b12a447a2e283",
+      "source_sha256": "06BFFC2BB281BBD4DC42115414417A97E7A291A404C3E79DB96B12A447A2E283",
+      "destination_sha256": "06BFFC2BB281BBD4DC42115414417A97E7A291A404C3E79DB96B12A447A2E283",
+      "equal": true
+    },
+    {
+      "id": "ES08",
+      "destination": "07-系统设置/13-邮件AI设置-抽查后暂停与重新批准.png",
+      "expected_sha256": "1c2389fc67f928642a79f024ed5d9e7939f92a171945a4bb24d84cd42827df97",
+      "source_sha256": "1C2389FC67F928642A79F024ED5D9E7939F92A171945A4BB24D84CD42827DF97",
+      "destination_sha256": "1C2389FC67F928642A79F024ED5D9E7939F92A171945A4BB24D84CD42827DF97",
+      "equal": true
+    },
+    {
+      "id": "S10",
+      "destination": "07-系统设置/14-邮件关联设置-关联规则列表.png",
+      "expected_sha256": "9d34520559d57b8ea23f43aa118c404cb5a098d560ebba9a5d414389cf4c6197",
+      "source_sha256": "9D34520559D57B8EA23F43AA118C404CB5A098D560EBBA9A5D414389CF4C6197",
+      "destination_sha256": "9D34520559D57B8EA23F43AA118C404CB5A098D560EBBA9A5D414389CF4C6197",
+      "equal": true
+    },
+    {
+      "id": "O-S10",
+      "destination": "07-系统设置/15-邮件关联设置-新增编辑或移除规则.png",
+      "expected_sha256": "4dce8cbe5b6eed52c525e30ad8515bd1d6e721ae330bf2f9cb7d6ab9e215059a",
+      "source_sha256": "4DCE8CBE5B6EED52C525E30AD8515BD1D6E721AE330BF2F9CB7D6AB9E215059A",
+      "destination_sha256": "4DCE8CBE5B6EED52C525E30AD8515BD1D6E721AE330BF2F9CB7D6AB9E215059A",
+      "equal": true
+    },
+    {
+      "id": "S08",
+      "destination": "08-内部用户与权限/01-用户管理-内部用户列表.png",
+      "expected_sha256": "23a02c6786ba2c77c998a71f030357b96d4acba6974cc10da4eb8a227305e898",
+      "source_sha256": "23A02C6786BA2C77C998A71F030357B96D4ACBA6974CC10DA4EB8A227305E898",
+      "destination_sha256": "23A02C6786BA2C77C998A71F030357B96D4ACBA6974CC10DA4EB8A227305E898",
+      "equal": true
+    },
+    {
+      "id": "O-S06",
+      "destination": "08-内部用户与权限/02-用户管理-创建内部用户.png",
+      "expected_sha256": "872fda317f148db70c82d30174cea039f0f73b900c9e01fb3718e5031cb293cb",
+      "source_sha256": "872FDA317F148DB70C82D30174CEA039F0F73B900C9E01FB3718E5031CB293CB",
+      "destination_sha256": "872FDA317F148DB70C82D30174CEA039F0F73B900C9E01FB3718E5031CB293CB",
+      "equal": true
+    },
+    {
+      "id": "O-S07",
+      "destination": "08-内部用户与权限/03-用户管理-重置用户密码.png",
+      "expected_sha256": "48344fe3c2fb3722115ef120e29ec999dc8b82c8d7c13cc905913753a4fd9a97",
+      "source_sha256": "48344FE3C2FB3722115EF120E29EC999DC8B82C8D7C13CC905913753A4FD9A97",
+      "destination_sha256": "48344FE3C2FB3722115EF120E29EC999DC8B82C8D7C13CC905913753A4FD9A97",
+      "equal": true
+    },
+    {
+      "id": "O-S08",
+      "destination": "08-内部用户与权限/04-用户管理-启用或停用用户确认.png",
+      "expected_sha256": "fc9bfdfc9211271e5fd3978429a5186a9e05c8c47eef7e36e7e146362989c2de",
+      "source_sha256": "FC9BFDFC9211271E5FD3978429A5186A9E05C8C47EEF7E36E7E146362989C2DE",
+      "destination_sha256": "FC9BFDFC9211271E5FD3978429A5186A9E05C8C47EEF7E36E7E146362989C2DE",
+      "equal": true
+    },
+    {
+      "id": "A02",
+      "destination": "09-登录与全局工具/01-系统登录-内部用户登录.png",
+      "expected_sha256": "3286ecfbd651e667976a522001b590e9051edace395e00797426c998da815a30",
+      "source_sha256": "3286ECFBD651E667976A522001B590E9051EDACE395E00797426C998DA815A30",
+      "destination_sha256": "3286ECFBD651E667976A522001B590E9051EDACE395E00797426C998DA815A30",
+      "equal": true
+    },
+    {
+      "id": "A03-forced",
+      "destination": "09-登录与全局工具/02-账号安全-首次登录必须修改密码.png",
+      "expected_sha256": "e3f4a202fba26f5b996d4f246ff9067f84b91b1de3e3007943d1a3f80a2c0809",
+      "source_sha256": "E3F4A202FBA26F5B996D4F246FF9067F84B91B1DE3E3007943D1A3F80A2C0809",
+      "destination_sha256": "E3F4A202FBA26F5B996D4F246FF9067F84B91B1DE3E3007943D1A3F80A2C0809",
+      "equal": true
+    },
+    {
+      "id": "A03",
+      "destination": "09-登录与全局工具/03-账号安全-主动修改自己的密码.png",
+      "expected_sha256": "a7dd803b74de4d3abfc7e152da7a120e011ed147878c55ad56db93a6f0325d34",
+      "source_sha256": "A7DD803B74DE4D3ABFC7E152DA7A120E011ED147878C55AD56DB93A6F0325D34",
+      "destination_sha256": "A7DD803B74DE4D3ABFC7E152DA7A120E011ED147878C55AD56DB93A6F0325D34",
+      "equal": true
+    },
+    {
+      "id": "A04",
+      "destination": "09-登录与全局工具/04-账号入口-个人菜单.png",
+      "expected_sha256": "fec05402dde951a4b1afd4a6258762ae5590b593acea87e3defac8bbc9088a2f",
+      "source_sha256": "FEC05402DDE951A4B1AFD4A6258762AE5590B593ACEA87E3DEFAC8BBC9088A2F",
+      "destination_sha256": "FEC05402DDE951A4B1AFD4A6258762AE5590B593ACEA87E3DEFAC8BBC9088A2F",
+      "equal": true
+    },
+    {
+      "id": "A01",
+      "destination": "09-登录与全局工具/05-通用导航-以驾照上传页为例.png",
+      "expected_sha256": "828e965458f590916f694a82e0351bf7fcaae777e171abaa60ad246173e2955c",
+      "source_sha256": "828E965458F590916F694A82E0351BF7FCAAE777E171ABAA60AD246173E2955C",
+      "destination_sha256": "828E965458F590916F694A82E0351BF7FCAAE777E171ABAA60AD246173E2955C",
+      "equal": true
+    },
+    {
+      "id": "A01-narrow-navigation",
+      "destination": "09-登录与全局工具/06-通用导航-窄屏菜单与主从切换.png",
+      "expected_sha256": "08da379aa6d3df78c1b851f5e15069b6b0b47aa598bdb2d7a4cef251727b5ac2",
+      "source_sha256": "08DA379AA6D3DF78C1B851F5E15069B6B0B47AA598BDB2D7A4CEF251727B5AC2",
+      "destination_sha256": "08DA379AA6D3DF78C1B851F5E15069B6B0B47AA598BDB2D7A4CEF251727B5AC2",
+      "equal": true
+    },
+    {
+      "id": "A08",
+      "destination": "09-登录与全局工具/07-全局搜索-查找系统内容.png",
+      "expected_sha256": "ed971b7910ce79e61aa8edc7bfd02f901c46e5d37a6168a31ed97241c7f325db",
+      "source_sha256": "ED971B7910CE79E61AA8EDC7BFD02F901C46E5D37A6168A31ED97241C7F325DB",
+      "destination_sha256": "ED971B7910CE79E61AA8EDC7BFD02F901C46E5D37A6168A31ED97241C7F325DB",
+      "equal": true
+    },
+    {
+      "id": "A09",
+      "destination": "09-登录与全局工具/08-全局助手-打开AI对话侧栏.png",
+      "expected_sha256": "e4f043c1390f345dbcb877be4270fd9e4cd6696f1fbca6dd2502d51c9b2e3e0d",
+      "source_sha256": "E4F043C1390F345DBCB877BE4270FD9E4CD6696F1FBCA6DD2502D51C9B2E3E0D",
+      "destination_sha256": "E4F043C1390F345DBCB877BE4270FD9E4CD6696F1FBCA6DD2502D51C9B2E3E0D",
+      "equal": true
+    },
+    {
+      "id": "O-A02",
+      "destination": "09-登录与全局工具/09-全局助手-工具操作确认.png",
+      "expected_sha256": "6f39c47c686c2dee6e33c14595f03ea36c3197b292af4e80907dc744a5bac174",
+      "source_sha256": "6F39C47C686C2DEE6E33C14595F03EA36C3197B292AF4E80907DC744A5BAC174",
+      "destination_sha256": "6F39C47C686C2DEE6E33C14595F03EA36C3197B292AF4E80907DC744A5BAC174",
+      "equal": true
+    },
+    {
+      "id": "O-A03",
+      "destination": "09-登录与全局工具/10-全局助手-开始新对话确认.png",
+      "expected_sha256": "74024547c015faef4fcf70bba083058aea7c79a01c1983cc849fa40decffd46b",
+      "source_sha256": "74024547C015FAEF4FCF70BBA083058AEA7C79A01C1983CC849FA40DECFFD46B",
+      "destination_sha256": "74024547C015FAEF4FCF70BBA083058AEA7C79A01C1983CC849FA40DECFFD46B",
+      "equal": true
+    },
+    {
+      "id": "O-A04",
+      "destination": "09-登录与全局工具/11-编辑保护-未保存就离开确认.png",
+      "expected_sha256": "18737f1ab0a2095c9fa4f814db6cd0c1fc03f07635a761ed648ce4503eef05b4",
+      "source_sha256": "18737F1AB0A2095C9FA4F814DB6CD0C1FC03F07635A761ED648CE4503EEF05B4",
+      "destination_sha256": "18737F1AB0A2095C9FA4F814DB6CD0C1FC03F07635A761ED648CE4503EEF05B4",
+      "equal": true
+    },
+    {
+      "id": "O-A05",
+      "destination": "09-登录与全局工具/12-编辑保护-多人同时修改发生冲突.png",
+      "expected_sha256": "67816f7e4231172b8244038d576468343aa653007a0b604d678bbb44ae531397",
+      "source_sha256": "67816F7E4231172B8244038D576468343AA653007A0B604D678BBB44AE531397",
+      "destination_sha256": "67816F7E4231172B8244038D576468343AA653007A0B604D678BBB44AE531397",
+      "equal": true
+    },
+    {
+      "id": "ES10",
+      "destination": "09-登录与全局工具/13-编辑保护-保存时发现记录已被删除.png",
+      "expected_sha256": "0592fb509b3011ac7716bfdda0e8cc051b1e0d1c8d5e8b8da72118b72e81068b",
+      "source_sha256": "0592FB509B3011AC7716BFDDA0E8CC051B1E0D1C8D5E8B8DA72118B72E81068B",
+      "destination_sha256": "0592FB509B3011AC7716BFDDA0E8CC051B1E0D1C8D5E8B8DA72118B72E81068B",
+      "equal": true
+    },
+    {
+      "id": "A01-session-expired",
+      "destination": "09-登录与全局工具/14-登录异常-会话已失效.png",
+      "expected_sha256": "6845ba1d6e8b070bc0e2df757bb1c385eacb33dce84b4e31e558987cb14c3f7a",
+      "source_sha256": "6845BA1D6E8B070BC0E2DF757BB1C385EACB33DCE84B4E31E558987CB14C3F7A",
+      "destination_sha256": "6845BA1D6E8B070BC0E2DF757BB1C385EACB33DCE84B4E31E558987CB14C3F7A",
+      "equal": true
+    },
+    {
+      "id": "A01-identity-recheck-failed",
+      "destination": "09-登录与全局工具/15-登录异常-身份复核暂时失败.png",
+      "expected_sha256": "786e6b80eeec3a66a79899e083096fd98afc47050ab6935a08fef83f0cd1c333",
+      "source_sha256": "786E6B80EEEC3A66A79899E083096FD98AFC47050AB6935A08FEF83F0CD1C333",
+      "destination_sha256": "786E6B80EEEC3A66A79899E083096FD98AFC47050AB6935A08FEF83F0CD1C333",
+      "equal": true
+    },
+    {
+      "id": "A05",
+      "destination": "09-登录与全局工具/16-访问异常-没有访问权限.png",
+      "expected_sha256": "326ed5368461047cc2de0ea57c712cb885dbaf3fbbec011786e290c57b72a8c5",
+      "source_sha256": "326ED5368461047CC2DE0EA57C712CB885DBAF3FBBEC011786E290C57B72A8C5",
+      "destination_sha256": "326ED5368461047CC2DE0EA57C712CB885DBAF3FBBEC011786E290C57B72A8C5",
+      "equal": true
+    },
+    {
+      "id": "A06",
+      "destination": "09-登录与全局工具/17-访问异常-页面不存在.png",
+      "expected_sha256": "8d32163ba41d59cab7f22017a9020137884006dd7f876c039eb620239e7bf3a6",
+      "source_sha256": "8D32163BA41D59CAB7F22017A9020137884006DD7F876C039EB620239E7BF3A6",
+      "destination_sha256": "8D32163BA41D59CAB7F22017A9020137884006DD7F876C039EB620239E7BF3A6",
+      "equal": true
+    },
+    {
+      "id": "A07",
+      "destination": "09-登录与全局工具/18-访问异常-服务暂时不可用.png",
+      "expected_sha256": "3c14c47c1f3483b73dbf330338211aa8693c0a9cc28856395abfe0773b842e08",
+      "source_sha256": "3C14C47C1F3483B73DBF330338211AA8693C0A9CC28856395ABFE0773B842E08",
+      "destination_sha256": "3C14C47C1F3483B73DBF330338211AA8693C0A9CC28856395ABFE0773B842E08",
+      "equal": true
+    }
+  ],
+  "aliases": [
+    {
+      "id": "A03-voluntary",
+      "target_id": "A03",
+      "valid": true
+    },
+    {
+      "id": "O-M03",
+      "target_id": "M04",
+      "valid": true
+    },
+    {
+      "id": "O-R03",
+      "target_id": "R04",
+      "valid": true
+    },
+    {
+      "id": "T03",
+      "target_id": "S06",
+      "valid": true
+    },
+    {
+      "id": "S07",
+      "target_id": "A03",
+      "valid": true
+    },
+    {
+      "id": "O-S01",
+      "target_id": "S02",
+      "valid": true
+    },
+    {
+      "id": "O-A01",
+      "target_id": "A08",
+      "valid": true
+    },
+    {
+      "id": "C09",
+      "target_id": "C09-active",
+      "valid": true
+    },
+    {
+      "id": "C10",
+      "target_id": "C10-bank",
+      "valid": true
+    },
+    {
+      "id": "O-C04",
+      "target_id": "O-C04-personal",
+      "valid": true
+    },
+    {
+      "id": "ES09",
+      "target_id": "A03-forced",
+      "valid": true
+    }
+  ],
+  "markdown_links": [
+    {
+      "document": "README.md",
+      "target": "01-客户档案与资料/模块介绍.md",
+      "valid": true
+    },
+    {
+      "document": "README.md",
+      "target": "01-客户档案与资料/页面目录.md",
+      "valid": true
+    },
+    {
+      "document": "README.md",
+      "target": "02-网站建设与站点管理/模块介绍.md",
+      "valid": true
+    },
+    {
+      "document": "README.md",
+      "target": "02-网站建设与站点管理/页面目录.md",
+      "valid": true
+    },
+    {
+      "document": "README.md",
+      "target": "03-支付网关申请/模块介绍.md",
+      "valid": true
+    },
+    {
+      "document": "README.md",
+      "target": "03-支付网关申请/页面目录.md",
+      "valid": true
+    },
+    {
+      "document": "README.md",
+      "target": "04-邮箱与邮件跟进/模块介绍.md",
+      "valid": true
+    },
+    {
+      "document": "README.md",
+      "target": "04-邮箱与邮件跟进/页面目录.md",
+      "valid": true
+    },
+    {
+      "document": "README.md",
+      "target": "05-账号与域名资源/模块介绍.md",
+      "valid": true
+    },
+    {
+      "document": "README.md",
+      "target": "05-账号与域名资源/页面目录.md",
+      "valid": true
+    },
+    {
+      "document": "README.md",
+      "target": "06-表格协作/模块介绍.md",
+      "valid": true
+    },
+    {
+      "document": "README.md",
+      "target": "06-表格协作/页面目录.md",
+      "valid": true
+    },
+    {
+      "document": "README.md",
+      "target": "07-系统设置/模块介绍.md",
+      "valid": true
+    },
+    {
+      "document": "README.md",
+      "target": "07-系统设置/页面目录.md",
+      "valid": true
+    },
+    {
+      "document": "README.md",
+      "target": "08-内部用户与权限/模块介绍.md",
+      "valid": true
+    },
+    {
+      "document": "README.md",
+      "target": "08-内部用户与权限/页面目录.md",
+      "valid": true
+    },
+    {
+      "document": "README.md",
+      "target": "09-登录与全局工具/模块介绍.md",
+      "valid": true
+    },
+    {
+      "document": "README.md",
+      "target": "09-登录与全局工具/页面目录.md",
+      "valid": true
+    },
+    {
+      "document": "README.md",
+      "target": "../full-system-prototype-20261017/README.md",
+      "valid": true
+    },
+    {
+      "document": "README.md",
+      "target": "页面映射.json",
+      "valid": true
+    },
+    {
+      "document": "README.md",
+      "target": "图片复制校验.json",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\模块介绍.md",
+      "target": "01-客户列表-搜索与快速查看.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\模块介绍.md",
+      "target": "02-客户档案-资料总览.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\模块介绍.md",
+      "target": "13-企业资料-企业信息与税号.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\模块介绍.md",
+      "target": "28-网站与邮箱-查看客户关联.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\模块介绍.md",
+      "target": "42-删除客户-确认影响范围.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\模块介绍.md",
+      "target": "页面目录.md",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\模块介绍.md",
+      "target": "../README.md",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "模块介绍.md",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "../README.md",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "01-客户列表-搜索与快速查看.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "02-客户档案-资料总览.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "03-客户建档-上传驾照正面.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "04-客户建档-核对驾照识别结果.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "05-客户建档-查看建档结果.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "06-客户建档-重复驾照或同名客户处理.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "07-客户建档-确认资料差异侧栏.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "08-客户建档-部分上传成功与失败.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "09-客户建档-识别失败后人工录入.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "10-客户建档-提交结果暂不确定.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "11-个人资料-基本信息与两个地址.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "12-个人资料-编辑侧栏.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "13-企业资料-企业信息与税号.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "14-企业资料-编辑侧栏.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "15-企业资料-更新企业办理状态.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "16-银行资料-账户信息与银行文件.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "17-银行资料-编辑侧栏.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "18-资料附件-上传文件侧栏.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "19-资料附件-打开当前文件.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "20-资料附件-替换文件确认.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "21-资料附件-移除文件确认.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "22-资料附件-部分上传成功与失败.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "23-资料附件-文件读取失败.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "24-资料附件-格式不支持直接预览.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "25-资料附件-替换文件失败.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "26-资料附件-移除文件失败.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "27-资料编辑-保存失败.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "28-网站与邮箱-查看客户关联.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "29-网站与邮箱-关联或更换已有网站.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "30-网站与邮箱-关联或更换商业邮箱.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "31-网站与邮箱-解除关联确认.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "32-网站与邮箱-核对网站公开信息.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "33-资料审核-查看检查结果.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "34-资料审核-确认本次检查范围.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "35-资料审核-查看检查进度.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "36-资料审核-查看问题详情.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "37-操作人查询-个人资料第1页.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "38-操作人查询-个人资料第2页.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "39-操作人查询-企业资料.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "40-操作人查询-银行资料.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "41-操作人查询-单个字段详情.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "42-删除客户-确认影响范围.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "43-删除客户-查看执行结果.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "44-客户列表-尚未建档.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "45-客户列表-没有搜索结果.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "46-客户列表-正在加载.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "47-客户列表-快速查看读取失败.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "48-客户档案-记录不存在.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "49-客户档案-没有查看权限.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "../01-客户档案与资料/40-操作人查询-银行资料.png",
+      "valid": true
+    },
+    {
+      "document": "01-客户档案与资料\\页面目录.md",
+      "target": "../01-客户档案与资料/12-个人资料-编辑侧栏.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\模块介绍.md",
+      "target": "01-建站总览-查看网站建设情况.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\模块介绍.md",
+      "target": "04-新建网站第1步-多客户工作表.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\模块介绍.md",
+      "target": "05-新建网站第2步-站点配置.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\模块介绍.md",
+      "target": "10-新建网站第3步-确认启动.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\模块介绍.md",
+      "target": "15-建站批次-批次详情.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\模块介绍.md",
+      "target": "31-站点详情-网站复核.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\模块介绍.md",
+      "target": "页面目录.md",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\模块介绍.md",
+      "target": "../README.md",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "模块介绍.md",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "../README.md",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "01-建站总览-查看网站建设情况.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "02-新建网站-选择客户侧栏.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "03-新建网站第1步-客户与经营资料.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "04-新建网站第1步-多客户工作表.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "05-新建网站第2步-站点配置.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "06-站点配置-资源读取失败.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "07-站点配置-暂无可用资源.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "08-站点配置-导入配置文件结果.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "09-新建网站-移出本次建站项确认.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "10-新建网站第3步-确认启动.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "11-确认启动-多客户长清单.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "12-确认启动-检查必要条件.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "13-确认启动-提交结果暂不确定.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "14-建站批次-批次列表.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "15-建站批次-批次详情.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "16-建站批次-运行步骤与日志.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "17-建站批次-重试确认与反馈.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "18-站点管理-网站列表.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "19-站点详情-网站概况.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "20-站点详情-AI对话.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "21-站点对话-开始新对话确认.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "22-站点详情-商业邮箱与网站发信.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "23-网站发信-邮箱修复与发信启用确认.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "24-网站发信-发送测试邮件.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "25-网站发信-测试邮件发送结果未知.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "26-站点详情-网站变更记录.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "27-网站变更-查看改动详情.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "28-网站变更-整体恢复确认.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "29-网站变更-恢复被后续修改阻止.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "30-网站变更-取消定时恢复确认.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "31-站点详情-网站复核.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "32-网站复核-上线前检查提示.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "33-网站复核-上线前检查读取失败.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "34-网站复核-修复与复核进度.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "35-网站复核-部分修复成功与人工处理项.png",
+      "valid": true
+    },
+    {
+      "document": "02-网站建设与站点管理\\页面目录.md",
+      "target": "36-网站复核-放大查看问题证据.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\模块介绍.md",
+      "target": "01-网关申请-全部申请工作台.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\模块介绍.md",
+      "target": "05-开始申请-确认平台与申请负责人.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\模块介绍.md",
+      "target": "08-申请详情-本次申请概览.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\模块介绍.md",
+      "target": "09-申请详情-查看申请时保存的资料.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\模块介绍.md",
+      "target": "16-申请状态-人工更新或纠正.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\模块介绍.md",
+      "target": "24-结束申请-结束本次申请确认.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\模块介绍.md",
+      "target": "页面目录.md",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\模块介绍.md",
+      "target": "../README.md",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "模块介绍.md",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "../README.md",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "01-网关申请-全部申请工作台.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "02-客户网关面板-尚无进行中的申请.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "03-客户网关面板-已有进行中的申请.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "04-客户网关面板-管理当前补充证明.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "05-开始申请-确认平台与申请负责人.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "06-开始申请-同时有人已启动申请.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "07-开始申请-申请与资料定稿保存结果未知.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "08-申请详情-本次申请概览.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "09-申请详情-查看申请时保存的资料.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "10-申请资料-打开定稿附件.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "11-申请详情-相关邮件与明确要求.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "12-申请邮件-确认邮件所属申请.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "13-申请要求-查看明确要求与处理记录.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "14-申请要求-记录本次人工处理结果.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "15-申请状态-状态变化与纠正记录.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "16-申请状态-人工更新或纠正.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "17-申请状态-唯一获批被纠正后的客户状态.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "18-申请状态-人工纠正后收到新邮件.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "19-申请状态-首次有效获批与客户完成.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "20-申请状态-纠错后出现进行中申请冲突.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "21-邮件事项-确认归属与拆分误归组.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "22-邮件事项-纠正分类或处理标记.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "23-邮件事项-撤销单项人工决定确认.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "24-结束申请-结束本次申请确认.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "25-结束申请-再次处理旧邮件不重开申请.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "26-网关工作台-筛选后没有申请.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "27-申请详情-部分内容读取失败.png",
+      "valid": true
+    },
+    {
+      "document": "03-支付网关申请\\页面目录.md",
+      "target": "../03-支付网关申请/03-客户网关面板-已有进行中的申请.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\模块介绍.md",
+      "target": "01-邮箱管理-按域名查看商业邮箱.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\模块介绍.md",
+      "target": "05-邮件查看-文件夹与邮件列表.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\模块介绍.md",
+      "target": "07-邮件查看-阅读邮件原文.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\模块介绍.md",
+      "target": "13-邮件预审-查看建议与关联候选.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\模块介绍.md",
+      "target": "16-邮件跟进-按申请查看事项.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\模块介绍.md",
+      "target": "17-历史邮件-选择补审范围.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\模块介绍.md",
+      "target": "页面目录.md",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\模块介绍.md",
+      "target": "../README.md",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "模块介绍.md",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "../README.md",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "01-邮箱管理-按域名查看商业邮箱.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "02-邮箱管理-设置邮箱登录凭据.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "03-邮箱凭据-显示密码确认.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "04-邮箱管理-监听与同步侧栏.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "05-邮件查看-文件夹与邮件列表.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "06-邮件查看-切换邮箱时加载新内容.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "07-邮件查看-阅读邮件原文.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "08-邮件查看-展开中文译文.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "09-邮件回复-编辑回复内容.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "10-邮件回复-发送前确认.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "11-邮件回复-发送结果暂不确定.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "12-邮件整理-移到废纸篓确认.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "13-邮件预审-查看建议与关联候选.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "14-邮件预审-待人工确认事项.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "15-邮件预审-建议与原文存在冲突.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "16-邮件跟进-按申请查看事项.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "17-历史邮件-选择补审范围.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "18-历史邮件-确认补审入队.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "19-删除邮箱-有关联时阻止删除.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "20-删除邮箱-查看关联保护详情.png",
+      "valid": true
+    },
+    {
+      "document": "04-邮箱与邮件跟进\\页面目录.md",
+      "target": "../04-邮箱与邮件跟进/09-邮件回复-编辑回复内容.png",
+      "valid": true
+    },
+    {
+      "document": "05-账号与域名资源\\模块介绍.md",
+      "target": "01-资源管理-账号与域名总览.png",
+      "valid": true
+    },
+    {
+      "document": "05-账号与域名资源\\模块介绍.md",
+      "target": "页面目录.md",
+      "valid": true
+    },
+    {
+      "document": "05-账号与域名资源\\模块介绍.md",
+      "target": "../README.md",
+      "valid": true
+    },
+    {
+      "document": "05-账号与域名资源\\页面目录.md",
+      "target": "模块介绍.md",
+      "valid": true
+    },
+    {
+      "document": "05-账号与域名资源\\页面目录.md",
+      "target": "../README.md",
+      "valid": true
+    },
+    {
+      "document": "05-账号与域名资源\\页面目录.md",
+      "target": "01-资源管理-账号与域名总览.png",
+      "valid": true
+    },
+    {
+      "document": "05-账号与域名资源\\页面目录.md",
+      "target": "02-资源管理-添加Hostinger账号.png",
+      "valid": true
+    },
+    {
+      "document": "05-账号与域名资源\\页面目录.md",
+      "target": "03-资源管理-查看所选账号的域名.png",
+      "valid": true
+    },
+    {
+      "document": "05-账号与域名资源\\页面目录.md",
+      "target": "04-域名详情-查看域名与关联信息.png",
+      "valid": true
+    },
+    {
+      "document": "05-账号与域名资源\\页面目录.md",
+      "target": "05-资源管理-账号验证失败与过期信息.png",
+      "valid": true
+    },
+    {
+      "document": "05-账号与域名资源\\页面目录.md",
+      "target": "06-资源管理-删除账号确认.png",
+      "valid": true
+    },
+    {
+      "document": "05-账号与域名资源\\页面目录.md",
+      "target": "07-资源清理-放弃站点或域名资源.png",
+      "valid": true
+    },
+    {
+      "document": "05-账号与域名资源\\页面目录.md",
+      "target": "08-资源清理-部分步骤成功与失败.png",
+      "valid": true
+    },
+    {
+      "document": "05-账号与域名资源\\页面目录.md",
+      "target": "../05-账号与域名资源/07-资源清理-放弃站点或域名资源.png",
+      "valid": true
+    },
+    {
+      "document": "06-表格协作\\模块介绍.md",
+      "target": "02-表格工作区-Grist原生文档与表格.png",
+      "valid": true
+    },
+    {
+      "document": "06-表格协作\\模块介绍.md",
+      "target": "页面目录.md",
+      "valid": true
+    },
+    {
+      "document": "06-表格协作\\模块介绍.md",
+      "target": "../README.md",
+      "valid": true
+    },
+    {
+      "document": "06-表格协作\\页面目录.md",
+      "target": "模块介绍.md",
+      "valid": true
+    },
+    {
+      "document": "06-表格协作\\页面目录.md",
+      "target": "../README.md",
+      "valid": true
+    },
+    {
+      "document": "06-表格协作\\页面目录.md",
+      "target": "01-表格工作区-打开第三方表格入口.png",
+      "valid": true
+    },
+    {
+      "document": "06-表格协作\\页面目录.md",
+      "target": "02-表格工作区-Grist原生文档与表格.png",
+      "valid": true
+    },
+    {
+      "document": "06-表格协作\\页面目录.md",
+      "target": "03-表格工作区-尚未配置连接.png",
+      "valid": true
+    },
+    {
+      "document": "06-表格协作\\页面目录.md",
+      "target": "../07-系统设置/09-表格设置-Grist连接.png",
+      "valid": true
+    },
+    {
+      "document": "07-系统设置\\模块介绍.md",
+      "target": "11-邮件AI设置-预审范围与开关.png",
+      "valid": true
+    },
+    {
+      "document": "07-系统设置\\模块介绍.md",
+      "target": "页面目录.md",
+      "valid": true
+    },
+    {
+      "document": "07-系统设置\\模块介绍.md",
+      "target": "../README.md",
+      "valid": true
+    },
+    {
+      "document": "07-系统设置\\页面目录.md",
+      "target": "模块介绍.md",
+      "valid": true
+    },
+    {
+      "document": "07-系统设置\\页面目录.md",
+      "target": "../README.md",
+      "valid": true
+    },
+    {
+      "document": "07-系统设置\\页面目录.md",
+      "target": "01-AI设置-模型服务商列表.png",
+      "valid": true
+    },
+    {
+      "document": "07-系统设置\\页面目录.md",
+      "target": "02-AI设置-编辑服务商与模型.png",
+      "valid": true
+    },
+    {
+      "document": "07-系统设置\\页面目录.md",
+      "target": "03-AI设置-删除服务商确认.png",
+      "valid": true
+    },
+    {
+      "document": "07-系统设置\\页面目录.md",
+      "target": "04-AI设置-为不同用途选择模型.png",
+      "valid": true
+    },
+    {
+      "document": "07-系统设置\\页面目录.md",
+      "target": "05-商品资料设置-CJ商品服务.png",
+      "valid": true
+    },
+    {
+      "document": "07-系统设置\\页面目录.md",
+      "target": "06-商品资料设置-填写CJ连接凭据.png",
+      "valid": true
+    },
+    {
+      "document": "07-系统设置\\页面目录.md",
+      "target": "07-邮箱设置-默认参数.png",
+      "valid": true
+    },
+    {
+      "document": "07-系统设置\\页面目录.md",
+      "target": "08-邮箱设置-清除默认密码确认.png",
+      "valid": true
+    },
+    {
+      "document": "07-系统设置\\页面目录.md",
+      "target": "09-表格设置-Grist连接.png",
+      "valid": true
+    },
+    {
+      "document": "07-系统设置\\页面目录.md",
+      "target": "10-表格设置-连接凭据与集成操作确认.png",
+      "valid": true
+    },
+    {
+      "document": "07-系统设置\\页面目录.md",
+      "target": "11-邮件AI设置-预审范围与开关.png",
+      "valid": true
+    },
+    {
+      "document": "07-系统设置\\页面目录.md",
+      "target": "12-邮件AI设置-授权与配置变更确认.png",
+      "valid": true
+    },
+    {
+      "document": "07-系统设置\\页面目录.md",
+      "target": "13-邮件AI设置-抽查后暂停与重新批准.png",
+      "valid": true
+    },
+    {
+      "document": "07-系统设置\\页面目录.md",
+      "target": "14-邮件关联设置-关联规则列表.png",
+      "valid": true
+    },
+    {
+      "document": "07-系统设置\\页面目录.md",
+      "target": "15-邮件关联设置-新增编辑或移除规则.png",
+      "valid": true
+    },
+    {
+      "document": "07-系统设置\\页面目录.md",
+      "target": "../09-登录与全局工具/03-账号安全-主动修改自己的密码.png",
+      "valid": true
+    },
+    {
+      "document": "07-系统设置\\页面目录.md",
+      "target": "../07-系统设置/02-AI设置-编辑服务商与模型.png",
+      "valid": true
+    },
+    {
+      "document": "08-内部用户与权限\\模块介绍.md",
+      "target": "01-用户管理-内部用户列表.png",
+      "valid": true
+    },
+    {
+      "document": "08-内部用户与权限\\模块介绍.md",
+      "target": "页面目录.md",
+      "valid": true
+    },
+    {
+      "document": "08-内部用户与权限\\模块介绍.md",
+      "target": "../README.md",
+      "valid": true
+    },
+    {
+      "document": "08-内部用户与权限\\页面目录.md",
+      "target": "模块介绍.md",
+      "valid": true
+    },
+    {
+      "document": "08-内部用户与权限\\页面目录.md",
+      "target": "../README.md",
+      "valid": true
+    },
+    {
+      "document": "08-内部用户与权限\\页面目录.md",
+      "target": "01-用户管理-内部用户列表.png",
+      "valid": true
+    },
+    {
+      "document": "08-内部用户与权限\\页面目录.md",
+      "target": "02-用户管理-创建内部用户.png",
+      "valid": true
+    },
+    {
+      "document": "08-内部用户与权限\\页面目录.md",
+      "target": "03-用户管理-重置用户密码.png",
+      "valid": true
+    },
+    {
+      "document": "08-内部用户与权限\\页面目录.md",
+      "target": "04-用户管理-启用或停用用户确认.png",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\模块介绍.md",
+      "target": "05-通用导航-以驾照上传页为例.png",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\模块介绍.md",
+      "target": "页面目录.md",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\模块介绍.md",
+      "target": "../README.md",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "模块介绍.md",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "../README.md",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "01-系统登录-内部用户登录.png",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "02-账号安全-首次登录必须修改密码.png",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "03-账号安全-主动修改自己的密码.png",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "04-账号入口-个人菜单.png",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "05-通用导航-以驾照上传页为例.png",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "06-通用导航-窄屏菜单与主从切换.png",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "07-全局搜索-查找系统内容.png",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "08-全局助手-打开AI对话侧栏.png",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "09-全局助手-工具操作确认.png",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "10-全局助手-开始新对话确认.png",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "11-编辑保护-未保存就离开确认.png",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "12-编辑保护-多人同时修改发生冲突.png",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "13-编辑保护-保存时发现记录已被删除.png",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "14-登录异常-会话已失效.png",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "15-登录异常-身份复核暂时失败.png",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "16-访问异常-没有访问权限.png",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "17-访问异常-页面不存在.png",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "18-访问异常-服务暂时不可用.png",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "../09-登录与全局工具/03-账号安全-主动修改自己的密码.png",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "../09-登录与全局工具/07-全局搜索-查找系统内容.png",
+      "valid": true
+    },
+    {
+      "document": "09-登录与全局工具\\页面目录.md",
+      "target": "../09-登录与全局工具/02-账号安全-首次登录必须修改密码.png",
+      "valid": true
+    }
+  ],
+  "application_source": [
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\abandon.test.ts",
+      "sha256": "CF4A16B28900BF599D50365AC6CD4A53C9E3B5462F6DE7615EEFBCE3C1465100",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\abandon.ts",
+      "sha256": "06D3684611577F9DEA5654D7FB5029397795374D1C15DC92FF0CA0F51D4DC679",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\accounts.test.ts",
+      "sha256": "FB1597BBF49861CE4B3F201F6DD1CF02999E77D5077883869E0A57125676F67A",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\accounts.ts",
+      "sha256": "AF95526BF7ADDC45B3F5AF40E92C2E58B27EF364A628D5FCB475BCA9AB730F29",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\agent-session.ts",
+      "sha256": "4A5A01109A973328E6039768216126C505C392F86E2F6ED15AF551B7EE5FF0AC",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\agent.ts",
+      "sha256": "2C09EA47F170E8DC97559878BB6C4F4E52936B4544443B634099F2A9998B1C4D",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\assistant-schema.test.ts",
+      "sha256": "07E2635A8A162752197CC3FC82E6AACAADDD04FE6E27A8B15BEF4ED6D55D904B",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\assistant-tools.test.ts",
+      "sha256": "D40FB1085DD0F0E5E834304F822279DD72DE2ED3EBB4C3D1F2E4BCC7F80CA737",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\assistant-tools.ts",
+      "sha256": "FF12562381AB28539E230CD89B8DF341D85FDB7DAEEEBC9D4E7026DA97CADFFC",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\assistant.test.ts",
+      "sha256": "8AE70736854C4F694B0D33B5C25250BEF9F999955F6BC6F9B35B6A2553F9CB90",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\assistant.ts",
+      "sha256": "3924FBAA7461E773BA237B6A059D78F48D7F73CFA87F2F3631FF749C15852DB2",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\batches.test.ts",
+      "sha256": "A89FD9FD629276B4C381CA84F4931760D900782482FCDA7093A12D79F588DB1E",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\batches.ts",
+      "sha256": "AE2A14316C7E5DF632DA545B6A0EEA8EB475AE1141D6638A08664B35D42F0BC8",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\branding.test.ts",
+      "sha256": "610886B143ADC7FD808B982B8F401F8290EBFAB3321A958296417B7080DB8F3F",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\branding.ts",
+      "sha256": "466EAFFE621E755435AAC932F68AEE3CE55D9677A8A81CBC4EBBB32F56DFC46F",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\changes.test.ts",
+      "sha256": "5707C850D4E1F3CABC9043521A9F6A0ADF06FFBB1D863D8D69D27DA1E2D02215",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\changes.ts",
+      "sha256": "F536F89C7484774609BF2CD6C59CAB6CC39F683397688F376D619B554E17EC2A",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\check-models-script.test.ts",
+      "sha256": "7BE0A28100C175AE053F68C50C1D658BF29A61356A2838021A87A5BE1414974E",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\cj.ts",
+      "sha256": "42DA55A06E17E0C25896CC6A438A42404479D5C7B7BC8D9FBABA6EAEAC5CF283",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\companion.ts",
+      "sha256": "D9D22ECB11619FC2BC0CE20CA6B01B790EE911B6D2398AD7621C32BD7BFD0ABA",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\content.test.ts",
+      "sha256": "1201EE68BD0F049C25C8FD9CFD15009A43C12C0377F35CFA8C4D264A4A9B218C",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\content.ts",
+      "sha256": "88E152CBDF3DA642EC3AFE38EDCD35B9F507986A274D1A52E886AF094B4EB4F3",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\db.test.ts",
+      "sha256": "D9775161B52B6A485E33FCE8A14A7A6FA1B3274B8C9A97FFCF9E1D15A54F1FD4",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\db.ts",
+      "sha256": "81C79F40341DF4B766737DBC809CE2BB5CEC4B7435699776E77CD487CF21316B",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\entity-templates.test.ts",
+      "sha256": "20167CD5D29CE4DA7EB6F618A3A016885590DE81D246FC4FBFF62A49BB01C8AE",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\entity-templates.ts",
+      "sha256": "04FCDF433CD61D842DBAB93428A0FE8736032523AA1C08ECBF47DC326FD7451A",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist-retry.test.ts",
+      "sha256": "2A08C71E119529FE8D9816829BAE128E8AC14163F72A2377F1102191D88D5936",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist-settings.test.ts",
+      "sha256": "C3CB173CB8D1A223B337812D91AFDB68ED66BF41EBD438037DC9C473429A0012",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist-settings.ts",
+      "sha256": "184894AB0373E036E4CFB727EC57EE1499B81E48ECCBE79EF8393A916CE1EFBC",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist-structure.test.ts",
+      "sha256": "37EA189D71317ED1AC2C6DDC0679311C1C19B2BB2E229FABA92F75E616DF6D98",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist-structure.ts",
+      "sha256": "F77DCD37476FAAF81EC271B960693733A80DD61ABF44CECAD5E87534453D591A",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist-tools.test.ts",
+      "sha256": "18CE307010E150E7ADB8ECA9D14B9E104DEF39B07A8518F6FD3A4B7A1D0A369E",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist-tools.ts",
+      "sha256": "5C1BF33FA51D5B0A9BA907446FC3C97C66CDA4B1C6083E97D269D7E3BC51D5AF",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist.test.ts",
+      "sha256": "46DA991109228663863DCDDBD4ADE4C42EECA2548FEE74C2A80C0CC5842AF214",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist.ts",
+      "sha256": "29BF28619D0412D2E90D0E8683458D64B402426DE9B5E8CA3F17D38FF0C3E15D",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\home-design.test.ts",
+      "sha256": "1491B65F2B68719BE6D8253BEC08FC87D4BE9E9167621835C76B1FE0E47BC927",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\home-design.ts",
+      "sha256": "AB0FF758015F0C3C3EDB2051D13704157D7F353FDBC41CE81FA370E01F6B367A",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\hostinger.test.ts",
+      "sha256": "76023246D46DDE96736900087D919FA09A9B095C85C220E73C818D1BC528D207",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\hostinger.ts",
+      "sha256": "1F6525559EE4BAC3165F59362E0E374F7F56BF25094A1B40D44A433149E17AEA",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\index.ts",
+      "sha256": "14A176E372D50062C44222BF0ACDF8EF89F5AA6715C82FB93148A2ADC3820288",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\jobs.test.ts",
+      "sha256": "E4B774D5DB9E7264A570995563AC42ACDE84C56F9A21C09C9FC8E953E8A10098",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\jobs.ts",
+      "sha256": "C67A62AED219FA400A895EE7DC5FD4B11542CEBCBBFAD9227BF65FEB2403CFA3",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\launch.ts",
+      "sha256": "08FE851D206B8E56E8A1EF48CA8E8404BAE618666405AC1B9AAC5B84B9FBFA30",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-case-projector.test.ts",
+      "sha256": "9BE14A8544ACDE41CD2A6BA9CB7FDA734A277B81A79A56F588204CFB7CAF76D9",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-case-projector.ts",
+      "sha256": "9D0CA66AF2E1EB79112F858FAF172B50C76B4C1EB0F5FAB67447E613EECAE0E7",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-migration.test.ts",
+      "sha256": "8DAAFB1EC74C78081C5B5F7735168D34CD853DE1A80D4F0C18CB25D089BF8469",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-translation-workspace.test.ts",
+      "sha256": "94AEF06E949BCCF413834D72B5471F9AE293B215C948B33A5F8DB2F4C8C0372B",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-translation.test.ts",
+      "sha256": "5453CFF4B711755CE320A4EC8CE6869371827D66BDF7F4B545C8AC1FD4F09845",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-translation.ts",
+      "sha256": "818025EDEC0133992375BB4ED774ECAC9C8C235E91010AAC1EB7F4270C2C3080",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-acceptance.test.ts",
+      "sha256": "15501889F8F51FB1818A034286A549D1C6EDEE04D675E060A776F22F4DEF5738",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-actions.test.ts",
+      "sha256": "D02A16306D08046AE614C973F919E9AA69086142B86A71E6B3517A9B59A77458",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-actions.ts",
+      "sha256": "7A9CEE449146EACF97202540A537655663C413581BB9E8FA76A67B6D19C665CC",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-analyzer.test.ts",
+      "sha256": "A1CEC7FC4B3D3EC575AFDC70866B21A883EC9F092658D2C5E5CC50442D63BB4C",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-analyzer.ts",
+      "sha256": "89B31E74A2A86DAEA2D4C5F29842E69D029707EA762E7C2201CF84C958481926",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-board.test.ts",
+      "sha256": "72ABFDF5C306F1509481462C56EF6B68022D6A512DC2A6BFD5D5CD7857EF503B",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-context.test.ts",
+      "sha256": "FADA450D8BBA6CB3CC1EA81D44D9AF935D8115FA9AF96D76758EDD7FBFE22EEF",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-context.ts",
+      "sha256": "12C17CBC5C910D3DA8FF017DDB4A56484EEDF5D6D5C05762F933D0EF8F8FBDA7",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-evaluation.test.ts",
+      "sha256": "C9DA51F71C3E3671DA87FBFA1C9D850E8159C5DD186505E7B6304531BDE643D5",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-evaluation.ts",
+      "sha256": "5EB63602196D8DBC1332787215E35F8E5A7B3B18DF3227F4066A17C164C8DE59",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-lifecycle.test.ts",
+      "sha256": "DEE76860CD7EAEEA2B64CA9840A2FB8E08A50EFE42713E9BD01004CFAF60F2B1",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-lifecycle.ts",
+      "sha256": "D982907148A354D57151E788A3265FFD0E524E52FBAD8EAC4B5BCF9EBA16AAC5",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-migration.test.ts",
+      "sha256": "6C65D9D0C1AEE75683BA9E701E3EAB154882BD30D275C0B44D383E1347DE723E",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-model.test.ts",
+      "sha256": "61CEF94BAACD02AF61439BA1204E92145763E893312E145656CCD826DB12A36B",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-model.ts",
+      "sha256": "C333ED92F595854BD1DCBC5D61CEC41F0CD6694A60D6CCE254618B085553C4C4",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-queue.test.ts",
+      "sha256": "48E9F6BFD166C720459284862545CFEDEE9F8C02FA30B3F52CE5E0C22F9ED934",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-queue.ts",
+      "sha256": "357822FF13C0335BCEDBD550600806FDD2B6832DF21B3520266AA53857958C2F",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-scheduler.ts",
+      "sha256": "C8B974B0ED7E36A6EBDDE9F8A11D67B9702F391F947B71A1F33F18901A46FE45",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-schema.ts",
+      "sha256": "15A282FDCB3CDF6FA68B1BC94D9C7AADD970534395C63C7D75E1488A69C05E52",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-send.test.ts",
+      "sha256": "FC2535285D17EA88B4C0BA5C14E968C50C7608701CB3D89AFBB755AB3A1BD503",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-send.ts",
+      "sha256": "E3E283ADDE973B6B3050BEB33CC22088C04FAEBC6F1E5A6351EE96FEEC64FFB8",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-service.ts",
+      "sha256": "B8D289E96344F2C4C99F14D79B8143215B7259A001143255F0D8ADFACFA00B5C",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-source.test.ts",
+      "sha256": "938303C24A5EEBAEC6F5383A5B221506F61F12DEA62DCEAA59866B56B83FEAA9",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-source.ts",
+      "sha256": "2A46983048A0868E5698817D41CAF39499E6E5E72A4F081DCB4DAC433CD7B3A8",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-worker.test.ts",
+      "sha256": "63EFE4E7BC13ABC9B418DC758B302B03EC42B60537C945F5BB6A5CA5A5FDA7B4",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-worker.ts",
+      "sha256": "87587AC21CA2FCCB7226EB0190045AEC9DA569881A7007A8A318F2EA6962A811",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-workspace.test.ts",
+      "sha256": "E4E0F688192FAF64290405976B3A2905FAA73C8FFB57561AF0C8E7A25129E874",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-workspace.test.ts",
+      "sha256": "FDB40ADA837F252DBF6CA4E5139D46F7DCA0BCD6DF23E808D285157C333F42C0",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail.test.ts",
+      "sha256": "48905D44B400A68B36D133D918CAC2077B409F7C91D0ECC1557BBE1C804D5E56",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail.ts",
+      "sha256": "CB011DBBB097AB577FDC287F0F14D5A685060AE31762A587ADCC6974D20E9B7F",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-adapter.test.ts",
+      "sha256": "D4E41F2F8BCC9595B69976E6393A54DA90F9B73A3797ED59A1B9473293D92A9B",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-adapter.ts",
+      "sha256": "C76EFD74C42B690907215D77C34A1EB0CBB9FF672EDAD69A9018B3BCD33AC20A",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-default-password.test.ts",
+      "sha256": "56914B3555443DD83F0976192E431CCB852BD984681131181C55C6B02848CB14",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-monitor.ts",
+      "sha256": "EC969780337964E84454701397814E7CE00F9ECEAEF785D69CC0EE3C7F86A3BA",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-parser.ts",
+      "sha256": "97949803275503708A4CBA46BB74D7C51141CF36DA59BF5C44F3B8D1649CCBB2",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-service.test.ts",
+      "sha256": "669BAA8D1257D68D2D2D3EB0E838CEFD8C102AE4FD4C8A385A05770FF6DD0BB0",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-service.ts",
+      "sha256": "5B2B09E3EA876079F262633473F42956846BF8FC5B502091EF8CC3FDB1FCB70E",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-transport.ts",
+      "sha256": "A7F5C824DACA6041CBE41C879278775EB24376C8FEC4322104DC82766B003BDB",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\migrations.ts",
+      "sha256": "30E950C296383A37C90808925A90FDF52E286A4302447CF6D693DC7422C7B9EC",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\model-retry.test.ts",
+      "sha256": "E9625AD56D76C6299356586804EDE77BF707ED9586E9E6183ECFCCA3B1DA9647",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\model-retry.ts",
+      "sha256": "5C5945913DE2D6D9619606748AE83C944D8BA4C628F68188AB422053B7D9AB6D",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\models.test.ts",
+      "sha256": "D2B8A79C50AB7A061533A67B75EB96ACA538E9B2DBF909DED62E2D34820A169A",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\models.ts",
+      "sha256": "7396C92CF593E5A64A4E877DCF07B9B0C7AD9934D3B4DFC209776DA709822DBC",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\net-guard.test.ts",
+      "sha256": "6EA9DE7A44EC55D8D015C5266767B07F5E62E58285569E932BFC1393D18C1A35",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\net-guard.ts",
+      "sha256": "367B3B826F6A9F5BE60ED50BC6BDBF51A938643A7F2948DF05B501B015B22D01",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\overview.test.ts",
+      "sha256": "E3E5AF3D167C3DF19655091E5EB2929589A62637CE60BE1CDEE1BC38B414EFC3",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\overview.ts",
+      "sha256": "C9973476453B33931099747B0DBA339CAE6BA0A619A4E0E0F10A1C4EBEE9D128",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\phase3.integration.test.ts",
+      "sha256": "F5854CC25C9EED7C426C7C7C8C706825C5B83BEE1ACF99FBC5153E7AFB83646F",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\pipeline.test.ts",
+      "sha256": "9B71BB4043394E4AEDCF0FC4E50AD0CF1ED3AB95BD80091291E043D1D0538534",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\pipeline.ts",
+      "sha256": "29BF539FD0DC6FB14FC71E87975C12BD16AE75DBA47FDBC7111388AD8311A86B",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\product-content.test.ts",
+      "sha256": "82D7CF799E312C413108282B57E431AFF3A352D0AED0F9790CCD962266F9D81C",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\product-content.ts",
+      "sha256": "E1A6D604ED3CD086776928DE73564C12CC204DAB7C37E14BC3E27D53BC41EA47",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\provider-workspace.test.ts",
+      "sha256": "0D93EA5FC7A67DEA90DEF2E0117C5C4CDA945C96FE43F9A95661B0A9C3EF9234",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\qa-browser.test.ts",
+      "sha256": "ED55F51EE837F91CC5C9996F9D2E41B79602C93D74B17EDC080F0C7E5A4F69E2",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\qa-browser.ts",
+      "sha256": "DF3D4E024CA23C21FD4E6A3FD9F03EBC008CC81FF4600C0F2838712E13FC8EF3",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\qa-runs.test.ts",
+      "sha256": "9D068AE8631FF79A7283FDDB379B586C8ABE96DD6035A1066A88279AA3CE14B9",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\qa-runs.ts",
+      "sha256": "B771F824C00853CF236CF872612D8F5F14ADF8277D48C3D4704FA7692C9438B6",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\qa-view.test.ts",
+      "sha256": "A3B99D17CA04475DBD6E695F8D6B7A222979FE7D77970CFFF079AAE429CB7E3A",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\qa-view.ts",
+      "sha256": "1493DA1DC7C072D6C9F840620B76F542DBE88714E3F4A442695725240B2EE3A3",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\rate-limit.test.ts",
+      "sha256": "54C71EACEBDD7DCE09393D65ADBB11DF8FF0C2E047E6405166C5F70A52EECDF1",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\rate-limit.ts",
+      "sha256": "B86C30170813DF540EF181432DA94BBC89FC332C4B67A68BC8EC91BF27E43B85",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\resources-phase3.test.ts",
+      "sha256": "002007414A88CE590F89509F5A831A603BCC9D500A4EEAAA3F0463420A049245",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\review-autofix.test.ts",
+      "sha256": "52CD36EA4DC24088401C880C4FCA299B81EF83D683137F741D95536E46623B8F",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\review-history.test.ts",
+      "sha256": "7E48A3B57D97545740E8BC5EC042D0D5A808BD6D3384D9DC6A0CA9AD8E5D3502",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\review-loop-planning.test.ts",
+      "sha256": "5B01C5DA8851864B241B8171C67A39EAB2FC005E37652888AC7DC4E507077E92",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\review-presentation.ts",
+      "sha256": "B18077D24F683E18670A49D962360F91C5F6B87EB36B4CCDB32DB5AB229A4A4B",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\review-source-mapping.test.ts",
+      "sha256": "6A18FE72659AED609A142DDFA83E68012E40CB65A6D5A323CA37B60BD0D44491",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\review.test.ts",
+      "sha256": "517228D2CB7419F5527A864AB1F6D0551E10839AEAA7E379E7FC4E566D87F08F",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\review.ts",
+      "sha256": "979FF6F47057D71B86372599E9EA4B470DADE6ACCCE6829E5168E434F75538A3",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\rpc.test.ts",
+      "sha256": "02B615F711EB0F9560CDD1F5A2DE80B38241451F7285E0BFA755744B969E4BDA",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\rpc.ts",
+      "sha256": "2E6A17E67C1BD92BC858ED97F3189585E7D5CFA685AA1DC9D9A5379F27FB967F",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\run-pool.test.ts",
+      "sha256": "C93DC4537618D19CA86049ACBBBF39DAE8CCB3EE50CC29D49BA4EC060690D7BC",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\run-pool.ts",
+      "sha256": "B0889C78610D452EA34E38C26F143EDF7C38C4B020513445E38649400F8EF1D2",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\secrets.test.ts",
+      "sha256": "8E0B215F4C4B0B8C86861D1E144A7BAC2431AAA1DBC157BBE73299B5753660DF",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\secrets.ts",
+      "sha256": "153EBD46405CFCF4B0D0238E74DC775FD2743C9DDF1954787E2F6CF2DA14398B",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-fetch.test.ts",
+      "sha256": "54F9CD68B498C70A8EAC0138B006A3D73612E8FED07797420B0BFE5483E1BBBD",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-fetch.ts",
+      "sha256": "8A662CDD589BF75813CB0C8955E0CFBCDEB12189F86D9AC07D2CA09DC9480DF0",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-mailbox-pipeline.test.ts",
+      "sha256": "C34D4BF8A27F8E61FBA1866A94DF0D157353BFE41A43201683358D3EEBB725F4",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-mailbox-workspace.test.ts",
+      "sha256": "D63057DC18C107F92771A5F78D0B8B9161766BD44ACBB1B7E51B6C443F7B3356",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-mailbox.test.ts",
+      "sha256": "1A66976DE4ABB23F765EAB2E2FE84C91FFBCC2B21C8C50B197223DDEB4D2FEA4",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-mailbox.ts",
+      "sha256": "03A9740A3B57897F10B698CF8E73859B28519C7D43F051B7DE8C02994A0EE5C7",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-tools-phase3.test.ts",
+      "sha256": "3DF098DB80BB3509FC405DB84A87EAC1FCDDAD7A1B6B9CB9E245F4415239B4FA",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-tools.ts",
+      "sha256": "2DD557C490FB774849426226D3F3ECC1CDBD7B3652DEF77AD0B3515471F04B23",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\smtp.test.ts",
+      "sha256": "DF6B15C7419CBF28C28CF503CB51213CF90A13635094C1A2EFDD58C902B86B4E",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\smtp.ts",
+      "sha256": "5F514CD8A5E29BFE77108BF4C1B77DF53C8656058CF70FC3AAB3599BCBC08A1B",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\store-selection.test.ts",
+      "sha256": "B76DAF2EBB362E7D5366BC4372074240E1F8AA4F4ED836D95F99CB8DDE1F8658",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\store.ts",
+      "sha256": "A739203B3680209BB576369EF4BBC39F01A347561A5A8EC88F2ADFD295278DB3",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\style.test.ts",
+      "sha256": "3E3A064AE64B2AB7A8A35E9A9F8CE2546A4A20D1F28BE5B89702B099D97BF371",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\style.ts",
+      "sha256": "336DE7CA990D7481A81B47D4FACF3752E16F253AF2963FC8535597E0DAD6F485",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\testing.ts",
+      "sha256": "79FC68C7C84A6D691BB148B2185F812C6D57B85CDD20E0609896B18ED95744BD",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\translation-model-migration.test.ts",
+      "sha256": "5C66515EA350939BC9CA8A56ECD3A1C2888B5F8FAC15E3409F2D550609B87721",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\vision.test.ts",
+      "sha256": "F5F7B518D6BEDB059D4CE05693458ED889BE507D78DC7F4DBCB2EE5495AE872A",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\vision.ts",
+      "sha256": "A18640C8679CFD9EA57FB06663B4D8933D69BD38B2997E92C01728107EADEB4A",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\workspace-rpc-policy.ts",
+      "sha256": "D63FAEABE47A2A6F01FFE47705F9B306DF60792E9A76EE2E592278813B3E6EEC",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\workspaces.test.ts",
+      "sha256": "A5CE3D424043540C1B0DF88C6D2A15BC7777E8EB45B95055A858523C99B046FA",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\workspaces.ts",
+      "sha256": "F2F18B559E0DA17F7915DF6A6761993F3339A2173E29B4C9BFB85393416FDD9E",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\index.html",
+      "sha256": "E72A85461C2D5091F40E47F9BC2D57938106EEEFA64D30D3B38DB113F2DF4936",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\REWRITE_REPORT.md",
+      "sha256": "B7FCB7C4A7EA44BC1DDA1689A6B12CBD09746BFE53483AEE8EB8AF4A9CF0EB58",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\THIRD_PARTY_NOTICES",
+      "sha256": "D28C723C33A18DFED6AF67B1A0AC368724F79BCB80750D3E080DBCF8DEDB9E4B",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\App.tsx",
+      "sha256": "E04538D74C5CB449FDA9F19879B5621F04A7D948046EA9E5865D77E99F6014E1",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\env.d.ts",
+      "sha256": "65996936FBB042915F7B74A200FCDDE7E410F32A669B1AB9597CFAA4B0FADDB5",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\index.css",
+      "sha256": "795896A877121A9D943E32D453334A15DDE45AC5E280C597E0A9F4437DDC3C2C",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\main.tsx",
+      "sha256": "C6713F68E9761117B8E6EC9BE2992AF70F395B01B4D058D8BAAC0B6108ECC763",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routeTree.gen.ts",
+      "sha256": "DE71C8D686F554F9155C9308094FC05C2D3501E16298C3D6A3758DAED85B34F5",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\abandon-site.tsx",
+      "sha256": "E3E9926D33FC879E7AA231AE5AF1BE69D9365C6DDD77B45E1D5F39112870CF29",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\assistant-state.test.ts",
+      "sha256": "C894BA287A263499BEB29358EA00A893E7C690B9D86D3F1989FD7A1F5ECC6F3D",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\assistant-state.ts",
+      "sha256": "F959142271DF76105CC976344C34114EF2C9C68B3163B2E1C409416B8C1F9EE2",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\assistant-ui.test.ts",
+      "sha256": "655A18EB044E88646A75FFD4B9CF5A6AB87FC44987477A7C7DDBF82A22240EFC",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\chat-markdown.test.ts",
+      "sha256": "F195F0D196A5D53637DA08D73817A003299299F939486EE5D0DA0D78AA8B9DAB",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\chat-markdown.ts",
+      "sha256": "C83A20247FDDE3D4D74DDE7C34456E9BEACE90200EA049127E2227D7C0B66936",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\chat-message-utils.ts",
+      "sha256": "B61829C1EDBEF9366E85776650EF762AD6B9907EB979565181A0EEE4E52AF1C1",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\chat-messages.test.ts",
+      "sha256": "5C074CF5446BEED6C150AD40F2733C4FC989FFBFEE63CAC86539C5D63D4F46F7",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\chat-messages.tsx",
+      "sha256": "9E2181E50E3276C0BDEC977E56B77ED0C24696FD73253317C6C24147777D6C54",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\confirm-dialog.tsx",
+      "sha256": "A6198D517DAEF53D1A2331C4A8C22330AF75AB2178BCF478786517767652CE28",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\confirmation-params.test.ts",
+      "sha256": "64A76EDDC2C31C388B4E6B66052FBD2C59D702933DEE63AD91B681C9370DDAF2",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\confirmation-params.ts",
+      "sha256": "F8AD794E8D495B54876F3700A3F9696B02BCD0B88166337D8D15B418513B4106",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\data-table.tsx",
+      "sha256": "F0DF4E5CCAF976C233F128F11FC2F7EF63478C3687652E3DB8CAA3B45F2223C2",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\feedback.tsx",
+      "sha256": "E78DF710D02EA58CB17FA8C26865F3496CBCE2E29DAE431DD08A59DD9FD700CB",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\global-assistant.tsx",
+      "sha256": "9C22DEB07992B0F367795C0CAA961D1374320C87678F572D377A65AD4D5A37F4",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\navigation-progress.tsx",
+      "sha256": "DE8D9BB45D5EDA7143E17E348D05D2E305E2CB4E693A129CB7726549784F4BD8",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\page-state.tsx",
+      "sha256": "78FF02355ABD8D66A0C3A9C50DA1A9CAF071F08E45F9890B7C9D968B377C2193",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\password-input.tsx",
+      "sha256": "E852285D58C903689ED711DD5ABFE78398EB2778646D3424C79F5DE4508DB015",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\profile-dropdown.tsx",
+      "sha256": "C26A2689BF4E90A59493EE2F6B5BA841FC40065311AE48459D0EDE4649A13819",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\search.tsx",
+      "sha256": "A01B016AE0157408C7473CF426EBAFC1518047F5D4BBA5324D3FB3CBC5D549C8",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\skip-to-main.tsx",
+      "sha256": "66198520829BE692579CED45550AF4414EB07D4CD8D21E39481E564F23015433",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\theme-switch.tsx",
+      "sha256": "C016BC3BBCBEBF63C418B67BCC7F31B648FF0BD823E753C28E63B949F6C7B0CE",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\layout\\app-sidebar.tsx",
+      "sha256": "EC4E1ECD87C56626C8E0FB4C9FC396B42525F111AEEB83E0698FA18AFD492A8B",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\layout\\authenticated-layout.tsx",
+      "sha256": "281D466CCBBA21823EC169A51D46F25B2F77FEB4AABAC380F90C073970DB562E",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\layout\\header.tsx",
+      "sha256": "3BFEFB16F2BE166177059E519DFA3F0D9FF71E777AE32731D03A7E9AB69C3EA9",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\layout\\main.tsx",
+      "sha256": "EAB34309E0BB3CCAF13F0D08C7B9A1B19670FDF22E84D691319482E5C9F5E758",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\layout\\nav-group.tsx",
+      "sha256": "483926EC9E7A72ABA27010E30BE2088A78CADA1236E80995C5EEDD73B3BA4A05",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\layout\\navigation.ts",
+      "sha256": "84A0AF920D231AF060B938A42201B9C42BD9ACF98AC5160982E4E08632957E75",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\alert-dialog.tsx",
+      "sha256": "D57A96557B5DC52D245D8F5F53250055AC1B6CA39EC28715EC9E3EB29A223472",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\avatar.tsx",
+      "sha256": "62B046FF186A753A4318CCF7A3233D767904851E51A9C18E6808002BF735E0FD",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\badge.tsx",
+      "sha256": "59953420D01D23D172B4E32583426DB153FF09226E2D460D53526B9F25282801",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\button.tsx",
+      "sha256": "C73281ACB492E6A20A300222523CFBE3714ECDB85FDC368468544017B7D265C3",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\card.tsx",
+      "sha256": "72728C3734479C247347759FC11BB01C3ACAC38F8E87DA6AEB03D69C39E0F9CC",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\command.tsx",
+      "sha256": "E12267DAAD87AB06482C5F707ADC58A7386EF1ECA18B7030BEAA27D7E3D9AA87",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\dialog.tsx",
+      "sha256": "9AFB71E44EF4862AD811419E936EF7F6739B21BE83DBDC17758C08E07362A40D",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\dropdown-menu.tsx",
+      "sha256": "BE17F9FAEA89BF81D806053441CBB7CD53AA6B14454CA66164C372A803F88EA4",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\input.tsx",
+      "sha256": "4F7D443722B4AEACB1179B863B98F773F7950514CEB1D897B66C967521F08072",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\label.tsx",
+      "sha256": "3E9699BAF80185C5C598D7E197D448541D03A6E5BD92B8D4B591774E738AF5EC",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\scroll-area.tsx",
+      "sha256": "45CC34DF8C0F09595716CDC66A19EF31F9B168057912AF75F7CA64F0C9431D04",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\select.tsx",
+      "sha256": "5ED4038FEB430B44F7DA060D44F21062932ADE549FF809BDAF85844657D4F1D8",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\separator.tsx",
+      "sha256": "8C8CB3818AA31CC8A38A047BB7FBBF815CD3B54E6997D389C2B01D8DCB3858A1",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\sheet.tsx",
+      "sha256": "B29DE8F2A9537A5C1B5D23858EC9B0E0E539A4C4DE5B9DD1BA9EAF9EB32F373E",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\sidebar.tsx",
+      "sha256": "97997A6498F81DE852E1C5636BF15212F0EEAC6CA5B3E36FC75D4AF89ABC6470",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\skeleton.tsx",
+      "sha256": "7617060C9EA8A25DAFADF224A8567C91DAEBD4A43149D0E72143BBA807FAB457",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\table.tsx",
+      "sha256": "8EBADFA3965FC72792D160579FF6BEB0B80D9DD0D3ACD56DB7A34168E956B531",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\tooltip.tsx",
+      "sha256": "F29BEDD31A31C1AC3AB8D3052F591C3B11F1C77AD03B4B2D6748E0EF67304DC5",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\context\\theme-provider.tsx",
+      "sha256": "4DBC650B42B9CDC04B65DA127ED2A7D888572242D602C873997F428D75E6B4B6",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\forms-validation.test.ts",
+      "sha256": "6D88B95C21966958703F1BE2615CCA1477747366BAD1A09D06A1D818CEC53F43",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\accounts\\accounts.tsx",
+      "sha256": "6D3A4238F0967858338A45EEF0575E14B436D9FA4B0043EC21FBB1345935A06C",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\accounts\\validation.ts",
+      "sha256": "A861FB8D25F2976D64DA532855B5729A46C66F881485F195C8E58BCA7CD65F6B",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\auth\\change-password.tsx",
+      "sha256": "A917446CDBFEACD8D532BE7BB54E495DB4F378846923C3CBEB151379891992E3",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\auth\\login.tsx",
+      "sha256": "723529F6A540E9B95B980752A07965243B93952653ACC219472490B1F63CE676",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\auth\\validation.ts",
+      "sha256": "9329117A2AA7405CB70A6F59AD00E84553E693BB358EA59C0BAA74EB2B7849AC",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\batches\\index.tsx",
+      "sha256": "94808C4970772D0E517AE20E56C2CF513482B817A7AAD94F20E7A167349F56D8",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\errors\\index.tsx",
+      "sha256": "3820B83B7233EB90170881D001563AD670D99A89426F42A5E78CCF516E89BA92",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\compose-dialog.tsx",
+      "sha256": "9657E6139BF0B989AFAC6E392D0C11441E454AA441505A2A3CB4B3B826D220B8",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\contact-mapping-pane.tsx",
+      "sha256": "E499FA2257E3412C2F9525A9CDFFAF1EDA0414268CFC9D2CAAF61C2D8C02542E",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\credential-dialog.tsx",
+      "sha256": "C4ADAE7B1F7065866D2DECCAF1CB0D15B442A0ED375B29948B64BFBEAB4EEE99",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-board-page.tsx",
+      "sha256": "5E8C2A6E201405733999F3C5651F3875992987550FD842D81020959995A97148",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-board.test.ts",
+      "sha256": "E5D4D5087CC5DF07B17D840F8AEBBC0E2533EBDD990BA556658F8A4CA843F747",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-body.test.ts",
+      "sha256": "0B6E73AEA93B952E456DC19F0571CE1193AB7DB0CF8788050672B4B739994550",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-body.ts",
+      "sha256": "FE755B09C0C98206973D71EEF609FB0702F341F56547BA6B8376706CCBEFFBE5",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-case-card.tsx",
+      "sha256": "B8A6E51B28B781C0B13CD1C2ECF88C831780871124E6E00936A01048091AB395",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-case-correction-dialog.tsx",
+      "sha256": "3F3F3D359D70B74D45DE354B8183D8F72DDB45BFFBDDC069E3E51DE92055FEA1",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-case-drawer.tsx",
+      "sha256": "1337BE9F58F320503918A9E957BF1D5AA663AB18AE9A6DBC6ADCF0CE0BF4A215",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-compose-controller.ts",
+      "sha256": "CE3048D19834241E632C40D6E182568330EE408F2AEA2B5BCD9A366FCE232392",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-form.test.ts",
+      "sha256": "6D4C530CD2455344392E31EE537EEBB43A2D63ED95230879C8A87CD25F7B1332",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-form.ts",
+      "sha256": "C4F60DCDD5A0944F1D13846CF4A6E6BC0572AD8D551449C9C49FCDCD544038C1",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-interaction.test.ts",
+      "sha256": "8DA85404E0C6528FB88F38B93031A39AAECB95D4F34FBFBE922C8A2EE7339C64",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-layout.test.ts",
+      "sha256": "05C6F708053CD62404BF13CD4FAD21FA4733331DD687C0F16FAA8D0F720BD934",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-layout.tsx",
+      "sha256": "2D9932C5330BCC607A61D51D7DFE31DDCB8F71A8D39B2ABA5542E2C30AF77F6A",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-management-page.tsx",
+      "sha256": "78EAF3BC3AAAD880C7B2B5CF2D7B64BC3455CC4AABD0AA27F7FE2E06B9028B97",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-open-state.test.ts",
+      "sha256": "CB842360D94209C4E5F1E5557A8659AC95638B86B2629E9673BDA90EC1125EAF",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-open-state.ts",
+      "sha256": "B2CCDEA0D7A4B325CC3A0F70BDBA03DF5B412F127BCF93B1D7EC85A5C2C19F5C",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-page.tsx",
+      "sha256": "496E3D7C2A5B29A75C5309143A9751AE0A4A0E0F4436895DAD14B3CB95D1498A",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-review-page.tsx",
+      "sha256": "AE29216538BC7EC25908F3CD4B19D2D84B340EA36F2C4F66E7ECDADDD122E79F",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-source-search.ts",
+      "sha256": "D0BC022F0F10CEB0ACCB30A1D2BD101D88E23391D50748E89B9FA0DF1ECC09A9",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-task-outcome-dialog.tsx",
+      "sha256": "F1642E8278B3F7187DD70D991F29E1AFCA699410B39048A42D6E7FAB1D1BC265",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-triage-client.ts",
+      "sha256": "A99368382029618F26DEBDA04ACEA0DA84DBBD9D6DBFBC9E5CAB3CB225EB4918",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-triage-pages.test.ts",
+      "sha256": "4DC022060AB3D9CDF25A0E11966074E477DA1663362DA2ECA9F3E90F35B85528",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-triage-settings-page.tsx",
+      "sha256": "E2D21E7468D76FC2B141B3A3EC83EF5F2CDEBA10A0C71F8A34B26921341B280A",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mailbox-pane.tsx",
+      "sha256": "A6470BB8433145989388E72015EEB7142D84DA6A6E1B3446A1887EF28C325C91",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\message-list-pane.tsx",
+      "sha256": "0CC08B76C43F13919374A29149F11C6B42C1945C16C95D56C6FFF9689CC05F59",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\message-reader-pane.tsx",
+      "sha256": "6C2F289D07CA1D674A61F07B89F75E4B9472F9BBC95C55B7475247E9EDA51DC6",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\new-batch\\batch-form.test.ts",
+      "sha256": "A43AD0BAE5364C6F15F1103131D9E2542089A1176FF21EB04FFF8D4F6FF9B153",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\new-batch\\batch-form.ts",
+      "sha256": "8D37839FA54B5376CA877EE15A6697FD2D48CEE611153CEAB477D34C04AD8EC5",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\new-batch\\index.tsx",
+      "sha256": "CA239BD290B1BDB1DB9FFD53603B227452A3BA45F5DC414BCC7A479280A9602F",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\new-batch\\new-batch-page.test.ts",
+      "sha256": "FA9DEB7938CBAA38C71336A769FA1D30755BDAF59D6E45CAB1B3884AF7964BD9",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\overview\\index.tsx",
+      "sha256": "5AB04A0673B62E48762DDE1F96A07E7703F7B7FE58901D44127DD358E94B6157",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\settings\\settings-types.ts",
+      "sha256": "BBB3610B8A1926FAC7AF8E2D697F962E0FC6F1E890AA3B504420128A6ABF3002",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\settings\\settings.tsx",
+      "sha256": "089E1E58669C29E0D459FA84A114D20AEBDADF3D985EA84FA5CE2215EE7BF58D",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\settings\\translation-role.test.ts",
+      "sha256": "A079EB1FF46564EBACFE9961FDDB9F65B2FAD3E4150AD8DA5DB2B7CF07AB9559",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\settings\\validation.ts",
+      "sha256": "7503EFB02FA903B686400C8BCD49100D1001E9B93658C906833DEF7068F12833",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\sites\\index.tsx",
+      "sha256": "C08686CDA6E210C2C27FD68DA49F4D626837CF6CC05F702D0AE2D5B64B3306FB",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\sites\\components\\qa-report-model.test.ts",
+      "sha256": "E81B9689BDF2E6C3A784E0CC9CD1DF255D9A90EA6B01275861DB7AECD961C223",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\sites\\components\\qa-report-model.ts",
+      "sha256": "00B440363C6CAC11F6AA86629F8215F4FE670F40D03D296D60BCB47C2FE8CECF",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\sites\\components\\qa-report.tsx",
+      "sha256": "8C45FFECB2767EB88DEC871FA3F5F87742238DEFF274C5363706D7B35972CE4A",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\sites\\components\\site-operations.tsx",
+      "sha256": "52AE880CA6BC5AB857D6F14F04F25C0EC2C4D3AC370621CEE8ED44C6A62A106B",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\tables\\grist-iframe-contract.test.ts",
+      "sha256": "B32F784156EC132D969DE98029320ECA6C0FD3290249D99E9B7CC9A900131D51",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\tables\\grist-iframe.test.ts",
+      "sha256": "CF97A1704F6CD22FCF5906370F1893613B8FB9A873901DB7FDFE52AA1843922F",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\tables\\grist-iframe.ts",
+      "sha256": "BF0A99E87781A4B52A85BDAE252623B850357ED8EA3850845EB624E0FB0BA03F",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\tables\\grist-settings-helpers.test.ts",
+      "sha256": "108FDE08883DD2DCC634FF2ED3E0BA950F7EF285FCDBDAFB5D490B2E6CF22DD3",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\tables\\grist-settings-helpers.ts",
+      "sha256": "C1A00202842AA31D42B212FE36BB7400753971C20E3B26E516247F46CB0769E3",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\tables\\grist-settings.tsx",
+      "sha256": "49AA8C6332ED827F895745407AF21300258C58E500CE879CD2657B33DE01968D",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\tables\\tables.tsx",
+      "sha256": "677701A40A00E047CE3F1B41668A4F8CC98CE0F578D2E83E01F768EE3017D495",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\users\\users.tsx",
+      "sha256": "BAC9A5E7D74A15EC044D82B2166F75F10A0D37BD7CF0F6E09C2EF275DD24C2C6",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\users\\validation.ts",
+      "sha256": "3DA407F009C783A1AB14A0886A3EEA46ED5FBE0DBE74470AEC40C7417A44A5D1",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\hooks\\use-mobile.tsx",
+      "sha256": "CEF2003DB553EF127BA219E8F4303A733CC76B85F83F17B1622131C0ECFD3B3C",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\hooks\\use-session.ts",
+      "sha256": "12068387147C80EBD23211A1C7A49E818892456A1E8398DB5BD89C82758292C1",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\auth.test.ts",
+      "sha256": "CEF9E88FFA2263D0666C7C7FA425463552EC7E6CCF218D79D270555845475FBC",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\auth.ts",
+      "sha256": "7A19C08E5BC037DF5251754BC37E41692A9D55EA7B00C644056036FB6C37E6B5",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\backend.ts",
+      "sha256": "5AC3794F5B4E1F41DB0A702E178FC8DD1AD31ECD4C84064865DFE88BAED69C84",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\query-client.test.ts",
+      "sha256": "10025E9DEA1657B508A88685092B73A4801FF66080660CB489DE8479918538AA",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\query-client.ts",
+      "sha256": "9AB23FBF8B1F3CD75C38FB216AFB895559B6BF3B23228ADE356F120E1BD1F439",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\route-guards.ts",
+      "sha256": "568FC474FCECB7296DA090A2884967A897995C968880901112D611C72AC92B15",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\route-params.ts",
+      "sha256": "C9F8D806F3DA42210A9AD34313EB0F563C99B18616A4429DCBC68757F8C5F32F",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\router-runtime.test.ts",
+      "sha256": "164CCD30DA68839F3417E3B3B9446C45234B2E8C3613989498AF6D0E30A22264",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\router.ts",
+      "sha256": "CE3797BFD88F17EDA654329B90CA91839ED6A39F47937314D6A235F5AD3C0DDA",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\routes.test.ts",
+      "sha256": "AB3109FEB8A18BC3E3EB54E8B6AFD31BB455C2026F4108B4CD4463A39F44C992",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\session.test.ts",
+      "sha256": "138007CE097F27FF59241CF77CA6C79B3FE09C2D17B2A2AF000BA7353E2C2D17",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\session.ts",
+      "sha256": "4ACA303C50D9E3F7ED6520420A8A70C6621D8AF1EAF9F02E095007272E4482CD",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\site-csv.test.ts",
+      "sha256": "62D6B3DFCF618D060E8D28EA941A38DDEC6F11A29A71607F1F9351C444D391E3",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\site-csv.ts",
+      "sha256": "ED1E57AF83966F058FAF7BCCDAB7D1BF62E0963632A9C3D45351B806BEE4B83F",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\utils.ts",
+      "sha256": "14300D758170C270C75B057F38FEDB3793A5920EA872F0477E29FB131185E8A7",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\__root.tsx",
+      "sha256": "0900F9C6666580A626CBE24F9D46D374755E057258713AD8316366975882438C",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.accounts.tsx",
+      "sha256": "48665D6147F96F1807E31C3CC56CB7F2EB438A65D411EDDDBA9406304911C98F",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.batches.$batchId.tsx",
+      "sha256": "695EF27167DDF88B266CE2A295502526BDC42C825635A28BD194D569C593850E",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.batches.index.tsx",
+      "sha256": "8C7CD1E201616B079DF5BC655D6E1270859A7BE82CDC0247422EB192CFC67125",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.batches.tsx",
+      "sha256": "B77F9FBB30C0618F483427ED69CC679B2FF85D848921C06A2F625E83B813480E",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.index.tsx",
+      "sha256": "25DEAFD9CD8C691E2DAA6A5571B2669BB6626486960FEF4EFC411B1DFC4CAC09",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.$mailboxId.$folder.$uid.tsx",
+      "sha256": "2CE3794FE99B4C5B1E0258BD4ADE653FE1B92D2F1925E8F1606F32AB7008B14F",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.$mailboxId.$folder.index.tsx",
+      "sha256": "1A15435314F100FBF41274D8D9A9896B50965C53CB529482896CFB6132621A4A",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.$mailboxId.$folder.tsx",
+      "sha256": "C2D181983934567CB62505C5AAAA34C9EDF83752AA47E6641B19A3A4CCC2D4C1",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.$mailboxId.index.tsx",
+      "sha256": "F5947071C475BDDABF721D6310E55C7A68219A4F3E0E82C7C0079B2F5F847920",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.$mailboxId.tsx",
+      "sha256": "1C5F2CDE2ECE261C687B3A1299D2E9C3B38287EE64235AABC363281E07A97115",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.cases.$caseId.tsx",
+      "sha256": "B87ABBEB8911E8CCEF29279F2B865C217D6E90B40B59B8607F6ECD319A8E5B54",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.inbox.tsx",
+      "sha256": "A12C1902D4E616577D0FDA459B3AAA38F3311110688F613A92FDAC524CC825AE",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.index.tsx",
+      "sha256": "8C9DAC5EC149986CB8CF2C186990DCC51E4ED0FC12415C7F4BFE9BBE5076F904",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.manage.tsx",
+      "sha256": "2F8DC142575D19D44AA255C3CE99736BEF436BEBE3F8FFBFD16DE5E86ADD6404",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.notifications.tsx",
+      "sha256": "98568E81B9E5DEB7AA3254B64309EE4D7D2C8880720C37E15698EA26C1FE8FD0",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.reminders.tsx",
+      "sha256": "561BE81D591FE5DFF092939B5B44487D26466476EB19BE58DCB7265F46BA4AFB",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.review.tsx",
+      "sha256": "0DA17F304A6F1A01132B8BFB3EC0C261F497669B609E0C4A5DC9B96430FCE54C",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.settings.tsx",
+      "sha256": "6D8DA38D6D62F1F5D6170A1830E2646764DA2905193844FEC4DA6C5D85C6D2E9",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.tsx",
+      "sha256": "81E31D72E1603626404EAEC2E9509ABEEF45872E9EE76B5FBF72B6A7F962422D",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.new.tsx",
+      "sha256": "14725690B624767A77159E4EF0CC6ABAABD0C5A24A26C4793CFC936017010272",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.settings.tsx",
+      "sha256": "1EB23C184088E09A397A7A3CA6476729D6ED4CCCA7F1F785FC4707E23E6DC645",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.sites.$siteId.$tab.tsx",
+      "sha256": "A9331CEB2169962C7DEE98C450E96EF15CF9D0E3F3A26EF606D7B78D768BD040",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.sites.$siteId.index.tsx",
+      "sha256": "61A0EB9153A4D5CFCDCA9A2FA6CDE9D737B74B702D8CB6D04309667215A61634",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.sites.$siteId.tsx",
+      "sha256": "2B8692C0CA2746513095E8176CB4555706C2422689EA35B87AACA8AB2CC92D58",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.sites.index.tsx",
+      "sha256": "A77E2E5048A5A03717A508488942FC86D0DDCCDEF6B04DFC137CCD8518DB9EEB",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.sites.tsx",
+      "sha256": "A9B1306E28DEB408C8B2CD5B7BC1015A3E768CBF01D1455EFCC6E2B154A059FD",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.tables.tsx",
+      "sha256": "C68623A3A69DD5FBEB27E68E1BB2F610ECCCBB6FEB42C3C40CA9EAAA0C0C1A20",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.tsx",
+      "sha256": "AAFE801CB70A8ED0A1C1CF778F13B7A9088CBA5D7119A4AE842226384CAB566C",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.users.tsx",
+      "sha256": "D0DB74361CE0494EA4E7AF10ED44793EF1FA1DA957E054C9561B5951D8F1C282",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\change-password.tsx",
+      "sha256": "3F3CCE141F854A887F34C5534F4C3B395D59827779FC5E3713F0F3568273F287",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\errors.403.tsx",
+      "sha256": "D43FC4A95629FBA641A2C21D59F458E722AF4DC8C2E615A99CABBF4C345046C9",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\errors.404.tsx",
+      "sha256": "71B243968C0746E7623BBFA490762897E23FE86516E10C5708433D36BD69546F",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\errors.500.tsx",
+      "sha256": "F31FDB3C3D8BD6BBD55532BF69EC08D9F8327302ED49A4A95296032A297A615A",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\login.tsx",
+      "sha256": "B51198178A9F8F32E69E2A37926C1D7A547A660553D2A863A1D935AE46AE9CCC",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\styles\\app.css",
+      "sha256": "BE9AADCE5233110209A547D9180A7512C7EA6BFDC0CBCF85B4112D914E6BF1C8",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\styles\\theme.css",
+      "sha256": "FAEE559C9A21B2084BF7BAE193E70F0AB18B18A393A06FEC1408669652C266A1",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\admin-db.ts",
+      "sha256": "BDFF43C346121DD68B973913A4202F7AD436B8562E6D96208AAE3EF1F386165E",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\assistant-access.test.ts",
+      "sha256": "3BEEF20BE05139084280A9F2B03F0B3A28D620BA6BDDDD3B132092AC721C56F7",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\assistant-access.ts",
+      "sha256": "EC343F165E7C8429B5E116EBCC404FA2B89F9B6E211EB6F67324574FF79D72AF",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\auth.test.ts",
+      "sha256": "92BFA58E550FED7781E0DDAD9CF88B3B3EF7215C6481EC548057D240D3C65AC7",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\auth.ts",
+      "sha256": "DC4EC1FDC94A5B964955C1C2E864C615E0C4F6D8A7DF19F39B4E97C207D09E51",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-attachment-http.test.ts",
+      "sha256": "C319754EC9B20AB991B8257781AB85630C0ECD0AD4B5CA252262670FD0CC7F83",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-attachment-origin.test.ts",
+      "sha256": "22D2C83D5ACF6FCC2FC4FAE5224D86AD6ECE5EA60504535A6ADF653D00AADFD4",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-attachment-regression.test.ts",
+      "sha256": "3E1CD4755960832D4D9FEB10582967794ADC370B6F737692C88AC3E122AD8279",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-attachment-signing.test.ts",
+      "sha256": "DA4E275F5F66EC3FFC83673FE8FF23EC2C78D8199E440DDD957C79A28AD5E150",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-attachment-signing.ts",
+      "sha256": "DB42B3B1314F84ACA30BE630FBDDEA2B56BBC443CEAF19CE8222DB90BABC4827",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-attachment.test.ts",
+      "sha256": "B3DB038E30752AA496638C14E0CEDD32F203B22C0F60F4DB381C9C3B76BCB793",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-attachment.ts",
+      "sha256": "4BC41436A948E50D30C090A1F334AD43D89D54A258812FCE2FBAD1710A68F0AE",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-http.test.ts",
+      "sha256": "C12D3DD61A29F56F0120DBB47FA38F052EDBD2671251539032C2CF92475721A7",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-mcp.test.ts",
+      "sha256": "3815E3FB92A0021B8FA931FF9B8553DFCFE8826AF87C174EBCD369A3A7997A9D",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-mcp.ts",
+      "sha256": "1D274DCDB00D880B33C85E88FBFE2B4C01C162032726DF391402308AD5F159ED",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-tokens.test.ts",
+      "sha256": "370AD7A7CBBA33B1EBC0771219BA87094F850E73B20A73E4C97EB02906659ABE",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-tokens.ts",
+      "sha256": "7B9AFB9A87B6993172840BCC62CD29B3E2EC9FFB44F49BE56CD512428D2DA266",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\http.test.ts",
+      "sha256": "5CF82E43ADB5976E9DCB5E63B90EC58F69405BB64EEF255A0F86613479303B5C",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\http.ts",
+      "sha256": "4452139B6824D062FA14AB5D5EAADAF98990EAA138E9A9BDC008D3462C04BF93",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\import-desktop.test.ts",
+      "sha256": "AC1FE61D62E32BC380685C84A69E144DE6D18042E44C0505716260ADA3901D0C",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\index.ts",
+      "sha256": "1FF1B873A44DBBDF4A20E93FA4E9681FC5BCF6EFBCBC46E62B4C0DCA891E9BA3",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\keys.ts",
+      "sha256": "7B878A7620445A178DE58ACE449CF31DF1486E9581310A7A8CFB31F683A9FEEF",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\lock.ts",
+      "sha256": "30C8497DAA0388F16E87489AEE6729A925E521246EB8C5CA34074F83769DD8C8",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\auth.ts",
+      "sha256": "21369CC422F1219B18DD62DCE24EB74BD668F529AFE0FBBC092C4911121C3169",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\forms.test.ts",
+      "sha256": "C7C5AD23100D185DCEA5BC4F88CC4CABACABF5D456440A2C95F511BBC4380CCD",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\forms.ts",
+      "sha256": "A6BAD1ABD4C1E665055BAF4E38B003DA5F9130562D6FC859E615396C96813FAF",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\mail-triage-types.ts",
+      "sha256": "74635A29AEE3C03376E2122D758125DBA3A5194B1E6106028F928AE308B9E273",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\mail-types.ts",
+      "sha256": "ABE3DB39C29D832BE0591F8C2917F9C69CE57F2B44E3C406B0CED525FC113B30",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\protocol.ts",
+      "sha256": "129DAF7E50974CB4EEB5F5FAB4640ACA01335D1517B79AA9688BF9F08CC67BFC",
+      "unchanged": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\rules.ts",
+      "sha256": "72D286755DA73DC685714113CA4F425EA8AD44833743A4170084C181FC9D14A6",
+      "unchanged": true
+    }
+  ]
+}

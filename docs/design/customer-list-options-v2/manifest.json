@@ -1,0 +1,38 @@
+{
+  "selected": false,
+  "rollback": "Remove only this new design directory if not needed; original designs and source untouched",
+  "original": {
+    "path": "F:\\projects\\website-gen\\docs\\design\\customer-key-pages-v1\\01-customer-list.png",
+    "unchanged": true,
+    "sha256": "DB0DFB8757270A1CAF209EF678D92F8FFD195F0A8406210A27472EEA11723466"
+  },
+  "date": "2026-10-16",
+  "verification": {
+    "runtimeTests": "not applicable: images only",
+    "imageCount": 3,
+    "originalPreserved": true,
+    "businessSemantics": "no speculative next action; completion and current application separate",
+    "copyHashesMatch": true
+  },
+  "files": [
+    {
+      "file": "01-register.png",
+      "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-9e53f75b-c064-45ce-b0f9-9eb0e3119b3a.png",
+      "displayOrder": 1,
+      "sha256": "8F65375E3DF8FA9C264DF56C098D4BD577E254F92C115EE343C0DA45BD6F8525"
+    },
+    {
+      "file": "02-material-matrix.png",
+      "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-b3ed0372-971d-445d-a096-db5ee16b94c8.png",
+      "displayOrder": 2,
+      "sha256": "C4B66AE416676532A694604E54CF91CF5F1220869AE869CC0EED46B6ADAFB242"
+    },
+    {
+      "file": "03-list-preview.png",
+      "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-f84bc33f-c1f5-4fb8-ae69-7a1464cf38dd.png",
+      "displayOrder": 3,
+      "sha256": "EA4EE3A22C41CB3CAD971901E540389BFF8FB6A1CC9389D9EC478EBE1420AB6E"
+    }
+  ],
+  "kind": "static-image-ideation"
+}

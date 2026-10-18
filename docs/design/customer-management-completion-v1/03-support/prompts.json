@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "shared_style": "White enterprise UI, near-black deep navy typography, gray-blue support, deep navy buttons, sparse bright-blue links, restrained semantic colors; all DEMO; US dates.",
+  "generator": "built-in image_gen",
+  "color_reference": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+  "generated_at": "2026-10-17",
+  "items": [
+    {
+      "id": "O-C15-delete-confirm-v1",
+      "output": "O-C15-delete-confirm-v1.png",
+      "referenced_image_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/C02-overview-v2.png"
+      ],
+      "prompt": "Use case: ui-mockup. Create one Chinese O-C15 删除客户确认 modal over the existing customer overview. Admin DEMO actor 李敏; Alex Morgan C001; warn 当前有 1 个在办申请 PayPal 待补件 and require a separate unchecked confirmation checkbox. 将删除: 客户档案与当前附件、全部网关申请及申请定稿、客户专属案件与待办、实际网站 northline.example. 将保留: domain unbound with renewal unchanged, commercial mailbox, original emails. State that this admin example does not define other employee permissions. Buttons 取消/确认删除. Do not claim completion or add customer owner."
+    },
+    {
+      "id": "O-C16-delete-execution-v1",
+      "output": "O-C16-delete-execution-v1.png",
+      "referenced_image_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/C02-overview-v2.png"
+      ],
+      "prompt": "Use case: ui-mockup. Create one Chinese O-C16 客户删除执行结果 panel. Summary must be 未完成：部分步骤需要处理, operation DEL-DEMO-1026. Show internal dossier/current attachments and gateway applications/snapshots/cases/tasks completed; actual website failed; domain unlink result unknown while retained; mailbox and original email unprocessed and retained. Provide 返回客户列表、重新核验、重试失败步骤. Never claim atomic completion or recovery; late tasks and original mail cannot recreate customer."
+    },
+    {
+      "id": "O-C07-upload-states-v1",
+      "output": "O-C07-upload-states-v1.png",
+      "referenced_image_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C07-upload-v2.png"
+      ],
+      "prompt": "Use case: ui-mockup. Edit the upload drawer into one O-C07 上传状态 screen with five independent queue rows: upload success with actor/time, upload in progress 62% with cancel, upload failed with retry and not written, cancelled with re-upload and not written, unsupported .exe with remove and not uploaded. Footer 1成功·1上传中·3待处理. Only successful files record actor/time; no payment-platform submission or inferred missing month."
+    },
+    {
+      "id": "O-C08-preview-unavailable-v1",
+      "output": "O-C08-preview-unavailable-v1.png",
+      "referenced_image_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C08-preview-v2.png"
+      ],
+      "prompt": "Use case: ui-mockup. Edit the current file preview into O-C08 预览读取失败. Keep 银行介绍信.pdf metadata and actor unchanged. Large canvas says 无法读取文件预览; file still exists; actions 重试预览 and 下载文件. Footer: preview failure does not mean unuploaded and does not change file attribution. Keep replace/remove actions; do not call file missing, deleted, invalid or audit-failed."
+    },
+    {
+      "id": "O-C08-preview-unsupported-v1",
+      "output": "O-C08-preview-unsupported-v1.png",
+      "referenced_image_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C08-preview-v2.png"
+      ],
+      "prompt": "Use case: ui-mockup. Edit the current file preview into O-C08 不支持在线预览 for 库存清单.xlsx, 其他证明, 46KB, actor 王芳, 10/15/2026. Neutral spreadsheet icon; state the file is stored and downloadable; primary 下载文件 only, no retry. Footer says unsupported preview is not corruption, missing upload, or audit failure. Keep replace/remove actions."
+    },
+    {
+      "id": "O-C09-replace-failure-v1",
+      "output": "O-C09-replace-failure-v1.png",
+      "referenced_image_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C09-replace-v2.png"
+      ],
+      "prompt": "Use case: ui-mockup. Edit replace modal into O-C09 替换失败. Current 银行流水-01.pdf remains valid with original actor 李敏 and date 10/02/2026. New 银行流水-01-补充版.pdf upload failed due network interruption and was not saved. Provide retry upload/reselect, state replacement incomplete, old file remains viewable/downloadable, attribution unchanged, no intermediate version, existing application snapshot unchanged. Buttons 取消/重试替换."
+    },
+    {
+      "id": "O-C10-remove-failure-v1",
+      "output": "O-C10-remove-failure-v1.png",
+      "referenced_image_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C10-remove-v2.png"
+      ],
+      "prompt": "Use case: ui-mockup. Edit remove modal into O-C10 移除失败. Target 银行流水-02.pdf remains in current dossier and viewable/downloadable. Original attribution 李敏·上传·10/02/2026 unchanged. State that failed removal records no remover and does not update audit state; application snapshot unchanged. Buttons 关闭/重试移除; no destructive success button and no claim of removal."
+    },
+    {
+      "id": "O-C04-save-failure-v1",
+      "output": "O-C04-save-failure-v1.png",
+      "referenced_image_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C04-personal-edit-v3.png"
+      ],
+      "prompt": "Use case: ui-mockup. Edit personal-information drawer into O-C04 保存失败. Preserve all entered values; phone +1 (202) 555-0149 and current street 130 Example Ave are marked 未保存. Network error says input remains. Formal dossier retains original values and field actors; only actual successfully saved changes update attribution; existing application snapshot unchanged. Actor 李敏 only recorded after success. Buttons 取消/重试保存."
+    }
+  ]
+}

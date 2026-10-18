@@ -1,0 +1,30 @@
+Use case: ui-mockup. Create a realistic, production-quality Chinese desktop business-workbench UI prototype, a single full-page screen, not code. This is a continuation of the exact existing three-step website-creation wizard, NOT a new visual direction. Target dimensions 1489 x 1056, same aspect ratio and scale as first attached W03 image. No browser chrome, framing, mockup devices or captions outside the screen.
+
+REFERENCE ROLES: Image 1 is the authoritative existing W03 step 2: copy its full app shell, sidebar width about249px, header and footer, typography, colors, spacing, icon style, table styling, step positions and sample-client identity. Image 2 is the user's authoritative original COLOR reference only; do NOT restore its obsolete manual-customer-creation button or simplified sidebar. New content changes only the wizard main content and active step. Preserve the visual language: white background; ink navy headings (#000E39 approx), navy body #172D65, slate blue #607298 secondary text; navy primary buttons #12244C; blue interactive links, thin pale-blue borders, small 6px radii, very restrained selected pale blue rows. No purple, gradient theme, decorative analytics, giant cards or unnecessary badges. Continuous table/grouped surface, modest 14–16px text at this scale, visually aligned crisp Chinese. Avoid crowding and clipped fields.
+
+REPRODUCE SHELL: full left sidebar logo 业务工作台; groups 客户业务 (客户, 网关申请), 网站 (建站总览, 新建网站 ACTIVE pale blue and navy left indicator, 批次, 站点), 资源 (账号与域名, 邮箱, 表格), 系统 (设置, 用户管理); bottom 李敏 · 管理员. Header 网站 / 新建网站. Top right "10/17/2026  静态原型 · 全部为示例数据". Main h1 "新建网站"; subtitle "每位客户单独配置一个网站，支持单个或批量。" Right "操作人：李敏 · 提交成功后记录". Three horizontally aligned steps at same place: 1 客户与经营资料, 2 站点配置, 3 确认启动. Only designated current step navy filled circle; other circles pale blue and labels slate. All dates MM/DD/YYYY. Supplied date 10/17/2026.
+
+BUSINESS INVARIANTS: one customer = one company = one website; batch means independent customer items not multiple sites for same company. Only three fictional selected customers, each without existing website: Jamie Chen C002 / Cedar Living LLC; Taylor Brooks C003 / Paperfield LLC; Jordan Lee C004 / Harbor Supply LLC. Never use Alex/C001 (already has a site). No shared enterprise template or copy-all-business-data; no new customer creation, no uploads here, no fixed customer owner, no bank/material/gateway approval prerequisite. No SSN or driver's license details on a website form. Read-only imported company fields should be text, not misleading editable inputs. EIN is a business prerequisite only, NOT a published website field. All data in image fictional. Website creation not yet submitted. Do not show green successful website states or invent external resource verification. Focus on the requested stage with one clear primary action.
+
+SCREEN ID W04 — STEP 3 "确认启动", active third circle. FINAL PRE-SUBMIT REVIEW screen, no tasks created yet. Reuse identical header/footer and table geometry. Show exactly same3clients/domain/mail/brand/category values as W03.
+
+Content title near y280 "确认本次建站 · 3" and helper "请逐项核对，确认后开始建站。".
+Continuous full-width table at x278..1462,y325 with FOUR columns "客户 / 企业", "域名 / 商业邮箱", "站点配置", "操作". All values READ-ONLY text, not inputs.
+Jamie selected pale blue row:
+Jamie Chen C002 / Cedar Living LLC;
+cedar-living.example / hello@cedar-living.example;
+Cedar Living / 家具;
+"收起明细 ⌃".
+Inline expanded area within table, immediately underneath Jamie, title "Jamie Chen · 启动前核对", top-right distinct blue links "修改经营资料" and "修改站点配置".
+First line of aligned info: "企业地址" 18 Demo Cedar Rd, Austin, TX 78701; "网站联系电话" +1 (202) 555-0126. No personal address.
+Second line four compact groups:
+"商品数量" 60; "售价区间（USD）" 25 – 120; "订单处理（工作日）" 2 – 4; "运输时效（工作日）" 5 – 10.
+Bottom tiny muted note within this expansion "企业资料与 EIN 已齐备；EIN 不对外展示。". No actual EIN/SSN.
+Taylor compact row: Taylor Brooks C003 / Paperfield LLC | paperfield.example / hello@paperfield.example | Paperfield / 文具 | "展开明细 ⌄".
+Jordan compact row: Jordan Lee C004 / Harbor Supply LLC | harbor-supply.example / hello@harbor-supply.example | Harbor Supply / 家居用品 | "展开明细 ⌄".
+Allow enough room below table for subtle warm cream warning strip with small icon and heading "启动前请确认". Two readable lines:
+"将调用 Hostinger 创建网站、读取 CJ 商品并调用模型生成内容，可能产生模型费用。"
+"生成后仍保持维护模式，需人工检查并上线；建站完成不代表网关获批。"
+Below the warning a SMALL navy-checked checkbox with label "我已核对本次配置并知悉上述说明". This is just the static selected state; still no submission.
+Fixed bottom footer at same W03 y964, left "本次 3 位客户 · 3 个网站", secondary "当前尚未提交建站。"; right outlined "上一步" and navy primary "确认并开始建站（3）".
+This button is the sole submission action in entire three-step wizard. Do NOT show submission spinner, batch ID, success message, website/live/task created statuses or realtime-cost estimate. First2step indicators may stay muted as in W03 (past navigation), third navy current. No new customers, purchase links, one-click email creation, no route complexity. Main page must remain comfortable, readable and strongly match W03.

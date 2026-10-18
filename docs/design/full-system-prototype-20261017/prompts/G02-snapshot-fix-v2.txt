@@ -1,0 +1,6 @@
+Edit this UI snapshot page. Preserve all outer chrome, PayPal APP-002 Alex Morgan C001 header and status, top date, typography, deep navy palette, selected top tab and summary 26项字段 9份附件 saved10/16/2026 14:00PT, confirmer李敏 and当时申请负责人李敏. Replace ONLY central selected category and tables. Left category nav selects "附件清单" now. Remove all existing invented company/bank/attachment tables and their invented operators, times, bank info, file sizes. Right content: heading "定稿附件", a modest line "当前显示 4 / 9 份 · 所有文件仅供只读查看". One clear roomy table with columns 文件名称 / 资料类别 / 操作人 / 操作日期 / 操作. Exactly four rows:
+bank-statement-2026-07.pdf | 银行流水 | 王芳 |10/02/2026 10:30 PT | 查看 下载
+fulfillment-agreement-demo.pdf | 履行协议 | 李敏 |10/12/2026 | 查看 下载
+inventory-demo.jpg | 库存照片 | 王芳 |10/15/2026 | 查看 下载
+other-proof-demo.pdf | 其他证明 | 陈杰 |10/16/2026 | 查看 下载
+No file sizes, no invented dates or other rows. Below table unobtrusive pagination "每页4份 · 第1页/共3页" 1 2 3 下一页; overall9files notallshown. Below "银行流水当前文件后续替换，不影响此定稿。" Preserve existing bottom "当前档案后续修改，不会重写本次定稿。" Use calm white whitespace not giant cards. No editing/replacing/removing button. Categories navigation company/contact/business/bank/tax remain accessible but only附件清单active. All operation identities explicitly distinct from snapshot confirmer. Same1490x1056.

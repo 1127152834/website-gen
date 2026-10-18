@@ -5,6 +5,7 @@ import { listFreeDomains } from "./batches.ts";
 import { HostingerError, type HostingerExec } from "./hostinger.ts";
 import { createRunner } from "./jobs.ts";
 import { DOMAIN, setup } from "./testing.ts";
+import { invalidateSource, invalidateTriageScope } from "./mail-triage-lifecycle.ts";
 
 type Remote = {
   orders: Record<string, unknown>[];
@@ -114,6 +115,34 @@ test("放弃任务跨账号删除邮件和网站，核验 5xx 的实际状态并
   assert.equal(queueAbandon(f.db, { domain: DOMAIN, confirmation: DOMAIN, siteId: f.siteId }, f.clock()).jobId, queued.jobId);
   await runAbandon(f.deps, { id: queued.jobId, type: ABANDON_JOB, siteId: f.siteId, attempts: 0, maxAttempts: 3 });
   assert.equal(a.calls.length + b.calls.length, callCount, "已完成步骤不会重复执行远端写操作");
+});
+
+test("Task8 abandon tombstone synchronously revokes triage, then local cleanup purges sources before mailbox cascade", async () => {
+  const f = fixture(new Map([[1, remote()]]));
+  const mailboxId = Number(f.db.prepare("SELECT id FROM mailboxes WHERE remote_id='B1'").get()!.id);
+  f.db.exec(`INSERT INTO mail_triage_scope(mailbox_id,epoch,state,uid_validity,baseline_uid,effective_at) VALUES(${mailboxId},1,'authorized','100',0,0);
+    INSERT INTO mail_triage_sources(id,mailbox_id,source_hash,critical_headers_hash,observed_at) VALUES('abandon-source',${mailboxId},'hash','headers',1);
+    INSERT INTO mail_triage_source_aliases(mailbox_id,folder,uid_validity,uid,source_id) VALUES(${mailboxId},'INBOX','100',1,'abandon-source');
+    INSERT INTO mail_triage_jobs(id,source_id,source_version,provider_id,model_id,model_config_revision,prompt_version,rule_version,schema_version,context_version,config_epoch,state)
+      VALUES('abandon-job','abandon-source',1,1,'fixture',1,1,1,1,'pending',1,'running');
+    INSERT INTO mail_triage_attempts(id,job_id,attempt_seq,budget_day,reserved_at,deadline_at,outcome,usage_json)
+      VALUES('abandon-attempt','abandon-job',1,'2026-10-16',1,2,'succeeded','{"inputTokens":1}');`);
+  const aborted: string[][] = [];
+  const hooks = {
+    invalidateScope: (input: { mailboxIds: number[]; reason: "abandon" }, now: number) => invalidateTriageScope(f.db, input, now),
+    invalidateSource: (sourceId: string, reason: "explicit_delete", now: number) => invalidateSource(f.db, sourceId, reason, now),
+    abortSources: (ids: string[]) => { assert.equal(f.db.isTransaction, false); aborted.push(ids); },
+  };
+  f.deps.triageLifecycleHooks = hooks;
+  const queued = queueAbandon(f.db, { domain: DOMAIN, confirmation: DOMAIN, siteId: f.siteId }, f.clock(), hooks);
+  assert.equal(f.db.prepare("SELECT state FROM mail_triage_scope WHERE mailbox_id=?").get(mailboxId)!.state, "revoked");
+  assert.equal(f.db.prepare("SELECT state FROM mail_triage_jobs WHERE id='abandon-job'").get()!.state, "cancelled");
+  f.db.prepare("UPDATE abandon_steps SET status='done' WHERE job_id=? AND step<>'local_mail'").run(queued.jobId);
+  await runAbandon(f.deps, { id: queued.jobId, type: ABANDON_JOB, siteId: f.siteId, attempts: 0, maxAttempts: 3 });
+  assert.equal(f.db.prepare("SELECT 1 FROM mailboxes WHERE id=?").get(mailboxId), undefined);
+  assert.equal(f.db.prepare("SELECT 1 FROM mail_triage_sources WHERE id='abandon-source'").get(), undefined);
+  assert.equal(f.db.prepare("SELECT job_id FROM mail_triage_attempts WHERE id='abandon-attempt'").get()!.job_id, null);
+  assert.deepEqual(aborted, [["abandon-source"], ["abandon-source"]]);
 });
 
 test("域名订阅不唯一时失败关闭且不猜测", async () => {

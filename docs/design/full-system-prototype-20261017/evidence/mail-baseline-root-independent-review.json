@@ -1,0 +1,49 @@
+{
+  "date": "10/18/2026 PT",
+  "method": "Root direct view_image independent of original maker; exact canonical evidence and navigation comparison",
+  "passed": 5,
+  "needs_fix": 0,
+  "interaction_verified": false,
+  "items": [
+    {
+      "id": "M01",
+      "image": "screens/M01-v2.png",
+      "sha256": "5BB5A5BD6037E1222299A50CFF25F80F84ED01B49B43DFEBE28B3F6680F0C4F2",
+      "status": "independent_static_review_pass",
+      "reviewer": "root",
+      "notes": "Domain/mailbox grouping, credential/listening/sync distinct; no automatic reply"
+    },
+    {
+      "id": "M02",
+      "image": "screens/M02-v2.png",
+      "sha256": "24BFC2AAD4B08B9A46C4FDC6A3BAF902D1A8B320565BE8F3D021CA72E4F8328A",
+      "status": "independent_static_review_pass",
+      "reviewer": "root",
+      "notes": "Folder hierarchy, counts and pagination; message previews are summaries, not source quotation"
+    },
+    {
+      "id": "M03",
+      "image": "screens/M03-v3.png",
+      "sha256": "55D3F3D174AFFAFC88E7B5C9D40D51571029C2716AF22637FD74CB97EF10598F",
+      "status": "independent_static_review_pass",
+      "reviewer": "root",
+      "notes": "Full canonical E-101 original,09:18PT,attachments0; AI suggestion and identity candidate unconfirmed"
+    },
+    {
+      "id": "M05",
+      "image": "screens/M05-v4.png",
+      "sha256": "5B3810DC710E32D925B2A1CF462823B765A4A5C4A2DAC79A366A75DE1D9DE712",
+      "status": "independent_static_review_pass",
+      "reviewer": "root",
+      "notes": "Full E-101 evidence; two requests only; history correction separate from gateway ownership"
+    },
+    {
+      "id": "M06",
+      "image": "screens/M06-v2.png",
+      "sha256": "592609A3E3F0C8DE6304D62437A4BCFDC24AECBAFB09B29215B9682480A0B440",
+      "status": "independent_static_review_pass",
+      "reviewer": "root",
+      "notes": "Pending identity, safe original plaintext, all related entities are candidates only"
+    }
+  ]
+}

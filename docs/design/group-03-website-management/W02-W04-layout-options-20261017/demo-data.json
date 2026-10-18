@@ -1,0 +1,78 @@
+{
+  "fictional": true,
+  "note": "All records are mock data. Taylor/Jordan detailed values are newly specified for consistent design alternatives, not real dossier changes.",
+  "clients": [
+    {
+      "id": "C002",
+      "name": "Jamie Chen",
+      "company": "Cedar Living LLC",
+      "domain": "cedar-living.example",
+      "email": "hello@cedar-living.example",
+      "brand": "Cedar Living",
+      "category": "家具",
+      "address": "18 Demo Cedar Rd, Austin, TX 78701",
+      "phone": "+1 (202) 555-0126",
+      "count": 60,
+      "price": [
+        25,
+        120
+      ],
+      "processing": [
+        2,
+        4
+      ],
+      "transit": [
+        5,
+        10
+      ]
+    },
+    {
+      "id": "C003",
+      "name": "Taylor Brooks",
+      "company": "Paperfield LLC",
+      "domain": "paperfield.example",
+      "email": "hello@paperfield.example",
+      "brand": "Paperfield",
+      "category": "文具",
+      "address": "24 Demo Paper St, Denver, CO 80202",
+      "phone": "+1 (202) 555-0134",
+      "count": 40,
+      "price": [
+        5,
+        30
+      ],
+      "processing": [
+        1,
+        3
+      ],
+      "transit": [
+        4,
+        8
+      ]
+    },
+    {
+      "id": "C004",
+      "name": "Jordan Lee",
+      "company": "Harbor Supply LLC",
+      "domain": "harbor-supply.example",
+      "email": "hello@harbor-supply.example",
+      "brand": "Harbor Supply",
+      "category": "家居用品",
+      "address": "36 Demo Harbor Ave, Tampa, FL 33602",
+      "phone": "+1 (202) 555-0168",
+      "count": 80,
+      "price": [
+        15,
+        80
+      ],
+      "processing": [
+        2,
+        5
+      ],
+      "transit": [
+        5,
+        12
+      ]
+    }
+  ]
+}

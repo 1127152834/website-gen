@@ -1,0 +1,73 @@
+{
+  "artifactHashes": [
+    {
+      "sha256": "24E8B3F1DCF46CE0863D50982FFD33C4C19F3BF7FCA970CA88711C1C9A659F70",
+      "path": "F:\\projects\\website-gen\\docs\\superpowers\\specs\\2026-10-16-mail-triage-design.md"
+    },
+    {
+      "sha256": "79142FC3EC0599DCC0532AD8FC25415DEA97CA76E1BF396F85B3CEC96214590C",
+      "path": "F:\\projects\\website-gen\\CONTEXT.md"
+    },
+    {
+      "sha256": "C12079E28710F419240E48F1D8819BC54554C10AB6C38C9A08AFE636DFE00F5C",
+      "path": "F:\\projects\\website-gen\\docs\\superpowers\\specs\\assets\\mail-triage-board-selected.png"
+    },
+    {
+      "sha256": "4B66640175E240C47D57C4040A35063FEA61505A2C88AB96EA06DA02117F22CE",
+      "path": "F:\\projects\\website-gen\\docs\\superpowers\\specs\\assets\\mail-triage-design-baseline.json"
+    }
+  ],
+  "documentValidation": "passed",
+  "diffChecks": [
+    {
+      "exitCode": 1,
+      "output": "",
+      "path": "docs/superpowers/specs/2026-10-16-mail-triage-design.md"
+    },
+    {
+      "exitCode": 1,
+      "output": "",
+      "path": "CONTEXT.md"
+    },
+    {
+      "exitCode": 1,
+      "output": "",
+      "path": "docs/superpowers/specs/assets/mail-triage-design-baseline.json"
+    }
+  ],
+  "jsonExampleValid": true,
+  "deployed": false,
+  "acceptanceCasesExecuted": false,
+  "realMailboxOrTriageModelCalled": false,
+  "productTestsRun": false,
+  "concurrentSourceChanges": [
+    {
+      "after": "1AE14417EA8F7B1B24F9487CA3092E4CA857455989A1E4B57A84B398659DE258",
+      "before": "4B2FDB6918A683C8D06BB54C07EBF93DA56728F13DBE3C88B88A3EF7EA893195",
+      "path": "src/backend/models.ts"
+    },
+    {
+      "after": "73CB0139BD6F09F8108E35D289878A12B99A47CFDE1C2D3CEBC196C64DA20A62",
+      "before": "BAA7196CC91943AC8F96F41412EA473442F305814B7477BCF42AE7753DCCF69F",
+      "path": "src/backend/migrations.ts"
+    },
+    {
+      "after": "818025EDEC0133992375BB4ED774ECAC9C8C235E91010AAC1EB7F4270C2C3080",
+      "before": "7ED685D4979C90C8E6FA2A04FED9771324FE4085A6CA6E3FD79AB663108E856F",
+      "path": "src/backend/mail-translation.ts"
+    },
+    {
+      "after": "46C03FC52B41BECCCDCD2BC6099FAFFC7FB4E3D999618439C643184FFAF88A9C",
+      "before": "D036997E6F9F01CCF43D7E2FE4DCE42CBB7B7B262FA2BEBA419DD6C9B4E94F7B",
+      "path": "src/shared/protocol.ts"
+    }
+  ],
+  "selectedImageHashMatched": true,
+  "sourceBaselineMatched": "9/13",
+  "acceptanceCases": 62,
+  "reviewScope": "design-only",
+  "businessReview": "no remaining P1 found",
+  "architectureReview": "no remaining P1 found",
+  "diffExitCodeExplanation": "git diff --no-index --check returns 1 for added-file differences; empty diagnostics and no exit code above 1 were required",
+  "rollback": "Only remove this task's newly added documents and copied image; do not reset source files or overwrite concurrent translation changes."
+}

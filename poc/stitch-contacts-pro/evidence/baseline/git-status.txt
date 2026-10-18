@@ -1,0 +1,126 @@
+ M package.json
+ M scripts/check-models.ts
+ M scripts/smoke.ts
+ M src/backend/abandon.test.ts
+ M src/backend/abandon.ts
+ M src/backend/assistant-tools.test.ts
+ M src/backend/assistant-tools.ts
+ M src/backend/batches.test.ts
+ M src/backend/batches.ts
+ M src/backend/index.ts
+ M src/backend/mail.ts
+ M src/backend/mailbox-parser.ts
+ M src/backend/mailbox-service.ts
+ M src/backend/migrations.ts
+ M src/backend/models.test.ts
+ M src/backend/models.ts
+ M src/backend/pipeline.test.ts
+ M src/backend/pipeline.ts
+ M src/backend/smtp.test.ts
+ M src/backend/testing.ts
+ M src/backend/workspaces.ts
+ M src/renderer/src/components/chat-message-utils.ts
+ M src/renderer/src/components/layout/app-sidebar.tsx
+ M src/renderer/src/components/layout/main.tsx
+ M src/renderer/src/components/layout/nav-group.tsx
+ M src/renderer/src/features/mail/mail-interaction.test.ts
+ M src/renderer/src/features/mail/mail-page.tsx
+ M src/renderer/src/features/new-batch/batch-form.test.ts
+ M src/renderer/src/features/new-batch/batch-form.ts
+ M src/renderer/src/features/new-batch/index.tsx
+ M src/renderer/src/features/settings/settings.tsx
+ M src/renderer/src/features/tables/grist-iframe-contract.test.ts
+ M src/renderer/src/lib/backend.ts
+ M src/renderer/src/lib/query-client.test.ts
+ M src/renderer/src/lib/query-client.ts
+ M src/renderer/src/lib/router-runtime.test.ts
+ M src/renderer/src/routeTree.gen.ts
+ M src/renderer/src/routes/_authenticated.mail.$mailboxId.$folder.$uid.tsx
+ M src/renderer/src/routes/_authenticated.mail.$mailboxId.tsx
+ M src/renderer/src/routes/_authenticated.mail.index.tsx
+ M src/renderer/src/routes/_authenticated.mail.tsx
+ M src/server/http.test.ts
+ M src/shared/forms.ts
+ M src/shared/mail-types.ts
+ M src/shared/protocol.ts
+?? .cindy-worktrees/
+?? .stitch/
+?? CONTEXT.md
+?? docs/customer-business-structure-v1.md
+?? docs/design/
+?? docs/superpowers/
+?? poc/stitch-contacts/
+?? scripts/evaluate-mail-triage.ts
+?? scripts/mail-triage-restore-probe.ts
+?? scripts/mail-triage-smoke-fixture.ts
+?? scripts/mail-triage-smoke.ts
+?? src/backend/check-models-script.test.ts
+?? src/backend/mail-case-projector.test.ts
+?? src/backend/mail-case-projector.ts
+?? src/backend/mail-translation-workspace.test.ts
+?? src/backend/mail-translation.test.ts
+?? src/backend/mail-translation.ts
+?? src/backend/mail-triage-acceptance.test.ts
+?? src/backend/mail-triage-actions.test.ts
+?? src/backend/mail-triage-actions.ts
+?? src/backend/mail-triage-analyzer.test.ts
+?? src/backend/mail-triage-analyzer.ts
+?? src/backend/mail-triage-board.test.ts
+?? src/backend/mail-triage-context.test.ts
+?? src/backend/mail-triage-context.ts
+?? src/backend/mail-triage-evaluation.test.ts
+?? src/backend/mail-triage-evaluation.ts
+?? src/backend/mail-triage-lifecycle.test.ts
+?? src/backend/mail-triage-lifecycle.ts
+?? src/backend/mail-triage-migration.test.ts
+?? src/backend/mail-triage-model.test.ts
+?? src/backend/mail-triage-model.ts
+?? src/backend/mail-triage-queue.test.ts
+?? src/backend/mail-triage-queue.ts
+?? src/backend/mail-triage-scheduler.ts
+?? src/backend/mail-triage-schema.ts
+?? src/backend/mail-triage-send.test.ts
+?? src/backend/mail-triage-send.ts
+?? src/backend/mail-triage-service.ts
+?? src/backend/mail-triage-source.test.ts
+?? src/backend/mail-triage-source.ts
+?? src/backend/mail-triage-worker.test.ts
+?? src/backend/mail-triage-worker.ts
+?? src/backend/mail-triage-workspace.test.ts
+?? src/backend/site-mailbox-pipeline.test.ts
+?? src/backend/site-mailbox-workspace.test.ts
+?? src/backend/site-mailbox.test.ts
+?? src/backend/site-mailbox.ts
+?? src/backend/translation-model-migration.test.ts
+?? src/backend/workspace-rpc-policy.ts
+?? src/renderer/src/features/mail/compose-dialog.tsx
+?? src/renderer/src/features/mail/contact-mapping-pane.tsx
+?? src/renderer/src/features/mail/credential-dialog.tsx
+?? src/renderer/src/features/mail/mail-board-page.tsx
+?? src/renderer/src/features/mail/mail-board.test.ts
+?? src/renderer/src/features/mail/mail-case-card.tsx
+?? src/renderer/src/features/mail/mail-case-correction-dialog.tsx
+?? src/renderer/src/features/mail/mail-case-drawer.tsx
+?? src/renderer/src/features/mail/mail-compose-controller.ts
+?? src/renderer/src/features/mail/mail-layout.test.ts
+?? src/renderer/src/features/mail/mail-layout.tsx
+?? src/renderer/src/features/mail/mail-management-page.tsx
+?? src/renderer/src/features/mail/mail-review-page.tsx
+?? src/renderer/src/features/mail/mail-source-search.ts
+?? src/renderer/src/features/mail/mail-task-outcome-dialog.tsx
+?? src/renderer/src/features/mail/mail-triage-client.ts
+?? src/renderer/src/features/mail/mail-triage-pages.test.ts
+?? src/renderer/src/features/mail/mail-triage-settings-page.tsx
+?? src/renderer/src/features/mail/mailbox-pane.tsx
+?? src/renderer/src/features/mail/message-list-pane.tsx
+?? src/renderer/src/features/mail/message-reader-pane.tsx
+?? src/renderer/src/features/new-batch/new-batch-page.test.ts
+?? src/renderer/src/features/settings/translation-role.test.ts
+?? src/renderer/src/routes/_authenticated.mail.cases.$caseId.tsx
+?? src/renderer/src/routes/_authenticated.mail.inbox.tsx
+?? src/renderer/src/routes/_authenticated.mail.manage.tsx
+?? src/renderer/src/routes/_authenticated.mail.notifications.tsx
+?? src/renderer/src/routes/_authenticated.mail.reminders.tsx
+?? src/renderer/src/routes/_authenticated.mail.review.tsx
+?? src/renderer/src/routes/_authenticated.mail.settings.tsx
+?? src/shared/mail-triage-types.ts

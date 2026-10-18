@@ -1,0 +1,268 @@
+{
+  "checkedAtUtc": "2026-10-16T17:44:36.9871895Z",
+  "planPath": "F:\\projects\\website-gen\\docs\\superpowers\\plans\\2026-10-16-mail-triage-implementation.md",
+  "sha256": "2879AF3072296311E9D606B2866272A06BE7A0900C9EE90CC426203E238BEEAA",
+  "bytes": 81349,
+  "lines": 558,
+  "taskNumbers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16
+  ],
+  "acceptanceIds": [
+    "B01",
+    "B02",
+    "B03",
+    "B04",
+    "B05",
+    "B06",
+    "B07",
+    "B08",
+    "B09",
+    "B10",
+    "B11",
+    "B12",
+    "B13",
+    "B14",
+    "B15",
+    "B16",
+    "B17",
+    "B18",
+    "B19",
+    "B20",
+    "B21",
+    "B22",
+    "B23",
+    "B24",
+    "B25",
+    "B26",
+    "B27",
+    "B28",
+    "B29",
+    "B30",
+    "B31",
+    "B32",
+    "B33",
+    "B34",
+    "B35",
+    "B36",
+    "B37",
+    "B38",
+    "B39",
+    "B40",
+    "B41",
+    "B42",
+    "B43",
+    "B44",
+    "B45",
+    "B46",
+    "B47",
+    "B48",
+    "B49",
+    "B50",
+    "B51",
+    "B52",
+    "B53",
+    "B54",
+    "B55",
+    "B56",
+    "B57",
+    "B58",
+    "B59",
+    "B60",
+    "B61",
+    "B62"
+  ],
+  "openCheckboxes": 88,
+  "completedCheckboxes": 0,
+  "interfaces": 16,
+  "reviewFocusIds": [
+    "RF1",
+    "RF2",
+    "RF3",
+    "RF4",
+    "RF5"
+  ],
+  "sourceHashes": [
+    {
+      "path": "F:\\projects\\website-gen\\docs\\superpowers\\specs\\2026-10-16-mail-triage-design.md",
+      "sha256": "24E8B3F1DCF46CE0863D50982FFD33C4C19F3BF7FCA970CA88711C1C9A659F70"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\CONTEXT.md",
+      "sha256": "79142FC3EC0599DCC0532AD8FC25415DEA97CA76E1BF396F85B3CEC96214590C"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\migrations.ts",
+      "sha256": "73CB0139BD6F09F8108E35D289878A12B99A47CFDE1C2D3CEBC196C64DA20A62"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\models.ts",
+      "sha256": "1AE14417EA8F7B1B24F9487CA3092E4CA857455989A1E4B57A84B398659DE258"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\index.ts",
+      "sha256": "31FB57AAFCB4B77D8F14439F4DEA4A3D51538FAAC091B725C17BBC3218A79E0F"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-service.ts",
+      "sha256": "417020D0E9A34200E8BC0E3710EE4EA534F7649FAF38AF489FBB8B150E8535C4"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-translation.ts",
+      "sha256": "818025EDEC0133992375BB4ED774ECAC9C8C235E91010AAC1EB7F4270C2C3080"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\protocol.ts",
+      "sha256": "DC9121B4DAB7BBAA8AA7E799EE4B6E63511C1F467DABE6C2A50C8766EFA875C8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-page.tsx",
+      "sha256": "12B7538D7A712ED9F56DD4AEDAE78E7D0467470AB58B018A74E972FDF89F1FD5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\settings\\settings.tsx",
+      "sha256": "6D47230242A7AD775958E6315B02C58F76852E82A1F93D1572B90B9718D1A1AC"
+    }
+  ],
+  "gitStatus": [
+    " M scripts/check-models.ts",
+    " M src/backend/assistant-tools.test.ts",
+    " M src/backend/assistant-tools.ts",
+    " M src/backend/batches.test.ts",
+    " M src/backend/batches.ts",
+    " M src/backend/index.ts",
+    " M src/backend/migrations.ts",
+    " M src/backend/models.test.ts",
+    " M src/backend/models.ts",
+    " M src/backend/pipeline.test.ts",
+    " M src/renderer/src/features/mail/mail-interaction.test.ts",
+    " M src/renderer/src/features/mail/mail-page.tsx",
+    " M src/renderer/src/features/new-batch/batch-form.test.ts",
+    " M src/renderer/src/features/new-batch/batch-form.ts",
+    " M src/renderer/src/features/new-batch/index.tsx",
+    " M src/renderer/src/features/settings/settings.tsx",
+    " M src/shared/forms.ts",
+    " M src/shared/mail-types.ts",
+    " M src/shared/protocol.ts",
+    "?? .cindy-worktrees/",
+    "?? CONTEXT.md",
+    "?? docs/superpowers/",
+    "?? src/backend/check-models-script.test.ts",
+    "?? src/backend/mail-translation-workspace.test.ts",
+    "?? src/backend/mail-translation.test.ts",
+    "?? src/backend/mail-translation.ts",
+    "?? src/backend/site-mailbox.test.ts",
+    "?? src/backend/site-mailbox.ts",
+    "?? src/backend/translation-model-migration.test.ts",
+    "?? src/renderer/src/features/new-batch/new-batch-page.test.ts",
+    "?? src/renderer/src/features/settings/translation-role.test.ts"
+  ],
+  "structureChecks": {
+    "tasks1through16": true,
+    "all62CasesUnique": true,
+    "all16HaveInterfaces": true,
+    "all5ReviewFocusNamed": true,
+    "noFalseCompletedBoxes": true,
+    "trailingWhitespaceAbsent": true
+  },
+  "sourceComparisons": [
+    {
+      "path": "F:\\projects\\website-gen\\docs\\superpowers\\specs\\2026-10-16-mail-triage-design.md",
+      "sha256": "24E8B3F1DCF46CE0863D50982FFD33C4C19F3BF7FCA970CA88711C1C9A659F70",
+      "unchangedSincePlanBaseline": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\CONTEXT.md",
+      "sha256": "79142FC3EC0599DCC0532AD8FC25415DEA97CA76E1BF396F85B3CEC96214590C",
+      "unchangedSincePlanBaseline": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\migrations.ts",
+      "sha256": "73CB0139BD6F09F8108E35D289878A12B99A47CFDE1C2D3CEBC196C64DA20A62",
+      "unchangedSincePlanBaseline": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\models.ts",
+      "sha256": "1AE14417EA8F7B1B24F9487CA3092E4CA857455989A1E4B57A84B398659DE258",
+      "unchangedSincePlanBaseline": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\index.ts",
+      "sha256": "31FB57AAFCB4B77D8F14439F4DEA4A3D51538FAAC091B725C17BBC3218A79E0F",
+      "unchangedSincePlanBaseline": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-service.ts",
+      "sha256": "417020D0E9A34200E8BC0E3710EE4EA534F7649FAF38AF489FBB8B150E8535C4",
+      "unchangedSincePlanBaseline": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-translation.ts",
+      "sha256": "818025EDEC0133992375BB4ED774ECAC9C8C235E91010AAC1EB7F4270C2C3080",
+      "unchangedSincePlanBaseline": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\protocol.ts",
+      "sha256": "DC9121B4DAB7BBAA8AA7E799EE4B6E63511C1F467DABE6C2A50C8766EFA875C8",
+      "unchangedSincePlanBaseline": false
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-page.tsx",
+      "sha256": "12B7538D7A712ED9F56DD4AEDAE78E7D0467470AB58B018A74E972FDF89F1FD5",
+      "unchangedSincePlanBaseline": true
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\settings\\settings.tsx",
+      "sha256": "6D47230242A7AD775958E6315B02C58F76852E82A1F93D1572B90B9718D1A1AC",
+      "unchangedSincePlanBaseline": true
+    }
+  ],
+  "selfReview": {
+    "performedBy": "root",
+    "specCoverage": "PASS: 16 tasks map all 62 spec acceptance cases and 5 additional review-focus tests",
+    "stepScan": "PASS: exact owners/interfaces/red-green checks and reversible checkpoints; fixture browser evidence distinct from real external services",
+    "typeConsistency": "PASS after repairs: resolved_by_human; TriageModelRequest and shared caller signature; server actor source; model config revision invalidation; preserves RoleSummary providerId=0/modelId empty/ready=false sentinel",
+    "reviewFocus": "PASS: RF1 task5; RF2 tasks3/6; RF3 tasks5/6; RF4 tasks13/15/16; RF5 tasks3/8",
+    "proportion": "Plan under twice approved spec byte size; includes signatures, tests and decisions, not full implementation bodies"
+  },
+  "scope": {
+    "businessCodeModifiedByThisTurn": false,
+    "productTestsExecuted": false,
+    "servicesStarted": false,
+    "realMailOrModelCalls": false,
+    "planOnly": true
+  },
+  "rollback": {
+    "baseline": "plan absent; only added plan and metadata",
+    "preReviewBackup": "F:/projects/website-gen/.tmp/mail-triage-plan-self-review-20261016/2026-10-16-mail-triage-implementation.before-review.md",
+    "preReviewSha256": "C297D8C27D30A085E4204C1E9EF953E57A385A739801A09D6445D446DDABE6B0",
+    "preserve": "approved spec, reference image, existing and concurrent source changes"
+  },
+  "trailingWhitespaceCount": 0,
+  "specHash": "24E8B3F1DCF46CE0863D50982FFD33C4C19F3BF7FCA970CA88711C1C9A659F70",
+  "sourceDriftReview": {
+    "path": "F:/projects/website-gen/src/shared/protocol.ts",
+    "explanation": "Concurrent DomainMailboxes addition; reread actual diff and role/Push definitions; retained, no implementation plan conflict.",
+    "writtenByThisTurn": false
+  },
+  "nonIndexWhitespaceCheck": {
+    "command": "git diff --no-index --check -- NUL docs/superpowers/plans/2026-10-16-mail-triage-implementation.md",
+    "exitCode": 1,
+    "output": "no whitespace diagnostics; no-index reports differing file against NUL",
+    "additionalCheck": "Explicit trailing whitespace scan: 0"
+  }
+}

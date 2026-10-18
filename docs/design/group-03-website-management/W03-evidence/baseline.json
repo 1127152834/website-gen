@@ -1,0 +1,47 @@
+{
+  "captured_at_utc": "2026-10-17T17:30:49.987933+00:00",
+  "purpose": "New W03 static image; references read-only; README backup before adding image entry",
+  "README_backup": "F:/projects/website-gen/.tmp/website-W03-prototype-20261017/README-before-W03.md",
+  "files": [
+    {
+      "path": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+      "sha256": "60fd3efbd322730a432116dfa8d5b9dddde3e165e571b8800968101a7a2e01c5"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C12-batch-upload-v4.png",
+      "sha256": "828e965458f590916f694a82e0351bf7fcaae777e171abaa60ad246173e2955c"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/baseline-v2.json",
+      "sha256": "e250ea35b9b989be3e261e07ddb20c3a5b5d6474059d03b3fb675a3a25ed59d4"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/baseline.json",
+      "sha256": "d8951c8f3ad0ca2ecf55b29983e965b2cf178acfab8f8d55acecb1cb01b431f5"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v1.md",
+      "sha256": "5c3917b6de87932387e75b9df6663e25f9e1dd7cd0f074a65dfa64c869014fe3"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+      "sha256": "d86c108a7bba00cc8c25567f6d9f9ea8103a085ec4d4b9d08c3b63e3d8446b2b"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/README.md",
+      "sha256": "bdb6aaa10526a0a66b87658c9c50e166ea40bab6aed1669375f4ddd1f7a09f2a"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+      "sha256": "e9eda4196ac0957ea3ff8d93e0ad154cd43894bcbbfd2fa867f64b1676e793ea"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/verification-v2.json",
+      "sha256": "e434e457d2f4650b0905343a8decfe2f036c9c7c5143f0ba818b393fbc2ef3f3"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/verification.json",
+      "sha256": "bc41726332b2f7ab10ebc44493ff186c8715e287595456f5cb1b9efc5c1f9d3e"
+    }
+  ]
+}

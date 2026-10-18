@@ -19,7 +19,8 @@ for (const p of listProviders(db)) {
   const r = await pingModel(runtime.models, model as Parameters<typeof pingModel>[1], [apiKey]);
   console.log(`✔ ${p.name} / ${model.id}: ${r.ms}ms reply="${r.reply}" $${r.cost.toFixed(5)}`);
 }
-for (const role of ROLES) {
+// seedModelDefaults 只配置原有四种用途；邮件翻译必须由用户单独选择模型，不能为了探测而自动绑定。
+for (const role of ROLES.filter((role) => role !== "translation")) {
   const { model, thinking } = runtime.resolve(role);
   const r = await pingModel(runtime.models, model, [apiKey]);
   console.log(`✔ role ${role.padEnd(6)} → ${model.id} (${model.api}, thinking ${thinking}): ${r.ms}ms reply="${r.reply}"`);

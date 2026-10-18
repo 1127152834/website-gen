@@ -1,4 +1,4 @@
-// 商业邮箱与邮件 DNS：用域名的 Hostinger 邮箱订单建 support@（已有就复用）并加 orders@ 别名；
+// 商业邮箱与邮件 DNS：建站流水线只复核已申请邮箱；仅显式“修复”入口可创建缺失邮箱并加 orders@ 别名；
 // 按 Hostinger Email 的标准记录检查 MX、SPF、DKIM、DMARC，只补缺的，不动别人的（POC 在两个域名上核对过这套记录）。
 // 公共 DNS 用 DoH 查（本机代理的虚拟 DNS 查不了 TXT/NS）；写入只改 Hostinger 管理的区域，改前记下 Hostinger 自动拍的快照编号。
 import { randomBytes } from "node:crypto";
@@ -6,7 +6,7 @@ import { listAll } from "./hostinger.ts";
 import { PermanentError } from "./jobs.ts";
 import type { StepCtx } from "./pipeline.ts";
 import type { DatabaseSync } from "node:sqlite";
-import { getSecret, seal, setSecret } from "./secrets.ts";
+import { getSecret, seal, setSecret, unseal } from "./secrets.ts";
 import { facts } from "./store.ts";
 import type { MailDnsCheck, MailDnsResult, MailStatus } from "../shared/protocol.ts";
 
@@ -139,6 +139,56 @@ export function setDefaultMailboxPassword(db: DatabaseSync, key: Buffer, passwor
 
 export const hasDefaultMailboxPassword = (db: DatabaseSync) => Boolean(db.prepare("SELECT 1 FROM secrets WHERE name = ?").get(DEFAULT_PASSWORD));
 
+/**
+ * 流水线只为已存在且已远端确认的邮箱准备凭据：先复用本工作区缓存密文；否则用默认密码只读登录验证一次。
+ * 不创建邮箱/别名，不改密，也不把未经验证的默认密码写入站点。
+ */
+export async function prepareExistingMailboxCredentials(
+  ctx: StepCtx,
+  input: { email: string; accountId: number },
+): Promise<{ saved: boolean; detail: string }> {
+  const email = input.email.trim().toLowerCase();
+  if (ctx.site.mailbox_ciphertext) {
+    try {
+      const existing = JSON.parse(unseal(ctx.d.key, ctx.site.mailbox_ciphertext)) as { address?: unknown; password?: unknown };
+      if (typeof existing.address === "string" && existing.address.trim().toLowerCase() === email
+        && typeof existing.password === "string" && existing.password.length > 0) {
+        return { saved: true, detail: "站点已保存当前客服邮箱凭据" };
+      }
+    } catch {
+      // 损坏密文与地址不匹配同样不能用于 SMTP。
+    }
+    ctx.save("mailbox_ciphertext", null);
+  }
+  const cached = ctx.d.db.prepare(`SELECT credential_ciphertext FROM mailboxes
+    WHERE account_id=? AND domain=? COLLATE NOCASE AND address=? COLLATE NOCASE
+      AND status='active' AND credential_ciphertext IS NOT NULL
+    ORDER BY id LIMIT 1`).get(input.accountId, ctx.domain, email) as { credential_ciphertext: Uint8Array } | undefined;
+  if (cached) {
+    try {
+      const creds = JSON.parse(unseal(ctx.d.key, cached.credential_ciphertext)) as { address?: string; password?: string };
+      if (creds.address?.trim().toLowerCase() === email && creds.password) {
+        ctx.save("mailbox_ciphertext", cached.credential_ciphertext);
+        return { saved: true, detail: "已复用工作区保存的客服邮箱凭据" };
+      }
+    } catch {
+      // 缓存密文损坏或来自其他邮箱时绝不复用，继续尝试显式配置的默认密码。
+    }
+  }
+
+  const password = getSecret(ctx.d.db, ctx.d.key, DEFAULT_PASSWORD);
+  if (!password) return { saved: false, detail: "工作区没有可验证的客服邮箱密码" };
+  if (!ctx.d.login) return { saved: false, detail: "当前环境不能验证默认邮箱密码" };
+  const creds = { address: email, password };
+  try {
+    await ctx.d.login(creds);
+  } catch {
+    return { saved: false, detail: "工作区默认邮箱密码验证失败，未保存" };
+  }
+  ctx.save("mailbox_ciphertext", seal(ctx.d.key, JSON.stringify(creds)));
+  return { saved: true, detail: "工作区默认邮箱密码验证成功，已保存" };
+}
+
 /** 客服邮箱地址、它是否在本站域名上、这个域名有没有有效的 Hostinger 邮箱订单 */
 export async function mailSetup(ctx: StepCtx): Promise<{ email: string; onDomain: boolean; order: MailOrder | null }> {
   const email = facts(ctx).email;
@@ -148,7 +198,7 @@ export async function mailSetup(ctx: StepCtx): Promise<{ email: string; onDomain
   return { email, onDomain, order: orders.find((o) => o.domain?.name === ctx.domain && o.status === "active") ?? null };
 }
 
-/** 建 support@（已有就复用）并加 orders@ 别名。返回给人看的说明；有问题时 ok=false，但不让建站失败。 */
+/** 显式修复入口：创建当前配置邮箱（已有就复用）并加 orders@ 别名；流水线不得调用。 */
 export async function ensureMailbox(ctx: StepCtx): Promise<{ ok: boolean; detail: string }> {
   const { email, onDomain, order } = await mailSetup(ctx);
   if (!onDomain) return { ok: true, detail: `客服邮箱用的是 ${email}，不在这个域名上，不创建` };

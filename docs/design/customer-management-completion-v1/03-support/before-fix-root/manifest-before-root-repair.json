@@ -1,0 +1,142 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-17",
+  "output_directory": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support",
+  "artifact_count": 8,
+  "files": [
+    {
+      "id": "O-C15-delete-confirm-v1",
+      "file": "O-C15-delete-confirm-v1.png",
+      "width": 1487,
+      "height": 1058,
+      "bytes": 1540792,
+      "sha256": "5EE907C9E840CC9D2BA004DBE48E3E06E699426D47A4699A25035023D20314C8",
+      "generated_source": "C:/Users/zhang/.codex/generated_images/01a14639-3e25-7b52-98e0-65a248b5d37c/exec-16617cee-ee16-4455-a055-f3b4a99ef187.png",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/C02-overview-v2.png"
+      ],
+      "generator": "built-in image_gen",
+      "visual_review": "passed",
+      "status": "static prototype pending user confirmation"
+    },
+    {
+      "id": "O-C16-delete-execution-v1",
+      "file": "O-C16-delete-execution-v1.png",
+      "width": 1487,
+      "height": 1058,
+      "bytes": 1483949,
+      "sha256": "0EF74F980796A8A9FFDA6F457BC92429460EBD7A3222AFE7783B8D009E66A6FB",
+      "generated_source": "C:/Users/zhang/.codex/generated_images/01a14639-3e25-7b52-98e0-65a248b5d37c/exec-7ac2457e-ff79-4ebd-bb2a-23c373c11c00.png",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/C02-overview-v2.png"
+      ],
+      "generator": "built-in image_gen",
+      "visual_review": "passed",
+      "status": "static prototype pending user confirmation"
+    },
+    {
+      "id": "O-C07-upload-states-v1",
+      "file": "O-C07-upload-states-v1.png",
+      "width": 1489,
+      "height": 1056,
+      "bytes": 1448264,
+      "sha256": "F1BBC98D6FF848E627D206BCC4CE66A42E0350D6C1B1DB069FBB057E397A1A60",
+      "generated_source": "C:/Users/zhang/.codex/generated_images/01a14639-3e25-7b52-98e0-65a248b5d37c/exec-b8b46db7-c480-4deb-b332-e391f2af03ab.png",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C07-upload-v2.png"
+      ],
+      "generator": "built-in image_gen",
+      "visual_review": "passed",
+      "status": "static prototype pending user confirmation"
+    },
+    {
+      "id": "O-C08-preview-unavailable-v1",
+      "file": "O-C08-preview-unavailable-v1.png",
+      "width": 1491,
+      "height": 1055,
+      "bytes": 1364262,
+      "sha256": "67BCBD299BF12BCB4D132F5F3A821E80BA3DA12D731E922C09C2890EEA6FBE48",
+      "generated_source": "C:/Users/zhang/.codex/generated_images/01a14639-3e25-7b52-98e0-65a248b5d37c/exec-b3b20732-3fbc-4408-9faa-95f96ad27d71.png",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C08-preview-v2.png"
+      ],
+      "generator": "built-in image_gen",
+      "visual_review": "passed",
+      "status": "static prototype pending user confirmation"
+    },
+    {
+      "id": "O-C08-preview-unsupported-v1",
+      "file": "O-C08-preview-unsupported-v1.png",
+      "width": 1490,
+      "height": 1055,
+      "bytes": 1371875,
+      "sha256": "8A8ACB518049FC8F992067AF56B09B74AB7307190883A2B4B5532BC781F9381A",
+      "generated_source": "C:/Users/zhang/.codex/generated_images/01a14639-3e25-7b52-98e0-65a248b5d37c/exec-0afe1f8f-a0ba-41c2-a2df-aaf5db2c2b8b.png",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C08-preview-v2.png"
+      ],
+      "generator": "built-in image_gen",
+      "visual_review": "passed",
+      "status": "static prototype pending user confirmation"
+    },
+    {
+      "id": "O-C09-replace-failure-v1",
+      "file": "O-C09-replace-failure-v1.png",
+      "width": 1489,
+      "height": 1056,
+      "bytes": 1473908,
+      "sha256": "4EBDC1E774FC392E50CA1088FB155C5629B5A6A82B29064E9701733BB786ACAA",
+      "generated_source": "C:/Users/zhang/.codex/generated_images/01a14639-3e25-7b52-98e0-65a248b5d37c/exec-151c9930-bac6-4fee-821c-3505d42c82ed.png",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C09-replace-v2.png"
+      ],
+      "generator": "built-in image_gen",
+      "visual_review": "passed",
+      "status": "static prototype pending user confirmation"
+    },
+    {
+      "id": "O-C10-remove-failure-v1",
+      "file": "O-C10-remove-failure-v1.png",
+      "width": 1487,
+      "height": 1058,
+      "bytes": 1491165,
+      "sha256": "C4036A387F7C0331822F8F1F8779B6A8388ACCE2F3B1207B1A11549426197113",
+      "generated_source": "C:/Users/zhang/.codex/generated_images/01a14639-3e25-7b52-98e0-65a248b5d37c/exec-e739e318-c596-42d7-9044-b38cd531ef7e.png",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C10-remove-v2.png"
+      ],
+      "generator": "built-in image_gen",
+      "visual_review": "passed",
+      "status": "static prototype pending user confirmation"
+    },
+    {
+      "id": "O-C04-save-failure-v1",
+      "file": "O-C04-save-failure-v1.png",
+      "width": 1490,
+      "height": 1056,
+      "bytes": 1551562,
+      "sha256": "17C6FD7B3DEE0C99317D928E549173A9BADC767DA70A6138F1554E10DFF917FD",
+      "generated_source": "C:/Users/zhang/.codex/generated_images/01a14639-3e25-7b52-98e0-65a248b5d37c/exec-f4d3826a-63cd-4f19-9b04-f896405dc310.png",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C04-personal-edit-v3.png"
+      ],
+      "generator": "built-in image_gen",
+      "visual_review": "passed",
+      "status": "static prototype pending user confirmation"
+    }
+  ],
+  "verification": {
+    "png_count": 8,
+    "all_opened_with_view_image": true,
+    "application_code_changed": false,
+    "existing_files_modified": false
+  }
+}

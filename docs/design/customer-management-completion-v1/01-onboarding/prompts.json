@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-17",
+  "timezone": "America/Los_Angeles",
+  "generator": "built-in image_gen",
+  "shared_style": "White enterprise UI, deep navy typography and controls, muted gray-blue support colors, restrained semantic states, Chinese UI, US MM/DD/YYYY dates, all sample data marked DEMO/static.",
+  "status": "static prototypes pending user confirmation",
+  "items": [
+    {
+      "id": "O-C02-duplicate-v1",
+      "output": "O-C02-duplicate-v1.png",
+      "referenced_image_paths": [
+        "F:/projects/website-gen/docs/design/customer-management-completion-v1/01-onboarding/O-C02-duplicate-v1.png",
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C13-recognition-review-v3.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/C03-personal-v3.png"
+      ],
+      "prompt": "Precise object-level edit of the first reference. Preserve the entire duplicate-decision drawer and its values. Fix only the dimmed evidence behind it: select 03-alex.jpg / Alex Morgan / duplicate pending rather than 01-emily.jpg, and show an Alex Morgan DEMO license with DL DEMO-DL-0001, DOB 04/18/1990, address 78 Sample St, Dallas TX 75201, ISS 08/15/2022, EXP 08/15/2030. Keep the drawer decision as temporary only; no submit, link, or overwrite.",
+      "generated_source": "C:/Users/zhang/.codex/generated_images/01a14861-1d46-7200-a48c-12d1d407e41e/exec-152fc8a0-deda-4a83-a11f-bb271bbec501.png",
+      "source_sha256": "C3D56241C62B5F49F17970131BC3BF02E8D8A9D609211EF068C1D3C9DD04D36F",
+      "replaced_candidate": {
+        "file": "history/O-C02-duplicate-v1-source-misaligned.png",
+        "sha256": "E699399C5B348370DE9B9E98CA31C0C76431AFCB60AEF65A204DDEDA2DB40F36",
+        "reason": "drawer handled Alex while the dimmed source selected Emily"
+      }
+    },
+    {
+      "id": "O-C03-differences-v1",
+      "output": "O-C03-differences-v1.png",
+      "referenced_image_paths": [
+        "F:/projects/website-gen/docs/design/customer-management-completion-v1/01-onboarding/O-C03-differences-v1.png",
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C13-recognition-review-v3.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/C03-personal-v3.png"
+      ],
+      "prompt": "Precise local text-only edit. Preserve the complete ten-field differences drawer, including current C001 values, candidates and selections. In the dimmed Alex Morgan DEMO license only, change Address from 78 Sample St to 78 Sample Street and EXP from 08/15/2030 to 08/15/2031. Keep the drawer current values at 78 Sample St and 08/15/2030, while the selected recognition candidates remain 78 Sample Street and 08/15/2031.",
+      "generated_source": "C:/Users/zhang/.codex/generated_images/01a14861-1d46-7200-a48c-12d1d407e41e/exec-b94515c4-bd2e-4b3c-85ad-2dbd66c6b278.png",
+      "source_sha256": "C220C9C3E9E2345C6837749AD7BBBF52D711E77C85D5C3B9A6327C208957846A",
+      "replaced_candidates": [
+        {
+          "file": "history/O-C03-differences-v1-source-misaligned.png",
+          "sha256": "63AC48CEF82248445268E6BE3F6870260344F6B00AB1CA2F214685A69DE1A1F6",
+          "reason": "drawer compared Alex while the dimmed source selected Emily"
+        },
+        {
+          "file": "history/O-C03-differences-v1-candidate-source-value-mismatch.png",
+          "sha256": "CFF47AAAFDB55C06639F1D90D0073097143AC133158B247F08338BFD04BF7D3D",
+          "reason": "Alex source image still showed current expiration and street while the drawer selected different recognized values"
+        }
+      ]
+    },
+    {
+      "id": "C12-upload-states-v1",
+      "output": "C12-upload-states-v1.png",
+      "referenced_image_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C12-batch-upload-v4.png"
+      ],
+      "prompt": "Create one standalone C12 upload-state prototype for batch B20261017-02 with five license-front files: one uploaded and queued for recognition, one uploading at 62 percent, one waiting, one network upload failure with retry, and one unsupported file with reselect. Summary must conserve selected 5, uploaded 1, uploading 1, failed 2, waiting 1. Disable enter-review because zero items are ready. Do not infer missing material or create a customer without an uploaded license front.",
+      "generated_source": "C:/Users/zhang/.codex/generated_images/01a14861-1d46-7200-a48c-12d1d407e41e/exec-3c8d2f0f-acfd-4768-a97e-df71780ae392.png",
+      "source_sha256": "30AC58A5348DA95D3B760353F95D9B94F1847501F0B16A68299E2EF6C4B3CA12"
+    },
+    {
+      "id": "C13-manual-transcription-v1",
+      "output": "C13-manual-transcription-v1.png",
+      "referenced_image_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C13-recognition-review-v3.png"
+      ],
+      "prompt": "Create one standalone C13 manual-transcription state with 04-blur.jpg selected. Mark OCR failed and manual transcription, retain and show the uploaded blurred DEMO original, show upload and transcription actors separately, and provide exactly the ten license fields. Keep 05-spare.jpg as original unavailable with re-upload. Manual transcription must remain based on the uploaded source image and must not be relabeled as AI success.",
+      "generated_source": "C:/Users/zhang/.codex/generated_images/01a14861-1d46-7200-a48c-12d1d407e41e/exec-74a14334-d1e9-487d-a6fe-c1cf390ff9e8.png",
+      "source_sha256": "5F42F0F5D6B449C847665466274DB51090E3CAB48584F9A85BAA792B49305985"
+    },
+    {
+      "id": "C14-unknown-result-v1",
+      "output": "C14-unknown-result-v1.png",
+      "referenced_image_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C14-creation-results-v2.png"
+      ],
+      "prompt": "Create one standalone C14 result-unknown prototype for batch B20261017-01. Keep five rows and exact conservation: Emily created C007, Noah result unknown, Alex linked C001 without overwrite, blur unprocessed, spare skipped. Tabs must show all 5, created 1, linked 1, result unknown 1, unprocessed 1, skipped 1. The unknown row offers only verify result, never blind retry; explain it may already have succeeded and only confirmed not-written items may be retried. Successful created and linked results do not roll back.",
+      "generated_source": "C:/Users/zhang/.codex/generated_images/01a14861-1d46-7200-a48c-12d1d407e41e/exec-fe224cfb-4d19-4cca-8066-d6114e33e921.png",
+      "source_sha256": "90322C656C78A081D532113BF6156358D774B0358605A8DBE45FA0300F155A72"
+    }
+  ]
+}

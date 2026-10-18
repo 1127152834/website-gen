@@ -4,7 +4,7 @@ import type { AssistantEvent, BackendMessage, ChatEvent, Request, Response, RunE
 import { useCallback, useMemo, useSyncExternalStore } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest, getCurrentUser, HttpError } from "./auth.ts";
-import { clearRpcQueries, invalidatePush, matchesRpc, queryClient, rpcQueryKey, stableRpcParams } from "./query-client.ts";
+import { clearRpcQueries, invalidatePush, invalidateRpcState, invalidateTriageQueries, matchesRpc, queryClient, rpcQueryKey, stableRpcParams } from "./query-client.ts";
 
 type AuthProblem = "unauthenticated" | "password_required" | "identity_changed";
 type SseEnvelope = { seq: number; reset?: boolean; message?: BackendMessage } & Partial<BackendMessage>;
@@ -28,6 +28,12 @@ const chatListeners = new Set<(siteId: number, e: ChatEvent) => void>();
 const assistantListeners = new Set<(event: AssistantEvent) => void>();
 export type MailPushEvent = { type: "new" | "changed"; mailboxId: number; folder?: string; uid?: number; unreadCount?: number };
 const mailListeners = new Set<(event: MailPushEvent) => void>();
+const triageWriteMethods = new Set([
+  "mail.triage.saveEvaluationReport", "mail.triage.approveNotificationRouting", "mail.triage.auditOutcome", "mail.triage.configure",
+  "mail.triage.enqueue", "mail.triage.retry", "mail.triage.cancel", "mail.triage.contacts.save", "mail.triage.contacts.remove",
+  "mail.triage.correct", "mail.cases.link", "mail.cases.split", "mail.cases.confirm", "mail.cases.independentFact", "mail.cases.appeal",
+  "mail.triage.undo", "mail.tasks.recordOutcome",
+]);
 
 function reportAuthProblem(problem: AuthProblem): void {
   window.dispatchEvent(new CustomEvent<AuthProblem>("website-gen:auth", { detail: problem }));
@@ -38,26 +44,26 @@ function setConnected(value: boolean): void {
   connected = value;
   for (const listener of statusListeners) listener(value);
   if (value) {
-    void queryClient.invalidateQueries({ predicate: q => q.queryKey[0] === "rpc" });
+    void invalidateRpcState(expectedUserId);
     for (const listener of connectListeners) listener();
   }
 }
 
 function dispatch(message: BackendMessage): void {
   if (message.kind === "event") {
-    invalidatePush({ kind: "event", siteId: message.event.siteId, batchId: message.event.batchId });
+    invalidatePush({ kind: "event", siteId: message.event.siteId, batchId: message.event.batchId }, expectedUserId);
     for (const listener of eventListeners) listener(message.event);
   } else if (message.kind === "changed") {
-    invalidatePush({ kind: "changed", topic: message.topic });
+    invalidatePush({ kind: "changed", topic: message.topic }, expectedUserId);
     for (const listener of changedListeners) listener(message.topic);
   } else if (message.kind === "chat") {
-    if (message.event.type === "settled") invalidatePush({ kind: "chat", siteId: message.siteId });
+    if (message.event.type === "settled") invalidatePush({ kind: "chat", siteId: message.siteId }, expectedUserId);
     for (const listener of chatListeners) listener(message.siteId, message.event);
   } else if (message.kind === "assistant") {
-    if (message.event.type === "settled") invalidatePush({ kind: "assistant" });
+    if (message.event.type === "settled") invalidatePush({ kind: "assistant" }, expectedUserId);
     for (const listener of assistantListeners) listener(message.event);
   } else if (message.kind === "mail") {
-    invalidatePush({ kind: "mail", mailboxId: message.event.mailboxId });
+    invalidatePush({ kind: "mail", mailboxId: message.event.mailboxId }, expectedUserId);
     for (const listener of mailListeners) listener(message.event);
   }
 }
@@ -108,6 +114,7 @@ function openEvents(currentGeneration: number): void {
       if (envelope.reset) {
         if (Number.isSafeInteger(envelope.seq)) lastSeq = envelope.seq;
         // 服务端重启或补发缓冲缺口后，重新拉取各页持久化状态；不重置 React 页面本身。
+        void invalidateRpcState(expectedUserId);
         for (const listener of connectListeners) listener();
         return;
       }
@@ -204,7 +211,12 @@ export async function call<T>(method: string, params?: unknown): Promise<T> {
     if (requestGeneration !== generation || requestUserId !== expectedUserId) throw new Error("登录状态已变化，请重试");
     if (response.kind !== "res" || response.id !== id) throw new Error("后台返回了不匹配的响应");
     if (!response.ok) throw new Error(response.error);
-    return response.result as T;
+    const result = response.result as T;
+    if (triageWriteMethods.has(method)) {
+      void queryClient.invalidateQueries({ predicate: query => query.queryKey[1] === requestUserId && matchesRpc(query, method, params, true) });
+      void invalidateTriageQueries(requestUserId);
+    }
+    return result;
   } catch (error) {
     if (error instanceof HttpError && error.status === 401) {
       stopBackendTransport();
@@ -253,6 +265,11 @@ export function useRpcData<T>(method: string, params?: unknown | null, options: 
 /** Omitted params invalidates all variants; explicit params is an exact query key. */
 export function invalidateRpcData(method?: string, ...params: [unknown?]): void {
   void queryClient.invalidateQueries({predicate:q=>matchesRpc(q,method,params[0],params.length>0)});
+}
+
+/** Current transport identity is the only authority for cross-view triage invalidation. */
+export function invalidateCurrentTriageViews(): void {
+  void invalidateTriageQueries(expectedUserId);
 }
 export function onEvent(listener: (e: RunEvent) => void): () => void {
   eventListeners.add(listener);

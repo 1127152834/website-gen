@@ -1,0 +1,327 @@
+{
+  "verified_at_utc": "2026-10-17T19:27:42.8556258Z",
+  "status": "PASS_STATIC_ARCHIVE_CHECKS_AWAITING_USER_SELECTION",
+  "scope": "Six independent static layout options, three for W02 and three for W04; no application code or deployment",
+  "final_images": [
+    {
+      "page": "W02",
+      "choice": 1,
+      "file": "W02-option-01.png",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14607-58e5-7831-b3b1-33bf0fc130de/exec-65a06afd-0d0e-4066-b26e-6bc5514eaaf6.png",
+      "sha256": "6ab7cb1bbd491f7b96bb51c9074f7a270ecc3b7afac07f3aefde69bfb2a3960e",
+      "source_sha256": "6ab7cb1bbd491f7b96bb51c9074f7a270ecc3b7afac07f3aefde69bfb2a3960e",
+      "source_matches": true,
+      "width": 1489,
+      "height": 1056
+    },
+    {
+      "page": "W02",
+      "choice": 2,
+      "file": "W02-option-02.png",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14607-58e5-7831-b3b1-33bf0fc130de/exec-3cfc3a8e-ba0c-4d4c-9c4e-86e6d9bc3adb.png",
+      "sha256": "1ee5c8019461b12a004ab7bf13f4cc03ede87bdc249c513906fba547d6ee19b7",
+      "source_sha256": "1ee5c8019461b12a004ab7bf13f4cc03ede87bdc249c513906fba547d6ee19b7",
+      "source_matches": true,
+      "width": 1489,
+      "height": 1056
+    },
+    {
+      "page": "W02",
+      "choice": 3,
+      "file": "W02-option-03.png",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14607-58e5-7831-b3b1-33bf0fc130de/exec-51b02514-92d8-4dd1-b600-177b3dc7f3da.png",
+      "sha256": "32c7f005ff6d688fca8a2bb2cddf1daaa15e11395d83e826841bf1005252670b",
+      "source_sha256": "32c7f005ff6d688fca8a2bb2cddf1daaa15e11395d83e826841bf1005252670b",
+      "source_matches": true,
+      "width": 1489,
+      "height": 1056
+    },
+    {
+      "page": "W04",
+      "choice": 1,
+      "file": "W04-option-01.png",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14607-58e5-7831-b3b1-33bf0fc130de/exec-1e28d5f7-e441-4312-9567-ea8be330d9bf.png",
+      "sha256": "ec9934bbaf5f3bf1b58a70d3b97a78f9beb01f850a83935888488df3dcfcc447",
+      "source_sha256": "ec9934bbaf5f3bf1b58a70d3b97a78f9beb01f850a83935888488df3dcfcc447",
+      "source_matches": true,
+      "width": 1490,
+      "height": 1056
+    },
+    {
+      "page": "W04",
+      "choice": 2,
+      "file": "W04-option-02.png",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14607-58e5-7831-b3b1-33bf0fc130de/exec-9a8c6d4d-7226-4eaf-a835-e1f5a6769cba.png",
+      "sha256": "428111f557dead9f13ae3d9c5e1981c895b88883bdf1550e5412e17d69370286",
+      "source_sha256": "428111f557dead9f13ae3d9c5e1981c895b88883bdf1550e5412e17d69370286",
+      "source_matches": true,
+      "width": 1490,
+      "height": 1056
+    },
+    {
+      "page": "W04",
+      "choice": 3,
+      "file": "W04-option-03.png",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14607-58e5-7831-b3b1-33bf0fc130de/exec-647ede02-1622-45a2-a16c-da79dbd1cb44.png",
+      "sha256": "ad09f7ec14483881f531cd6b3793020765a6f3930b38480fed49bda328498fe7",
+      "source_sha256": "ad09f7ec14483881f531cd6b3793020765a6f3930b38480fed49bda328498fe7",
+      "source_matches": true,
+      "width": 1490,
+      "height": 1056
+    }
+  ],
+  "existing_group_count": 27,
+  "existing_group_unchanged_count": 26,
+  "existing_group_changes": [
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/README.md",
+      "before": "738fec490e8eb5191c859471023ebf3b8a9badbc4e7164b1565d78abad90fcd5",
+      "after": "5bec45bbb410d6dc64c8fd293f16634c5d3e0d47f35cbf7e97a8ddeaf2f72a40",
+      "unchanged": false
+    }
+  ],
+  "earlier_design_count": 63,
+  "earlier_design_unchanged_count": 63,
+  "w03_sha256": "ce0fcc7052fc017fd3733cc0ec6d7a9139c7e772722446dbaeec46379fa4ecde",
+  "readme_backup_verified": true,
+  "readme_backup": "F:/projects/website-gen/.tmp/website-layout-options-20261017/README-before-options.md",
+  "link_checks": [
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "W02-W04-layout-options-20261017/README.md",
+      "resolved": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\README.md",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+      "resolved": "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+      "resolved": "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+      "resolved": "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "F:/projects/website-gen/docs/design/group-03-website-management/baseline-v2.json",
+      "resolved": "F:/projects/website-gen/docs/design/group-03-website-management/baseline-v2.json",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "F:/projects/website-gen/docs/design/group-03-website-management/verification-v2.json",
+      "resolved": "F:/projects/website-gen/docs/design/group-03-website-management/verification-v2.json",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v1.md",
+      "resolved": "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v1.md",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "F:/projects/website-gen/docs/design/group-03-website-management/baseline.json",
+      "resolved": "F:/projects/website-gen/docs/design/group-03-website-management/baseline.json",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "F:/projects/website-gen/docs/design/group-03-website-management/verification.json",
+      "resolved": "F:/projects/website-gen/docs/design/group-03-website-management/verification.json",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "F:/projects/website-gen/docs/design/group-03-website-management/W02-customer-business-info-v1.png",
+      "resolved": "F:/projects/website-gen/docs/design/group-03-website-management/W02-customer-business-info-v1.png",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "F:/projects/website-gen/docs/design/group-03-website-management/W03-site-configuration-v1.png",
+      "resolved": "F:/projects/website-gen/docs/design/group-03-website-management/W03-site-configuration-v1.png",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "F:/projects/website-gen/docs/design/group-03-website-management/W04-confirm-start-v1.png",
+      "resolved": "F:/projects/website-gen/docs/design/group-03-website-management/W04-confirm-start-v1.png",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-design-notes.md",
+      "resolved": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-design-notes.md",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-evidence/independent-review.md",
+      "resolved": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-evidence/independent-review.md",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-evidence/baseline.json",
+      "resolved": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-evidence/baseline.json",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-evidence/verification.json",
+      "resolved": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-evidence/verification.json",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-evidence/W02-prompt-v1.txt",
+      "resolved": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-evidence/W02-prompt-v1.txt",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-evidence/W04-prompt-retry-1.txt",
+      "resolved": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-evidence/W04-prompt-retry-1.txt",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-evidence/W04-copy-fix-prompt.txt",
+      "resolved": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-evidence/W04-copy-fix-prompt.txt",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "F:/projects/website-gen/docs/design/group-03-website-management/W03-design-notes.md",
+      "resolved": "F:/projects/website-gen/docs/design/group-03-website-management/W03-design-notes.md",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "F:/projects/website-gen/docs/design/group-03-website-management/W03-evidence/prompt-v1.txt",
+      "resolved": "F:/projects/website-gen/docs/design/group-03-website-management/W03-evidence/prompt-v1.txt",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "F:/projects/website-gen/docs/design/group-03-website-management/W03-evidence/baseline.json",
+      "resolved": "F:/projects/website-gen/docs/design/group-03-website-management/W03-evidence/baseline.json",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "target": "F:/projects/website-gen/docs/design/group-03-website-management/W03-evidence/verification.json",
+      "resolved": "F:/projects/website-gen/docs/design/group-03-website-management/W03-evidence/verification.json",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\README.md",
+      "target": "W02-option-01.png",
+      "resolved": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-option-01.png",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\README.md",
+      "target": "W02-option-02.png",
+      "resolved": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-option-02.png",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\README.md",
+      "target": "W02-option-03.png",
+      "resolved": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-option-03.png",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\README.md",
+      "target": "W04-option-01.png",
+      "resolved": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-option-01.png",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\README.md",
+      "target": "W04-option-02.png",
+      "resolved": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-option-02.png",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\README.md",
+      "target": "W04-option-03.png",
+      "resolved": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-option-03.png",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\README.md",
+      "target": "demo-data.json",
+      "resolved": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\demo-data.json",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\README.md",
+      "target": "../W02-customer-business-info-v1.png",
+      "resolved": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\..\\W02-customer-business-info-v1.png",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\README.md",
+      "target": "../W04-confirm-start-v1.png",
+      "resolved": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\..\\W04-confirm-start-v1.png",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\README.md",
+      "target": "../W03-site-configuration-v1.png",
+      "resolved": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\..\\W03-site-configuration-v1.png",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\README.md",
+      "target": "review.md",
+      "resolved": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\review.md",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\README.md",
+      "target": "verification.json",
+      "resolved": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\verification.json",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\README.md",
+      "target": "manifest.json",
+      "resolved": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\manifest.json",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\README.md",
+      "target": "generation-recovery.md",
+      "resolved": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\generation-recovery.md",
+      "exists_at_delivery": true
+    },
+    {
+      "from": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\README.md",
+      "target": "baseline.json",
+      "resolved": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\baseline.json",
+      "exists_at_delivery": true
+    }
+  ],
+  "static_review": "Two independent reviewers found no blocking visible business/visual issues. Nonblocking terminology cleanup deferred until layout selection. See review.md.",
+  "unverified": [
+    "Interactive behavior",
+    "More than three customer overflow",
+    "Responsive and keyboard behavior",
+    "Real Hostinger/CJ/model requests",
+    "Production or browser implementation"
+  ],
+  "rollback": "Existing images untouched. README backup retained. No deployments performed."
+}

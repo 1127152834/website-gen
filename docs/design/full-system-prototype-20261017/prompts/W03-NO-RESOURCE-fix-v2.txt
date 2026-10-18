@@ -1,0 +1,1 @@
+Change only one helper sentence in Taylor's 域名资源 empty-state block: replace 可前往账号与域名管理已有域名，或新增域名后刷新。 with 可前往账号与域名管理已有资源，或在服务商准备域名后返回刷新。 This avoids implying domain purchasing inside this app. Preserve every other text, state, green query-success mark, disabled next-step button, identities, layout, dates and UI. No other edits.

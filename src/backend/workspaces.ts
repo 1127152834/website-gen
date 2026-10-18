@@ -1,12 +1,15 @@
 import { join } from "node:path";
 import { deriveUserKey } from "../server/keys.ts";
 import { createWorkspace, type Workspace } from "./index.ts";
+import { createTriageScheduler } from "./mail-triage-scheduler.ts";
 
 /** 用户 ID 只来自管理库，不接受前端指定目录；停用后关闭其所有后台任务。 */
 export class WorkspaceManager {
   private readonly options: { dataDir: string; masterKey: Buffer; resourcesDir?: string };
   private readonly workspaces = new Map<string, Workspace>();
   private readonly closing = new Set<string>();
+  /** 一个服务进程共享四个许可；每个workspace仍由scheduler键限制为1。 */
+  private readonly triageScheduler = createTriageScheduler(4);
 
   constructor(options: { dataDir: string; masterKey: Buffer; resourcesDir?: string }) {
     this.options = options;
@@ -31,6 +34,8 @@ export class WorkspaceManager {
         userDir: join(this.options.dataDir, "users", id),
         key: deriveUserKey(this.options.masterKey, id),
         resourcesDir: this.options.resourcesDir,
+        ownerUserId: Number(id),
+        dependencies: { triageScheduler: this.triageScheduler },
       });
       this.workspaces.set(id, workspace);
     }
@@ -47,6 +52,7 @@ export class WorkspaceManager {
       resourcesDir: this.options.resourcesDir,
       backgroundTasks: false,
       readOnly: true,
+      dependencies: { triageScheduler: this.triageScheduler },
     });
     try { return await read(workspace); }
     finally { await workspace.close(); }
@@ -67,5 +73,6 @@ export class WorkspaceManager {
 
   async closeAll(): Promise<void> {
     await Promise.all([...this.workspaces.keys()].map((id) => this.close(id)));
+    this.triageScheduler.close();
   }
 }

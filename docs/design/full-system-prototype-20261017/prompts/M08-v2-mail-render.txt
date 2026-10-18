@@ -1,0 +1,1 @@
+Edit this exact image only. Change just the single helper sentence under “2. 授权与处理配置” to “确认专用模型与正文处理授权；此时仅预览本地缓存范围，尚未调用模型。” Do not call the model local and do not imply analysis already ran. Keep all other layout, sidebar, dates, 18封,7天,200上限, 未入队, model and authorization demo states, buttons unchanged. No additional edits.

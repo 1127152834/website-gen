@@ -17,9 +17,10 @@ import type { Browse } from "./qa-browser.ts";
 import type { VisionComplete } from "./vision.ts";
 import type { BrandRenderer } from "./branding.ts";
 import { storeSteps } from "./store.ts";
-import { ensureMailbox, mailDns, mailSetup } from "./mail.ts";
+import { mailDns, mailSetup, prepareExistingMailboxCredentials } from "./mail.ts";
 import { enableSmtp, imapHasSubject, type InboxCheck, type MailboxCreds } from "./smtp.ts";
 import { siteFetch } from "./site-fetch.ts";
+import { MailboxSelectionError, readDomainMailboxes, selectDomainMailbox } from "./site-mailbox.ts";
 
 export interface PipelineDeps {
   db: DatabaseSync;
@@ -115,7 +116,10 @@ export function siteContext(d: PipelineDeps, siteId: number): StepCtx {
     }
   };
   assertActive();
-  const entity = JSON.parse((db.prepare("SELECT entity_json FROM batches WHERE id = ?").get(site.batch_id) as { entity_json: string }).entity_json) as EntityForm;
+  const historicalEntity = JSON.parse((db.prepare("SELECT entity_json FROM batches WHERE id = ?").get(site.batch_id) as { entity_json: string }).entity_json) as EntityForm;
+  const form = JSON.parse(site.form_json) as SiteForm;
+  // 新批次按站点保存真实邮箱；旧历史没有该字段时才沿用 entity.supportEmail。
+  const entity = form.supportEmail ? { ...historicalEntity, supportEmail: form.supportEmail } : historicalEntity;
   const { domain } = site;
   const emit = (kind: RunEventKind, payload: Record<string, unknown>) => d.emit({ batchId: site.batch_id, siteId, kind, payload });
 
@@ -180,7 +184,7 @@ export function siteContext(d: PipelineDeps, siteId: number): StepCtx {
     return json;
   }
 
-  return { d, site, domain, entity, form: JSON.parse(site.form_json) as SiteForm, save, emit, hx, act, inst, wp };
+  return { d, site, domain, entity, form, save, emit, hx, act, inst, wp };
 }
 
 export async function provisionSite(d: PipelineDeps, siteId: number): Promise<{ waitMs: number } | void> {
@@ -215,6 +219,26 @@ export async function provisionSite(d: PipelineDeps, siteId: number): Promise<{ 
   const website = async () =>
     ((await listAll(hx, "hosting_websites_list", { domain })) as { domain: string; username?: string }[]).find((w) => w.domain === domain);
 
+  const verifyNewBatchMailbox = async () => {
+    const current = await readDomainMailboxes(db, domain, d.hostinger);
+    let email: string;
+    try {
+      email = selectDomainMailbox(current, ctx.form.supportEmail);
+    } catch (error) {
+      if (error instanceof MailboxSelectionError) throw new PermanentError(error.message);
+      throw error;
+    }
+    if (ctx.form.supportEmail) {
+      if (email !== ctx.form.supportEmail.trim().toLowerCase()) throw new PermanentError(`${domain} 的客服邮箱选择已失效，请重新建批次`);
+    } else {
+      // 旧任务在真正建站前补齐站点级邮箱；siteContext 本身保持只读，只有流水线检查成功后才迁移。
+      ctx.form.supportEmail = email;
+      ctx.entity.supportEmail = email;
+      save("form_json", JSON.stringify(ctx.form));
+    }
+    return { current, email };
+  };
+
   /** 插件或主题：没装（或版本不对）就装，装了没启用就启用，最后以列表里的状态为准。 */
   async function ensureActive(
     kind: "plugin" | "theme", slug: string, install: () => Promise<void>, prevDetail: string | null, isCurrent = (_version?: string) => true,
@@ -239,10 +263,11 @@ export async function provisionSite(d: PipelineDeps, siteId: number): Promise<{ 
   const steps: Record<StepKey, (prev: StepRow | undefined) => Promise<StepResult>> = {
     ...storeSteps(ctx),
     async precheck() {
+      const mailbox = await verifyNewBatchMailbox();
       if (site.account_id == null) {
-        const owner = db.prepare("SELECT account_id FROM domains WHERE domain = ? ORDER BY account_id LIMIT 1").get(domain) as { account_id: number } | undefined;
-        if (!owner) throw new PermanentError(`${domain} 不在任何已接入的 Hostinger 账号里`);
-        save("account_id", owner.account_id);
+        save("account_id", mailbox.current.accountId);
+      } else if (mailbox.current.accountId !== site.account_id) {
+        throw new PermanentError(`${domain} 的 Hostinger 账号归属已变化`);
       }
       // 以实时列表为准，本地快照可能是半小时前的
       if (await website()) throw new PermanentError(`${domain} 已经有网站了，不会覆盖`);
@@ -255,13 +280,15 @@ export async function provisionSite(d: PipelineDeps, siteId: number): Promise<{ 
     },
 
     async create_site() {
+      const mailbox = await verifyNewBatchMailbox();
+      if (mailbox.current.accountId !== site.account_id) throw new PermanentError(`${domain} 的 Hostinger 账号归属已变化`);
       if (!site.wp_admin_ciphertext) {
         const admin = { user: `wg_${randomBytes(3).toString("hex")}`, password: `Aa1!${randomBytes(15).toString("base64url")}` };
         save("wp_admin_ciphertext", seal(key, JSON.stringify(admin)));
       }
       if ((await setups()).length > 0 || (await website())) return { status: "done", detail: "网站已在创建中" };
       const admin = JSON.parse(unseal(key, site.wp_admin_ciphertext!)) as { user: string; password: string };
-      const email = entity.supportEmail === "auto" ? `support@${domain}` : entity.supportEmail.trim();
+      const email = mailbox.email;
       const r = await act("hosting_websites_start-setup", {
         order_id: site.order_id, type: "wordpress", domain,
         wordpress: { language: "en_US", admin: { user: admin.user, password: admin.password, email } },
@@ -336,10 +363,10 @@ export async function provisionSite(d: PipelineDeps, siteId: number): Promise<{ 
     },
 
     async mailbox() {
-      // 邮箱有问题（没有邮箱订单、席位用完）不让建站失败：记下原因，QA 和站点页会提醒
-      const r = await ensureMailbox(ctx);
-      if (!r.ok) emit("warn", { message: r.detail });
-      return { status: r.ok ? "done" : "skipped", detail: r.detail };
+      // 流水线只复核，不再隐式创建邮箱；创建仍只允许从明确的 mail.fix 入口触发。
+      const verified = await verifyNewBatchMailbox();
+      const credentials = await prepareExistingMailboxCredentials(ctx, { email: verified.email, accountId: verified.current.accountId });
+      return { status: "done", detail: `已确认客服邮箱 ${verified.email}；${credentials.detail}` };
     },
 
     async mail_dns() {

@@ -1,0 +1,18 @@
+[
+  {
+    "Path": "F:\\projects\\website-gen\\package.json",
+    "Hash": "F32D1174C4D61B44F5C0C0ABF7DCD6CB9BDDF51A64F3330492B0C3ACB300E239"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\package-lock.json",
+    "Hash": "3076E217A225820DCC6F0571543C1666D36C3E490E57A24A1D33F10656DEEDDE"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\vite.config.ts",
+    "Hash": "C206DDC7CFEF2C857D00F2DBF0BAFEA0B1128218DC38C8EA3F7C7B307D24DF6E"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\tsconfig.json",
+    "Hash": "106D111EE3CD3DA717EB24985FA503A31154E6D998C0BE5A43FFFBF9F6168627"
+  }
+]

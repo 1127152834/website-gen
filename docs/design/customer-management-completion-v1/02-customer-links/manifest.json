@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-17",
+  "scope": "customer dossier website/mailbox, material review, gateway applications and direct overlays",
+  "imageCount": 12,
+  "images": [
+    {
+      "file": "C07-website-mail-v1.png",
+      "bytes": 1634514,
+      "width": 1489,
+      "height": 1056,
+      "sha256": "D77C945427002CC16F39CBC25FA9330A8F4D26A2E725123A5CB6A0B1770CC662",
+      "status": "待用户确认"
+    },
+    {
+      "file": "C08-review-v1.png",
+      "bytes": 1653668,
+      "width": 1489,
+      "height": 1056,
+      "sha256": "37A8959C4195FA2238C35A67BEBA040A084F6D529BFCB7544AD975823D15A10D",
+      "status": "待用户确认"
+    },
+    {
+      "file": "C09-applications-active-v1.png",
+      "bytes": 1645375,
+      "width": 1489,
+      "height": 1056,
+      "sha256": "5FAF0274EA6201463B0CE47ADF138F4086E2152F0221D3274EB18842B2895A87",
+      "status": "待用户确认"
+    },
+    {
+      "file": "C09-applications-idle-v1.png",
+      "bytes": 1386063,
+      "width": 1489,
+      "height": 1056,
+      "sha256": "1F9616176B7314CBB9B1BD8A0386BD574AC40B9473D950F929015870A0BF50CE",
+      "status": "待用户确认"
+    },
+    {
+      "file": "O-C11-link-site-v1.png",
+      "bytes": 1630879,
+      "width": 1489,
+      "height": 1056,
+      "sha256": "01D098694C656D0ABEACAB4C7DCD6863B108A2C49E7C6E61E4E21640990A8C36",
+      "status": "待用户确认"
+    },
+    {
+      "file": "O-C12-link-mail-v1.png",
+      "bytes": 1562793,
+      "width": 1489,
+      "height": 1056,
+      "sha256": "6F198277CA70C79629F08EE5BF6B60352A68C7FCA18F051C5D74BD4E08404686",
+      "status": "待用户确认"
+    },
+    {
+      "file": "O-C13-unlink-confirm-v1.png",
+      "bytes": 1613780,
+      "width": 1489,
+      "height": 1056,
+      "sha256": "2665BD34FAEEF973B300BD97884965B358FD9FD818F67E0A995CB83115B2BCA2",
+      "status": "待用户确认"
+    },
+    {
+      "file": "O-C14-public-info-v1.png",
+      "bytes": 1621426,
+      "width": 1489,
+      "height": 1056,
+      "sha256": "A13D71AA356D44110EE30ACBC98080BCF6CE9BC2E5DBBE5A045589375B87790A",
+      "status": "待用户确认"
+    },
+    {
+      "file": "O-G01-review-scope-v1.png",
+      "bytes": 1644445,
+      "width": 1489,
+      "height": 1056,
+      "sha256": "C31F479182A431BED498C97A7DEBF01D141168015F259C2DD1A2AEFAAA5226F8",
+      "status": "待用户确认"
+    },
+    {
+      "file": "O-G02-review-running-v1.png",
+      "bytes": 1537950,
+      "width": 1489,
+      "height": 1056,
+      "sha256": "6D2CB3A282728D40AC4ED0CC78C75D218EF10D5DBF0EB07E1B2EDD5139078DB3",
+      "status": "待用户确认"
+    },
+    {
+      "file": "O-G03-finding-detail-v1.png",
+      "bytes": 1481054,
+      "width": 1490,
+      "height": 1056,
+      "sha256": "C16A17676F912FD74912AF1208EB23721A6C838A0C41008DAD7D4D88DABEE71C",
+      "status": "待用户确认"
+    },
+    {
+      "file": "O-G04-start-application-v1.png",
+      "bytes": 1482232,
+      "width": 1489,
+      "height": 1056,
+      "sha256": "942E2FA2A67FCFB7B186DF4DB8AC6D84600039E1ECC3DBF4FF03F00206C13E76",
+      "status": "待用户确认"
+    }
+  ],
+  "references": [
+    "docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+    "docs/design/group-01-customer-dossier/C02-overview-v2.png",
+    "docs/design/group-01-customer-dossier/C03-personal-v3.png"
+  ],
+  "note": "Static prototypes only; not code or runtime validation."
+}

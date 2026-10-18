@@ -17,6 +17,7 @@
     "test": "node --test \"src/**/*.test.ts\"",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "smoke": "node scripts/smoke.ts",
+    "smoke:mail": "node scripts/mail-triage-smoke.ts",
     "check:sync": "node --env-file=.env scripts/check-sync.ts",
     "check:models": "node --env-file=.env scripts/check-models.ts"
   },

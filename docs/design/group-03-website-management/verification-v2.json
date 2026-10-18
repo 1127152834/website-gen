@@ -1,0 +1,31 @@
+{
+  "checked_at_utc": "2026-10-17T17:13:29.689810+00:00",
+  "status": "BUSINESS_RELATION_CONFIRMED_LAYOUT_DRAFT",
+  "confirmed_rules": [
+    "One customer, one company, one website",
+    "Single and multiple customers supported in the same design scope",
+    "Optimize existing UI, do not rebuild core features"
+  ],
+  "checks": {
+    "W_views": 12,
+    "O_W_overlays": 14,
+    "ids_complete_and_unique": true,
+    "prior_63_design_files_unchanged": true,
+    "v1_documents_unchanged": true,
+    "only_existing_edited_file": "README.md",
+    "README_backup_matches_baseline": true,
+    "local_links_valid": true,
+    "independent_business_review": "PASS_NO_DEFINITE_CONFLICTS"
+  },
+  "image_generation": false,
+  "application_code_modified": false,
+  "remote_calls": false,
+  "deployment": false,
+  "sha256": {
+    "docs/design/group-03-website-management/design-brief-v2.md": "d86c108a7bba00cc8c25567f6d9f9ea8103a085ec4d4b9d08c3b63e3d8446b2b",
+    "docs/design/group-03-website-management/README.md": "bdb6aaa10526a0a66b87658c9c50e166ea40bab6aed1669375f4ddd1f7a09f2a",
+    "docs/design/group-03-website-management/baseline-v2.json": "e250ea35b9b989be3e261e07ddb20c3a5b5d6474059d03b3fb675a3a25ed59d4",
+    "docs/design/scope-amendment-04-one-company-one-site.md": "51f678c9be418b95b8c3b271dc7d6b377f38476eef8e0f0f23219db814d15878"
+  },
+  "rollback": "Restore README from baseline-v2 backup and archive new v2/amendment files; v1 design and old prototypes remain intact."
+}

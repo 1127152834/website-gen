@@ -1,0 +1,14 @@
+
+> stitch-contacts@1.0.0 build
+> vite build
+
+vite v8.3.4 building client environment for production...
+transforming...
+✓ 1936 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.51 kB │ gzip:  0.39 kB
+dist/assets/index-BxLkIKqI.css   26.10 kB │ gzip:  6.01 kB
+dist/assets/index-C47dI_jX.js   254.99 kB │ gzip: 80.32 kB
+
+✓ built in 532ms

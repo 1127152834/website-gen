@@ -1,0 +1,129 @@
+{
+  "as_of": "2026-10-18 PT",
+  "scope": "gateway completion independent static review",
+  "basis": [
+    "evidence/gateway-completion-ledger.jsonl",
+    "prompts/gateway-scenes.json",
+    "prompts/gateway-state-scenes.json",
+    "plans/customer-gateway-coverage.md",
+    "plans/gateway-demo-data.md"
+  ],
+  "summary": {
+    "total": 10,
+    "static_review_pass": 10,
+    "needs_fix": 0,
+    "pending": 0
+  },
+  "items": [
+    {
+      "id": "G01-empty",
+      "image": "screens/G01-empty-v1.png",
+      "sha256": "728d957331e779ce7e0a45021eeca57c3f4c6c8b9bbb74ec63bff3ac9753b94d",
+      "dimensions": { "width": 1490, "height": 1055 },
+      "status": "static_review_pass",
+      "checks": ["text", "state", "navigation", "palette"],
+      "finding": "The rejected filter and zero filtered rows are explicit; the screen does not claim that the workspace has no applications.",
+      "issues": []
+    },
+    {
+      "id": "G02-read-failure",
+      "image": "screens/G02-read-failure-v1.png",
+      "sha256": "18f2a5657d758b6b6dee2a515120e03a1b5b528c3b78d86143ba0a393445f215",
+      "dimensions": { "width": 1490, "height": 1055 },
+      "status": "static_review_pass",
+      "checks": ["text", "state", "navigation", "palette"],
+      "finding": "Identity, status, and evidence remain loaded while only snapshot content has a read error; it does not claim the snapshot is absent.",
+      "issues": []
+    },
+    {
+      "id": "O-G04-concurrent",
+      "image": "screens/O-G04-concurrent-v2.png",
+      "sha256": "37dcbb81c0be4d5baf9c894fdc05a9d539e41aa1ed71aa5b598b9491c936def4",
+      "dimensions": { "width": 1489, "height": 1056 },
+      "status": "static_review_pass",
+      "checks": ["text", "state", "navigation", "palette"],
+      "finding": "The conflict preserves the single effective APP-002 and states that the other request created neither an application nor a snapshot; no retry bypass is offered.",
+      "issues": []
+    },
+    {
+      "id": "O-G04-unknown",
+      "image": "screens/O-G04-unknown-v1.png",
+      "sha256": "609fe0bd73a2a29a19d8a9ec0d80b65e87724c930c986fe82424e0e4bf397fa0",
+      "dimensions": { "width": 1490, "height": 1056 },
+      "status": "static_review_pass",
+      "checks": ["text", "state", "navigation", "palette"],
+      "finding": "Both application creation and snapshot persistence remain unknown, APP-002 is pending verification, and restart is disabled.",
+      "issues": []
+    },
+    {
+      "id": "G04-new-email-after-correction",
+      "image": "screens/G04-new-email-after-correction-v1.png",
+      "sha256": "53d14de6517b036277b347a60b857be0d96ef948d98309092851a6ce3412fed4",
+      "dimensions": { "width": 1490, "height": 1056 },
+      "status": "static_review_pass",
+      "checks": ["text", "state", "navigation", "palette"],
+      "finding": "Mistaken E-100 approval, manual correction, E-102 progression, and non-reapplication of duplicate E-100 are separated; APP-001 still completes Alex.",
+      "issues": []
+    },
+    {
+      "id": "O-G05-approved-correction-result",
+      "image": "screens/O-G05-approved-correction-result-v2.png",
+      "sha256": "47329a4253f750b9ffe82ee03b4ebb4649eba634936c2670ae61a0986496a8c2",
+      "dimensions": { "width": 1490, "height": 1055 },
+      "status": "static_review_pass",
+      "checks": ["text", "state", "navigation", "palette"],
+      "finding": "Casey remains incomplete with APP-003 under review and zero valid approvals; the current source is the 13:20 manual correction while E-300 remains immutable evidence. Overview body plus history link is coherent.",
+      "issues": []
+    },
+    {
+      "id": "C09-current-proofs",
+      "image": "screens/C09-current-proofs-v1.png",
+      "sha256": "700ac5e4ab4542def4697aff36d2d68956e5494de50b33c857d8db479ab0889c",
+      "dimensions": { "width": 1490, "height": 1056 },
+      "status": "static_review_pass",
+      "checks": ["text", "state", "navigation", "palette"],
+      "finding": "Three DEMO files have independent operators and dates; shared file actions are visible, and the drawer says current customer records are not auto-sent and do not alter an existing snapshot.",
+      "issues": [],
+      "minor_notes": ["The column label says 操作日期 rather than 操作时间; only date-granularity values are shown, so meaning is unchanged."]
+    },
+    {
+      "id": "G04-first-valid-approval",
+      "image": "screens/G04-first-valid-approval-v2.png",
+      "sha256": "5b88946566b0190bd2d5cdc4931586614a4012430fca3265f00cd793460bb613",
+      "dimensions": { "width": 1490, "height": 1055 },
+      "status": "static_review_pass",
+      "checks": ["text", "state", "navigation", "palette"],
+      "finding": "The 11:00 mistaken E-300 approval, 13:20 manual correction, and 15:00 genuine E-301 approval are accurate; APP-003 and Casey become approved/completed with one valid approval and zero active applications.",
+      "issues": []
+    },
+    {
+      "id": "G04-ended-mail-guard",
+      "image": "screens/G04-ended-mail-guard-v2.png",
+      "sha256": "1c68173a2c5a299ff5aa726b8def99db1c95fd8d49b1116cb6672dfec53fa117",
+      "dimensions": { "width": 1490, "height": 1056 },
+      "status": "static_review_pass",
+      "checks": ["text", "state", "navigation", "palette"],
+      "finding": "APP-002 ends internally at 16:00; E-102 retains original receipt at 09:20 and is reprocessed at 16:20 without being applied or reopening the application. APP-001 remains the valid completion basis.",
+      "issues": []
+    },
+    {
+      "id": "O-G11-revoke-confirm",
+      "image": "screens/O-G11-revoke-confirm-v2.png",
+      "sha256": "061e8e03b55d8d95eed8bd8940c05cec2fb23710d8270d3004583a86dd109208",
+      "dimensions": { "width": 1490, "height": 1055 },
+      "status": "static_review_pass",
+      "checks": ["text", "state", "navigation", "palette"],
+      "finding": "The pending confirmation reverses only REQ-01 from completed to pending, keeps original mail, application status, and snapshot unchanged, and does not claim mail retraction or external action.",
+      "issues": []
+    }
+  ],
+  "non_blocking_dimension_deviations": [
+    "G01-empty-v1.png is 1490x1055",
+    "G02-read-failure-v1.png is 1490x1055",
+    "O-G04-concurrent-v2.png is 1489x1056",
+    "O-G05-approved-correction-result-v2.png is 1490x1055",
+    "G04-first-valid-approval-v2.png is 1490x1055",
+    "O-G11-revoke-confirm-v2.png is 1490x1055"
+  ],
+  "static_limit": "PNG review does not verify interaction, persistence, concurrency enforcement, mail processing, or third-party provider behavior."
+}

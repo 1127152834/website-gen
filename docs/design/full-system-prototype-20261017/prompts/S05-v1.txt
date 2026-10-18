@@ -1,0 +1,12 @@
+Scene ID: S05
+Title: 设置／邮箱
+Reference kind: shared_application_shell
+Common style: prompts/common-style.txt
+
+Create the primary static ImageGen scene for S05, “设置／邮箱”. Use the supplied root reference and prompts/common-style.txt as the authoritative shell and visual system; do not restate or reinterpret its palette, typography, spacing, or navigation rules. Produce one 1490x1056 desktop screen, not a collage. Use navigation context “设置” when applicable and the exact Chinese heading “设置／邮箱”. Keep one focal workflow and enough shell context to identify location.
+
+Approved purpose: 配置默认邮箱密码并报告自动验证摘要。 Exact scene data: Use “已设置（静态示例） / •••••••••••• / 成功 1 · 失败 0 · 稍后重试 0”. Required visible content: 密码状态；新密码输入；安全说明；成功/失败/稍后重试数量；不影响既有邮箱的清除说明. Use these Chinese action labels where applicable: 保存/更换；清除；查看结果摘要. Show one normal or most important decision state, not every state simultaneously. Tables use compact aligned rows; forms use clear labels, validation space, and one unambiguous primary action. Every status is written as text, not color alone. Dates use MM/DD/YYYY and times include PT.
+
+All content is fictional static demo data dated 10/17/2026 PT. Where relevant, use only Alex Morgan · C001, Northline LLC, northline.example, and hello@northline.example. Keep “客户已完成”, Stripe APP-001 “已获批”, and PayPal APP-002 “待补件” separate. Only gateway applications may show “申请负责人：李敏”; elsewhere use “操作人”. Never invent a mail requirement unless its exact source quote is visible. Mail is safe local plain text: no remote images, tracking pixels, automatic body-link access, or translation replacing evidence. Secrets use bullets or suffix placeholders. Distinguish configured, unconfigured, untested, loading, failed, and confirmed states. Do not add customer import, domain purchasing, automatic payment applications, entity templates, test payments, managed follow-up, inferred next steps, success scores, or exaggerated AI capability. Keep the composition calm and production-review ready, without decorative charts, repeated navigation, or unrelated records.
+
+UI title correction: The user-facing heading must be exactly '邮箱设置'. Do not show the design inventory label, ID, the word page/dialog/drawer, or a slash-separated responsibility name as a user-facing title.

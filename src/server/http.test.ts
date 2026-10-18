@@ -410,4 +410,11 @@ test("real workspaces keep user A's accounts invisible to user B's RPC", async (
   await post("/api/password", { old: "initial bob", new: "changed bob" }, bobCookie);
   const bobAccounts = await post("/api/rpc", { kind: "req", id: 2, method: "accounts.list" }, bobCookie).then((r) => r.json()) as { result: unknown[] };
   assert.deepEqual(bobAccounts.result, []);
+  const normalTriage = await post("/api/rpc", { kind: "req", id: 3, method: "mail.triage.settings", params: {} }, bobCookie);
+  assert.equal(normalTriage.status, 200);
+  const spoofedTriage = await post("/api/rpc", { kind: "req", id: 4, method: "mail.triage.settings", params: { userId: adminId, workspaceId: "admin", actor: "admin" } }, bobCookie);
+  assert.equal(spoofedTriage.status, 200);
+  const spoofedBody = await spoofedTriage.json() as { ok: boolean; error: string };
+  assert.equal(spoofedBody.ok, false);
+  assert.match(spoofedBody.error, /服务端会话/);
 });

@@ -1,0 +1,410 @@
+[
+  {
+    "id": "01-core",
+    "title": "基础档案与正常操作",
+    "items": [
+      {
+        "title": "客户列表与速览",
+        "before": "F:/projects/website-gen/docs/design/group-01-customer-dossier/C01-list-preview-v4.png",
+        "current": "F:/projects/website-gen/docs/design/group-01-customer-dossier/C01-list-preview-v4.png",
+        "revised": false,
+        "sha256": "3CE62A5609DCC158225BF5A926E8C3F0A38F1D10D6167B23CA1E11ABB6FE602A"
+      },
+      {
+        "title": "档案概览",
+        "before": "F:/projects/website-gen/docs/design/group-01-customer-dossier/C02-overview-v2.png",
+        "current": "F:/projects/website-gen/docs/design/group-01-customer-dossier/C02-overview-v2.png",
+        "revised": false,
+        "sha256": "104AF41887E2BB2F2808873303E1A8B07D2DE0AA574A853347950D145EEAD3F2"
+      },
+      {
+        "title": "个人资料",
+        "before": "F:/projects/website-gen/docs/design/group-01-customer-dossier/C03-personal-v3.png",
+        "current": "F:/projects/website-gen/docs/design/group-01-customer-dossier/C03-personal-v3.png",
+        "revised": false,
+        "sha256": "461FD963D169852C4558EAD342FE7EEAB55853FEE885E25B743F187FAD0A9999"
+      },
+      {
+        "title": "企业资料",
+        "before": "F:/projects/website-gen/docs/design/group-01-customer-dossier/C04-company-v2.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C04-company-ui-v3.png",
+        "revised": true,
+        "sha256": "CBDE693FCA6E014F2097019C4CBE48212EA4EA4A0FCCD355AA04BE176B41DD3C"
+      },
+      {
+        "title": "银行资料",
+        "before": "F:/projects/website-gen/docs/design/group-01-customer-dossier/C05-bank-v2.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C05-bank-ui-v3.png",
+        "revised": true,
+        "sha256": "1E5656822E6CF3CD26636A13511EDD86E7076E313CCB3A4597037B47CB78071D"
+      },
+      {
+        "title": "银行资料操作归属",
+        "before": "F:/projects/website-gen/docs/design/group-01-customer-dossier/C10-attribution-v2.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-bank-ui-v3.png",
+        "revised": true,
+        "sha256": "B3115E20012CE31E912198DCBC7EE926A8D988DE68845B2198175B373438EEEE"
+      },
+      {
+        "title": "编辑个人资料",
+        "before": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C04-personal-edit-v3.png",
+        "current": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C04-personal-edit-v3.png",
+        "revised": false,
+        "sha256": "5FFDE99DF45F793404BC00B21BE68EC62F665095065BB8E9E2F6A6AF33BE9FAB"
+      },
+      {
+        "title": "编辑企业资料",
+        "before": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C04-company-edit-v2.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/support/O-C04-company-edit-v2.png",
+        "revised": true,
+        "sha256": "C88A4019D3499340C2D6A43928D043894EC09999FACE9F381A08645AD97F9667"
+      },
+      {
+        "title": "编辑银行资料",
+        "before": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C04-bank-edit-v2.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/support/O-C04-bank-edit-v2.png",
+        "revised": true,
+        "sha256": "6E6AC2A8467C89DBF6BF9A043F83274358C12529ECC324C8DB2198E61112D784"
+      },
+      {
+        "title": "企业办理状态",
+        "before": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C05-company-status-v2.png",
+        "current": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C05-company-status-v2.png",
+        "revised": false,
+        "sha256": "3EA9715FABA58CA5F4CAD147B688F9F1792C6A01D8E995C6466E9E6C05AE0F82"
+      },
+      {
+        "title": "上传文件",
+        "before": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C07-upload-v2.png",
+        "current": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C07-upload-v2.png",
+        "revised": false,
+        "sha256": "6FFD1C858CEF8B2101EF79D5C40762757CCD8D5B5DF130955C8B6BA6B29D62BA"
+      },
+      {
+        "title": "当前文件预览",
+        "before": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C08-preview-v2.png",
+        "current": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C08-preview-v2.png",
+        "revised": false,
+        "sha256": "BD7AD2BC7A71578873D0DDCADC3D4D9FAB9713988C77CECAC550274DBB226360"
+      },
+      {
+        "title": "替换文件",
+        "before": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C09-replace-v2.png",
+        "current": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C09-replace-v2.png",
+        "revised": false,
+        "sha256": "19EACC7399C0540A2756D87D21F40312F215D3D9F309E4F9B7B32E5F76BF52A6"
+      },
+      {
+        "title": "移除文件",
+        "before": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C10-remove-v2.png",
+        "current": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C10-remove-v2.png",
+        "revised": false,
+        "sha256": "8469D5B03BE4C99421B2C0350014697C911D4B1462882E32778013FD2EFC8D03"
+      }
+    ]
+  },
+  {
+    "id": "02-onboarding",
+    "title": "驾照建档与核对",
+    "items": [
+      {
+        "title": "上传驾照建档",
+        "before": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C12-batch-upload-v4.png",
+        "current": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C12-batch-upload-v4.png",
+        "revised": false,
+        "sha256": "828E965458F590916F694A82E0351BF7FCAAE777E171ABAA60AD246173E2955C"
+      },
+      {
+        "title": "人工核对识别结果",
+        "before": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C13-recognition-review-v3.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/C13-recognition-review-v4.png",
+        "revised": true,
+        "sha256": "03512C4BC9787C8DAA11BCEC04CF88E059A8D1D377F6018E266AE48E630C6EAD"
+      },
+      {
+        "title": "建档结果",
+        "before": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C14-creation-results-v2.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/C14-creation-results-v3.png",
+        "revised": true,
+        "sha256": "7939202CBD54605B1602F2484D388506E8C3F793ED23870B1CFCAF8041EDCAE3"
+      },
+      {
+        "title": "O-C02 重复线索处理",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/01-onboarding/O-C02-duplicate-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/O-C02-duplicate-v2.png",
+        "revised": true,
+        "sha256": "0588D8B445E47F54C2397B97EFB9F024630D71F191CC7B2A9BD993537722AB7B"
+      },
+      {
+        "title": "O-C03 字段差异确认",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/01-onboarding/O-C03-differences-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/O-C03-differences-v2.png",
+        "revised": true,
+        "sha256": "87226AE0FE967E543DD060395ECB591A43B76F87C22C71E43B1FC9C235086384"
+      },
+      {
+        "title": "C12 上传混合状态",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/01-onboarding/C12-upload-states-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/C12-upload-states-v2.png",
+        "revised": true,
+        "sha256": "20F1CD8827537943F84B50F6E7C6FAF5C60F72CC89A1AA28B53EAE8D5590B951"
+      },
+      {
+        "title": "C13 识别失败后的人工转录",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/01-onboarding/C13-manual-transcription-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/C13-manual-transcription-v2.png",
+        "revised": true,
+        "sha256": "8ED27D2F12152EFE9323E41DCC66C6D2A074F2A905519658350E293CB1C686C1"
+      },
+      {
+        "title": "C14 提交结果未知",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/01-onboarding/C14-unknown-result-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-management-completion-v1/01-onboarding/C14-unknown-result-v1.png",
+        "revised": false,
+        "sha256": "90322C656C78A081D532113BF6156358D774B0358605A8DBE45FA0300F155A72"
+      }
+    ]
+  },
+  {
+    "id": "03-links",
+    "title": "网站、审核与网关申请",
+    "items": [
+      {
+        "title": "C07 网站与邮箱",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/C07-website-mail-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/C07-website-mail-v1.png",
+        "revised": false,
+        "sha256": "D77C945427002CC16F39CBC25FA9330A8F4D26A2E725123A5CB6A0B1770CC662"
+      },
+      {
+        "title": "O-C11 关联或更换已有网站",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-C11-link-site-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-C11-link-site-v2.png",
+        "revised": true,
+        "sha256": "3E7B2C945FD5B19F2765CBD026295B96D81C75859D56B905C228C02D8E9B59F6"
+      },
+      {
+        "title": "O-C12 关联或更换商业邮箱",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-C12-link-mail-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-C12-link-mail-v2.png",
+        "revised": true,
+        "sha256": "F2AEEEC12C2BD91741268E81ED88EABF99B2DCD4270C4A490E991FF827F56193"
+      },
+      {
+        "title": "O-C13 解除关联确认",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-C13-unlink-confirm-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-C13-unlink-confirm-v2.png",
+        "revised": true,
+        "sha256": "5B31BE99D308AE35AF0619B8DCDE85F128F36FEE1158B3BD7FA586C062843101"
+      },
+      {
+        "title": "O-C14 网站公开信息对照",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-C14-public-info-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-C14-public-info-v2.png",
+        "revised": true,
+        "sha256": "E8688047B9C46354CE0EC49DE4B3473A7C9009D5ADC861A45461D6883F86F4E1"
+      },
+      {
+        "title": "C08 材料审核",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/C08-review-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/C08-review-v2.png",
+        "revised": true,
+        "sha256": "623B77F127B0568C2C454D4771EE65E73C884FCBEA18E4BF75762FC40400D1A3"
+      },
+      {
+        "title": "O-G01 确认检查范围",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-G01-review-scope-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-G01-review-scope-v1.png",
+        "revised": false,
+        "sha256": "C31F479182A431BED498C97A7DEBF01D141168015F259C2DD1A2AEFAAA5226F8"
+      },
+      {
+        "title": "O-G02 审核运行状态",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-G02-review-running-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-G02-review-running-v1.png",
+        "revised": false,
+        "sha256": "6D2CB3A282728D40AC4ED0CC78C75D218EF10D5DBF0EB07E1B2EDD5139078DB3"
+      },
+      {
+        "title": "O-G03 审核发现详情",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-G03-finding-detail-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-G03-finding-detail-v1.png",
+        "revised": false,
+        "sha256": "C16A17676F912FD74912AF1208EB23721A6C838A0C41008DAD7D4D88DABEE71C"
+      },
+      {
+        "title": "C09 网关申请：有在办申请",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/C09-applications-active-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/C09-applications-active-v2.png",
+        "revised": true,
+        "sha256": "9BCD2C1C6FB697C9E4C59BC6FE85295579395A116F8F06FBF208FF2682537850"
+      },
+      {
+        "title": "C09 网关申请：无在办申请",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/C09-applications-idle-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/C09-applications-idle-v2.png",
+        "revised": true,
+        "sha256": "DE71174D7C9C80DC6802CF389C9C663AA1124388BDB821AE758EC69D6697BB11"
+      },
+      {
+        "title": "O-G04 开始网关申请",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-G04-start-application-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-G04-start-application-v2.png",
+        "revised": true,
+        "sha256": "1DC713C50293938D6E131F9195811731D1B76575941322A9EF56B47A1FDDA473"
+      }
+    ]
+  },
+  {
+    "id": "04-support",
+    "title": "附件、保存与删除异常",
+    "items": [
+      {
+        "title": "O-C07 附件上传混合状态",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C07-upload-states-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/support/O-C07-upload-states-v1.png",
+        "revised": true,
+        "sha256": "6CCFEA0AC7912DE73FFD7240287EBBC4BC5CA38AD12DDDB850BD16E6F7219219"
+      },
+      {
+        "title": "O-C08 预览读取失败",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C08-preview-unavailable-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C08-preview-unavailable-v1.png",
+        "revised": false,
+        "sha256": "D2CCF24DA343691B210C4FD6D2C564E69613F4D80EA953CE30C11435C4ABF7A2"
+      },
+      {
+        "title": "O-C08 格式不支持预览",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C08-preview-unsupported-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C08-preview-unsupported-v1.png",
+        "revised": false,
+        "sha256": "494D2821A73471D0459EA0DF782EFB6F042C2A18DD70C07663CB927343B909A3"
+      },
+      {
+        "title": "O-C09 替换失败",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C09-replace-failure-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C09-replace-failure-v1.png",
+        "revised": false,
+        "sha256": "4EBDC1E774FC392E50CA1088FB155C5629B5A6A82B29064E9701733BB786ACAA"
+      },
+      {
+        "title": "O-C10 移除失败",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C10-remove-failure-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C10-remove-failure-v1.png",
+        "revised": false,
+        "sha256": "C4036A387F7C0331822F8F1F8779B6A8388ACCE2F3B1207B1A11549426197113"
+      },
+      {
+        "title": "O-C04 编辑保存失败",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C04-save-failure-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C04-save-failure-v1.png",
+        "revised": false,
+        "sha256": "17C6FD7B3DEE0C99317D928E549173A9BADC767DA70A6138F1554E10DFF917FD"
+      },
+      {
+        "title": "O-C15 删除客户影响确认",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C15-delete-confirm-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/support/O-C15-delete-confirm-v1.png",
+        "revised": true,
+        "sha256": "EC83FCEAF39688E16EA5A2A14DA93A21A957BD1D4677996363E3D77F309A1C62"
+      },
+      {
+        "title": "O-C16 删除执行结果",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C16-delete-execution-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C16-delete-execution-v1.png",
+        "revised": false,
+        "sha256": "93D49A72E487FC48AC324CDD5E8D88C94C273043FF28679DB61809976DB0D911"
+      }
+    ]
+  },
+  {
+    "id": "05-common",
+    "title": "操作归属与公共状态",
+    "items": [
+      {
+        "title": "C10 个人资料操作归属：第 1 页",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C10-personal-page1-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-personal-page1-ui-v2.png",
+        "revised": true,
+        "sha256": "DAF8977A72192B8ED7D12DF24277B5E74B2E548259C221E309BFCC426199BAE8"
+      },
+      {
+        "title": "C10 个人资料操作归属：第 2 页",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C10-personal-page2-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-personal-page2-ui-v2.png",
+        "revised": true,
+        "sha256": "1A5C984AB085DAA0D9A170718F42AC8BD2C9E0E3D19BBD37EEE00FC354271A44"
+      },
+      {
+        "title": "C10 企业资料操作归属",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C10-company-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-company-ui-v2.png",
+        "revised": true,
+        "sha256": "7A99BFCEB49AB37006FA9EF52ED9782AAAE4D82B818A17CE853D9BBA7193497C"
+      },
+      {
+        "title": "C10 字段操作归属详情",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C10-actor-detail-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-actor-detail-ui-v2.png",
+        "revised": true,
+        "sha256": "F0BD3A554CEA687B168CAAD24EEBF4D3754BCBC1456EC211CD7565FDE9771E40"
+      },
+      {
+        "title": "C01 尚无客户",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C01-empty-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C01-empty-v1.png",
+        "revised": false,
+        "sha256": "2AAA3BA312518E961E4841DC62939B1806FEE89E00F41B0DAEBA06190FB651F1"
+      },
+      {
+        "title": "C01 搜索无结果",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C01-search-empty-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C01-search-empty-ui-v2.png",
+        "revised": true,
+        "sha256": "3FB4C56D8283D3FDD6493D8DC3F27E49E23A56F1D4EEF13FBD871C3FFDAEB11C"
+      },
+      {
+        "title": "C01 列表加载中",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C01-loading-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C01-loading-ui-v2.png",
+        "revised": true,
+        "sha256": "F637287CA810DA4DB61B59FC77B3A756BE5D039AD03238AD94A1DB1C4F6B3C4C"
+      },
+      {
+        "title": "C01 客户速览读取失败",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C01-read-failure-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C01-read-failure-v1.png",
+        "revised": false,
+        "sha256": "373BC127AC434854A2293540217765F345FACF97D69AAE64F3459F2C7D3E6143"
+      },
+      {
+        "title": "C02 档案不存在",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C02-not-found-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C02-not-found-v1.png",
+        "revised": false,
+        "sha256": "58329AC11AC4442C08C50957FBAF14C25F52E81D4A5223DB385B8048007AF44E"
+      },
+      {
+        "title": "C02 无权访问档案",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C02-forbidden-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C02-forbidden-v1.png",
+        "revised": false,
+        "sha256": "A9519237542731B9121DF18F17AD64A5EB1304268D1152093F3D986172BB662F"
+      },
+      {
+        "title": "O-A04 未保存离开确认",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/O-A04-unsaved-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/O-A04-unsaved-ui-v2.png",
+        "revised": true,
+        "sha256": "18737F1AB0A2095C9FA4F814DB6CD0C1FC03F07635A761ED648CE4503EEF05B4"
+      },
+      {
+        "title": "O-A05 并发修改冲突",
+        "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/O-A05-conflict-v1.png",
+        "current": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/O-A05-conflict-ui-v2.png",
+        "revised": true,
+        "sha256": "67816F7E4231172B8244038D576468343AA653007A0B604D678BBB44AE531397"
+      }
+    ]
+  }
+]

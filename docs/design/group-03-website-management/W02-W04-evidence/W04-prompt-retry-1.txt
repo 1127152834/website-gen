@@ -1,0 +1,22 @@
+Create ONE production-quality Chinese desktop UI mockup image for STEP 3 of this same three-step website-creation wizard. EXACT existing design system, not a new design. Target 1489x1056.
+Image1 = W03 existing STEP2 authoritative layout, colors, sidebar, typography, selected client and all website data. Image2 = just-created W02 STEP1, use the same company address and phone. Both are visual references, do not redraw or modify those files. Continue to STEP3 only.
+
+COPY the whole shell of image1: white background, navy headings/body, slate-blue secondary text, navy primary buttons, blue links, thin light-blue borders, 6px radii. Sidebar249px, identical full nav entries/logo and 新建网站 active. Header 网站 / 新建网站. Date 10/17/2026, 静态原型 · 全部为示例数据. h1新建网站, subtitle每位客户单独配置一个网站，支持单个或批量。, right操作人：李敏 · 提交成功后记录. Three steps at same position1客户与经营资料 /2站点配置 /3确认启动. ONLY third step dark filled active, others muted. Readable 14–16px Chinese, same density/spacing as references, no clipped text, no extra cards/metrics.
+
+Below steps, title "确认本次建站 · 3" subtitle "请逐项核对，确认后开始建站。"
+One continuous table with headers 客户 / 企业 | 域名 / 商业邮箱 | 站点配置 | 操作.
+Row1 pale-blue selected: Jamie Chen C002 above Cedar Living LLC; cedar-living.example above hello@cedar-living.example; Cedar Living above 家具; 收起明细.
+Immediately below row1 inline expanded pale surface, title Jamie Chen · 启动前核对. Right links 修改经营资料 and 修改站点配置. These return to proper steps, never edit a shared company.
+Read-only detail row: 企业地址 18 Demo Cedar Rd, Austin, TX 78701; 网站联系电话 +1 (202) 555-0126.
+Next four aligned read-only groups: 商品数量 60; 售价区间（USD）25–120; 订单处理（工作日）2–4; 运输时效（工作日）5–10.
+Tiny note 企业资料与 EIN 已齐备；EIN 不对外展示。
+Then compact row2 Taylor Brooks C003 / Paperfield LLC | paperfield.example / hello@paperfield.example | Paperfield / 文具 | 展开明细
+row3 Jordan Lee C004 / Harbor Supply LLC | harbor-supply.example / hello@harbor-supply.example | Harbor Supply / 家居用品 | 展开明细.
+All values are read-only text NOT form inputs. All rows above visible bottom warning.
+
+Below table subtle cream warning with heading 启动前请确认 and readable exact copy:
+将调用 Hostinger 创建网站、读取 CJ 商品并调用模型生成内容，可能产生模型费用。
+生成后仍保持维护模式，需人工检查并上线；建站完成不代表网关获批。
+Below it one small navy-checked checkbox 我已核对本次配置并知悉上述说明.
+Bottom fixed footer as references: left bold 本次 3 位客户 · 3 个网站, secondary 当前尚未提交建站。; right outlined 上一步 and navy primary 确认并开始建站（3）.
+This is PRE-SUBMIT review, no created tasks, no fake success/toast/approval/live or SMTP validation. Exactly same3fictional customers as previousscreens, onecompanyonesite, neverAlex. No shared company, no customer owner, no SSN/driver license/bank details. Keep cost warning no price estimate. All content fits height1056 naturally, no long scroll. No device/browser chrome or external annotations.

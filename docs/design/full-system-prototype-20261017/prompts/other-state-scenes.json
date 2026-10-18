@@ -1,0 +1,149 @@
+[
+  {
+    "id": "ES01",
+    "parent": "M02",
+    "title": "邮箱切换安全加载",
+    "prompt": "Create one static 1490x1056 desktop scene for ES01, “邮箱切换安全加载”, an essential state of M02. Use prompts/common-style.txt and the M02 surface as design references; do not assume a future PNG exists. Show one readable focal state, not a collage. This is an authorized phase-one static target, not proof of implementation.\n\nShow the mailbox workspace while the user switches from one mailbox or folder to hello@northline.example / 收件箱. The previous message body area must already be blank, replaced by a contained loading state labelled “正在读取新邮箱…” and “旧邮件内容已清空”. Keep the domain, mailbox, and folder hierarchy visible, but disable message actions until the new selection finishes. Do not flash Alex Morgan’s prior message, preview text, sender, attachment, translation, or AI label. A small notice may say “切换期间不会显示上一邮箱内容”. Keep “收件箱 12” as the destination and use a neutral skeleton for the new list. Provide only “取消切换” if a visible action is needed; do not show a stale selected row or treat loading as an empty inbox.\n\nUse fictional data dated 10/17/2026 PT and MM/DD/YYYY. Keep Alex Morgan · C001, Northline LLC, northline.example, and hello@northline.example consistent where relevant. Only gateway applications use 申请负责人; otherwise use 操作人. Mail stays safe local plain text with no remote content or link access. Do not add unsupported automation or engineering notes to the UI.",
+    "reference_kind": "base_id:M02; shared_mail_shell; fallback_shell:M01",
+    "required_content": [
+      "新邮箱/文件夹目标",
+      "旧正文已清空",
+      "正在读取新邮箱",
+      "消息动作禁用",
+      "无旧客户正文闪现"
+    ]
+  },
+  {
+    "id": "ES02",
+    "parent": "M04",
+    "title": "发送结果未知与防重复提交",
+    "prompt": "Create one static 1490x1056 desktop scene for ES02, “发送结果未知与防重复提交”, an essential state of M04. Use prompts/common-style.txt and the M04 surface as design references; do not assume a future PNG exists. Show one readable focal state, not a collage. This is an authorized phase-one static target, not proof of implementation.\n\nShow the M04 compose overlay after a send attempt whose provider result cannot yet be reconciled with the local 已发送 copy. The draft targets review@paypal-demo.example from hello@northline.example, but do not claim the recipient accepted or received it. Replace the normal primary send control with a locked state labelled “发送结果待核对”, plus the explanation “请先核对已发送副本，避免重复发送”. Show a compact timeline: “请求已提交”, “SMTP 最终结果未知”, and “本地已发送副本尚未核对”. Offer “查看已发送” and “关闭”; do not offer another send, automatic retry, or a success toast. Keep the original draft content preserved and mark it “只读，等待核对”. The dimmed background may reuse M04 and O-M08 semantics, but the uncertain-result panel is the only focal layer.\n\nUse fictional data dated 10/17/2026 PT and MM/DD/YYYY. Keep Alex Morgan · C001, Northline LLC, northline.example, and hello@northline.example consistent where relevant. Only gateway applications use 申请负责人; otherwise use 操作人. Mail stays safe local plain text with no remote content or link access. Do not add unsupported automation or engineering notes to the UI.",
+    "reference_kind": "base_id:M04; compose_overlay; confirmation_semantics:O-M08",
+    "required_content": [
+      "发送结果待核对",
+      "发送按钮锁定",
+      "SMTP最终结果未知",
+      "已发送副本尚未核对",
+      "查看已发送"
+    ]
+  },
+  {
+    "id": "ES03",
+    "parent": "M05",
+    "title": "来源证据冲突待人工确认",
+    "prompt": "Create one static 1490x1056 desktop scene for ES03, “来源证据冲突待人工确认”, an essential state of M05. Use prompts/common-style.txt and the M05 surface as design references; do not assume a future PNG exists. Show one readable focal state, not a collage. This is an authorized phase-one static target, not proof of implementation.\n\nShow M05 with one mail item downgraded to “待人工确认”. Keep the original English evidence visible and readable: “For application APP-002, please reply with the most recent business bank statement and one current inventory photo.” Beside it, show a restrained conflict card stating that the earlier automated label “一般通知” conflicts with the explicit source request. List only the two source-supported items: “最近一期企业银行流水” and “一张当前库存照片”. Do not invent a deadline, format, upload link, month, approval likelihood, or next step. The AI suggestion must be visibly subordinate and labelled “建议，不能替代原文证据”. Provide “查看冲突点” and “人工纠正”; do not auto-update APP-002. This scene represents an independently authorized historical snapshot after mail pre-triage was enabled; it does not change the default-off configuration shown elsewhere.\n\nUse fictional data dated 10/17/2026 PT and MM/DD/YYYY. Keep Alex Morgan · C001, Northline LLC, northline.example, and hello@northline.example consistent where relevant. Only gateway applications use 申请负责人; otherwise use 操作人. Mail stays safe local plain text with no remote content or link access. Do not add unsupported automation or engineering notes to the UI.",
+    "reference_kind": "base_id:M05; evidence_view:M03",
+    "required_content": [
+      "待人工确认",
+      "原文证据",
+      "冲突点",
+      "AI建议从属",
+      "人工纠正入口"
+    ]
+  },
+  {
+    "id": "ES04",
+    "parent": "O-M05",
+    "title": "邮箱删除被关联保护阻止",
+    "prompt": "Create one static 1490x1056 desktop scene for ES04, “邮箱删除被关联保护阻止”, an essential state of O-M05. Use prompts/common-style.txt and the O-M05 surface as design references; do not assume a future PNG exists. Show one readable focal state, not a collage. This is an authorized phase-one static target, not proof of implementation.\n\nShow the O-M05 deletion confirmation over the M01 mailbox management page for hello@northline.example. The phase-one relationship guard has found Alex Morgan · C001 and PayPal APP-002, so the destructive path is blocked before any deletion. Display “存在客户或申请关联，无法永久删除” with relationship rows showing that neither the remote mailbox nor local index has been changed. The “永久删除” control is disabled; the available actions are “查看关联” and “取消”. Do not ask for a confirmation phrase once the guard blocks the operation, and do not imply that closing the dialog removes credentials or cached mail. Keep APP-002 “待补件” separate from Stripe APP-001 “已获批”. Treat the guard as an authorized phase-one target only; the prompt must not claim current source already enforces it, and that implementation qualification must remain outside visible UI copy.\n\nUse fictional data dated 10/17/2026 PT and MM/DD/YYYY. Keep Alex Morgan · C001, Northline LLC, northline.example, and hello@northline.example consistent where relevant. Only gateway applications use 申请负责人; otherwise use 操作人. Mail stays safe local plain text with no remote content or link access. Do not add unsupported automation or engineering notes to the UI.",
+    "reference_kind": "base_id:O-M05; dimmed_base:M01; phase_one_guard_target",
+    "required_content": [
+      "关联阻止文案",
+      "Alex Morgan C001",
+      "PayPal APP-002",
+      "永久删除禁用",
+      "查看关联",
+      "未执行删除"
+    ]
+  },
+  {
+    "id": "ES05",
+    "parent": "R01",
+    "title": "Token 无效与过期快照",
+    "prompt": "Create one static 1490x1056 desktop scene for ES05, “Token 无效与过期快照”, an essential state of R01. Use prompts/common-style.txt and the R01 surface as design references; do not assume a future PNG exists. Show one readable focal state, not a collage. This is an authorized phase-one static target, not proof of implementation.\n\nShow R01 after the Hostinger token validation fails. The account row remains “Northline Hostinger（演示）”, with only “Token 尾号 DEMO”; never display a secret. Put the current remote state in an explicit “未知” status and show “Token 验证失败”. Keep the previous domain data in a separate muted block labelled “上次同步快照（已过期）”, including northline.example and the old 10/17/2026 09:40 PT timestamp, but do not present its domain status or expiry as current truth. Offer “更新 Token” and “重新验证”; do not claim that a new validation was performed, that the provider is down, or that the token is definitely revoked. A concise warning should say “过期快照仅供核对，不能代表远端当前状态”. Do not infer renewal, availability, ownership changes, or a purchasing path from the stale snapshot.\n\nUse fictional data dated 10/17/2026 PT and MM/DD/YYYY. Keep Alex Morgan · C001, Northline LLC, northline.example, and hello@northline.example consistent where relevant. Only gateway applications use 申请负责人; otherwise use 操作人. Mail stays safe local plain text with no remote content or link access. Do not add unsupported automation or engineering notes to the UI.",
+    "reference_kind": "base_id:R01; resource_shell",
+    "required_content": [
+      "Token验证失败",
+      "远端状态未知",
+      "过期同步快照",
+      "旧时间戳",
+      "更新Token",
+      "不把旧状态当当前"
+    ]
+  },
+  {
+    "id": "ES06",
+    "parent": "R04",
+    "title": "资源放弃部分执行失败",
+    "prompt": "Create one static 1490x1056 desktop scene for ES06, “资源放弃部分执行失败”, an essential state of R04. Use prompts/common-style.txt and the R04 surface as design references; do not assume a future PNG exists. Show one readable focal state, not a collage. This is an authorized phase-one static target, not proof of implementation.\n\nShow the R04 execution panel for an explicitly unlinked fictional resource demo-resource.example after a non-atomic cleanup stops partway through. Divide the steps into three clear groups: “已完成”, “失败”, and “未执行”. Example rows may show local index cleanup completed, remote mailbox removal failed, and domain release not started. State “整体未成功” and keep each step’s 10/17/2026 PT time, operation result, and rollback boundary visible. Offer only “重试失败步骤”, “取消未执行部分”, and “返回资源”; do not rerun completed steps, claim full rollback, or display a green overall success state. The panel must explain that completed remote effects may not be reversible and that retry applies only to the failed step. This is an authorized phase-one recovery target, not evidence that current source implements the relationship preflight, orchestration, idempotency, or rollback behavior.\n\nUse fictional data dated 10/17/2026 PT and MM/DD/YYYY. Keep Alex Morgan · C001, Northline LLC, northline.example, and hello@northline.example consistent where relevant. Only gateway applications use 申请负责人; otherwise use 操作人. Mail stays safe local plain text with no remote content or link access. Do not add unsupported automation or engineering notes to the UI.",
+    "reference_kind": "base_id:R04; partial_execution_panel; phase_one_recovery_target",
+    "required_content": [
+      "已完成步骤",
+      "失败步骤",
+      "未执行步骤",
+      "整体未成功",
+      "重试失败步骤",
+      "回滚边界"
+    ]
+  },
+  {
+    "id": "ES07",
+    "parent": "T01",
+    "title": "Grist 尚未配置空态",
+    "prompt": "Create one static 1490x1056 desktop scene for ES07, “Grist 尚未配置空态”, an essential state of T01. Use prompts/common-style.txt and the T01 surface as design references; do not assume a future PNG exists. Show one readable focal state, not a collage. This is an authorized phase-one static target, not proof of implementation.\n\nShow the authenticated T01 host route with Grist not configured. Keep the application shell and page heading, replacing the iframe region with an empty state labelled “Grist 尚未配置”. Explain “完成设置后，第三方 Grist 原生文档将在此区域打开” and provide one action, “前往 Grist 设置”. Add a visible boundary label “第三方原生界面区域” without drawing a fake spreadsheet, custom table editor, login form, document error, or iframe-internal diagnostics. Do not imply that a connection attempt occurred, that credentials failed, or that the host can inspect cross-origin internals. The settings route may be named, but no Base URL, API key, token, customer import, or example document is shown in this state. Distinguish this unconfigured state from an unknown load failure; ordinary host-side read failures can reuse A07 rather than appearing inside the empty iframe area.\n\nUse fictional data dated 10/17/2026 PT and MM/DD/YYYY. Keep Alex Morgan · C001, Northline LLC, northline.example, and hello@northline.example consistent where relevant. Only gateway applications use 申请负责人; otherwise use 操作人. Mail stays safe local plain text with no remote content or link access. Do not add unsupported automation or engineering notes to the UI.",
+    "reference_kind": "base_id:T01; shared_shell:A01; native_grist_boundary",
+    "required_content": [
+      "Grist尚未配置",
+      "第三方原生界面区域",
+      "前往Grist设置",
+      "无假表格编辑器",
+      "无iframe内部错误"
+    ]
+  },
+  {
+    "id": "ES08",
+    "parent": "S09",
+    "title": "邮件 AI paused_audit 安全停机",
+    "prompt": "Create one static 1490x1056 desktop scene for ES08, “邮件 AI paused_audit 安全停机”, an essential state of S09. Use prompts/common-style.txt and the S09 surface as design references; do not assume a future PNG exists. Show one readable focal state, not a collage. This is an authorized phase-one static target, not proof of implementation.\n\nShow S09 in “paused_audit” after a human stopped an authorized mail-AI run. This is not the default-off setup form and must not be combined with an unsubmitted configuration. Display “预审已暂停” and the reason “抽查发现一项明确待办未被提取”, referencing the safe local APP-002 source mail and the missed phrase “one current inventory photo” without inventing any additional request. Show a short audit trail with 操作人陈佳 and 10/17/2026 10:05 PT. Provide “查看抽查记录” and “提交重新批准”; do not auto-resume, auto-switch providers or models, silently reprocess mail, or promise improved accuracy. The reapproval conditions must require human review of affected items, confirmation of mailbox scope, and renewed explicit authorization. This independent historical state does not change the system-wide rule that Mail AI remains default off until explicitly authorized.\n\nUse fictional data dated 10/17/2026 PT and MM/DD/YYYY. Keep Alex Morgan · C001, Northline LLC, northline.example, and hello@northline.example consistent where relevant. Only gateway applications use 申请负责人; otherwise use 操作人. Mail stays safe local plain text with no remote content or link access. Do not add unsupported automation or engineering notes to the UI.",
+    "reference_kind": "base_id:S09; independent_authorized_history_snapshot",
+    "required_content": [
+      "paused_audit",
+      "预审已暂停",
+      "漏待办原因",
+      "人工抽查记录",
+      "重新批准条件",
+      "不自动切换模型"
+    ]
+  },
+  {
+    "id": "ES09",
+    "parent": "A03",
+    "title": "首次登录强制修改密码",
+    "prompt": "Create one static 1490x1056 desktop scene for ES09, “首次登录强制修改密码”, an essential state of A03. Use prompts/common-style.txt and the A03 surface as design references; do not assume a future PNG exists. Show one readable focal state, not a collage. This is an authorized phase-one static target, not proof of implementation.\n\nShow A03 immediately after first login, before any application route is available. The heading is “首次登录，请修改密码” with username “王磊” and role “普通用户”; “运营” may appear only as a duty note, never as a permission role. Include “新密码”, “确认新密码”, a compact password requirement list, and one primary action “保存新密码”. The only secondary action is “退出登录”. Do not show “返回应用”, cancel-to-dashboard, sidebar navigation, customer data, reset-by-email, administrator override, or a successful completion state. Validation space must be reserved below each field, but the main scene should show valid masked input using bullets, not a real password. State that existing sessions will be invalidated after a successful change, without claiming the save has occurred. Keep this forced path distinct from the voluntary A03 form, which may return to the application.\n\nUse fictional data dated 10/17/2026 PT and MM/DD/YYYY. Keep Alex Morgan · C001, Northline LLC, northline.example, and hello@northline.example consistent where relevant. Only gateway applications use 申请负责人; otherwise use 操作人. Mail stays safe local plain text with no remote content or link access. Do not add unsupported automation or engineering notes to the UI.",
+    "reference_kind": "base_id:A03; standalone_forced_auth_state",
+    "required_content": [
+      "首次登录标题",
+      "普通用户角色",
+      "密码与确认密码",
+      "保存新密码",
+      "退出登录",
+      "无返回应用入口"
+    ]
+  },
+  {
+    "id": "ES10",
+    "parent": "O-A05",
+    "title": "远端对象已删除的并发冲突",
+    "prompt": "Create one static 1490x1056 desktop scene for ES10, “远端对象已删除的并发冲突”, an essential state of O-A05. Use prompts/common-style.txt and the O-A05 surface as design references; do not assume a future PNG exists. Show one readable focal state, not a collage. This is an authorized phase-one static target, not proof of implementation.\n\nShow the existing O-A05 conflict dialog over a recognizable editor after the remote object was deleted while the local form remained open. The dialog title is “记录已被删除” and the status text says “无法覆盖保存，也不会重新创建对象”. Show a concise local edit summary, the remote deletion event, 操作人陈佳, and 10/17/2026 10:22 PT. The only actions are “比较”, “重新读取”, and “取消”. Do not offer any additional export, retry, restore, or overwrite action that could resurrect the deleted object. “比较” may reveal the local draft beside the deletion event, but it is inspection only. “重新读取” returns to the authoritative not-found state; “取消” leaves the dialog without saving. Treat this as a future static variant of O-A05, not an existing PNG or implemented handler.\n\nUse fictional data dated 10/17/2026 PT and MM/DD/YYYY. Keep Alex Morgan · C001, Northline LLC, northline.example, and hello@northline.example consistent where relevant. Only gateway applications use 申请负责人; otherwise use 操作人. Mail stays safe local plain text with no remote content or link access. Do not add unsupported automation or engineering notes to the UI.",
+    "reference_kind": "base_id:O-A05; existing_conflict_visual_reference; future_state_variant",
+    "required_content": [
+      "记录已被删除",
+      "本地编辑摘要",
+      "远端删除事件",
+      "比较",
+      "重新读取",
+      "取消",
+      "禁止覆盖或复活"
+    ]
+  }
+]

@@ -1,0 +1,54 @@
+{
+  "projectId": "9334146681510666234",
+  "title": "智能通讯录系统",
+  "deviceType": "MOBILE",
+  "Last Sync Time": "2026-10-18T08:18:45.910Z",
+  "screens": {
+    "405b27e1eeec43c897505a28ac2fce54": {
+      "id": "405b27e1eeec43c897505a28ac2fce54",
+      "label": "通话记录 - 最近通话",
+      "sourceScreen": "projects/9334146681510666234/screens/405b27e1eeec43c897505a28ac2fce54",
+      "width": "780",
+      "height": "1768",
+      "canvasPosition": {
+        "x": 2386,
+        "y": 0
+      }
+    },
+    "51ee07a503694f048f8928485b2ff981": {
+      "id": "51ee07a503694f048f8928485b2ff981",
+      "label": "通讯录 - 联系人列表",
+      "sourceScreen": "projects/9334146681510666234/screens/51ee07a503694f048f8928485b2ff981",
+      "width": "780",
+      "height": "3070",
+      "canvasPosition": {
+        "x": 1478,
+        "y": 0
+      }
+    },
+    "aa3d05228f4541bb91feef3fb85bd23d": {
+      "id": "aa3d05228f4541bb91feef3fb85bd23d",
+      "label": "新建联系人",
+      "sourceScreen": "projects/9334146681510666234/screens/aa3d05228f4541bb91feef3fb85bd23d",
+      "width": "780",
+      "height": "2674",
+      "canvasPosition": {
+        "x": 1932,
+        "y": 0
+      }
+    },
+    "b30596e03690472da8d3147affdc5432": {
+      "id": "b30596e03690472da8d3147affdc5432",
+      "label": "联系人详情 - 张伟",
+      "sourceScreen": "projects/9334146681510666234/screens/b30596e03690472da8d3147affdc5432",
+      "width": "780",
+      "height": "3406",
+      "canvasPosition": {
+        "x": 1024,
+        "y": 0
+      }
+    }
+  },
+  "designSystem": "assets/a789807ea13f47dbb36708da22745339",
+  "sourceMode": "Existing project read-only"
+}

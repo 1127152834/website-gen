@@ -1,0 +1,1448 @@
+{
+  "copies": 180,
+  "unique_sources": 179,
+  "copied_at": "2026-10-18T04:06:28.2464464-07:00",
+  "items": [
+    {
+      "source_sha256": "3CE62A5609DCC158225BF5A926E8C3F0A38F1D10D6167B23CA1E11ABB6FE602A",
+      "destination_sha256": "3CE62A5609DCC158225BF5A926E8C3F0A38F1D10D6167B23CA1E11ABB6FE602A",
+      "source": "F:/projects/website-gen/docs/design/group-01-customer-dossier/C01-list-preview-v4.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/01-客户列表-搜索与快速查看.png",
+      "id": "C01"
+    },
+    {
+      "source_sha256": "C609E37D3A2C61B2AAE69A002B67A193D8AAEF633D68AB36155DFFBB75EFDE46",
+      "destination_sha256": "C609E37D3A2C61B2AAE69A002B67A193D8AAEF633D68AB36155DFFBB75EFDE46",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/C02-v4.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/02-客户档案-资料总览.png",
+      "id": "C02"
+    },
+    {
+      "source_sha256": "828E965458F590916F694A82E0351BF7FCAAE777E171ABAA60AD246173E2955C",
+      "destination_sha256": "828E965458F590916F694A82E0351BF7FCAAE777E171ABAA60AD246173E2955C",
+      "source": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C12-batch-upload-v4.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/03-客户建档-上传驾照正面.png",
+      "id": "C12"
+    },
+    {
+      "source_sha256": "03512C4BC9787C8DAA11BCEC04CF88E059A8D1D377F6018E266AE48E630C6EAD",
+      "destination_sha256": "03512C4BC9787C8DAA11BCEC04CF88E059A8D1D377F6018E266AE48E630C6EAD",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/C13-recognition-review-v4.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/04-客户建档-核对驾照识别结果.png",
+      "id": "C13"
+    },
+    {
+      "source_sha256": "7939202CBD54605B1602F2484D388506E8C3F793ED23870B1CFCAF8041EDCAE3",
+      "destination_sha256": "7939202CBD54605B1602F2484D388506E8C3F793ED23870B1CFCAF8041EDCAE3",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/C14-creation-results-v3.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/05-客户建档-查看建档结果.png",
+      "id": "C14"
+    },
+    {
+      "source_sha256": "0588D8B445E47F54C2397B97EFB9F024630D71F191CC7B2A9BD993537722AB7B",
+      "destination_sha256": "0588D8B445E47F54C2397B97EFB9F024630D71F191CC7B2A9BD993537722AB7B",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/O-C02-duplicate-v2.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/06-客户建档-重复驾照或同名客户处理.png",
+      "id": "O-C02"
+    },
+    {
+      "source_sha256": "87226AE0FE967E543DD060395ECB591A43B76F87C22C71E43B1FC9C235086384",
+      "destination_sha256": "87226AE0FE967E543DD060395ECB591A43B76F87C22C71E43B1FC9C235086384",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/O-C03-differences-v2.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/07-客户建档-确认资料差异侧栏.png",
+      "id": "O-C03"
+    },
+    {
+      "source_sha256": "20F1CD8827537943F84B50F6E7C6FAF5C60F72CC89A1AA28B53EAE8D5590B951",
+      "destination_sha256": "20F1CD8827537943F84B50F6E7C6FAF5C60F72CC89A1AA28B53EAE8D5590B951",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/C12-upload-states-v2.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/08-客户建档-部分上传成功与失败.png",
+      "id": "C12-upload-states"
+    },
+    {
+      "source_sha256": "8ED27D2F12152EFE9323E41DCC66C6D2A074F2A905519658350E293CB1C686C1",
+      "destination_sha256": "8ED27D2F12152EFE9323E41DCC66C6D2A074F2A905519658350E293CB1C686C1",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/C13-manual-transcription-v2.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/09-客户建档-识别失败后人工录入.png",
+      "id": "C13-manual-transcription"
+    },
+    {
+      "source_sha256": "90322C656C78A081D532113BF6156358D774B0358605A8DBE45FA0300F155A72",
+      "destination_sha256": "90322C656C78A081D532113BF6156358D774B0358605A8DBE45FA0300F155A72",
+      "source": "F:/projects/website-gen/docs/design/customer-management-completion-v1/01-onboarding/C14-unknown-result-v1.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/10-客户建档-提交结果暂不确定.png",
+      "id": "C14-unknown-result"
+    },
+    {
+      "source_sha256": "461FD963D169852C4558EAD342FE7EEAB55853FEE885E25B743F187FAD0A9999",
+      "destination_sha256": "461FD963D169852C4558EAD342FE7EEAB55853FEE885E25B743F187FAD0A9999",
+      "source": "F:/projects/website-gen/docs/design/group-01-customer-dossier/C03-personal-v3.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/11-个人资料-基本信息与两个地址.png",
+      "id": "C03"
+    },
+    {
+      "source_sha256": "5FFDE99DF45F793404BC00B21BE68EC62F665095065BB8E9E2F6A6AF33BE9FAB",
+      "destination_sha256": "5FFDE99DF45F793404BC00B21BE68EC62F665095065BB8E9E2F6A6AF33BE9FAB",
+      "source": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C04-personal-edit-v3.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/12-个人资料-编辑侧栏.png",
+      "id": "O-C04-personal"
+    },
+    {
+      "source_sha256": "CBDE693FCA6E014F2097019C4CBE48212EA4EA4A0FCCD355AA04BE176B41DD3C",
+      "destination_sha256": "CBDE693FCA6E014F2097019C4CBE48212EA4EA4A0FCCD355AA04BE176B41DD3C",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C04-company-ui-v3.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/13-企业资料-企业信息与税号.png",
+      "id": "C04"
+    },
+    {
+      "source_sha256": "C88A4019D3499340C2D6A43928D043894EC09999FACE9F381A08645AD97F9667",
+      "destination_sha256": "C88A4019D3499340C2D6A43928D043894EC09999FACE9F381A08645AD97F9667",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/support/O-C04-company-edit-v2.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/14-企业资料-编辑侧栏.png",
+      "id": "O-C04-company"
+    },
+    {
+      "source_sha256": "3EA9715FABA58CA5F4CAD147B688F9F1792C6A01D8E995C6466E9E6C05AE0F82",
+      "destination_sha256": "3EA9715FABA58CA5F4CAD147B688F9F1792C6A01D8E995C6466E9E6C05AE0F82",
+      "source": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C05-company-status-v2.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/15-企业资料-更新企业办理状态.png",
+      "id": "O-C05"
+    },
+    {
+      "source_sha256": "1E5656822E6CF3CD26636A13511EDD86E7076E313CCB3A4597037B47CB78071D",
+      "destination_sha256": "1E5656822E6CF3CD26636A13511EDD86E7076E313CCB3A4597037B47CB78071D",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C05-bank-ui-v3.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/16-银行资料-账户信息与银行文件.png",
+      "id": "C05"
+    },
+    {
+      "source_sha256": "6E6AC2A8467C89DBF6BF9A043F83274358C12529ECC324C8DB2198E61112D784",
+      "destination_sha256": "6E6AC2A8467C89DBF6BF9A043F83274358C12529ECC324C8DB2198E61112D784",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/support/O-C04-bank-edit-v2.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/17-银行资料-编辑侧栏.png",
+      "id": "O-C04-bank"
+    },
+    {
+      "source_sha256": "6FFD1C858CEF8B2101EF79D5C40762757CCD8D5B5DF130955C8B6BA6B29D62BA",
+      "destination_sha256": "6FFD1C858CEF8B2101EF79D5C40762757CCD8D5B5DF130955C8B6BA6B29D62BA",
+      "source": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C07-upload-v2.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/18-资料附件-上传文件侧栏.png",
+      "id": "O-C07"
+    },
+    {
+      "source_sha256": "BD7AD2BC7A71578873D0DDCADC3D4D9FAB9713988C77CECAC550274DBB226360",
+      "destination_sha256": "BD7AD2BC7A71578873D0DDCADC3D4D9FAB9713988C77CECAC550274DBB226360",
+      "source": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C08-preview-v2.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/19-资料附件-打开当前文件.png",
+      "id": "O-C08"
+    },
+    {
+      "source_sha256": "19EACC7399C0540A2756D87D21F40312F215D3D9F309E4F9B7B32E5F76BF52A6",
+      "destination_sha256": "19EACC7399C0540A2756D87D21F40312F215D3D9F309E4F9B7B32E5F76BF52A6",
+      "source": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C09-replace-v2.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/20-资料附件-替换文件确认.png",
+      "id": "O-C09"
+    },
+    {
+      "source_sha256": "8469D5B03BE4C99421B2C0350014697C911D4B1462882E32778013FD2EFC8D03",
+      "destination_sha256": "8469D5B03BE4C99421B2C0350014697C911D4B1462882E32778013FD2EFC8D03",
+      "source": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C10-remove-v2.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/21-资料附件-移除文件确认.png",
+      "id": "O-C10"
+    },
+    {
+      "source_sha256": "6CCFEA0AC7912DE73FFD7240287EBBC4BC5CA38AD12DDDB850BD16E6F7219219",
+      "destination_sha256": "6CCFEA0AC7912DE73FFD7240287EBBC4BC5CA38AD12DDDB850BD16E6F7219219",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/support/O-C07-upload-states-v1.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/22-资料附件-部分上传成功与失败.png",
+      "id": "O-C07-upload-states"
+    },
+    {
+      "source_sha256": "D2CCF24DA343691B210C4FD6D2C564E69613F4D80EA953CE30C11435C4ABF7A2",
+      "destination_sha256": "D2CCF24DA343691B210C4FD6D2C564E69613F4D80EA953CE30C11435C4ABF7A2",
+      "source": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C08-preview-unavailable-v1.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/23-资料附件-文件读取失败.png",
+      "id": "O-C08-preview-unavailable"
+    },
+    {
+      "source_sha256": "494D2821A73471D0459EA0DF782EFB6F042C2A18DD70C07663CB927343B909A3",
+      "destination_sha256": "494D2821A73471D0459EA0DF782EFB6F042C2A18DD70C07663CB927343B909A3",
+      "source": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C08-preview-unsupported-v1.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/24-资料附件-格式不支持直接预览.png",
+      "id": "O-C08-preview-unsupported"
+    },
+    {
+      "source_sha256": "4EBDC1E774FC392E50CA1088FB155C5629B5A6A82B29064E9701733BB786ACAA",
+      "destination_sha256": "4EBDC1E774FC392E50CA1088FB155C5629B5A6A82B29064E9701733BB786ACAA",
+      "source": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C09-replace-failure-v1.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/25-资料附件-替换文件失败.png",
+      "id": "O-C09-replace-failure"
+    },
+    {
+      "source_sha256": "C4036A387F7C0331822F8F1F8779B6A8388ACCE2F3B1207B1A11549426197113",
+      "destination_sha256": "C4036A387F7C0331822F8F1F8779B6A8388ACCE2F3B1207B1A11549426197113",
+      "source": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C10-remove-failure-v1.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/26-资料附件-移除文件失败.png",
+      "id": "O-C10-remove-failure"
+    },
+    {
+      "source_sha256": "17C6FD7B3DEE0C99317D928E549173A9BADC767DA70A6138F1554E10DFF917FD",
+      "destination_sha256": "17C6FD7B3DEE0C99317D928E549173A9BADC767DA70A6138F1554E10DFF917FD",
+      "source": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C04-save-failure-v1.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/27-资料编辑-保存失败.png",
+      "id": "O-C04-save-failure"
+    },
+    {
+      "source_sha256": "D77C945427002CC16F39CBC25FA9330A8F4D26A2E725123A5CB6A0B1770CC662",
+      "destination_sha256": "D77C945427002CC16F39CBC25FA9330A8F4D26A2E725123A5CB6A0B1770CC662",
+      "source": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/C07-website-mail-v1.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/28-网站与邮箱-查看客户关联.png",
+      "id": "C07"
+    },
+    {
+      "source_sha256": "3E7B2C945FD5B19F2765CBD026295B96D81C75859D56B905C228C02D8E9B59F6",
+      "destination_sha256": "3E7B2C945FD5B19F2765CBD026295B96D81C75859D56B905C228C02D8E9B59F6",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-C11-link-site-v2.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/29-网站与邮箱-关联或更换已有网站.png",
+      "id": "O-C11"
+    },
+    {
+      "source_sha256": "F2AEEEC12C2BD91741268E81ED88EABF99B2DCD4270C4A490E991FF827F56193",
+      "destination_sha256": "F2AEEEC12C2BD91741268E81ED88EABF99B2DCD4270C4A490E991FF827F56193",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-C12-link-mail-v2.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/30-网站与邮箱-关联或更换商业邮箱.png",
+      "id": "O-C12"
+    },
+    {
+      "source_sha256": "5B31BE99D308AE35AF0619B8DCDE85F128F36FEE1158B3BD7FA586C062843101",
+      "destination_sha256": "5B31BE99D308AE35AF0619B8DCDE85F128F36FEE1158B3BD7FA586C062843101",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-C13-unlink-confirm-v2.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/31-网站与邮箱-解除关联确认.png",
+      "id": "O-C13"
+    },
+    {
+      "source_sha256": "E8688047B9C46354CE0EC49DE4B3473A7C9009D5ADC861A45461D6883F86F4E1",
+      "destination_sha256": "E8688047B9C46354CE0EC49DE4B3473A7C9009D5ADC861A45461D6883F86F4E1",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-C14-public-info-v2.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/32-网站与邮箱-核对网站公开信息.png",
+      "id": "O-C14"
+    },
+    {
+      "source_sha256": "623B77F127B0568C2C454D4771EE65E73C884FCBEA18E4BF75762FC40400D1A3",
+      "destination_sha256": "623B77F127B0568C2C454D4771EE65E73C884FCBEA18E4BF75762FC40400D1A3",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/C08-review-v2.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/33-资料审核-查看检查结果.png",
+      "id": "C08"
+    },
+    {
+      "source_sha256": "C31F479182A431BED498C97A7DEBF01D141168015F259C2DD1A2AEFAAA5226F8",
+      "destination_sha256": "C31F479182A431BED498C97A7DEBF01D141168015F259C2DD1A2AEFAAA5226F8",
+      "source": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-G01-review-scope-v1.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/34-资料审核-确认本次检查范围.png",
+      "id": "O-G01"
+    },
+    {
+      "source_sha256": "6D2CB3A282728D40AC4ED0CC78C75D218EF10D5DBF0EB07E1B2EDD5139078DB3",
+      "destination_sha256": "6D2CB3A282728D40AC4ED0CC78C75D218EF10D5DBF0EB07E1B2EDD5139078DB3",
+      "source": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-G02-review-running-v1.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/35-资料审核-查看检查进度.png",
+      "id": "O-G02"
+    },
+    {
+      "source_sha256": "C16A17676F912FD74912AF1208EB23721A6C838A0C41008DAD7D4D88DABEE71C",
+      "destination_sha256": "C16A17676F912FD74912AF1208EB23721A6C838A0C41008DAD7D4D88DABEE71C",
+      "source": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-G03-finding-detail-v1.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/36-资料审核-查看问题详情.png",
+      "id": "O-G03"
+    },
+    {
+      "source_sha256": "DAF8977A72192B8ED7D12DF24277B5E74B2E548259C221E309BFCC426199BAE8",
+      "destination_sha256": "DAF8977A72192B8ED7D12DF24277B5E74B2E548259C221E309BFCC426199BAE8",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-personal-page1-ui-v2.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/37-操作人查询-个人资料第1页.png",
+      "id": "C10-personal-page1"
+    },
+    {
+      "source_sha256": "1A5C984AB085DAA0D9A170718F42AC8BD2C9E0E3D19BBD37EEE00FC354271A44",
+      "destination_sha256": "1A5C984AB085DAA0D9A170718F42AC8BD2C9E0E3D19BBD37EEE00FC354271A44",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-personal-page2-ui-v2.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/38-操作人查询-个人资料第2页.png",
+      "id": "C10-personal-page2"
+    },
+    {
+      "source_sha256": "7A99BFCEB49AB37006FA9EF52ED9782AAAE4D82B818A17CE853D9BBA7193497C",
+      "destination_sha256": "7A99BFCEB49AB37006FA9EF52ED9782AAAE4D82B818A17CE853D9BBA7193497C",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-company-ui-v2.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/39-操作人查询-企业资料.png",
+      "id": "C10-company"
+    },
+    {
+      "source_sha256": "B3115E20012CE31E912198DCBC7EE926A8D988DE68845B2198175B373438EEEE",
+      "destination_sha256": "B3115E20012CE31E912198DCBC7EE926A8D988DE68845B2198175B373438EEEE",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-bank-ui-v3.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/40-操作人查询-银行资料.png",
+      "id": "C10-bank"
+    },
+    {
+      "source_sha256": "F0BD3A554CEA687B168CAAD24EEBF4D3754BCBC1456EC211CD7565FDE9771E40",
+      "destination_sha256": "F0BD3A554CEA687B168CAAD24EEBF4D3754BCBC1456EC211CD7565FDE9771E40",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-actor-detail-ui-v2.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/41-操作人查询-单个字段详情.png",
+      "id": "C10-actor-detail"
+    },
+    {
+      "source_sha256": "EC83FCEAF39688E16EA5A2A14DA93A21A957BD1D4677996363E3D77F309A1C62",
+      "destination_sha256": "EC83FCEAF39688E16EA5A2A14DA93A21A957BD1D4677996363E3D77F309A1C62",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/support/O-C15-delete-confirm-v1.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/42-删除客户-确认影响范围.png",
+      "id": "O-C15"
+    },
+    {
+      "source_sha256": "93D49A72E487FC48AC324CDD5E8D88C94C273043FF28679DB61809976DB0D911",
+      "destination_sha256": "93D49A72E487FC48AC324CDD5E8D88C94C273043FF28679DB61809976DB0D911",
+      "source": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C16-delete-execution-v1.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/43-删除客户-查看执行结果.png",
+      "id": "O-C16"
+    },
+    {
+      "source_sha256": "2AAA3BA312518E961E4841DC62939B1806FEE89E00F41B0DAEBA06190FB651F1",
+      "destination_sha256": "2AAA3BA312518E961E4841DC62939B1806FEE89E00F41B0DAEBA06190FB651F1",
+      "source": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C01-empty-v1.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/44-客户列表-尚未建档.png",
+      "id": "C01-empty"
+    },
+    {
+      "source_sha256": "3FB4C56D8283D3FDD6493D8DC3F27E49E23A56F1D4EEF13FBD871C3FFDAEB11C",
+      "destination_sha256": "3FB4C56D8283D3FDD6493D8DC3F27E49E23A56F1D4EEF13FBD871C3FFDAEB11C",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C01-search-empty-ui-v2.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/45-客户列表-没有搜索结果.png",
+      "id": "C01-search-empty"
+    },
+    {
+      "source_sha256": "F637287CA810DA4DB61B59FC77B3A756BE5D039AD03238AD94A1DB1C4F6B3C4C",
+      "destination_sha256": "F637287CA810DA4DB61B59FC77B3A756BE5D039AD03238AD94A1DB1C4F6B3C4C",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C01-loading-ui-v2.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/46-客户列表-正在加载.png",
+      "id": "C01-loading"
+    },
+    {
+      "source_sha256": "373BC127AC434854A2293540217765F345FACF97D69AAE64F3459F2C7D3E6143",
+      "destination_sha256": "373BC127AC434854A2293540217765F345FACF97D69AAE64F3459F2C7D3E6143",
+      "source": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C01-read-failure-v1.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/47-客户列表-快速查看读取失败.png",
+      "id": "C01-read-failure"
+    },
+    {
+      "source_sha256": "58329AC11AC4442C08C50957FBAF14C25F52E81D4A5223DB385B8048007AF44E",
+      "destination_sha256": "58329AC11AC4442C08C50957FBAF14C25F52E81D4A5223DB385B8048007AF44E",
+      "source": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C02-not-found-v1.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/48-客户档案-记录不存在.png",
+      "id": "C02-not-found"
+    },
+    {
+      "source_sha256": "A9519237542731B9121DF18F17AD64A5EB1304268D1152093F3D986172BB662F",
+      "destination_sha256": "A9519237542731B9121DF18F17AD64A5EB1304268D1152093F3D986172BB662F",
+      "source": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C02-forbidden-v1.png",
+      "equal": true,
+      "destination": "01-客户档案与资料/49-客户档案-没有查看权限.png",
+      "id": "C02-forbidden"
+    },
+    {
+      "source_sha256": "11E856A51088253DA094D44D6B27E95B62ADDB6153ADC2E00CBCDBDCC624EF7D",
+      "destination_sha256": "11E856A51088253DA094D44D6B27E95B62ADDB6153ADC2E00CBCDBDCC624EF7D",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W01-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/01-建站总览-查看网站建设情况.png",
+      "id": "W01"
+    },
+    {
+      "source_sha256": "0DC60F0AF37703A57B5D8CB05CABEEFE4DD772BB078C1C40DB4F3A5633AE0B4B",
+      "destination_sha256": "0DC60F0AF37703A57B5D8CB05CABEEFE4DD772BB078C1C40DB4F3A5633AE0B4B",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W02-CUSTOMER-PICKER-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/02-新建网站-选择客户侧栏.png",
+      "id": "W02-CUSTOMER-PICKER"
+    },
+    {
+      "source_sha256": "32C7F005FF6D688FCA8A2BB2CDDF1DAAA15E11395D83E826841BF1005252670B",
+      "destination_sha256": "32C7F005FF6D688FCA8A2BB2CDDF1DAAA15E11395D83E826841BF1005252670B",
+      "source": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/W02-option-03.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/03-新建网站第1步-客户与经营资料.png",
+      "id": "W02"
+    },
+    {
+      "source_sha256": "D346144523D41233B9CF6434472AA22A6460D228D548E052745CD8A66932DA8B",
+      "destination_sha256": "D346144523D41233B9CF6434472AA22A6460D228D548E052745CD8A66932DA8B",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W02-LONG-v3.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/04-新建网站第1步-多客户工作表.png",
+      "id": "W02-LONG"
+    },
+    {
+      "source_sha256": "CE0FCC7052FC017FD3733CC0EC6D7A9139C7E772722446DBAEEC46379FA4ECDE",
+      "destination_sha256": "CE0FCC7052FC017FD3733CC0EC6D7A9139C7E772722446DBAEEC46379FA4ECDE",
+      "source": "F:/projects/website-gen/docs/design/group-03-website-management/W03-site-configuration-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/05-新建网站第2步-站点配置.png",
+      "id": "W03"
+    },
+    {
+      "source_sha256": "38A3AD1C40DC2C6238C76C9DFB21E8BB5049A797D398F8559B9FFF34D155F436",
+      "destination_sha256": "38A3AD1C40DC2C6238C76C9DFB21E8BB5049A797D398F8559B9FFF34D155F436",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W03-RESOURCE-ERROR-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/06-站点配置-资源读取失败.png",
+      "id": "W03-RESOURCE-ERROR"
+    },
+    {
+      "source_sha256": "4FA59973F3CF9D38E066B5F37035ABEA004304AD91316F69730856896147BE2D",
+      "destination_sha256": "4FA59973F3CF9D38E066B5F37035ABEA004304AD91316F69730856896147BE2D",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W03-NO-RESOURCE-v2.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/07-站点配置-暂无可用资源.png",
+      "id": "W03-NO-RESOURCE"
+    },
+    {
+      "source_sha256": "AA7BC2F11695B8385F2A5F62FDA124D9523C2C154BFF0C9D760C46C326749ACE",
+      "destination_sha256": "AA7BC2F11695B8385F2A5F62FDA124D9523C2C154BFF0C9D760C46C326749ACE",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-W01-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/08-站点配置-导入配置文件结果.png",
+      "id": "O-W01"
+    },
+    {
+      "source_sha256": "60285E7015E91CD209D04922166365D3B955AA3C1267F9418E354B34682BC71C",
+      "destination_sha256": "60285E7015E91CD209D04922166365D3B955AA3C1267F9418E354B34682BC71C",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-W02-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/09-新建网站-移出本次建站项确认.png",
+      "id": "O-W02"
+    },
+    {
+      "source_sha256": "EC9934BBAF5F3BF1B58A70D3B97A78F9BEB01F850A83935888488DF3DCFCC447",
+      "destination_sha256": "EC9934BBAF5F3BF1B58A70D3B97A78F9BEB01F850A83935888488DF3DCFCC447",
+      "source": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/W04-option-01.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/10-新建网站第3步-确认启动.png",
+      "id": "W04"
+    },
+    {
+      "source_sha256": "65B2EC4E9835B0938FF65C90D6589ABD4A3F20760B03AA9A985D6A0BDD06D952",
+      "destination_sha256": "65B2EC4E9835B0938FF65C90D6589ABD4A3F20760B03AA9A985D6A0BDD06D952",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W04-LONG-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/11-确认启动-多客户长清单.png",
+      "id": "W04-LONG"
+    },
+    {
+      "source_sha256": "B36DDE284CE47AFB6A18358A87ED857C2319816C9E42EC9D034B5AFC28B9E6EC",
+      "destination_sha256": "B36DDE284CE47AFB6A18358A87ED857C2319816C9E42EC9D034B5AFC28B9E6EC",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-W03-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/12-确认启动-检查必要条件.png",
+      "id": "O-W03"
+    },
+    {
+      "source_sha256": "6B4F815DDDA06BF4A4A0770B850D425E4D98E408C07CC61F39E5AD0D37E835FC",
+      "destination_sha256": "6B4F815DDDA06BF4A4A0770B850D425E4D98E408C07CC61F39E5AD0D37E835FC",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W04-SUBMISSION-UNKNOWN-v2.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/13-确认启动-提交结果暂不确定.png",
+      "id": "W04-SUBMISSION-UNKNOWN"
+    },
+    {
+      "source_sha256": "6B95E18A79A39FBF38F0FC3F2B9AB100D2DAA931ED59F895AA955466B3B82385",
+      "destination_sha256": "6B95E18A79A39FBF38F0FC3F2B9AB100D2DAA931ED59F895AA955466B3B82385",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W05-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/14-建站批次-批次列表.png",
+      "id": "W05"
+    },
+    {
+      "source_sha256": "1441EAE4CAC8020285EE50EAF92083132DEC55DC82469A93CE3A04CE164F996B",
+      "destination_sha256": "1441EAE4CAC8020285EE50EAF92083132DEC55DC82469A93CE3A04CE164F996B",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W06-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/15-建站批次-批次详情.png",
+      "id": "W06"
+    },
+    {
+      "source_sha256": "53E2A35BE63B55BAF327FD47992C2FF4F8F86D9CBD9A322F697D43F218B0FD47",
+      "destination_sha256": "53E2A35BE63B55BAF327FD47992C2FF4F8F86D9CBD9A322F697D43F218B0FD47",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-W06-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/16-建站批次-运行步骤与日志.png",
+      "id": "O-W06"
+    },
+    {
+      "source_sha256": "30E983706446BEA4512F8831E42350F6CA6AB7CF3B2560F71E235FE1EBB0D7A1",
+      "destination_sha256": "30E983706446BEA4512F8831E42350F6CA6AB7CF3B2560F71E235FE1EBB0D7A1",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-W04-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/17-建站批次-重试确认与反馈.png",
+      "id": "O-W04"
+    },
+    {
+      "source_sha256": "FF79ECC9F65F276D7D372A4BDCF7070E5282F33ABEF3B3F5944E27E09E77C511",
+      "destination_sha256": "FF79ECC9F65F276D7D372A4BDCF7070E5282F33ABEF3B3F5944E27E09E77C511",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W07-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/18-站点管理-网站列表.png",
+      "id": "W07"
+    },
+    {
+      "source_sha256": "B5FB4BE961094A199B9651D81DA7FDC24CAFE257FCC67AC2E39BBFC4EDD5D030",
+      "destination_sha256": "B5FB4BE961094A199B9651D81DA7FDC24CAFE257FCC67AC2E39BBFC4EDD5D030",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W08-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/19-站点详情-网站概况.png",
+      "id": "W08"
+    },
+    {
+      "source_sha256": "C104872677F2B313724B3DFE44447D8863BD57C54E3B23DFD574B0A03773C6F5",
+      "destination_sha256": "C104872677F2B313724B3DFE44447D8863BD57C54E3B23DFD574B0A03773C6F5",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W09-v2.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/20-站点详情-AI对话.png",
+      "id": "W09"
+    },
+    {
+      "source_sha256": "46DD1F041A04232BAEB90E65B3B1B9701DB1D72531D59A744736CF426339879D",
+      "destination_sha256": "46DD1F041A04232BAEB90E65B3B1B9701DB1D72531D59A744736CF426339879D",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-W07-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/21-站点对话-开始新对话确认.png",
+      "id": "O-W07"
+    },
+    {
+      "source_sha256": "C14F0C47D891D9DF83161A2D26416F9838D54584D29549032E0ACCE5C69C8A02",
+      "destination_sha256": "C14F0C47D891D9DF83161A2D26416F9838D54584D29549032E0ACCE5C69C8A02",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W10-v2.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/22-站点详情-商业邮箱与网站发信.png",
+      "id": "W10"
+    },
+    {
+      "source_sha256": "42EC7372EE42CF7CBA57B3670A4B0A9C34A1CA4770319D60850CA22F6670409D",
+      "destination_sha256": "42EC7372EE42CF7CBA57B3670A4B0A9C34A1CA4770319D60850CA22F6670409D",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-W13-v2.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/23-网站发信-邮箱修复与发信启用确认.png",
+      "id": "O-W13"
+    },
+    {
+      "source_sha256": "E50D7107F77BA288C76A5298553322BE7DA79E99966A3066E2342F9FB32AC250",
+      "destination_sha256": "E50D7107F77BA288C76A5298553322BE7DA79E99966A3066E2342F9FB32AC250",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-W14-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/24-网站发信-发送测试邮件.png",
+      "id": "O-W14"
+    },
+    {
+      "source_sha256": "064CC43D5A3D7BD0389832971A2506C9BA77406F7A7A45BB159E10DE4152EC4F",
+      "destination_sha256": "064CC43D5A3D7BD0389832971A2506C9BA77406F7A7A45BB159E10DE4152EC4F",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-W14-SEND-UNKNOWN-v2.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/25-网站发信-测试邮件发送结果未知.png",
+      "id": "O-W14-SEND-UNKNOWN"
+    },
+    {
+      "source_sha256": "A013DA9F3A2C32FCD084BF6C90DF76AF1CF416FBB14B83F3B76464FF17007428",
+      "destination_sha256": "A013DA9F3A2C32FCD084BF6C90DF76AF1CF416FBB14B83F3B76464FF17007428",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W11-v2.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/26-站点详情-网站变更记录.png",
+      "id": "W11"
+    },
+    {
+      "source_sha256": "5CF1AEE73A29E61DCCD4D9F81749C4F058FF15DBB1A6237D1FB39F3AE41EB5CA",
+      "destination_sha256": "5CF1AEE73A29E61DCCD4D9F81749C4F058FF15DBB1A6237D1FB39F3AE41EB5CA",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-W08-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/27-网站变更-查看改动详情.png",
+      "id": "O-W08"
+    },
+    {
+      "source_sha256": "19B02D8C93E10ED35282C06788C37594C3145357A736863FE1E8505209E03560",
+      "destination_sha256": "19B02D8C93E10ED35282C06788C37594C3145357A736863FE1E8505209E03560",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-W09-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/28-网站变更-整体恢复确认.png",
+      "id": "O-W09"
+    },
+    {
+      "source_sha256": "AB18317CE9A67B13C15F199303557453DAE67FFC95D211DA290BB102B19B9E91",
+      "destination_sha256": "AB18317CE9A67B13C15F199303557453DAE67FFC95D211DA290BB102B19B9E91",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-W09-LATER-CONFLICT-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/29-网站变更-恢复被后续修改阻止.png",
+      "id": "O-W09-LATER-CONFLICT"
+    },
+    {
+      "source_sha256": "F84C533545444852E9BEE984F65118C6C0CE76650260F5B8538257C16CCAC042",
+      "destination_sha256": "F84C533545444852E9BEE984F65118C6C0CE76650260F5B8538257C16CCAC042",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-W10-v2.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/30-网站变更-取消定时恢复确认.png",
+      "id": "O-W10"
+    },
+    {
+      "source_sha256": "DF17C887E411BAE3E66FCFB54B98E89E7916895729035BADF3B4A7E109E5AAAF",
+      "destination_sha256": "DF17C887E411BAE3E66FCFB54B98E89E7916895729035BADF3B4A7E109E5AAAF",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W12-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/31-站点详情-网站复核.png",
+      "id": "W12"
+    },
+    {
+      "source_sha256": "CE3F72BB51AA8719FF55DF6571C884C5C337B956A5D8B63A39E5B04AFF2064D5",
+      "destination_sha256": "CE3F72BB51AA8719FF55DF6571C884C5C337B956A5D8B63A39E5B04AFF2064D5",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-W05-v3.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/32-网站复核-上线前检查提示.png",
+      "id": "O-W05"
+    },
+    {
+      "source_sha256": "7C93C7D40E6497DB2EEE3D63FCBA9A179AD489AA651D35DAB6A055D19B25E725",
+      "destination_sha256": "7C93C7D40E6497DB2EEE3D63FCBA9A179AD489AA651D35DAB6A055D19B25E725",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-W05-READ-ERROR-v3.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/33-网站复核-上线前检查读取失败.png",
+      "id": "O-W05-READ-ERROR"
+    },
+    {
+      "source_sha256": "E6B54EE8074781ACFFBBE366820E39B4359735960F584B04F712CC599A94BDFB",
+      "destination_sha256": "E6B54EE8074781ACFFBBE366820E39B4359735960F584B04F712CC599A94BDFB",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-W11-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/34-网站复核-修复与复核进度.png",
+      "id": "O-W11"
+    },
+    {
+      "source_sha256": "B2D126F663D86A611156CB08430830BE9FAB61B589F3CF35406332BA7D04B23C",
+      "destination_sha256": "B2D126F663D86A611156CB08430830BE9FAB61B589F3CF35406332BA7D04B23C",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-W11-MIXED-RESULT-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/35-网站复核-部分修复成功与人工处理项.png",
+      "id": "O-W11-MIXED-RESULT"
+    },
+    {
+      "source_sha256": "66107444B153F092F9F81B419809A3B237AEC1718C92CFA74A73B507D8F9744A",
+      "destination_sha256": "66107444B153F092F9F81B419809A3B237AEC1718C92CFA74A73B507D8F9744A",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-W12-v1.png",
+      "equal": true,
+      "destination": "02-网站建设与站点管理/36-网站复核-放大查看问题证据.png",
+      "id": "O-W12"
+    },
+    {
+      "source_sha256": "99B9E390168A008137F6E7AA062E2BBCBC314EFFC8661CD493008FEA06636082",
+      "destination_sha256": "99B9E390168A008137F6E7AA062E2BBCBC314EFFC8661CD493008FEA06636082",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/G01-v3.png",
+      "equal": true,
+      "destination": "03-支付网关申请/01-网关申请-全部申请工作台.png",
+      "id": "G01"
+    },
+    {
+      "source_sha256": "C65571154C8E93870D98C9B24C90D682320FC9D6842D097DCC0E8208EC2F28A7",
+      "destination_sha256": "C65571154C8E93870D98C9B24C90D682320FC9D6842D097DCC0E8208EC2F28A7",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/C09-idle-v4.png",
+      "equal": true,
+      "destination": "03-支付网关申请/02-客户网关面板-尚无进行中的申请.png",
+      "id": "C09-idle"
+    },
+    {
+      "source_sha256": "60238DF015109CC0ADB85B77F6F9D963B0C43689B043D57ACF6EDF4901F2831F",
+      "destination_sha256": "60238DF015109CC0ADB85B77F6F9D963B0C43689B043D57ACF6EDF4901F2831F",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/C09-active-v4.png",
+      "equal": true,
+      "destination": "03-支付网关申请/03-客户网关面板-已有进行中的申请.png",
+      "id": "C09-active"
+    },
+    {
+      "source_sha256": "700AC5E4AB4542DEF4697AFF36D2D68956E5494DE50B33C857D8DB479AB0889C",
+      "destination_sha256": "700AC5E4AB4542DEF4697AFF36D2D68956E5494DE50B33C857D8DB479AB0889C",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/C09-current-proofs-v1.png",
+      "equal": true,
+      "destination": "03-支付网关申请/04-客户网关面板-管理当前补充证明.png",
+      "id": "C09-current-proofs"
+    },
+    {
+      "source_sha256": "9512D3C610A53B5005530B682358773857B38E853FE45FFC14B59BBD56EEF9C6",
+      "destination_sha256": "9512D3C610A53B5005530B682358773857B38E853FE45FFC14B59BBD56EEF9C6",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-G04-v4.png",
+      "equal": true,
+      "destination": "03-支付网关申请/05-开始申请-确认平台与申请负责人.png",
+      "id": "O-G04"
+    },
+    {
+      "source_sha256": "37DCBB81C0BE4D5BAF9C894FDC05A9D539E41AA1ED71AA5B598B9491C936DEF4",
+      "destination_sha256": "37DCBB81C0BE4D5BAF9C894FDC05A9D539E41AA1ED71AA5B598B9491C936DEF4",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-G04-concurrent-v2.png",
+      "equal": true,
+      "destination": "03-支付网关申请/06-开始申请-同时有人已启动申请.png",
+      "id": "O-G04-concurrent"
+    },
+    {
+      "source_sha256": "609FE0BD73A2A29A19D8A9EC0D80B65E87724C930C986FE82424E0E4BF397FA0",
+      "destination_sha256": "609FE0BD73A2A29A19D8A9EC0D80B65E87724C930C986FE82424E0E4BF397FA0",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-G04-unknown-v1.png",
+      "equal": true,
+      "destination": "03-支付网关申请/07-开始申请-申请与资料定稿保存结果未知.png",
+      "id": "O-G04-unknown"
+    },
+    {
+      "source_sha256": "8FE8B1021C2189EC394AF6202D57E38884ECBBEB30D46393E91629941063F6FF",
+      "destination_sha256": "8FE8B1021C2189EC394AF6202D57E38884ECBBEB30D46393E91629941063F6FF",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/G02-v3.png",
+      "equal": true,
+      "destination": "03-支付网关申请/08-申请详情-本次申请概览.png",
+      "id": "G02"
+    },
+    {
+      "source_sha256": "2F3474513E093693D979788103C47A7777CA30B22E74FABC4D34610FA824208B",
+      "destination_sha256": "2F3474513E093693D979788103C47A7777CA30B22E74FABC4D34610FA824208B",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/G02-snapshot-v2.png",
+      "equal": true,
+      "destination": "03-支付网关申请/09-申请详情-查看申请时保存的资料.png",
+      "id": "G02-snapshot"
+    },
+    {
+      "source_sha256": "DDC9E65ED8C85FD1B4A3BDE08A7819AE08F942CC603BE56FBC45CBFFB6962F9E",
+      "destination_sha256": "DDC9E65ED8C85FD1B4A3BDE08A7819AE08F942CC603BE56FBC45CBFFB6962F9E",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-G-snapshot-preview-v2.png",
+      "equal": true,
+      "destination": "03-支付网关申请/10-申请资料-打开定稿附件.png",
+      "id": "O-G-snapshot-preview"
+    },
+    {
+      "source_sha256": "B8836D4BF4A7E252F3C78F97FC08E40D8467A041BA870264F5A1C4AE7A676091",
+      "destination_sha256": "B8836D4BF4A7E252F3C78F97FC08E40D8467A041BA870264F5A1C4AE7A676091",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/G03-v2.png",
+      "equal": true,
+      "destination": "03-支付网关申请/11-申请详情-相关邮件与明确要求.png",
+      "id": "G03"
+    },
+    {
+      "source_sha256": "3C986767507F1B1AC2295B3A2C48D7761533297C6EEBE36538DAD9FEBD0144B1",
+      "destination_sha256": "3C986767507F1B1AC2295B3A2C48D7761533297C6EEBE36538DAD9FEBD0144B1",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-G07-v2.png",
+      "equal": true,
+      "destination": "03-支付网关申请/12-申请邮件-确认邮件所属申请.png",
+      "id": "O-G07"
+    },
+    {
+      "source_sha256": "39EF58F127B545EF2557154A1603E84FABD15DB943B2EE8E54C52708A28AEC43",
+      "destination_sha256": "39EF58F127B545EF2557154A1603E84FABD15DB943B2EE8E54C52708A28AEC43",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-G08-v2.png",
+      "equal": true,
+      "destination": "03-支付网关申请/13-申请要求-查看明确要求与处理记录.png",
+      "id": "O-G08"
+    },
+    {
+      "source_sha256": "4BE87C9C6A7134BDA11C2198E8067B4EFDC1D328703E1C7BD07D2614655B4DCB",
+      "destination_sha256": "4BE87C9C6A7134BDA11C2198E8067B4EFDC1D328703E1C7BD07D2614655B4DCB",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-G12-v2.png",
+      "equal": true,
+      "destination": "03-支付网关申请/14-申请要求-记录本次人工处理结果.png",
+      "id": "O-G12"
+    },
+    {
+      "source_sha256": "5D3E766FA4D36189FC70F8510E0AE123F65B9F579324E0B87866CAE766621FE0",
+      "destination_sha256": "5D3E766FA4D36189FC70F8510E0AE123F65B9F579324E0B87866CAE766621FE0",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/G04-v3.png",
+      "equal": true,
+      "destination": "03-支付网关申请/15-申请状态-状态变化与纠正记录.png",
+      "id": "G04"
+    },
+    {
+      "source_sha256": "5ADC9612FEC367EFFFF5A077AE0641EDBBDE7CB3D4B30D8464B755B9C779B88F",
+      "destination_sha256": "5ADC9612FEC367EFFFF5A077AE0641EDBBDE7CB3D4B30D8464B755B9C779B88F",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-G05-v3.png",
+      "equal": true,
+      "destination": "03-支付网关申请/16-申请状态-人工更新或纠正.png",
+      "id": "O-G05"
+    },
+    {
+      "source_sha256": "47329A4253F750B9FFE82EE03B4EBB4649EBA634936C2670AE61A0986496A8C2",
+      "destination_sha256": "47329A4253F750B9FFE82EE03B4EBB4649EBA634936C2670AE61A0986496A8C2",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-G05-approved-correction-result-v2.png",
+      "equal": true,
+      "destination": "03-支付网关申请/17-申请状态-唯一获批被纠正后的客户状态.png",
+      "id": "O-G05-approved-correction-result"
+    },
+    {
+      "source_sha256": "53D14DE6517B036277B347A60B857BE0D96EF948D98309092851A6CE3412FED4",
+      "destination_sha256": "53D14DE6517B036277B347A60B857BE0D96EF948D98309092851A6CE3412FED4",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/G04-new-email-after-correction-v1.png",
+      "equal": true,
+      "destination": "03-支付网关申请/18-申请状态-人工纠正后收到新邮件.png",
+      "id": "G04-new-email-after-correction"
+    },
+    {
+      "source_sha256": "5B88946566B0190BD2D5CDC4931586614A4012430FCA3265F00CD793460BB613",
+      "destination_sha256": "5B88946566B0190BD2D5CDC4931586614A4012430FCA3265F00CD793460BB613",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/G04-first-valid-approval-v2.png",
+      "equal": true,
+      "destination": "03-支付网关申请/19-申请状态-首次有效获批与客户完成.png",
+      "id": "G04-first-valid-approval"
+    },
+    {
+      "source_sha256": "1AC859F47CC6875599CE3C9DD0D6E8A9EF6CAE142FD6A9AD5780678F6DCEC619",
+      "destination_sha256": "1AC859F47CC6875599CE3C9DD0D6E8A9EF6CAE142FD6A9AD5780678F6DCEC619",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-G09-v2.png",
+      "equal": true,
+      "destination": "03-支付网关申请/20-申请状态-纠错后出现进行中申请冲突.png",
+      "id": "O-G09"
+    },
+    {
+      "source_sha256": "E12CFD672A7D0A00C18F8C6823A5FD64AB40A71481CA03C7632A26309EA7EFE0",
+      "destination_sha256": "E12CFD672A7D0A00C18F8C6823A5FD64AB40A71481CA03C7632A26309EA7EFE0",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-G10-v2.png",
+      "equal": true,
+      "destination": "03-支付网关申请/21-邮件事项-确认归属与拆分误归组.png",
+      "id": "O-G10"
+    },
+    {
+      "source_sha256": "EF978D5FE8E9FC892D65027BF419D25DECC47302BDCA889521967ED9BB2BB1E9",
+      "destination_sha256": "EF978D5FE8E9FC892D65027BF419D25DECC47302BDCA889521967ED9BB2BB1E9",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-G11-v3.png",
+      "equal": true,
+      "destination": "03-支付网关申请/22-邮件事项-纠正分类或处理标记.png",
+      "id": "O-G11"
+    },
+    {
+      "source_sha256": "061E8E03B55D8D95EED8BD8940C05CEC2FB23710D8270D3004583A86DD109208",
+      "destination_sha256": "061E8E03B55D8D95EED8BD8940C05CEC2FB23710D8270D3004583A86DD109208",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-G11-revoke-confirm-v2.png",
+      "equal": true,
+      "destination": "03-支付网关申请/23-邮件事项-撤销单项人工决定确认.png",
+      "id": "O-G11-revoke-confirm"
+    },
+    {
+      "source_sha256": "A728CD053226F0018F384C324A73D03EE8F8E13F696AF8F8ABFAE1F2CE22ECE1",
+      "destination_sha256": "A728CD053226F0018F384C324A73D03EE8F8E13F696AF8F8ABFAE1F2CE22ECE1",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-G06-v2.png",
+      "equal": true,
+      "destination": "03-支付网关申请/24-结束申请-结束本次申请确认.png",
+      "id": "O-G06"
+    },
+    {
+      "source_sha256": "1C68173A2C5A299FF5AA726B8DEF99DB1C95FD8D49B1116CB6672DFEC53FA117",
+      "destination_sha256": "1C68173A2C5A299FF5AA726B8DEF99DB1C95FD8D49B1116CB6672DFEC53FA117",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/G04-ended-mail-guard-v2.png",
+      "equal": true,
+      "destination": "03-支付网关申请/25-结束申请-再次处理旧邮件不重开申请.png",
+      "id": "G04-ended-mail-guard"
+    },
+    {
+      "source_sha256": "728D957331E779CE7E0A45021EECA57C3F4C6C8B9BBB74EC63BFF3AC9753B94D",
+      "destination_sha256": "728D957331E779CE7E0A45021EECA57C3F4C6C8B9BBB74EC63BFF3AC9753B94D",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/G01-empty-v1.png",
+      "equal": true,
+      "destination": "03-支付网关申请/26-网关工作台-筛选后没有申请.png",
+      "id": "G01-empty"
+    },
+    {
+      "source_sha256": "18F2A5657D758B6B6DEE2A515120E03A1B5B528C3B78D86143BA0A393445F215",
+      "destination_sha256": "18F2A5657D758B6B6DEE2A515120E03A1B5B528C3B78D86143BA0A393445F215",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/G02-read-failure-v1.png",
+      "equal": true,
+      "destination": "03-支付网关申请/27-申请详情-部分内容读取失败.png",
+      "id": "G02-read-failure"
+    },
+    {
+      "source_sha256": "5BB5A5BD6037E1222299A50CFF25F80F84ED01B49B43DFEBE28B3F6680F0C4F2",
+      "destination_sha256": "5BB5A5BD6037E1222299A50CFF25F80F84ED01B49B43DFEBE28B3F6680F0C4F2",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M01-v2.png",
+      "equal": true,
+      "destination": "04-邮箱与邮件跟进/01-邮箱管理-按域名查看商业邮箱.png",
+      "id": "M01"
+    },
+    {
+      "source_sha256": "2493271A925F1B87A170F470A512FB5AFD5F705C3C207C429E87E98C6330557E",
+      "destination_sha256": "2493271A925F1B87A170F470A512FB5AFD5F705C3C207C429E87E98C6330557E",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-M01-v1.png",
+      "equal": true,
+      "destination": "04-邮箱与邮件跟进/02-邮箱管理-设置邮箱登录凭据.png",
+      "id": "O-M01"
+    },
+    {
+      "source_sha256": "D8624F5C31A55E743E979B5C1D2933A833E9E1DD763304E9FA33D39E9D8D3600",
+      "destination_sha256": "D8624F5C31A55E743E979B5C1D2933A833E9E1DD763304E9FA33D39E9D8D3600",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-M02-v1.png",
+      "equal": true,
+      "destination": "04-邮箱与邮件跟进/03-邮箱凭据-显示密码确认.png",
+      "id": "O-M02"
+    },
+    {
+      "source_sha256": "DB191D2848EC859820D12C4A1BA59D7E8B180ACA7F93ECD5F0930358D0AE70F7",
+      "destination_sha256": "DB191D2848EC859820D12C4A1BA59D7E8B180ACA7F93ECD5F0930358D0AE70F7",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-M07-v2.png",
+      "equal": true,
+      "destination": "04-邮箱与邮件跟进/04-邮箱管理-监听与同步侧栏.png",
+      "id": "O-M07"
+    },
+    {
+      "source_sha256": "24BFC2AAD4B08B9A46C4FDC6A3BAF902D1A8B320565BE8F3D021CA72E4F8328A",
+      "destination_sha256": "24BFC2AAD4B08B9A46C4FDC6A3BAF902D1A8B320565BE8F3D021CA72E4F8328A",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M02-v2.png",
+      "equal": true,
+      "destination": "04-邮箱与邮件跟进/05-邮件查看-文件夹与邮件列表.png",
+      "id": "M02"
+    },
+    {
+      "source_sha256": "5A333136AEC6546685DC7EC796F292DA76E69B604170D63266294247B450B7E4",
+      "destination_sha256": "5A333136AEC6546685DC7EC796F292DA76E69B604170D63266294247B450B7E4",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/ES01-v2.png",
+      "equal": true,
+      "destination": "04-邮箱与邮件跟进/06-邮件查看-切换邮箱时加载新内容.png",
+      "id": "ES01"
+    },
+    {
+      "source_sha256": "55D3F3D174AFFAFC88E7B5C9D40D51571029C2716AF22637FD74CB97EF10598F",
+      "destination_sha256": "55D3F3D174AFFAFC88E7B5C9D40D51571029C2716AF22637FD74CB97EF10598F",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M03-v3.png",
+      "equal": true,
+      "destination": "04-邮箱与邮件跟进/07-邮件查看-阅读邮件原文.png",
+      "id": "M03"
+    },
+    {
+      "source_sha256": "202ECB563EC43983CC03E6910E3E97F337AE9B111C170C99A1912EDBCF4001FC",
+      "destination_sha256": "202ECB563EC43983CC03E6910E3E97F337AE9B111C170C99A1912EDBCF4001FC",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-M06-v1.png",
+      "equal": true,
+      "destination": "04-邮箱与邮件跟进/08-邮件查看-展开中文译文.png",
+      "id": "O-M06"
+    },
+    {
+      "source_sha256": "B827DF5D3A5EF97B38D2DF31B992EFBC6597212BB7E53B4F18F3BFC9A4D3329A",
+      "destination_sha256": "B827DF5D3A5EF97B38D2DF31B992EFBC6597212BB7E53B4F18F3BFC9A4D3329A",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M04-v1.png",
+      "equal": true,
+      "destination": "04-邮箱与邮件跟进/09-邮件回复-编辑回复内容.png",
+      "id": "M04"
+    },
+    {
+      "source_sha256": "E220D9D4F41951EEC01029F7FD984D9F23E15139A3BB1EA5AA6CCAADBC0C1125",
+      "destination_sha256": "E220D9D4F41951EEC01029F7FD984D9F23E15139A3BB1EA5AA6CCAADBC0C1125",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-M08-v3.png",
+      "equal": true,
+      "destination": "04-邮箱与邮件跟进/10-邮件回复-发送前确认.png",
+      "id": "O-M08"
+    },
+    {
+      "source_sha256": "A9C279DB516D4B894EB8137FBEE597CD74441F6A77C54A8011891B2EB2B36DC2",
+      "destination_sha256": "A9C279DB516D4B894EB8137FBEE597CD74441F6A77C54A8011891B2EB2B36DC2",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/ES02-v3.png",
+      "equal": true,
+      "destination": "04-邮箱与邮件跟进/11-邮件回复-发送结果暂不确定.png",
+      "id": "ES02"
+    },
+    {
+      "source_sha256": "001ADCF849F1CE2FE5E0B465199507BDB0FF52A17E5441E34C83B3463F063EEE",
+      "destination_sha256": "001ADCF849F1CE2FE5E0B465199507BDB0FF52A17E5441E34C83B3463F063EEE",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-M04-v2.png",
+      "equal": true,
+      "destination": "04-邮箱与邮件跟进/12-邮件整理-移到废纸篓确认.png",
+      "id": "O-M04"
+    },
+    {
+      "source_sha256": "5B3810DC710E32D925B2A1CF462823B765A4A5C4A2DAC79A366A75DE1D9DE712",
+      "destination_sha256": "5B3810DC710E32D925B2A1CF462823B765A4A5C4A2DAC79A366A75DE1D9DE712",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M05-v4.png",
+      "equal": true,
+      "destination": "04-邮箱与邮件跟进/13-邮件预审-查看建议与关联候选.png",
+      "id": "M05"
+    },
+    {
+      "source_sha256": "592609A3E3F0C8DE6304D62437A4BCFDC24AECBAFB09B29215B9682480A0B440",
+      "destination_sha256": "592609A3E3F0C8DE6304D62437A4BCFDC24AECBAFB09B29215B9682480A0B440",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M06-v2.png",
+      "equal": true,
+      "destination": "04-邮箱与邮件跟进/14-邮件预审-待人工确认事项.png",
+      "id": "M06"
+    },
+    {
+      "source_sha256": "AEF67B462F9FC060E585AC13A458C9560070151BFFF31D661121A662F4B92D94",
+      "destination_sha256": "AEF67B462F9FC060E585AC13A458C9560070151BFFF31D661121A662F4B92D94",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/ES03-v2.png",
+      "equal": true,
+      "destination": "04-邮箱与邮件跟进/15-邮件预审-建议与原文存在冲突.png",
+      "id": "ES03"
+    },
+    {
+      "source_sha256": "D193C9CC2C9081792AF84AA56589FF60BC21124B3420783E673A787BB7B5859E",
+      "destination_sha256": "D193C9CC2C9081792AF84AA56589FF60BC21124B3420783E673A787BB7B5859E",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M07-v2.png",
+      "equal": true,
+      "destination": "04-邮箱与邮件跟进/16-邮件跟进-按申请查看事项.png",
+      "id": "M07"
+    },
+    {
+      "source_sha256": "1466BEBAE249235B5377BFCC20921E1C6803905302E69056E8BD61F45B6DC9D1",
+      "destination_sha256": "1466BEBAE249235B5377BFCC20921E1C6803905302E69056E8BD61F45B6DC9D1",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M08-v2.png",
+      "equal": true,
+      "destination": "04-邮箱与邮件跟进/17-历史邮件-选择补审范围.png",
+      "id": "M08"
+    },
+    {
+      "source_sha256": "044B1CDDDC18D970BEC541BB38E5C5B1840508AA22D6BC6C819397483617CAA4",
+      "destination_sha256": "044B1CDDDC18D970BEC541BB38E5C5B1840508AA22D6BC6C819397483617CAA4",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-M09-v1.png",
+      "equal": true,
+      "destination": "04-邮箱与邮件跟进/18-历史邮件-确认补审入队.png",
+      "id": "O-M09"
+    },
+    {
+      "source_sha256": "9D8180B6FC1ECD884487C7E0663D49D7D1E1F2B63E39798E965077223D3568FB",
+      "destination_sha256": "9D8180B6FC1ECD884487C7E0663D49D7D1E1F2B63E39798E965077223D3568FB",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-M05-v2.png",
+      "equal": true,
+      "destination": "04-邮箱与邮件跟进/19-删除邮箱-有关联时阻止删除.png",
+      "id": "O-M05"
+    },
+    {
+      "source_sha256": "7747DAFDEBCE696BDF12C311C2A7E7B42B8B97B8342F4213BF576431AC7B7795",
+      "destination_sha256": "7747DAFDEBCE696BDF12C311C2A7E7B42B8B97B8342F4213BF576431AC7B7795",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/ES04-v2.png",
+      "equal": true,
+      "destination": "04-邮箱与邮件跟进/20-删除邮箱-查看关联保护详情.png",
+      "id": "ES04"
+    },
+    {
+      "source_sha256": "483BCD1194C257A7298536E470196DEF9B1AAE4CFBDF59C972D99EA0A201C55B",
+      "destination_sha256": "483BCD1194C257A7298536E470196DEF9B1AAE4CFBDF59C972D99EA0A201C55B",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/R01-v2.png",
+      "equal": true,
+      "destination": "05-账号与域名资源/01-资源管理-账号与域名总览.png",
+      "id": "R01"
+    },
+    {
+      "source_sha256": "1D361D4C628336A35050E4E19983A092B4E76206BC2ECD17799B25991E8A8133",
+      "destination_sha256": "1D361D4C628336A35050E4E19983A092B4E76206BC2ECD17799B25991E8A8133",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-R01-v1.png",
+      "equal": true,
+      "destination": "05-账号与域名资源/02-资源管理-添加Hostinger账号.png",
+      "id": "O-R01"
+    },
+    {
+      "source_sha256": "5D7DC1F02AA1857C26706361EDBA7762FCFE947E4A73061EECFC9D22B3FE9DF8",
+      "destination_sha256": "5D7DC1F02AA1857C26706361EDBA7762FCFE947E4A73061EECFC9D22B3FE9DF8",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/R02-v2.png",
+      "equal": true,
+      "destination": "05-账号与域名资源/03-资源管理-查看所选账号的域名.png",
+      "id": "R02"
+    },
+    {
+      "source_sha256": "1412ED2D5870BE03194B824DE48A65653371F86A467C207AA0AFF3712EFCF65A",
+      "destination_sha256": "1412ED2D5870BE03194B824DE48A65653371F86A467C207AA0AFF3712EFCF65A",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/R03-v2.png",
+      "equal": true,
+      "destination": "05-账号与域名资源/04-域名详情-查看域名与关联信息.png",
+      "id": "R03"
+    },
+    {
+      "source_sha256": "35D366E3A4426767F6AA4D0CC9BB312D1C34C1F65DFAD7CA60D59E4978D386FA",
+      "destination_sha256": "35D366E3A4426767F6AA4D0CC9BB312D1C34C1F65DFAD7CA60D59E4978D386FA",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/ES05-v1.png",
+      "equal": true,
+      "destination": "05-账号与域名资源/05-资源管理-账号验证失败与过期信息.png",
+      "id": "ES05"
+    },
+    {
+      "source_sha256": "74D140680C47F9516A96EABBFDA6411A92C1F2F349C0FFAEECD81D82F0D0738E",
+      "destination_sha256": "74D140680C47F9516A96EABBFDA6411A92C1F2F349C0FFAEECD81D82F0D0738E",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-R02-v1.png",
+      "equal": true,
+      "destination": "05-账号与域名资源/06-资源管理-删除账号确认.png",
+      "id": "O-R02"
+    },
+    {
+      "source_sha256": "14B5B1A0CABF1D28B774FFEE68651C92501D980144D24D0384F90E4702424B26",
+      "destination_sha256": "14B5B1A0CABF1D28B774FFEE68651C92501D980144D24D0384F90E4702424B26",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/R04-v3.png",
+      "equal": true,
+      "destination": "05-账号与域名资源/07-资源清理-放弃站点或域名资源.png",
+      "id": "R04"
+    },
+    {
+      "source_sha256": "ECBB6B2878D57E42F45A5CB735CD39CA6C98114E569C5498F178593D2ADD522F",
+      "destination_sha256": "ECBB6B2878D57E42F45A5CB735CD39CA6C98114E569C5498F178593D2ADD522F",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/ES06-v2.png",
+      "equal": true,
+      "destination": "05-账号与域名资源/08-资源清理-部分步骤成功与失败.png",
+      "id": "ES06"
+    },
+    {
+      "source_sha256": "6BC5D7F5C6D4C13EE7A2418285B5B6A44065232C7DB1F429ABFDF915F1550136",
+      "destination_sha256": "6BC5D7F5C6D4C13EE7A2418285B5B6A44065232C7DB1F429ABFDF915F1550136",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/T01-v2.png",
+      "equal": true,
+      "destination": "06-表格协作/01-表格工作区-打开第三方表格入口.png",
+      "id": "T01"
+    },
+    {
+      "source_sha256": "08C684627F47B55B266AA50E2CE06F9DEEE38CBA93FD5A09DF550E3177052C7E",
+      "destination_sha256": "08C684627F47B55B266AA50E2CE06F9DEEE38CBA93FD5A09DF550E3177052C7E",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/T02-v3.png",
+      "equal": true,
+      "destination": "06-表格协作/02-表格工作区-Grist原生文档与表格.png",
+      "id": "T02"
+    },
+    {
+      "source_sha256": "58AFE431C7022A7CF9D06ACB59A15E7C4A02237E32D98523A0FB498282E813C2",
+      "destination_sha256": "58AFE431C7022A7CF9D06ACB59A15E7C4A02237E32D98523A0FB498282E813C2",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/ES07-v1.png",
+      "equal": true,
+      "destination": "06-表格协作/03-表格工作区-尚未配置连接.png",
+      "id": "ES07"
+    },
+    {
+      "source_sha256": "A0F2922332676A5D0E69DF2EE965F67136D2E775A57564893A91F388A1F56D89",
+      "destination_sha256": "A0F2922332676A5D0E69DF2EE965F67136D2E775A57564893A91F388A1F56D89",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/S01-v1.png",
+      "equal": true,
+      "destination": "07-系统设置/01-AI设置-模型服务商列表.png",
+      "id": "S01"
+    },
+    {
+      "source_sha256": "DBE305E31F1E8B5985E05F5EA71E16CEDBF22FD42D55529CE277537737213483",
+      "destination_sha256": "DBE305E31F1E8B5985E05F5EA71E16CEDBF22FD42D55529CE277537737213483",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/S02-v1.png",
+      "equal": true,
+      "destination": "07-系统设置/02-AI设置-编辑服务商与模型.png",
+      "id": "S02"
+    },
+    {
+      "source_sha256": "D81A2304973871AF457722CAEC4F41FE9D0D19D672EA004CB939150768D77B17",
+      "destination_sha256": "D81A2304973871AF457722CAEC4F41FE9D0D19D672EA004CB939150768D77B17",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-S02-v1.png",
+      "equal": true,
+      "destination": "07-系统设置/03-AI设置-删除服务商确认.png",
+      "id": "O-S02"
+    },
+    {
+      "source_sha256": "01E58E685C9265C69826C3B1DC0C8C500F58BFB8A97664A0141EADDD061728D0",
+      "destination_sha256": "01E58E685C9265C69826C3B1DC0C8C500F58BFB8A97664A0141EADDD061728D0",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/S03-v1.png",
+      "equal": true,
+      "destination": "07-系统设置/04-AI设置-为不同用途选择模型.png",
+      "id": "S03"
+    },
+    {
+      "source_sha256": "C6771DCA314B6D949C2795B487FE0F17B315216EF3FA52E0BFBE3F8ADD61E534",
+      "destination_sha256": "C6771DCA314B6D949C2795B487FE0F17B315216EF3FA52E0BFBE3F8ADD61E534",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/S04-v2.png",
+      "equal": true,
+      "destination": "07-系统设置/05-商品资料设置-CJ商品服务.png",
+      "id": "S04"
+    },
+    {
+      "source_sha256": "F4F60165009C75B70C860954F6B2058CAEB607EFDF3C24F0837AE54199E22D0A",
+      "destination_sha256": "F4F60165009C75B70C860954F6B2058CAEB607EFDF3C24F0837AE54199E22D0A",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-S03-v2.png",
+      "equal": true,
+      "destination": "07-系统设置/06-商品资料设置-填写CJ连接凭据.png",
+      "id": "O-S03"
+    },
+    {
+      "source_sha256": "7A241ED90BFF5538C3F60EACE39F33BA50DB675602CE083F37E56063B586A9B7",
+      "destination_sha256": "7A241ED90BFF5538C3F60EACE39F33BA50DB675602CE083F37E56063B586A9B7",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/S05-v1.png",
+      "equal": true,
+      "destination": "07-系统设置/07-邮箱设置-默认参数.png",
+      "id": "S05"
+    },
+    {
+      "source_sha256": "BD5B9746F993BCB421C58B0A99C03CAB93E9A71CC2D2CC24C3DDA19CE08BF1B7",
+      "destination_sha256": "BD5B9746F993BCB421C58B0A99C03CAB93E9A71CC2D2CC24C3DDA19CE08BF1B7",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-S04-v1.png",
+      "equal": true,
+      "destination": "07-系统设置/08-邮箱设置-清除默认密码确认.png",
+      "id": "O-S04"
+    },
+    {
+      "source_sha256": "DD3EBF2D17766F84E2727B036716C07EF3F47F8FD3F4B59AEFD2742941EA0A8A",
+      "destination_sha256": "DD3EBF2D17766F84E2727B036716C07EF3F47F8FD3F4B59AEFD2742941EA0A8A",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/S06-v1.png",
+      "equal": true,
+      "destination": "07-系统设置/09-表格设置-Grist连接.png",
+      "id": "S06"
+    },
+    {
+      "source_sha256": "14EB13C4BD5672A348CD30CE9234687DA30120A882FB1EA2B8E42532A5710D37",
+      "destination_sha256": "14EB13C4BD5672A348CD30CE9234687DA30120A882FB1EA2B8E42532A5710D37",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-S05-v1.png",
+      "equal": true,
+      "destination": "07-系统设置/10-表格设置-连接凭据与集成操作确认.png",
+      "id": "O-S05"
+    },
+    {
+      "source_sha256": "7958F2D8C5590923B1B329DE370386BD59E157CA8211639CE5ACDBBCC90905BF",
+      "destination_sha256": "7958F2D8C5590923B1B329DE370386BD59E157CA8211639CE5ACDBBCC90905BF",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/S09-v1.png",
+      "equal": true,
+      "destination": "07-系统设置/11-邮件AI设置-预审范围与开关.png",
+      "id": "S09"
+    },
+    {
+      "source_sha256": "06BFFC2BB281BBD4DC42115414417A97E7A291A404C3E79DB96B12A447A2E283",
+      "destination_sha256": "06BFFC2BB281BBD4DC42115414417A97E7A291A404C3E79DB96B12A447A2E283",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-S09-v1.png",
+      "equal": true,
+      "destination": "07-系统设置/12-邮件AI设置-授权与配置变更确认.png",
+      "id": "O-S09"
+    },
+    {
+      "source_sha256": "1C2389FC67F928642A79F024ED5D9E7939F92A171945A4BB24D84CD42827DF97",
+      "destination_sha256": "1C2389FC67F928642A79F024ED5D9E7939F92A171945A4BB24D84CD42827DF97",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/ES08-v1.png",
+      "equal": true,
+      "destination": "07-系统设置/13-邮件AI设置-抽查后暂停与重新批准.png",
+      "id": "ES08"
+    },
+    {
+      "source_sha256": "9D34520559D57B8EA23F43AA118C404CB5A098D560EBBA9A5D414389CF4C6197",
+      "destination_sha256": "9D34520559D57B8EA23F43AA118C404CB5A098D560EBBA9A5D414389CF4C6197",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/S10-v1.png",
+      "equal": true,
+      "destination": "07-系统设置/14-邮件关联设置-关联规则列表.png",
+      "id": "S10"
+    },
+    {
+      "source_sha256": "4DCE8CBE5B6EED52C525E30AD8515BD1D6E721AE330BF2F9CB7D6AB9E215059A",
+      "destination_sha256": "4DCE8CBE5B6EED52C525E30AD8515BD1D6E721AE330BF2F9CB7D6AB9E215059A",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-S10-v1.png",
+      "equal": true,
+      "destination": "07-系统设置/15-邮件关联设置-新增编辑或移除规则.png",
+      "id": "O-S10"
+    },
+    {
+      "source_sha256": "23A02C6786BA2C77C998A71F030357B96D4ACBA6974CC10DA4EB8A227305E898",
+      "destination_sha256": "23A02C6786BA2C77C998A71F030357B96D4ACBA6974CC10DA4EB8A227305E898",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/S08-v1.png",
+      "equal": true,
+      "destination": "08-内部用户与权限/01-用户管理-内部用户列表.png",
+      "id": "S08"
+    },
+    {
+      "source_sha256": "872FDA317F148DB70C82D30174CEA039F0F73B900C9E01FB3718E5031CB293CB",
+      "destination_sha256": "872FDA317F148DB70C82D30174CEA039F0F73B900C9E01FB3718E5031CB293CB",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-S06-v1.png",
+      "equal": true,
+      "destination": "08-内部用户与权限/02-用户管理-创建内部用户.png",
+      "id": "O-S06"
+    },
+    {
+      "source_sha256": "48344FE3C2FB3722115EF120E29EC999DC8B82C8D7C13CC905913753A4FD9A97",
+      "destination_sha256": "48344FE3C2FB3722115EF120E29EC999DC8B82C8D7C13CC905913753A4FD9A97",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-S07-v1.png",
+      "equal": true,
+      "destination": "08-内部用户与权限/03-用户管理-重置用户密码.png",
+      "id": "O-S07"
+    },
+    {
+      "source_sha256": "FC9BFDFC9211271E5FD3978429A5186A9E05C8C47EEF7E36E7E146362989C2DE",
+      "destination_sha256": "FC9BFDFC9211271E5FD3978429A5186A9E05C8C47EEF7E36E7E146362989C2DE",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-S08-v1.png",
+      "equal": true,
+      "destination": "08-内部用户与权限/04-用户管理-启用或停用用户确认.png",
+      "id": "O-S08"
+    },
+    {
+      "source_sha256": "3286ECFBD651E667976A522001B590E9051EDACE395E00797426C998DA815A30",
+      "destination_sha256": "3286ECFBD651E667976A522001B590E9051EDACE395E00797426C998DA815A30",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/A02-v1.png",
+      "equal": true,
+      "destination": "09-登录与全局工具/01-系统登录-内部用户登录.png",
+      "id": "A02"
+    },
+    {
+      "source_sha256": "E3F4A202FBA26F5B996D4F246FF9067F84B91B1DE3E3007943D1A3F80A2C0809",
+      "destination_sha256": "E3F4A202FBA26F5B996D4F246FF9067F84B91B1DE3E3007943D1A3F80A2C0809",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/A03-forced-v1.png",
+      "equal": true,
+      "destination": "09-登录与全局工具/02-账号安全-首次登录必须修改密码.png",
+      "id": "A03-forced"
+    },
+    {
+      "source_sha256": "A7DD803B74DE4D3ABFC7E152DA7A120E011ED147878C55AD56DB93A6F0325D34",
+      "destination_sha256": "A7DD803B74DE4D3ABFC7E152DA7A120E011ED147878C55AD56DB93A6F0325D34",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/A03-v1.png",
+      "equal": true,
+      "destination": "09-登录与全局工具/03-账号安全-主动修改自己的密码.png",
+      "id": "A03"
+    },
+    {
+      "source_sha256": "FEC05402DDE951A4B1AFD4A6258762AE5590B593ACEA87E3DEFAC8BBC9088A2F",
+      "destination_sha256": "FEC05402DDE951A4B1AFD4A6258762AE5590B593ACEA87E3DEFAC8BBC9088A2F",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/A04-v1.png",
+      "equal": true,
+      "destination": "09-登录与全局工具/04-账号入口-个人菜单.png",
+      "id": "A04"
+    },
+    {
+      "source_sha256": "828E965458F590916F694A82E0351BF7FCAAE777E171ABAA60AD246173E2955C",
+      "destination_sha256": "828E965458F590916F694A82E0351BF7FCAAE777E171ABAA60AD246173E2955C",
+      "source": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C12-batch-upload-v4.png",
+      "equal": true,
+      "destination": "09-登录与全局工具/05-通用导航-以驾照上传页为例.png",
+      "id": "A01"
+    },
+    {
+      "source_sha256": "08DA379AA6D3DF78C1B851F5E15069B6B0B47AA598BDB2D7A4CEF251727B5AC2",
+      "destination_sha256": "08DA379AA6D3DF78C1B851F5E15069B6B0B47AA598BDB2D7A4CEF251727B5AC2",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/A01-narrow-navigation-v2.png",
+      "equal": true,
+      "destination": "09-登录与全局工具/06-通用导航-窄屏菜单与主从切换.png",
+      "id": "A01-narrow-navigation"
+    },
+    {
+      "source_sha256": "ED971B7910CE79E61AA8EDC7BFD02F901C46E5D37A6168A31ED97241C7F325DB",
+      "destination_sha256": "ED971B7910CE79E61AA8EDC7BFD02F901C46E5D37A6168A31ED97241C7F325DB",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/A08-v1.png",
+      "equal": true,
+      "destination": "09-登录与全局工具/07-全局搜索-查找系统内容.png",
+      "id": "A08"
+    },
+    {
+      "source_sha256": "E4F043C1390F345DBCB877BE4270FD9E4CD6696F1FBCA6DD2502D51C9B2E3E0D",
+      "destination_sha256": "E4F043C1390F345DBCB877BE4270FD9E4CD6696F1FBCA6DD2502D51C9B2E3E0D",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/A09-v1.png",
+      "equal": true,
+      "destination": "09-登录与全局工具/08-全局助手-打开AI对话侧栏.png",
+      "id": "A09"
+    },
+    {
+      "source_sha256": "6F39C47C686C2DEE6E33C14595F03EA36C3197B292AF4E80907DC744A5BAC174",
+      "destination_sha256": "6F39C47C686C2DEE6E33C14595F03EA36C3197B292AF4E80907DC744A5BAC174",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-A02-v1.png",
+      "equal": true,
+      "destination": "09-登录与全局工具/09-全局助手-工具操作确认.png",
+      "id": "O-A02"
+    },
+    {
+      "source_sha256": "74024547C015FAEF4FCF70BBA083058AEA7C79A01C1983CC849FA40DECFFD46B",
+      "destination_sha256": "74024547C015FAEF4FCF70BBA083058AEA7C79A01C1983CC849FA40DECFFD46B",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-A03-v1.png",
+      "equal": true,
+      "destination": "09-登录与全局工具/10-全局助手-开始新对话确认.png",
+      "id": "O-A03"
+    },
+    {
+      "source_sha256": "18737F1AB0A2095C9FA4F814DB6CD0C1FC03F07635A761ED648CE4503EEF05B4",
+      "destination_sha256": "18737F1AB0A2095C9FA4F814DB6CD0C1FC03F07635A761ED648CE4503EEF05B4",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/O-A04-unsaved-ui-v2.png",
+      "equal": true,
+      "destination": "09-登录与全局工具/11-编辑保护-未保存就离开确认.png",
+      "id": "O-A04"
+    },
+    {
+      "source_sha256": "67816F7E4231172B8244038D576468343AA653007A0B604D678BBB44AE531397",
+      "destination_sha256": "67816F7E4231172B8244038D576468343AA653007A0B604D678BBB44AE531397",
+      "source": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/O-A05-conflict-ui-v2.png",
+      "equal": true,
+      "destination": "09-登录与全局工具/12-编辑保护-多人同时修改发生冲突.png",
+      "id": "O-A05"
+    },
+    {
+      "source_sha256": "0592FB509B3011AC7716BFDDA0E8CC051B1E0D1C8D5E8B8DA72118B72E81068B",
+      "destination_sha256": "0592FB509B3011AC7716BFDDA0E8CC051B1E0D1C8D5E8B8DA72118B72E81068B",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/ES10-v1.png",
+      "equal": true,
+      "destination": "09-登录与全局工具/13-编辑保护-保存时发现记录已被删除.png",
+      "id": "ES10"
+    },
+    {
+      "source_sha256": "6845BA1D6E8B070BC0E2DF757BB1C385EACB33DCE84B4E31E558987CB14C3F7A",
+      "destination_sha256": "6845BA1D6E8B070BC0E2DF757BB1C385EACB33DCE84B4E31E558987CB14C3F7A",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/A01-session-expired-v1.png",
+      "equal": true,
+      "destination": "09-登录与全局工具/14-登录异常-会话已失效.png",
+      "id": "A01-session-expired"
+    },
+    {
+      "source_sha256": "786E6B80EEEC3A66A79899E083096FD98AFC47050AB6935A08FEF83F0CD1C333",
+      "destination_sha256": "786E6B80EEEC3A66A79899E083096FD98AFC47050AB6935A08FEF83F0CD1C333",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/A01-identity-recheck-failed-v1.png",
+      "equal": true,
+      "destination": "09-登录与全局工具/15-登录异常-身份复核暂时失败.png",
+      "id": "A01-identity-recheck-failed"
+    },
+    {
+      "source_sha256": "326ED5368461047CC2DE0EA57C712CB885DBAF3FBBEC011786E290C57B72A8C5",
+      "destination_sha256": "326ED5368461047CC2DE0EA57C712CB885DBAF3FBBEC011786E290C57B72A8C5",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/A05-v1.png",
+      "equal": true,
+      "destination": "09-登录与全局工具/16-访问异常-没有访问权限.png",
+      "id": "A05"
+    },
+    {
+      "source_sha256": "8D32163BA41D59CAB7F22017A9020137884006DD7F876C039EB620239E7BF3A6",
+      "destination_sha256": "8D32163BA41D59CAB7F22017A9020137884006DD7F876C039EB620239E7BF3A6",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/A06-v1.png",
+      "equal": true,
+      "destination": "09-登录与全局工具/17-访问异常-页面不存在.png",
+      "id": "A06"
+    },
+    {
+      "source_sha256": "3C14C47C1F3483B73DBF330338211AA8693C0A9CC28856395ABFE0773B842E08",
+      "destination_sha256": "3C14C47C1F3483B73DBF330338211AA8693C0A9CC28856395ABFE0773B842E08",
+      "source": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/A07-v1.png",
+      "equal": true,
+      "destination": "09-登录与全局工具/18-访问异常-服务暂时不可用.png",
+      "id": "A07"
+    }
+  ],
+  "errors": 0
+}

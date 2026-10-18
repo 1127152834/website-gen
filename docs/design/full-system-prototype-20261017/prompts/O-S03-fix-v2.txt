@@ -1,0 +1,5 @@
+Edit only the attached O-S03 screenshot. Preserve the white CJ credential modal, its entered masked API Key, read-only boundary, “验证失败不保存” explanation, and actions “取消 / 验证并保存”. Preserve the application shell, dim neutral scrim, typography, spacing, and 10/17/2026 header.
+
+Correct the DIMMED BACKGROUND page so it represents the unconfigured S04 state before saving: 状态“未设置”, Key尾号“未设置”, empty Key placeholder, no validation-success row, no successful timestamp, and no sample product/SKU table. The dimmed lower background should show the neutral empty state “尚未验证。输入 Key 后可进行验证。” The background action may show “设置 Key” and disabled “验证并保存”.
+
+Do not change the foreground modal into a success state. Do not imply that the currently typed credential was saved or that CJ was contacted. Do not add provider connectivity, store authorization, purchasing, ordering, fulfillment, or live inventory. One full 1490x1056 desktop screenshot, fictional DEMO UI.

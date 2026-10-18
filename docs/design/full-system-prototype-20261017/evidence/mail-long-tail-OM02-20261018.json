@@ -1,0 +1,14 @@
+{
+  "id": "O-M02",
+  "cell_id": "145",
+  "state": "terminated_after_over_12_minutes_no_output",
+  "tool_confirmation": "Script terminated",
+  "image_returned": false,
+  "next": "one serial retry only after confirmed termination",
+  "completed_this_run": [
+    "M07-v2",
+    "M08-v2",
+    "M04-v1",
+    "O-M01-v1"
+  ]
+}

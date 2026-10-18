@@ -1,0 +1,6 @@
+{
+  "probe": "fresh configured Stitch MCP; read only list_projects",
+  "http_status": 401,
+  "response_body": "{\"id\":4,\"jsonrpc\":\"2.0\",\"result\":{\"content\":[{\"text\":\"API key not valid. Please pass a valid API key.\",\"type\":\"text\"}],\"isError\":true}}",
+  "remote_write_calls_sent": 0
+}

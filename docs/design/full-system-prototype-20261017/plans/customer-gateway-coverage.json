@@ -1,0 +1,3291 @@
+{
+  "version": 1,
+  "generated_on": "10/17/2026",
+  "scope": "客户、网关与通用壳静态原型覆盖盘点；不修改应用代码",
+  "status": "planning_only_not_new_images",
+  "evidence": {
+    "catalog": "docs/design/customer-ui-consistency-20261017/catalog.json",
+    "catalog_images": 54,
+    "existing_paths_verified": 54,
+    "catalog_hashes_matched": 54,
+    "visual_samples_reviewed": [
+      "docs/design/customer-ui-consistency-20261017/corrected/links/O-G04-start-application-v2.png",
+      "docs/design/customer-ui-consistency-20261017/corrected/links/C09-applications-active-v2.png",
+      "docs/design/customer-ui-consistency-20261017/corrected/C04-company-ui-v3.png"
+    ],
+    "verification_scope": "文件存在与SHA-256一致；3张业务样例视觉只读查看；未重做54张全图视觉审计"
+  },
+  "counts": {
+    "catalog_existing_images": 54,
+    "shared_shell_reuse": 1,
+    "missing_required_images": 32,
+    "missing_reuse_pattern_only": 2,
+    "screen_records": 89
+  },
+  "rules": [
+    "无独立材料页；证明文件归客户当前资料，按所属页/申请补充证明入口管理，不以此次申请生成可编辑副本。",
+    "无无驾照建档；单张和批量都先上传正面，OCR失败可依原图人工转录，正式创建还需图片成功关联和人工确认。",
+    "准备材料不设客户负责人；开始网关申请时才指定申请负责人。操作人由登录身份记录，不可手选代填。",
+    "字段/每份附件只记录当前最后成功操作人；未变更、复制、取消、失败不刷新归因。C10不是中间变更历史。",
+    "一次申请保留不可变时点定稿：实际字段、实际文件内容、当时各项归因和当时负责人。当前资料变化不改既有定稿。",
+    "同客户正常只一条在办，首个有效获批即客户完成；后续申请与完成独立；误判获批纠正必须重算。",
+    "人工纠正后新邮件仍可推进；旧邮件重复处理不能反复覆盖人工纠正。AI结果须带原文依据，不猜下一步或缺件月份。",
+    "资料审核仅参考，未执行/失败/发现风险均可知悉后继续申请。系统记录开始不替代向支付平台人工申请。",
+    "一客户一企业一网站一商业邮箱；所有日期MM/DD/YYYY；州选项缩写与灰色全名；驾照正常页不显示缩略图。",
+    "同一G02业务记录被C09/G01/G03/M07等引用，不维护第二套客户获批状态。"
+  ],
+  "visual_rules": {
+    "reference": "docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+    "palette": "白底、近黑墨蓝标题、深蓝数据、灰蓝辅助、深海军蓝主按钮；亮蓝仅必要交互",
+    "structure": "完整分组侧栏、固定身份头、浅细分隔；每图一个独立屏或覆盖层；避免卡片嵌套、重复身份与状态、杂乱展开表",
+    "note": "不为现有成熟功能另造新业务；仅图稿，非运行UI。"
+  },
+  "reuse_policy": [
+    {
+      "source_ids": [
+        "O-C04-save-failure",
+        "O-A04",
+        "O-A05"
+      ],
+      "targets": [
+        "个人/企业/银行编辑",
+        "企业状态",
+        "关联更换",
+        "人工纠正和处理记录"
+      ],
+      "allowed": "复用保留输入、失败不记归因、未保存确认、并发冲突组件",
+      "not_allowed": "以通用保存失败代替O-G04申请定稿原子保存未知或单在办并发专有状态"
+    },
+    {
+      "source_ids": [
+        "O-C07",
+        "O-C07-upload-states",
+        "O-C08",
+        "O-C08-preview-unavailable",
+        "O-C08-preview-unsupported",
+        "O-C09",
+        "O-C10"
+      ],
+      "targets": [
+        "客户所属资料",
+        "C09当前补充证明"
+      ],
+      "allowed": "复用同一文件记录与覆盖层",
+      "not_allowed": "定稿预览必须新画只读形态；不得复用带替换/移除按钮的当前文件图冒充定稿"
+    },
+    {
+      "source_ids": [
+        "C02-not-found",
+        "C02-forbidden",
+        "C01-loading",
+        "C01-search-empty",
+        "C01-read-failure"
+      ],
+      "targets": [
+        "业务列表/详情"
+      ],
+      "allowed": "空/加载/部分失败组件与安全返回原则可复用",
+      "not_allowed": "未绘制G01/G02等正常主体不能因为有通用状态图宣称已完成；全局A05/A06/A07也不能以客户页替代"
+    },
+    {
+      "source_ids": [
+        "A01"
+      ],
+      "targets": [
+        "所有新主页面"
+      ],
+      "allowed": "复用全局导航、配色、标题和身份布局",
+      "not_allowed": "壳中的菜单文字不是登录、个人菜单、搜索或助手已经画出的证据"
+    }
+  ],
+  "assumptions": [
+    {
+      "topic": "申请负责人指定/改派",
+      "status": "旧规则未明确全部权限",
+      "decision": "O-G04现图已有设置；新G02明确当前负责人及定稿当时负责人，不恢复客户负责人。暂不恢复O-C06或默认新增改派；如主设计决定补改派，需标为管理员场景设计假设并独立出图，不能写为已确认旧功能。"
+    },
+    {
+      "topic": "删除权限",
+      "status": "管理员已确认，非管理员边界待定",
+      "decision": "新图使用管理员安全场景；不将最后操作人视为删除授权，不默授准备期员工删除权限。"
+    },
+    {
+      "topic": "当前补充证明",
+      "status": "C09现图已有落点提案，尚缺可管理列表",
+      "decision": "本盘点提出C09-current-proofs抽屉补实际目标，仍是客户当前资料共用记录，不新增独立材料导航或多版本申请定稿。"
+    },
+    {
+      "topic": "审批词映射",
+      "status": "页面语言非后台枚举设计",
+      "decision": "以已记录证据显示待补件/审核中/等待回复/获批/拒绝/结束；不推断平台实时状态。"
+    },
+    {
+      "topic": "授权与完成",
+      "status": "用户授权继续整个静态原型，不等于所有历史修图逐像素批准",
+      "decision": "复用catalog current路径作为有效设计基线；新增画完后复核，不将设计文件存在称为已实现/上线。"
+    }
+  ],
+  "excluded": [
+    {
+      "id": "C06",
+      "reason": "独立材料页已取消"
+    },
+    {
+      "id": "C11/O-C01",
+      "reason": "无驾照手工建档已取消"
+    },
+    {
+      "id": "O-C06",
+      "reason": "固定客户负责人调整废止；申请改派未自动继承"
+    }
+  ],
+  "recommended_draw_order": [
+    [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    [
+      "G02-snapshot",
+      "O-G-snapshot-preview",
+      "O-G05",
+      "O-G05-approved-correction-result",
+      "G04-new-email-after-correction"
+    ],
+    [
+      "O-G06",
+      "O-G07",
+      "O-G08",
+      "O-G09",
+      "O-G10",
+      "O-G11",
+      "O-G12"
+    ],
+    [
+      "O-G04-concurrent",
+      "O-G04-unknown",
+      "C09-current-proofs"
+    ],
+    [
+      "A02",
+      "A03-forced",
+      "A03-voluntary",
+      "A04",
+      "A05",
+      "A06",
+      "A07",
+      "A08/O-A01",
+      "A09",
+      "O-A02",
+      "O-A03",
+      "A01-session-expired",
+      "A01-narrow-navigation"
+    ]
+  ],
+  "screens": [
+    {
+      "id": "C01",
+      "title": "客户列表与速览",
+      "kind": "page",
+      "purpose": "一客户一行查找并在固定右侧速览",
+      "existing_image": "F:/projects/website-gen/docs/design/group-01-customer-dossier/C01-list-preview-v4.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "姓名/企业",
+        "客户完成与当前申请分开",
+        "上传驾照唯一建档入口",
+        "资料摘要"
+      ],
+      "actions": [
+        "搜索",
+        "选择客户",
+        "打开完整档案",
+        "上传驾照"
+      ],
+      "states": [
+        "正常列表与已选客户"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "3CE62A5609DCC158225BF5A926E8C3F0A38F1D10D6167B23CA1E11ABB6FE602A"
+      },
+      "notes": []
+    },
+    {
+      "id": "C02",
+      "title": "档案概览",
+      "kind": "page",
+      "purpose": "客户档案首页与八页签入口",
+      "existing_image": "F:/projects/website-gen/docs/design/group-01-customer-dossier/C02-overview-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "身份头部",
+        "当前档案",
+        "客户完成状态",
+        "当前申请负责人",
+        "事实摘要"
+      ],
+      "actions": [
+        "切换页签",
+        "返回列表",
+        "更多菜单"
+      ],
+      "states": [
+        "已完成但仍有后续申请"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "104AF41887E2BB2F2808873303E1A8B07D2DE0AA574A853347950D145EEAD3F2"
+      },
+      "notes": []
+    },
+    {
+      "id": "C03",
+      "title": "个人资料",
+      "kind": "tab",
+      "purpose": "查看个人字段和当前证件",
+      "existing_image": "F:/projects/website-gen/docs/design/group-01-customer-dossier/C03-personal-v3.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "FN/LN/SSN/电话/生日",
+        "驾照与当前住址分开",
+        "驾照仅上传状态",
+        "每项操作人"
+      ],
+      "actions": [
+        "复制字段",
+        "编辑资料",
+        "查看驾照",
+        "查看操作归属"
+      ],
+      "states": [
+        "驾照已上传",
+        "可选反面未提供"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "461FD963D169852C4558EAD342FE7EEAB55853FEE885E25B743F187FAD0A9999"
+      },
+      "notes": []
+    },
+    {
+      "id": "C04",
+      "title": "企业资料",
+      "kind": "tab",
+      "purpose": "外部企业办理事实与企业档案",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C04-company-ui-v3.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "办理状态",
+        "法定名称/品类/EIN",
+        "企业地址",
+        "文件",
+        "字段与附件操作人"
+      ],
+      "actions": [
+        "编辑企业",
+        "更新办理状态",
+        "上传和预览文件"
+      ],
+      "states": [
+        "已办结但字段文件独立"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "CBDE693FCA6E014F2097019C4CBE48212EA4EA4A0FCCD355AA04BE176B41DD3C"
+      },
+      "notes": []
+    },
+    {
+      "id": "C05",
+      "title": "银行资料",
+      "kind": "tab",
+      "purpose": "客户提供的企业银行信息",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C05-bank-ui-v3.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "银行名称",
+        "账号/routing保留前导零",
+        "介绍信与流水",
+        "逐项操作人"
+      ],
+      "actions": [
+        "编辑字段",
+        "复制",
+        "上传/预览/替换附件"
+      ],
+      "states": [
+        "已录入",
+        "非银行开户"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "1E5656822E6CF3CD26636A13511EDD86E7076E313CCB3A4597037B47CB78071D"
+      },
+      "notes": []
+    },
+    {
+      "id": "C10-bank",
+      "title": "银行资料操作归属",
+      "kind": "tab",
+      "purpose": "当前银行字段和文件的操作归属",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-bank-ui-v3.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "当前值",
+        "操作人",
+        "来源",
+        "时间",
+        "银行六项"
+      ],
+      "actions": [
+        "筛选",
+        "查看归因详情"
+      ],
+      "states": [
+        "当前最后一次成功操作"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "B3115E20012CE31E912198DCBC7EE926A8D988DE68845B2198175B373438EEEE"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-C04-personal",
+      "title": "编辑个人资料",
+      "kind": "drawer",
+      "purpose": "编辑个人字段",
+      "existing_image": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C04-personal-edit-v3.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "十八字段",
+        "美国日期",
+        "州缩写加全名",
+        "两个地址独立",
+        "系统操作人"
+      ],
+      "actions": [
+        "保存实际变更",
+        "取消",
+        "查看字段操作人"
+      ],
+      "states": [
+        "正常编辑",
+        "州下拉展开"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "5FFDE99DF45F793404BC00B21BE68EC62F665095065BB8E9E2F6A6AF33BE9FAB"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-C04-company",
+      "title": "编辑企业资料",
+      "kind": "drawer",
+      "purpose": "编辑企业字段",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/support/O-C04-company-edit-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "法定名称",
+        "品类可搜索自定义",
+        "EIN",
+        "企业地址",
+        "系统操作人"
+      ],
+      "actions": [
+        "保存变更",
+        "取消",
+        "查看归因"
+      ],
+      "states": [
+        "正常编辑"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "C88A4019D3499340C2D6A43928D043894EC09999FACE9F381A08645AD97F9667"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-C04-bank",
+      "title": "编辑银行资料",
+      "kind": "drawer",
+      "purpose": "录入客户提供银行字段",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/support/O-C04-bank-edit-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "银行名称",
+        "公户账号",
+        "九位routing",
+        "系统操作人"
+      ],
+      "actions": [
+        "保存变更",
+        "取消",
+        "查看归因"
+      ],
+      "states": [
+        "正常编辑",
+        "前导零保留"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "6E6AC2A8467C89DBF6BF9A043F83274358C12529ECC324C8DB2198E61112D784"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-C05",
+      "title": "企业办理状态",
+      "kind": "modal",
+      "purpose": "记录企业在系统外的办理状态",
+      "existing_image": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C05-company-status-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "当前与目标状态",
+        "可选说明",
+        "系统操作人",
+        "不自动补文件/EIN"
+      ],
+      "actions": [
+        "保存变化",
+        "取消"
+      ],
+      "states": [
+        "状态下拉",
+        "外部办理记录"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "3EA9715FABA58CA5F4CAD147B688F9F1792C6A01D8E995C6466E9E6C05AE0F82"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-C07",
+      "title": "上传文件",
+      "kind": "drawer",
+      "purpose": "向客户当前资料上传同类多份文件",
+      "existing_image": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C07-upload-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "所属客户/分类",
+        "多文件队列",
+        "当前操作人",
+        "不发给平台"
+      ],
+      "actions": [
+        "选择文件",
+        "上传",
+        "取消"
+      ],
+      "states": [
+        "待上传正常态"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "6FFD1C858CEF8B2101EF79D5C40762757CCD8D5B5DF130955C8B6BA6B29D62BA"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-C08",
+      "title": "当前文件预览",
+      "kind": "drawer",
+      "purpose": "预览客户当前附件",
+      "existing_image": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C08-preview-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "当前档案标签",
+        "图片/PDF",
+        "文件操作人/日期",
+        "单文件下载"
+      ],
+      "actions": [
+        "查看",
+        "下载",
+        "按权限替换/移除"
+      ],
+      "states": [
+        "当前可管理附件"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "BD7AD2BC7A71578873D0DDCADC3D4D9FAB9713988C77CECAC550274DBB226360"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-C09",
+      "title": "替换文件",
+      "kind": "modal",
+      "purpose": "直接替换当前附件而非新建版本",
+      "existing_image": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C09-replace-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "旧文件与新文件",
+        "影响仅当前资料",
+        "既有申请定稿不变"
+      ],
+      "actions": [
+        "选择新文件",
+        "确认替换",
+        "取消"
+      ],
+      "states": [
+        "替换确认"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "19EACC7399C0540A2756D87D21F40312F215D3D9F309E4F9B7B32E5F76BF52A6"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-C10",
+      "title": "移除文件",
+      "kind": "modal",
+      "purpose": "移除当前附件",
+      "existing_image": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C10-remove-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "目标文件",
+        "最后操作归因",
+        "不删除既有定稿",
+        "无旧版本恢复"
+      ],
+      "actions": [
+        "确认移除",
+        "取消"
+      ],
+      "states": [
+        "移除确认"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "8469D5B03BE4C99421B2C0350014697C911D4B1462882E32778013FD2EFC8D03"
+      },
+      "notes": []
+    },
+    {
+      "id": "C12",
+      "title": "上传驾照建档",
+      "kind": "page",
+      "purpose": "上传一张或多张驾照正面以建档",
+      "existing_image": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C12-batch-upload-v4.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "默认正面",
+        "文件队列",
+        "导入操作人",
+        "反面后补",
+        "无手工建档入口"
+      ],
+      "actions": [
+        "选择/拖入",
+        "上传",
+        "发起识别",
+        "继续核对"
+      ],
+      "states": [
+        "正常上传入口"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "828E965458F590916F694A82E0351BF7FCAAE777E171ABAA60AD246173E2955C"
+      },
+      "notes": []
+    },
+    {
+      "id": "C13",
+      "title": "人工核对识别结果",
+      "kind": "page",
+      "purpose": "对已上传驾照进行人工核对",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/C13-recognition-review-v4.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "原图",
+        "候选字段",
+        "缺失留空",
+        "识别发起人与确认人分开",
+        "不覆盖当前住址"
+      ],
+      "actions": [
+        "修改识别字段",
+        "确认",
+        "跳过",
+        "重复处理"
+      ],
+      "states": [
+        "待人工核对"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "03512C4BC9787C8DAA11BCEC04CF88E059A8D1D377F6018E266AE48E630C6EAD"
+      },
+      "notes": []
+    },
+    {
+      "id": "C14",
+      "title": "建档结果",
+      "kind": "page",
+      "purpose": "按文件报告实际建档结果",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/C14-creation-results-v3.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "已创建/已关联/失败/未处理/跳过",
+        "记录与图片均成功才已创建"
+      ],
+      "actions": [
+        "打开档案",
+        "处理剩余",
+        "核查失败"
+      ],
+      "states": [
+        "混合结果",
+        "非全批成功"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "7939202CBD54605B1602F2484D388506E8C3F793ED23870B1CFCAF8041EDCAE3"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-C02",
+      "title": "O-C02 重复线索处理",
+      "kind": "modal",
+      "purpose": "重复线索由员工决策",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/O-C02-duplicate-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "已上传原图",
+        "同名/驾照/重复图片线索",
+        "已有候选"
+      ],
+      "actions": [
+        "关联已有",
+        "作为不同客户另建",
+        "跳过"
+      ],
+      "states": [
+        "重复未决",
+        "不自动合并"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "0588D8B445E47F54C2397B97EFB9F024630D71F191CC7B2A9BD993537722AB7B"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-C03",
+      "title": "O-C03 字段差异确认",
+      "kind": "drawer",
+      "purpose": "逐项确认识别候选与现有字段差异",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/O-C03-differences-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "当前值/识别值",
+        "来源",
+        "逐字段选择",
+        "非识别字段不覆盖"
+      ],
+      "actions": [
+        "暂存选择",
+        "取消",
+        "返回核对"
+      ],
+      "states": [
+        "差异候选",
+        "尚未正式写入"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "87226AE0FE967E543DD060395ECB591A43B76F87C22C71E43B1FC9C235086384"
+      },
+      "notes": []
+    },
+    {
+      "id": "C12-upload-states",
+      "title": "C12 上传混合状态",
+      "kind": "state",
+      "purpose": "逐文件呈现上传和识别状态",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/C12-upload-states-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "等待/上传中/成功/失败/取消",
+        "操作人只在成功后记录"
+      ],
+      "actions": [
+        "重试明确失败",
+        "取消单项",
+        "继续已成功项"
+      ],
+      "states": [
+        "混合队列"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "20F1CD8827537943F84B50F6E7C6FAF5C60F72CC89A1AA28B53EAE8D5590B951"
+      },
+      "notes": []
+    },
+    {
+      "id": "C13-manual-transcription",
+      "title": "C13 识别失败后的人工转录",
+      "kind": "state",
+      "purpose": "识别失败后只对已上传原图人工转录",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/C13-manual-transcription-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "已上传原图",
+        "人工来源",
+        "无可用原图项不能确认",
+        "确认人"
+      ],
+      "actions": [
+        "人工转录",
+        "确认",
+        "返回上传"
+      ],
+      "states": [
+        "OCR失败",
+        "原图不可用队列"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "8ED27D2F12152EFE9323E41DCC66C6D2A074F2A905519658350E293CB1C686C1"
+      },
+      "notes": []
+    },
+    {
+      "id": "C14-unknown-result",
+      "title": "C14 提交结果未知",
+      "kind": "state",
+      "purpose": "提交结果未知时避免重复建客户",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-management-completion-v1/01-onboarding/C14-unknown-result-v1.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "请求未知",
+        "保留批次/文件",
+        "待核实"
+      ],
+      "actions": [
+        "核实结果",
+        "返回列表"
+      ],
+      "states": [
+        "未知结果",
+        "不直接重提"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "90322C656C78A081D532113BF6156358D774B0358605A8DBE45FA0300F155A72"
+      },
+      "notes": []
+    },
+    {
+      "id": "C07",
+      "title": "C07 网站与邮箱",
+      "kind": "tab",
+      "purpose": "客户与唯一网站和商业邮箱关联",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/C07-website-mail-v1.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "当前档案来源",
+        "关联站点/域名/商业邮箱",
+        "企业EIN前置",
+        "网站值非自动同步"
+      ],
+      "actions": [
+        "新建网站",
+        "关联已有",
+        "打开站点/邮箱",
+        "公开信息对照"
+      ],
+      "states": [
+        "已关联",
+        "未关联前置说明"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "D77C945427002CC16F39CBC25FA9330A8F4D26A2E725123A5CB6A0B1770CC662"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-C11",
+      "title": "O-C11 关联或更换已有网站",
+      "kind": "drawer",
+      "purpose": "关联或更换已有网站",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-C11-link-site-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "当前站点",
+        "可选空闲",
+        "他人占用不可选",
+        "一企业一网站"
+      ],
+      "actions": [
+        "搜索",
+        "选择",
+        "确认关联/更换",
+        "取消"
+      ],
+      "states": [
+        "空闲/占用候选"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "3E7B2C945FD5B19F2765CBD026295B96D81C75859D56B905C228C02D8E9B59F6"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-C12",
+      "title": "O-C12 关联或更换商业邮箱",
+      "kind": "drawer",
+      "purpose": "关联客户唯一商业邮箱",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-C12-link-mail-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "邮箱/域名/归属",
+        "当前与候选",
+        "连接与关联分开"
+      ],
+      "actions": [
+        "搜索",
+        "选择",
+        "确认",
+        "取消"
+      ],
+      "states": [
+        "关联候选"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "F2AEEEC12C2BD91741268E81ED88EABF99B2DCD4270C4A490E991FF827F56193"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-C13",
+      "title": "O-C13 解除关联确认",
+      "kind": "modal",
+      "purpose": "明确解除关联而非删除资源",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-C13-unlink-confirm-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "当前关系",
+        "在办影响",
+        "历史证据不重归属",
+        "邮箱域名资源保留"
+      ],
+      "actions": [
+        "解除",
+        "取消"
+      ],
+      "states": [
+        "解除确认"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "5B31BE99D308AE35AF0619B8DCDE85F128F36FEE1158B3BD7FA586C062843101"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-C14",
+      "title": "O-C14 网站公开信息对照",
+      "kind": "drawer",
+      "purpose": "对照档案公开字段与实际读取的网站值",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-C14-public-info-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "企业名/企业地址/商业邮箱/个人电话",
+        "品牌独立",
+        "来源时间",
+        "未读标未核对"
+      ],
+      "actions": [
+        "复制",
+        "跳站点修改",
+        "关闭"
+      ],
+      "states": [
+        "已读取差异与未核对"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "E8688047B9C46354CE0EC49DE4B3473A7C9009D5ADC861A45461D6883F86F4E1"
+      },
+      "notes": []
+    },
+    {
+      "id": "C08",
+      "title": "C08 材料审核",
+      "kind": "tab",
+      "purpose": "材料参考审核和增量复核",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/C08-review-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "目标平台",
+        "检查范围",
+        "当前问题",
+        "变更待复核",
+        "运行失败独立",
+        "非评分门槛"
+      ],
+      "actions": [
+        "检查",
+        "增量复核",
+        "查看发现",
+        "继续申请"
+      ],
+      "states": [
+        "未检查/发现问题/需更新/失败"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "623B77F127B0568C2C454D4771EE65E73C884FCBEA18E4BF75762FC40400D1A3"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-G01",
+      "title": "O-G01 确认检查范围",
+      "kind": "drawer",
+      "purpose": "人工确定参考审核范围",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-G01-review-scope-v1.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "变化项和受影响项",
+        "平台规则未知说明",
+        "当前资料"
+      ],
+      "actions": [
+        "追加范围",
+        "开始",
+        "取消"
+      ],
+      "states": [
+        "增量范围"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "C31F479182A431BED498C97A7DEBF01D141168015F259C2DD1A2AEFAAA5226F8"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-G02",
+      "title": "O-G02 审核运行状态",
+      "kind": "drawer",
+      "purpose": "跟踪参考审核执行",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-G02-review-running-v1.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "待执行/执行/完成/失败/取消",
+        "保留完成结果"
+      ],
+      "actions": [
+        "重试失败",
+        "取消任务",
+        "关闭"
+      ],
+      "states": [
+        "混合运行结果"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "6D2CB3A282728D40AC4ED0CC78C75D218EF10D5DBF0EB07E1B2EDD5139078DB3"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-G03",
+      "title": "O-G03 审核发现详情",
+      "kind": "drawer",
+      "purpose": "审核参考问题与证据",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-G03-finding-detail-v1.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "涉及字段/文件",
+        "证据",
+        "有效性",
+        "未覆盖范围",
+        "非拒绝结论"
+      ],
+      "actions": [
+        "打开当前资料",
+        "查看证据",
+        "关闭"
+      ],
+      "states": [
+        "发现详情"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "C16A17676F912FD74912AF1208EB23721A6C838A0C41008DAD7D4D88DABEE71C"
+      },
+      "notes": []
+    },
+    {
+      "id": "C09-active",
+      "title": "C09 网关申请：有在办申请",
+      "kind": "tab",
+      "purpose": "该客户当前在办与历次申请",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/C09-applications-active-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "唯一当前在办",
+        "有效获批",
+        "历史",
+        "申请负责人",
+        "当前补充证明"
+      ],
+      "actions": [
+        "申请详情",
+        "来源证据",
+        "定稿",
+        "所属证明入口"
+      ],
+      "states": [
+        "有在办",
+        "已完成客户继续申请"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "9BCD2C1C6FB697C9E4C59BC6FE85295579395A116F8F06FBF208FF2682537850"
+      },
+      "notes": []
+    },
+    {
+      "id": "C09-idle",
+      "title": "C09 网关申请：无在办申请",
+      "kind": "tab",
+      "purpose": "无在办时保留历史并开始后续申请",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/C09-applications-idle-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "无在办",
+        "有效获批",
+        "历史",
+        "未检查提示",
+        "当前补充证明"
+      ],
+      "actions": [
+        "开始申请",
+        "查看历史/定稿"
+      ],
+      "states": [
+        "无在办",
+        "已有有效获批"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "DE71174D7C9C80DC6802CF389C9C663AA1124388BDB821AE758EC69D6697BB11"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-G04",
+      "title": "O-G04 开始网关申请",
+      "kind": "modal",
+      "purpose": "由人工开始内部申请并保存一次定稿",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-G04-start-application-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "平台",
+        "申请负责人",
+        "商业邮箱",
+        "审核仅参考",
+        "字段/附件定稿摘要",
+        "两项知悉"
+      ],
+      "actions": [
+        "保存并开始记录",
+        "取消",
+        "前往审核"
+      ],
+      "states": [
+        "知悉未选按钮禁用",
+        "非外部提交"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "1DC713C50293938D6E131F9195811731D1B76575941322A9EF56B47A1FDDA473"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-C07-upload-states",
+      "title": "O-C07 附件上传混合状态",
+      "kind": "state",
+      "purpose": "客户当前附件逐文件上传结果",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/support/O-C07-upload-states-v1.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "等待/上传/成功/失败/取消",
+        "每份成功操作归因",
+        "不改定稿"
+      ],
+      "actions": [
+        "重试",
+        "取消",
+        "完成"
+      ],
+      "states": [
+        "混合文件队列"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "6CCFEA0AC7912DE73FFD7240287EBBC4BC5CA38AD12DDDB850BD16E6F7219219"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-C08-preview-unavailable",
+      "title": "O-C08 预览读取失败",
+      "kind": "state",
+      "purpose": "读取失败不等于从未上传",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C08-preview-unavailable-v1.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "文件元信息",
+        "明确读取失败",
+        "原文件仍记录"
+      ],
+      "actions": [
+        "重试",
+        "关闭"
+      ],
+      "states": [
+        "读取失败"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "D2CCF24DA343691B210C4FD6D2C564E69613F4D80EA953CE30C11435C4ABF7A2"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-C08-preview-unsupported",
+      "title": "O-C08 格式不支持预览",
+      "kind": "state",
+      "purpose": "不支持内嵌预览的格式",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C08-preview-unsupported-v1.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "当前文件",
+        "格式提示",
+        "单文件下载"
+      ],
+      "actions": [
+        "下载",
+        "关闭"
+      ],
+      "states": [
+        "格式不支持"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "494D2821A73471D0459EA0DF782EFB6F042C2A18DD70C07663CB927343B909A3"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-C09-replace-failure",
+      "title": "O-C09 替换失败",
+      "kind": "state",
+      "purpose": "替换失败时保留旧文件及其归因",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C09-replace-failure-v1.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "新文件失败",
+        "原文件仍可用",
+        "输入保留"
+      ],
+      "actions": [
+        "重试明确失败",
+        "取消"
+      ],
+      "states": [
+        "替换失败"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "4EBDC1E774FC392E50CA1088FB155C5629B5A6A82B29064E9701733BB786ACAA"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-C10-remove-failure",
+      "title": "O-C10 移除失败",
+      "kind": "state",
+      "purpose": "移除失败不虚报已删",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C10-remove-failure-v1.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "目标仍存在",
+        "失败说明",
+        "原归因不改"
+      ],
+      "actions": [
+        "重试",
+        "取消"
+      ],
+      "states": [
+        "移除失败"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "C4036A387F7C0331822F8F1F8779B6A8388ACCE2F3B1207B1A11549426197113"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-C04-save-failure",
+      "title": "O-C04 编辑保存失败",
+      "kind": "state",
+      "purpose": "保存失败保留输入和旧正式值",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C04-save-failure-v1.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "错误",
+        "输入保留",
+        "未成功不更新操作人"
+      ],
+      "actions": [
+        "重试",
+        "返回编辑",
+        "取消"
+      ],
+      "states": [
+        "保存失败"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "17C6FD7B3DEE0C99317D928E549173A9BADC767DA70A6138F1554E10DFF917FD"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-C15",
+      "title": "O-C15 删除客户影响确认",
+      "kind": "modal",
+      "purpose": "删除整个客户前核对影响",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/support/O-C15-delete-confirm-v1.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "管理员场景",
+        "在办额外确认",
+        "档案/实际站点/申请定稿删除",
+        "域名解绑保留",
+        "邮箱不动"
+      ],
+      "actions": [
+        "明确确认删除",
+        "取消"
+      ],
+      "states": [
+        "有在办确认"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "EC83FCEAF39688E16EA5A2A14DA93A21A957BD1D4677996363E3D77F309A1C62"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-C16",
+      "title": "O-C16 删除执行结果",
+      "kind": "drawer",
+      "purpose": "逐步骤报告删除执行与结果",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C16-delete-execution-v1.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "删除/解绑/保留各项",
+        "部分失败和未知",
+        "无隐藏副本"
+      ],
+      "actions": [
+        "核实",
+        "重试明确失败项",
+        "返回"
+      ],
+      "states": [
+        "部分成功/失败/未知/按规则保留"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "93D49A72E487FC48AC324CDD5E8D88C94C273043FF28679DB61809976DB0D911"
+      },
+      "notes": []
+    },
+    {
+      "id": "C10-personal-page1",
+      "title": "C10 个人资料操作归属：第 1 页",
+      "kind": "tab",
+      "purpose": "个人字段当前操作归属首屏",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-personal-page1-ui-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "资料项",
+        "当前值",
+        "操作人",
+        "来源",
+        "时间"
+      ],
+      "actions": [
+        "切换分类",
+        "下一页",
+        "查看详情"
+      ],
+      "states": [
+        "个人归属第一页"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "DAF8977A72192B8ED7D12DF24277B5E74B2E548259C221E309BFCC426199BAE8"
+      },
+      "notes": []
+    },
+    {
+      "id": "C10-personal-page2",
+      "title": "C10 个人资料操作归属：第 2 页",
+      "kind": "tab",
+      "purpose": "个人字段当前操作归属后屏",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-personal-page2-ui-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "个人地址/证件剩余项",
+        "来源",
+        "归因"
+      ],
+      "actions": [
+        "上一页",
+        "详情"
+      ],
+      "states": [
+        "个人归属第二页"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "1A5C984AB085DAA0D9A170718F42AC8BD2C9E0E3D19BBD37EEE00FC354271A44"
+      },
+      "notes": []
+    },
+    {
+      "id": "C10-company",
+      "title": "C10 企业资料操作归属",
+      "kind": "tab",
+      "purpose": "企业字段文件当前操作归属",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-company-ui-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "企业字段",
+        "附件",
+        "状态与说明独立归因"
+      ],
+      "actions": [
+        "分类",
+        "详情"
+      ],
+      "states": [
+        "企业归属"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "7A99BFCEB49AB37006FA9EF52ED9782AAAE4D82B818A17CE853D9BBA7193497C"
+      },
+      "notes": []
+    },
+    {
+      "id": "C10-actor-detail",
+      "title": "C10 字段操作归属详情",
+      "kind": "drawer",
+      "purpose": "单个字段的最后成功归因",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-actor-detail-ui-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "当前值",
+        "操作人",
+        "时间",
+        "来源",
+        "无中间修改历史"
+      ],
+      "actions": [
+        "返回来源",
+        "关闭"
+      ],
+      "states": [
+        "单字段详情"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "F0BD3A554CEA687B168CAAD24EEBF4D3754BCBC1456EC211CD7565FDE9771E40"
+      },
+      "notes": []
+    },
+    {
+      "id": "C01-empty",
+      "title": "C01 尚无客户",
+      "kind": "state",
+      "purpose": "尚无客户的真实空列表",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C01-empty-v1.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "无客户",
+        "上传驾照建档唯一入口",
+        "无负责人筛选"
+      ],
+      "actions": [
+        "上传驾照"
+      ],
+      "states": [
+        "真实空列表"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "2AAA3BA312518E961E4841DC62939B1806FEE89E00F41B0DAEBA06190FB651F1"
+      },
+      "notes": []
+    },
+    {
+      "id": "C01-search-empty",
+      "title": "C01 搜索无结果",
+      "kind": "state",
+      "purpose": "筛选搜索没有匹配而非无客户",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C01-search-empty-ui-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "保留搜索条件",
+        "清除条件入口"
+      ],
+      "actions": [
+        "清除搜索",
+        "继续搜索"
+      ],
+      "states": [
+        "搜索无结果"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "3FB4C56D8283D3FDD6493D8DC3F27E49E23A56F1D4EEF13FBD871C3FFDAEB11C"
+      },
+      "notes": []
+    },
+    {
+      "id": "C01-loading",
+      "title": "C01 列表加载中",
+      "kind": "state",
+      "purpose": "首次读取中的骨架",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C01-loading-ui-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "列表和速览加载骨架",
+        "不显示旧客户数据"
+      ],
+      "actions": [
+        "等待",
+        "后续失败重试"
+      ],
+      "states": [
+        "加载中"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "F637287CA810DA4DB61B59FC77B3A756BE5D039AD03238AD94A1DB1C4F6B3C4C"
+      },
+      "notes": []
+    },
+    {
+      "id": "C01-read-failure",
+      "title": "C01 客户速览读取失败",
+      "kind": "state",
+      "purpose": "左列表正常但速览失败",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C01-read-failure-v1.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "选中客户",
+        "速览错误局部提示"
+      ],
+      "actions": [
+        "重试速览",
+        "打开档案"
+      ],
+      "states": [
+        "部分读取失败"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "373BC127AC434854A2293540217765F345FACF97D69AAE64F3459F2C7D3E6143"
+      },
+      "notes": []
+    },
+    {
+      "id": "C02-not-found",
+      "title": "C02 档案不存在",
+      "kind": "state",
+      "purpose": "被删除/不存在档案不再暴露旧资料",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C02-not-found-v1.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "对象不可用",
+        "返回客户列表"
+      ],
+      "actions": [
+        "返回列表"
+      ],
+      "states": [
+        "对象不存在"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "58329AC11AC4442C08C50957FBAF14C25F52E81D4A5223DB385B8048007AF44E"
+      },
+      "notes": []
+    },
+    {
+      "id": "C02-forbidden",
+      "title": "C02 无权访问档案",
+      "kind": "state",
+      "purpose": "权限拒绝不是空档案",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C02-forbidden-v1.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "无权访问",
+        "安全返回",
+        "不显示资料"
+      ],
+      "actions": [
+        "返回可访问位置"
+      ],
+      "states": [
+        "无权限"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "A9519237542731B9121DF18F17AD64A5EB1304268D1152093F3D986172BB662F"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-A04",
+      "title": "O-A04 未保存离开确认",
+      "kind": "modal",
+      "purpose": "离开前保护未保存输入",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/O-A04-unsaved-ui-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "具体未保存上下文",
+        "放弃与继续区别",
+        "不承诺服务端草稿"
+      ],
+      "actions": [
+        "继续编辑",
+        "放弃离开"
+      ],
+      "states": [
+        "未保存离开"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "18737F1AB0A2095C9FA4F814DB6CD0C1FC03F07635A761ED648CE4503EEF05B4"
+      },
+      "notes": []
+    },
+    {
+      "id": "O-A05",
+      "title": "O-A05 并发修改冲突",
+      "kind": "modal",
+      "purpose": "并发冲突不静默覆盖同事资料",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/O-A05-conflict-ui-v2.png",
+      "coverage_status": "existing_current_catalog",
+      "required_content": [
+        "当前远端变化",
+        "本地输入保留",
+        "最后操作归因"
+      ],
+      "actions": [
+        "比较/刷新",
+        "返回编辑"
+      ],
+      "states": [
+        "同事已修改"
+      ],
+      "source_refs": [
+        "docs/design/customer-ui-consistency-20261017/catalog.json",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": {
+        "exists": true,
+        "catalog_sha256_match": true,
+        "sha256": "67816F7E4231172B8244038D576468343AA653007A0B604D678BBB44AE531397"
+      },
+      "notes": []
+    },
+    {
+      "id": "G01",
+      "title": "网关申请工作台",
+      "kind": "page",
+      "purpose": "横向管理全部客户的单次申请，不重复维护客户状态",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "每行一次申请",
+        "客户/企业/平台/当前负责人/状态/来源/更新日期",
+        "客户完成独立",
+        "当前与历史筛选"
+      ],
+      "actions": [
+        "筛选平台/负责人/状态",
+        "打开G02",
+        "选择客户开始O-G04"
+      ],
+      "states": [
+        "正常多客户列表",
+        "当前与历史混合"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "G02",
+      "title": "单次申请详情概览",
+      "kind": "page",
+      "purpose": "同一业务申请在客户、全局和邮箱入口中的统一详情",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "客户/企业/网站/商业邮箱",
+        "平台/申请标识",
+        "当前负责人",
+        "状态和证据来源",
+        "开始时间",
+        "客户完成",
+        "定稿入口"
+      ],
+      "actions": [
+        "打开档案/邮箱/来源",
+        "人工纠正",
+        "结束",
+        "查看申请定稿"
+      ],
+      "states": [
+        "当前待补件",
+        "获批/拒绝/结束按真实记录"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "G03",
+      "title": "申请邮件与明确要求",
+      "kind": "tab",
+      "purpose": "仅汇集该申请有原文出处的邮件要求和处理证据",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "邮件归属",
+        "原文片段与日期",
+        "明确要求",
+        "期限仅有依据时展示",
+        "逐项处理记录",
+        "当前证明不等于已提交"
+      ],
+      "actions": [
+        "查看原邮件",
+        "打开要求详情",
+        "人工关联",
+        "去邮箱回复",
+        "记录结果"
+      ],
+      "states": [
+        "明确补件要求",
+        "来源不充分进入待确认"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "G04",
+      "title": "申请状态与纠正记录",
+      "kind": "tab",
+      "purpose": "保存申请办理事实，展示AI推进和人工纠正的来源",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "前后状态",
+        "操作/来源为人工或邮件AI",
+        "时间",
+        "理由",
+        "客户完成重算结果",
+        "原邮件入口"
+      ],
+      "actions": [
+        "查看来源",
+        "人工纠正",
+        "打开申请定稿"
+      ],
+      "states": [
+        "人工纠正后新邮件再次合法推进"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "G02-snapshot",
+      "title": "申请时点定稿",
+      "kind": "tab",
+      "purpose": "读取该次申请保存的不可变字段、文件内容和归因",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "平台/申请标识/定稿时间/确认操作人/当时负责人",
+        "当前负责人另列",
+        "字段值和每份文件最后操作人/来源",
+        "只读标签"
+      ],
+      "actions": [
+        "分类浏览",
+        "复制字段",
+        "预览/单文件下载"
+      ],
+      "states": [
+        "既有定稿与当前档案已变化仍不回写"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "O-G-snapshot-preview",
+      "title": "申请定稿附件预览",
+      "kind": "drawer",
+      "purpose": "与可管理当前附件明确区别的只读时点文件",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "本次申请定稿只读",
+        "申请标识/平台",
+        "定稿文件内容",
+        "当时归因",
+        "不是当前附件链接"
+      ],
+      "actions": [
+        "查看",
+        "下载",
+        "关闭"
+      ],
+      "states": [
+        "正常只读预览",
+        "无替换/移除/恢复"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "O-G05",
+      "title": "人工更新或纠正申请状态",
+      "kind": "drawer",
+      "purpose": "人工纠正事实并预览客户完成状态影响",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "当前/目标状态",
+        "理由/证据",
+        "操作人",
+        "客户是否仍有其他有效获批",
+        "新邮件仍可推进说明"
+      ],
+      "actions": [
+        "预览影响",
+        "保存纠正",
+        "取消"
+      ],
+      "states": [
+        "唯一获批纠正后客户变未完成",
+        "另有获批则仍完成"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "O-G06",
+      "title": "结束本次申请确认",
+      "kind": "modal",
+      "purpose": "记录撤回或终止并释放正常在办名额",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "平台/申请标识",
+        "当前状态",
+        "结束原因",
+        "仅内部记录不代表远端撤回"
+      ],
+      "actions": [
+        "确认结束",
+        "取消"
+      ],
+      "states": [
+        "在办转结束",
+        "旧邮件不能复活"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "O-G07",
+      "title": "邮件与申请关联确认",
+      "kind": "drawer",
+      "purpose": "先确认原邮件的正确归属再应用证据",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "原文来源",
+        "客户/申请候选",
+        "平台/申请标识/站点核对",
+        "仅邮箱相同不足以归属"
+      ],
+      "actions": [
+        "确认关联",
+        "保持待核对",
+        "取消"
+      ],
+      "states": [
+        "候选冲突/归属不明"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "O-G08",
+      "title": "明确要求与处理记录",
+      "kind": "drawer",
+      "purpose": "一项有原文出处的要求及对应办理事实",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "原邮件与原要求",
+        "可选明确期限",
+        "员工说明",
+        "材料/发信证据",
+        "上传与发送与平台确认区分"
+      ],
+      "actions": [
+        "关联当前证明",
+        "去邮箱回复",
+        "记录处理",
+        "保存"
+      ],
+      "states": [
+        "已上传未发送",
+        "已发送未平台确认"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "O-G09",
+      "title": "纠错后的在办冲突",
+      "kind": "modal",
+      "purpose": "纠正误判后出现两条在办时保护真实记录",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "被纠正申请",
+        "已经开始的后续申请",
+        "客户状态重新计算",
+        "不得自动终止/删除任一条",
+        "禁止第三次开始"
+      ],
+      "actions": [
+        "查看两条申请",
+        "按已有规则人工处理或删除客户",
+        "关闭"
+      ],
+      "states": [
+        "少见双在办冲突",
+        "保持纠错事实"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "O-G10",
+      "title": "事项身份确认与误归组拆分",
+      "kind": "modal",
+      "purpose": "只调整选定邮件证据的归组",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "原事项/目标事项",
+        "平台/申请标识/站点/客户",
+        "选择的事件",
+        "未关联仍可待核对"
+      ],
+      "actions": [
+        "确认身份",
+        "拆分所选",
+        "取消"
+      ],
+      "states": [
+        "误归组",
+        "非全部同域名邮件搬迁"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "O-G11",
+      "title": "分类或待办纠正与撤销",
+      "kind": "drawer",
+      "purpose": "修正邮件分析或人工处理的错误而不改原文",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "原值/新值",
+        "分类/明确要求/期限/处理状态",
+        "理由",
+        "他人更新提示"
+      ],
+      "actions": [
+        "保存纠正",
+        "撤销错误人工决定",
+        "取消"
+      ],
+      "states": [
+        "分类纠正",
+        "人工决定撤销",
+        "并发用O-A05"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "O-G12",
+      "title": "待办结果记录",
+      "kind": "modal",
+      "purpose": "逐项记录已完成动作和实际证据",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "待办原要求",
+        "结果类型",
+        "说明",
+        "发信/材料证据",
+        "未完成项目仍开放"
+      ],
+      "actions": [
+        "记录回复已发/动作完成/忽略/受阻",
+        "取消"
+      ],
+      "states": [
+        "有证据完成",
+        "受阻",
+        "不全清其他义务"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "O-G04-concurrent",
+      "title": "申请开始并发冲突",
+      "kind": "state",
+      "purpose": "两个入口同时开始时仅接受一个正式在办",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "已生效申请/负责人/开始时间",
+        "本次未重复创建",
+        "原输入安全返回"
+      ],
+      "actions": [
+        "打开已生效申请",
+        "返回"
+      ],
+      "states": [
+        "并发失去资格",
+        "不能只靠禁用按钮"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "O-G04-unknown",
+      "title": "申请与定稿保存结果未知",
+      "kind": "state",
+      "purpose": "未知结果先核实，避免重复申请和缺定稿的半成功",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "请求/目标",
+        "结果未知",
+        "申请与定稿原子成功边界",
+        "不能显示已开始"
+      ],
+      "actions": [
+        "核实状态",
+        "返回档案"
+      ],
+      "states": [
+        "未知",
+        "核实前不重提"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "O-G05-approved-correction-result",
+      "title": "唯一获批被纠正后的结果",
+      "kind": "state",
+      "purpose": "把客户完成重算结果直接画出，不只文字承诺",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "申请由获批变回有证据目标值",
+        "无其他有效获批时客户未完成",
+        "操作人/理由/来源",
+        "原邮件保存"
+      ],
+      "actions": [
+        "返回申请",
+        "查看纠正记录"
+      ],
+      "states": [
+        "误判获批纠正完成"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "G04-new-email-after-correction",
+      "title": "人工纠正后的新邮件推进",
+      "kind": "state",
+      "purpose": "证明人工纠正不永久锁死状态且旧邮件不反复覆盖",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "纠正时间",
+        "新邮件时间/标识",
+        "前后状态",
+        "客户完成联动",
+        "旧邮件已处理/重复不应用说明"
+      ],
+      "actions": [
+        "查看新原邮件",
+        "查看纠正",
+        "打开当前申请"
+      ],
+      "states": [
+        "新证据可推进",
+        "不以旧邮件重放覆盖"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "A02",
+      "title": "内部用户登录",
+      "kind": "page",
+      "purpose": "内部员工凭账号登录，无客户注册",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "账号/密码",
+        "登录按钮",
+        "产品标识",
+        "无客户注册入口"
+      ],
+      "actions": [
+        "登录",
+        "显示隐藏密码"
+      ],
+      "states": [
+        "正常",
+        "提交中",
+        "校验错误/认证失败"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "A03-forced",
+      "title": "首次必须修改密码",
+      "kind": "page",
+      "purpose": "完成强制改密后才能继续",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "当前/新/确认密码",
+        "密码校验",
+        "强制模式说明",
+        "不提供绕过返回"
+      ],
+      "actions": [
+        "保存新密码",
+        "退出"
+      ],
+      "states": [
+        "必须修改",
+        "保存失败保留输入"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "A03-voluntary",
+      "title": "主动修改密码",
+      "kind": "page",
+      "purpose": "从个人菜单主动修改密码",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "当前/新/确认密码",
+        "校验",
+        "允许取消返回"
+      ],
+      "actions": [
+        "保存",
+        "取消"
+      ],
+      "states": [
+        "主动改密",
+        "不与强制模式混同"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "A04",
+      "title": "个人菜单",
+      "kind": "popover",
+      "purpose": "当前内部身份、主题、改密、退出",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "姓名/角色",
+        "浅色/深色/跟随系统",
+        "修改密码",
+        "退出"
+      ],
+      "actions": [
+        "选择主题",
+        "改密",
+        "退出"
+      ],
+      "states": [
+        "菜单展开"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "A05",
+      "title": "全局无权限",
+      "kind": "page",
+      "purpose": "无法访问模块时说明原因并安全返回",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "403",
+        "权限说明",
+        "无隐私内容",
+        "可访问入口"
+      ],
+      "actions": [
+        "返回首页/上一可访问位置"
+      ],
+      "states": [
+        "全局权限拒绝"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "A06",
+      "title": "全局页面不存在",
+      "kind": "page",
+      "purpose": "无效路由或对象已不存在",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "404",
+        "安全返回",
+        "不读取旧对象资料"
+      ],
+      "actions": [
+        "返回首页"
+      ],
+      "states": [
+        "路由不存在"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "A07",
+      "title": "全局服务异常",
+      "kind": "page",
+      "purpose": "明确服务错误而不伪装空数据",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "错误提示",
+        "重试/返回",
+        "不泄漏密钥或客户原文"
+      ],
+      "actions": [
+        "重试",
+        "返回"
+      ],
+      "states": [
+        "服务异常"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "A08/O-A01",
+      "title": "全局搜索",
+      "kind": "modal",
+      "purpose": "按页面、域名、客户和设置导航",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "搜索输入",
+        "分组结果",
+        "客户/企业索引",
+        "键盘提示",
+        "非材料全文搜索"
+      ],
+      "actions": [
+        "输入搜索",
+        "选择结果",
+        "关闭"
+      ],
+      "states": [
+        "有结果",
+        "无结果"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "A09",
+      "title": "全局AI助手",
+      "kind": "drawer",
+      "purpose": "非阻塞对话和实际工具执行状态",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "消息",
+        "工具进展",
+        "确认/拒绝",
+        "停止",
+        "新对话",
+        "错误",
+        "新增客户工具未实现不冒充"
+      ],
+      "actions": [
+        "发送",
+        "停止",
+        "展开工具",
+        "新对话"
+      ],
+      "states": [
+        "对话/执行中/错误"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "O-A02",
+      "title": "助手工具确认卡",
+      "kind": "component",
+      "purpose": "执行前明示具体动作和对象",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "工具拟操作对象/参数",
+        "影响",
+        "允许或拒绝",
+        "不假定新客户工具可用"
+      ],
+      "actions": [
+        "允许",
+        "拒绝"
+      ],
+      "states": [
+        "等待人工确认"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "O-A03",
+      "title": "助手新对话确认",
+      "kind": "modal",
+      "purpose": "清空上下文不撤销已执行动作",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "清空对话上下文范围",
+        "既有变更不撤销"
+      ],
+      "actions": [
+        "开始新对话",
+        "取消"
+      ],
+      "states": [
+        "确认前"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "A01-session-expired",
+      "title": "会话失效或身份复核失败",
+      "kind": "state",
+      "purpose": "登录状态异常时不永久遮罩也不泄露资料",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "会话失效/复核失败区别",
+        "未保存数据提示",
+        "重新登录或重试"
+      ],
+      "actions": [
+        "重新登录",
+        "重试身份复核"
+      ],
+      "states": [
+        "会话失效或复核失败"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "A01-narrow-navigation",
+      "title": "窄屏菜单与主从切换",
+      "kind": "state",
+      "purpose": "展示窄屏不会硬挤列表、详情和抽屉",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "收起导航",
+        "菜单入口",
+        "一次只读列表或详情",
+        "返回清楚"
+      ],
+      "actions": [
+        "打开菜单",
+        "切换列表/详情"
+      ],
+      "states": [
+        "窄屏静态代表态"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "C09-current-proofs",
+      "title": "当前客户补充证明管理",
+      "kind": "drawer",
+      "purpose": "让履行协议、库存照片、其他证明的链接有实际目标而不重建材料独立页",
+      "existing_image": null,
+      "coverage_status": "must_draw",
+      "required_content": [
+        "所属客户当前资料",
+        "证明类别",
+        "每份文件最后操作人",
+        "多份",
+        "已有定稿不变",
+        "不等于提交平台"
+      ],
+      "actions": [
+        "上传",
+        "查看",
+        "替换",
+        "移除",
+        "单文件下载"
+      ],
+      "states": [
+        "当前证明列表",
+        "空分类复用附件规范"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "G01-empty",
+      "title": "网关申请真实空列表",
+      "kind": "state",
+      "purpose": "区分尚无申请和筛选没有结果",
+      "existing_image": null,
+      "coverage_status": "reuse_pattern_only",
+      "required_content": [
+        "当前筛选",
+        "无记录原因",
+        "开始申请或清除条件"
+      ],
+      "actions": [
+        "开始",
+        "清除筛选"
+      ],
+      "states": [
+        "真实空列表/筛选空分支"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "G02-read-failure",
+      "title": "申请详情部分读取失败",
+      "kind": "state",
+      "purpose": "状态、定稿、邮件分区独立失败不串客户",
+      "existing_image": null,
+      "coverage_status": "reuse_pattern_only",
+      "required_content": [
+        "申请身份",
+        "失败区域",
+        "已读部分保留",
+        "重试"
+      ],
+      "actions": [
+        "重试当前区",
+        "返回"
+      ],
+      "states": [
+        "局部读取失败"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/prototype-groups-v1.md",
+        "docs/design/customer-management-completion-v1/coverage-status.md",
+        "docs/design/scope-amendment-01-no-materials-page.md",
+        "docs/design/scope-amendment-02-latest-actor.md",
+        "docs/design/scope-amendment-03-license-required.md",
+        "docs/design/scope-amendment-04-one-company-one-site.md"
+      ],
+      "verification": null,
+      "notes": []
+    },
+    {
+      "id": "A01",
+      "title": "通用应用壳",
+      "kind": "shared_shell",
+      "purpose": "复用同一侧栏、面包屑、当前身份与页面骨架，而非新增一级业务页",
+      "existing_image": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C12-batch-upload-v4.png",
+      "coverage_status": "existing_shell_reuse",
+      "required_content": [
+        "客户业务/网站/资源/系统分组导航",
+        "业务工作台品牌",
+        "当前登录身份",
+        "主区标题与状态",
+        "深海军蓝主按钮、灰蓝辅助、白底"
+      ],
+      "actions": [
+        "导航",
+        "个人菜单",
+        "搜索入口",
+        "助手入口"
+      ],
+      "states": [
+        "宽屏静态骨架"
+      ],
+      "source_refs": [
+        "docs/design/application-page-inventory-v1.md",
+        "docs/design/ui-conventions-v1.md",
+        "docs/design/customer-ui-consistency-20261017/catalog.json"
+      ],
+      "notes": [
+        "现有壳图证明配色与导航结构；A04/A08/A09 尚需独立图，不能据此认定菜单与助手已画出。"
+      ]
+    }
+  ]
+}
+

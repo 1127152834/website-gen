@@ -1,0 +1,50 @@
+Use case: ui-mockup. Create exactly ONE high-fidelity static desktop application screen image, not code, not collage. Target 1488 x 1056 landscape; match the supplied UI references' natural proportions. All Chinese labels must be legible, sharply typeset, correctly spelled. This is the existing Chinese internal 业务工作台 product, not a new visual direction.
+
+REFERENCE USE: Image 1 is the user's authoritative COLOR and typography reference only; do not reproduce its client list or obsolete 手工建档 button. Image 2 is the authoritative full sidebar/shell/three-step-wizard STYLE reference only; replace the main content with the new website-configuration step below. Preserve white canvas, subtle 1px blue-gray dividers, dark ink-navy heading (#000E39 approximately), dark navy body (#172D65), muted slate-blue labels (#607298), solid deep navy primary button (#12244C), pale blue active row/nav. Bright blue is only links. No violet, gradient, black header, dark mode, neon, giant radius, floating cards, decoration, charts, hero or donut progress. This must look like the NEXT SCREEN OF THE SAME APP as the references, not a generic new admin app.
+
+SHELL: full-height left sidebar width248, same line icons/logo as reference 2, same grouped navigation: 业务工作台; 客户业务: 客户, 网关申请; 网站: 建站总览, 新建网站, 批次, 站点; 资源: 账号与域名, 邮箱, 表格; 系统: 设置, 用户管理. Select 新建网站 with pale blue fill, dark navy text and slim left edge. Bottom profile 李敏 · 管理员. Top bar on right area breadcrumb 网站 / 新建网站, right 10/17/2026 and 静态原型 · 全部为示例数据.
+
+PAGE: main area x~275 to1462, consistent24px padding, y~96. Heading 新建网站. Subtitle 每位客户单独配置一个网站，支持单个或批量。 Upper-right quiet metadata 操作人：李敏 · 提交成功后记录. Three compact steps across, with small numbered circles (not KPI progress): 1 客户与经营资料 (previous), 2 站点配置 (ACTIVE dark navy), 3 确认启动 (inactive grayblue). All subsequent content is ONLY step2, nothing has been submitted or generated.
+
+Below steps: small section heading 客户建站项 · 3 and quiet text 每家企业仅对应一个网站. A clean continuous TABLE, not separate cards. Six columns: 客户 / 企业 | 域名 / 商业邮箱 | 店铺品牌 | 商品品类 | 配置 | 操作. Width around1188px. Combine domain and mailbox in one generous column, stacked as two outlined dropdown controls, never ellipsize the addresses. Customer name+small ID first line and enterprise second line. 14-16px readable fields. Domain+mailbox are demonstration available resources, not proof of SMTP connected. No green 已上线/建成/获批 status. Use neutral text 已填写 for configuration only. Brand fields editable text; category is editable searchable combo not an inflexible fixed list.
+
+THREE ROWS, EXACT DISTINCT FICTIONAL VALUES, each customer currently has NO existing website; do not include Alex Morgan whose site already exists.
+ROW1 selected pale blue:
+Jamie Chen small C002
+Cedar Living LLC
+domain dropdown cedar-living.example
+mailbox dropdown hello@cedar-living.example
+brand input Cedar Living
+category combobox 家具
+configuration 已填写
+links 收起 (up chevron), 移出
+Immediately below ROW1, inside same table, a full-width expanded parameter panel, very lightly tinted with thin dividers, NOT an overlay or separate page. Heading Jamie Chen · 详细参数, small right note 仅用于此客户的网站. One tidy row of four field groups:
+商品数量 : number input 60
+售价区间（选填，USD） : two inputs 25 — 120
+订单处理（工作日） : read-only value 2–4, small 来自上一步
+运输时效（工作日） : read-only value 5–10, small 来自上一步
+Below quantity small helper 数量范围 1–200. No address/company fields duplicated in this expanded panel; no copy-to-all/apply-all control. This expanded panel belongs ONLY to Jamie and visually stays between Jamie and Taylor.
+
+ROW2 collapsed:
+Taylor Brooks small C003
+Paperfield LLC
+domain dropdown paperfield.example
+mailbox dropdown hello@paperfield.example
+brand input Paperfield
+category combobox 文具
+configuration 已填写
+links 展开 (down chevron), 移出
+
+ROW3 collapsed:
+Jordan Lee small C004
+Harbor Supply LLC
+domain dropdown harbor-supply.example
+mailbox dropdown hello@harbor-supply.example
+brand input Harbor Supply
+category combobox 家居用品
+configuration 已填写
+links 展开 (down chevron), 移出
+
+After table a single quiet info line: 企业资料与 EIN 已在上一步核对；当前尚未提交建站。
+Fixed visible footer with subtle top border, left 本次 3 位客户 · 3 个网站 (this means planned websites, not generated), subtext 配置仅用于本次建站，不自动修改客户档案。
+Right exactly two buttons: outlined 上一步 and solid deep navy 下一步：确认启动. NO 开始建站/已提交/成功/保存到全部 button. Footer must not crop table or cover last row, everything visible within1056height with natural spacing. No batch-wide company header, no one-company-multi-sites, no fixed customer owner, no AI score or business completion %, no manual customer creation, no CSV import in this screen. No new capabilities. Keep this a realistic app screenshot aligned with both attached references, no device frame or browser chrome.

@@ -1,0 +1,17 @@
+{
+  "service": "Google Stitch MCP",
+  "endpoint": "https://stitch.googleapis.com/mcp",
+  "local_configuration_present": true,
+  "local_configuration_enabled": true,
+  "initialize_http_status": 200,
+  "tools_list_http_status": 200,
+  "list_projects_http_status": 401,
+  "server_error": "API key not valid. Please pass a valid API key.",
+  "authenticated": false,
+  "remote_write_calls_sent": 0,
+  "project_id": null,
+  "screen_ids": [],
+  "status": "AUTH_REQUIRED",
+  "next_step": "User updates valid Stitch credentials in existing MCP configuration; then verify project listing before writes.",
+  "secrets_persisted": false
+}

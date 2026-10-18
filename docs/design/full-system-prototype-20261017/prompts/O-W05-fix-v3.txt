@@ -1,0 +1,1 @@
+Edit ONLY the lower-left sidebar current user footer, replacing 陈佳 · 管理员 with 李敏 · 管理员. DO NOT replace 陈佳 anywhere else: historical build operator 陈佳 in the task card, website info, and bottom timeline is correct and MUST remain. Preserve every other pixel/content/layout/color as closely as possible. Only the current logged-in person footer is wrong.

@@ -1,0 +1,276 @@
+{
+  "catalog": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\catalog.json",
+  "catalog_sha256": "5be46fc732e714b7aba29301f2934f9dd4a333bedd95f670a1b493b0b56f38f6",
+  "screens": [
+    {
+      "title": "客户列表与速览",
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C01-list-preview-v4.png",
+      "sha256": "3ce62a5609dcc158225bf5a926e8c3f0a38f1d10d6167b23ca1e11abb6fe602a"
+    },
+    {
+      "title": "档案概览",
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C02-overview-v2.png",
+      "sha256": "104af41887e2bb2f2808873303e1a8b07d2de0aa574a853347950d145eead3f2"
+    },
+    {
+      "title": "个人资料",
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C03-personal-v3.png",
+      "sha256": "461fd963d169852c4558ead342fe7eeab55853fee885e25b743f187fad0a9999"
+    },
+    {
+      "title": "企业资料",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C04-company-ui-v3.png",
+      "sha256": "cbde693fca6e014f2097019c4cbe48212ea4ea4a0fccd355aa04be176b41dd3c"
+    },
+    {
+      "title": "银行资料",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C05-bank-ui-v3.png",
+      "sha256": "1e5656822e6cf3cd26636a13511edd86e7076e313ccb3a4597037b47cb78071d"
+    },
+    {
+      "title": "银行资料操作归属",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C10-bank-ui-v3.png",
+      "sha256": "b3115e20012ce31e912198dcbc7ee926a8d988de68845b2198175b373438eeee"
+    },
+    {
+      "title": "编辑个人资料",
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C04-personal-edit-v3.png",
+      "sha256": "5ffde99df45f793404bc00b21be68ec62f665095065bb8e9e2f6a6af33be9fab"
+    },
+    {
+      "title": "编辑企业资料",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\support\\O-C04-company-edit-v2.png",
+      "sha256": "c88a4019d3499340c2d6a43928d043894ec09999face9f381a08645ad97f9667"
+    },
+    {
+      "title": "编辑银行资料",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\support\\O-C04-bank-edit-v2.png",
+      "sha256": "6e6ac2a8467c89dbf6bf9a043f83274358c12529ecc324c8db2198e61112d784"
+    },
+    {
+      "title": "企业办理状态",
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C05-company-status-v2.png",
+      "sha256": "3ea9715faba58ca5f4cad147b688f9f1792c6a01d8e995c6466e9e6c05ae0f82"
+    },
+    {
+      "title": "上传文件",
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C07-upload-v2.png",
+      "sha256": "6ffd1c858cef8b2101ef79d5c40762757ccd8d5b5df130955c8b6ba6b29d62ba"
+    },
+    {
+      "title": "当前文件预览",
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C08-preview-v2.png",
+      "sha256": "bd7ad2bc7a71578873d0ddcadc3d4d9fab9713988c77cecac550274dbb226360"
+    },
+    {
+      "title": "替换文件",
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C09-replace-v2.png",
+      "sha256": "19eacc7399c0540a2756d87d21f40312f215d3d9f309e4f9b7b32e5f76bf52a6"
+    },
+    {
+      "title": "移除文件",
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C10-remove-v2.png",
+      "sha256": "8469d5b03be4c99421b2c0350014697c911d4b1462882e32778013fd2efc8d03"
+    },
+    {
+      "title": "上传驾照建档",
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\C12-batch-upload-v4.png",
+      "sha256": "828e965458f590916f694a82e0351bf7fcaae777e171abaa60ad246173e2955c"
+    },
+    {
+      "title": "人工核对识别结果",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\C13-recognition-review-v4.png",
+      "sha256": "03512c4bc9787c8daa11bcec04cf88e059a8d1d377f6018e266ae48e630c6ead"
+    },
+    {
+      "title": "建档结果",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\C14-creation-results-v3.png",
+      "sha256": "7939202cbd54605b1602f2484d388506e8c3f793ed23870b1cfcaf8041edcae3"
+    },
+    {
+      "title": "O-C02 重复线索处理",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\O-C02-duplicate-v2.png",
+      "sha256": "0588d8b445e47f54c2397b97efb9f024630d71f191cc7b2a9bd993537722ab7b"
+    },
+    {
+      "title": "O-C03 字段差异确认",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\O-C03-differences-v2.png",
+      "sha256": "87226ae0fe967e543dd060395ecb591a43b76f87c22c71e43b1fc9c235086384"
+    },
+    {
+      "title": "C12 上传混合状态",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\C12-upload-states-v2.png",
+      "sha256": "20f1cd8827537943f84b50f6e7c6faf5c60f72cc89a1aa28b53eae8d5590b951"
+    },
+    {
+      "title": "C13 识别失败后的人工转录",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\C13-manual-transcription-v2.png",
+      "sha256": "8ed27d2f12152efe9323e41dcc66c6d2a074f2a905519658350e293cb1c686c1"
+    },
+    {
+      "title": "C14 提交结果未知",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\C14-unknown-result-v1.png",
+      "sha256": "90322c656c78a081d532113bf6156358d774b0358605a8dbe45fa0300f155a72"
+    },
+    {
+      "title": "C07 网站与邮箱",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\C07-website-mail-v1.png",
+      "sha256": "d77c945427002cc16f39cbc25fa9330a8f4d26a2e725123a5cb6a0b1770cc662"
+    },
+    {
+      "title": "O-C11 关联或更换已有网站",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\O-C11-link-site-v2.png",
+      "sha256": "3e7b2c945fd5b19f2765cbd026295b96d81c75859d56b905c228c02d8e9b59f6"
+    },
+    {
+      "title": "O-C12 关联或更换商业邮箱",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\O-C12-link-mail-v2.png",
+      "sha256": "f2aeeec12c2bd91741268e81ed88eabf99b2dcd4270c4a490e991ff827f56193"
+    },
+    {
+      "title": "O-C13 解除关联确认",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\O-C13-unlink-confirm-v2.png",
+      "sha256": "5b31be99d308ae35af0619b8dcde85f128f36fee1158b3bd7fa586c062843101"
+    },
+    {
+      "title": "O-C14 网站公开信息对照",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\O-C14-public-info-v2.png",
+      "sha256": "e8688047b9c46354ce0ec49de4b3473a7c9009d5adc861a45461d6883f86f4e1"
+    },
+    {
+      "title": "C08 材料审核",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\C08-review-v2.png",
+      "sha256": "623b77f127b0568c2c454d4771ee65e73c884fcbea18e4bf75762fc40400d1a3"
+    },
+    {
+      "title": "O-G01 确认检查范围",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\O-G01-review-scope-v1.png",
+      "sha256": "c31f479182a431bed498c97a7debf01d141168015f259c2dd1a2aefaaa5226f8"
+    },
+    {
+      "title": "O-G02 审核运行状态",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\O-G02-review-running-v1.png",
+      "sha256": "6d2cb3a282728d40ac4ed0cc78c75d218ef10d5dbf0eb07e1b2edd5139078db3"
+    },
+    {
+      "title": "O-G03 审核发现详情",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\O-G03-finding-detail-v1.png",
+      "sha256": "c16a17676f912fd74912af1208eb23721a6c838a0c41008dad7d4d88dabee71c"
+    },
+    {
+      "title": "C09 网关申请：有在办申请",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\C09-applications-active-v2.png",
+      "sha256": "9bcd2c1c6fb697c9e4c59bc6fe85295579395a116f8f06fbf208ff2682537850"
+    },
+    {
+      "title": "C09 网关申请：无在办申请",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\C09-applications-idle-v2.png",
+      "sha256": "de71174d7c9c80dc6802cf389c9c663aa1124388bdb821ae758ec69d6697bb11"
+    },
+    {
+      "title": "O-G04 开始网关申请",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\O-G04-start-application-v2.png",
+      "sha256": "1dc713c50293938d6e131f9195811731d1b76575941322a9ef56b47a1fdda473"
+    },
+    {
+      "title": "O-C07 附件上传混合状态",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\support\\O-C07-upload-states-v1.png",
+      "sha256": "6ccfea0ac7912de73ffd7240287ebbc4bc5ca38ad12dddb850bd16e6f7219219"
+    },
+    {
+      "title": "O-C08 预览读取失败",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C08-preview-unavailable-v1.png",
+      "sha256": "d2ccf24da343691b210c4fd6d2c564e69613f4d80ea953ce30c11435c4abf7a2"
+    },
+    {
+      "title": "O-C08 格式不支持预览",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C08-preview-unsupported-v1.png",
+      "sha256": "494d2821a73471d0459ea0df782efb6f042c2a18dd70c07663cb927343b909a3"
+    },
+    {
+      "title": "O-C09 替换失败",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C09-replace-failure-v1.png",
+      "sha256": "4ebdc1e774fc392e50ca1088fb155c5629b5a6a82b29064e9701733bb786acaa"
+    },
+    {
+      "title": "O-C10 移除失败",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C10-remove-failure-v1.png",
+      "sha256": "c4036a387f7c0331822f8f1f8779b6a8388acce2f3b1207b1a11549426197113"
+    },
+    {
+      "title": "O-C04 编辑保存失败",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C04-save-failure-v1.png",
+      "sha256": "17c6fd7b3dee0c99317d928e549173a9badc767da70a6138f1554e10dff917fd"
+    },
+    {
+      "title": "O-C15 删除客户影响确认",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\support\\O-C15-delete-confirm-v1.png",
+      "sha256": "ec83fceaf39688e16ea5a2a14da93a21a957bd1d4677996363e3d77f309a1c62"
+    },
+    {
+      "title": "O-C16 删除执行结果",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C16-delete-execution-v1.png",
+      "sha256": "93d49a72e487fc48ac324cdd5e8d88c94c273043ff28679db61809976db0d911"
+    },
+    {
+      "title": "C10 个人资料操作归属：第 1 页",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C10-personal-page1-ui-v2.png",
+      "sha256": "daf8977a72192b8ed7d12df24277b5e74b2e548259c221e309bfcc426199bae8"
+    },
+    {
+      "title": "C10 个人资料操作归属：第 2 页",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C10-personal-page2-ui-v2.png",
+      "sha256": "1a5c984ab085daa0d9a170718f42ac8bd2c9e0e3d19bbd37eee00fc354271a44"
+    },
+    {
+      "title": "C10 企业资料操作归属",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C10-company-ui-v2.png",
+      "sha256": "7a99bfceb49ab37006fa9ef52ed9782aaae4d82b818a17ce853d9bba7193497c"
+    },
+    {
+      "title": "C10 字段操作归属详情",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C10-actor-detail-ui-v2.png",
+      "sha256": "f0bd3a554cea687b168caad24eebf4d3754bcbc1456ec211cd7565fde9771e40"
+    },
+    {
+      "title": "C01 尚无客户",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\C01-empty-v1.png",
+      "sha256": "2aaa3ba312518e961e4841dc62939b1806fee89e00f41b0daeba06190fb651f1"
+    },
+    {
+      "title": "C01 搜索无结果",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C01-search-empty-ui-v2.png",
+      "sha256": "3fb4c56d8283d3fdd6493d8dc3f27e49e23a56f1d4eef13fbd871c3ffdaeb11c"
+    },
+    {
+      "title": "C01 列表加载中",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C01-loading-ui-v2.png",
+      "sha256": "f637287ca810da4db61b59fc77b3a756be5d039ad03238ad94a1db1c4f6b3c4c"
+    },
+    {
+      "title": "C01 客户速览读取失败",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\C01-read-failure-v1.png",
+      "sha256": "373bc127ac434854a2293540217765f345facf97d69aae64f3459f2c7d3e6143"
+    },
+    {
+      "title": "C02 档案不存在",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\C02-not-found-v1.png",
+      "sha256": "58329ac11ac4442c08c50957fbaf14c25f52e81d4a5223db385b8048007af44e"
+    },
+    {
+      "title": "C02 无权访问档案",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\C02-forbidden-v1.png",
+      "sha256": "a9519237542731b9121df18f17ad64a5eb1304268d1152093f3d986172bb662f"
+    },
+    {
+      "title": "O-A04 未保存离开确认",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\O-A04-unsaved-ui-v2.png",
+      "sha256": "18737f1ab0a2095c9fa4f814db6cd0c1fc03f07635a761ed648ce4503eef05b4"
+    },
+    {
+      "title": "O-A05 并发修改冲突",
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\O-A05-conflict-ui-v2.png",
+      "sha256": "67816f7e4231172b8244038d576468343aa653007a0b604d678bbb44ae531397"
+    }
+  ]
+}

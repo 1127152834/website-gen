@@ -1,0 +1,58 @@
+{
+  "items": [
+    {
+      "id": "M04",
+      "image": "screens/M04-v1.png",
+      "sha256": "b827df5d3a5ef97b38d2df31b992efbc6597212bb7e53b4f18f3bfc9a4d3329a",
+      "status": "independent_static_review_pass",
+      "reviewer": "root",
+      "notes": "未发送回复、0附件、仅回复准备进度不冒充提交，APP-002人工选择、李敏操作，E-101时间09:18正确"
+    },
+    {
+      "id": "M07",
+      "image": "screens/M07-v2.png",
+      "sha256": "d193c9cc2c9081792af84aa56589ff60bc21124b3420783e673a787bb7b5859e",
+      "status": "independent_static_review_pass",
+      "reviewer": "root",
+      "notes": "E-001和E-101原文逐字正确，各自申请独立；邮件事项处理状态与网关状态区分，未发明月份或截止时间"
+    },
+    {
+      "id": "M08",
+      "image": "screens/M08-v2.png",
+      "sha256": "1466bebae249235b5377bfcc20921e1c6803905302e69056e8bd61f45b6dc9d1",
+      "status": "independent_static_review_pass",
+      "reviewer": "root",
+      "notes": "预览18封缓存不是收件箱12封，7天范围10/11至10/17；未调用模型未入队，授权/配置为示例，费用提示和确认入口"
+    },
+    {
+      "id": "O-M01",
+      "image": "screens/O-M01-v1.png",
+      "sha256": "2493271a925f1b87a170f470a512fb5afd5f705c3c207c429e87e98c6330557e",
+      "status": "independent_static_review_pass",
+      "reviewer": "root",
+      "notes": "邮箱和域名相符；密码遮蔽、已有凭据与当前未验证分开，显示/重置入口和验证保存；无真实凭据"
+    },
+    {
+      "sha256": "cbf49f9ef1c74da4adbf26a648f8cd6569a3a95d58e7c715ba64178f66dcfd6f",
+      "notes": "Core behavior correct; add folder/source metadata per later maker recheck; v2 pending",
+      "status": "needs_fix",
+      "id": "O-M04",
+      "reviewer": "root",
+      "image": "screens/O-M04-v1.png"
+    },
+    {
+      "reviewer": "root",
+      "status": "independent_static_review_pass",
+      "sha256": "D8624F5C31A55E743E979B5C1D2933A833E9E1DD763304E9FA33D39E9D8D3600",
+      "notes": "Masked password retained until explicit show; correct mailbox and no remote reset claim",
+      "id": "O-M02",
+      "image": "screens/O-M02-v1.png"
+    }
+  ],
+  "status": "PARTIAL",
+  "passed": 5,
+  "method": "Direct view_image and canonical shared-mail-evidence cross-check",
+  "interaction_verified": false,
+  "date": "10/18/2026 PT",
+  "scope": "15 continuation mail surfaces including M07 revision"
+}

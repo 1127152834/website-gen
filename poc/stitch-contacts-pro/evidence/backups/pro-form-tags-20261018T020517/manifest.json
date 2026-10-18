@@ -1,0 +1,10 @@
+[
+  {
+    "path": "src/hooks/useContactForm.ts",
+    "sha256": "7688391C414934BE530285D5922AE5E8AB0D4CFEF3EB797201C8E595C366870F"
+  },
+  {
+    "path": "src/components/ContactEditor.tsx",
+    "sha256": "582248BD44625D7590FD0638748FA88C16761CD0EB830246DDB432ABF06BAF64"
+  }
+]

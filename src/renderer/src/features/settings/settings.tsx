@@ -2,7 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useState, type ReactNode } fro
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, type FieldErrors } from "react-hook-form";
 import { z } from "zod";
-import { Bot, Boxes, CircleCheck, Eye, KeyRound, LoaderCircle, Mail, Pencil, Plus, RefreshCw, Settings2, ShieldCheck, Sparkles, Table2, Trash2, X } from "lucide-react";
+import { Bot, Boxes, CircleCheck, Eye, KeyRound, Languages, LoaderCircle, Mail, Pencil, Plus, RefreshCw, Settings2, ShieldCheck, Sparkles, Table2, Trash2, X } from "lucide-react";
 import type { AuthUser } from "../../../../shared/auth.ts";
 import type { ModelRole, RoleSummary } from "../../../../shared/protocol.ts";
 import { useConfirm, toast } from "@/components/feedback";
@@ -24,6 +24,8 @@ const ROLE_TEXT: Record<ModelRole, { label: string; hint: string; icon: typeof B
   vision: { label: "看截图", hint: "检查 QA 截图和视觉问题", icon: Eye },
   bulk: { label: "批量文案", hint: "商品描述、SEO 和政策文案", icon: Sparkles },
   review: { label: "合规审查", hint: "检查宣传、政策和证据", icon: ShieldCheck },
+  translation: { label: "邮件翻译", hint: "邮件主题和正文翻译，独立配置，不使用其他用途的模型", icon: Languages },
+  mail_triage: { label: "邮件预审", hint: "邮件分类与待办建议，独立配置，启用授权后才运行", icon: Mail },
 };
 const THINKING_TEXT: Record<string, string> = { off: "关闭", minimal: "最低", low: "低", medium: "中", high: "高", max: "最高" };
 const PROTOCOL_TEXT: Record<ProviderProtocol, string> = { openai: "OpenAI 兼容", anthropic: "Anthropic 兼容" };
@@ -203,6 +205,7 @@ function ProviderList({ providers, tests, testing, onEdit, onDelete, onTest }: {
 function RoleSection({ providers, roles, loading, onChange }: { providers: ProviderDetail[]; roles: RoleSummary[]; loading: boolean; onChange: (role: RoleSummary, patch: Partial<Pick<RoleSummary, "providerId" | "modelId" | "thinking">>) => Promise<void> }) {
   return <section id="roles" className="scroll-mt-24 space-y-5" aria-labelledby="roles-title"><div id="roles-title"><SectionHeading title="用途分配" description="不同任务可以使用不同厂商和模型。看截图只会列出明确标记为支持图片的模型。" /></div><div className="divide-y rounded-xl border bg-card">{roles.map((role) => {
     const copy = ROLE_TEXT[role.role]; const Icon = copy.icon; const provider = providers.find((item) => item.id === role.providerId); const models = provider?.models.filter((model) => role.role !== "vision" || model.vision) ?? []; const levels = models.find((model) => model.id === role.modelId)?.thinkingLevels ?? ["off"];
+    if(role.role === "mail_triage") return <div key={role.role} className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between"><div className="flex gap-3"><span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted"><Icon className="size-4" aria-hidden /></span><div><p className="font-medium">{copy.label}</p><p className="text-xs leading-5 text-muted-foreground">{copy.hint}</p>{!role.ready && <p className="mt-1 text-xs text-amber-700 dark:text-amber-400">{role.problem}</p>}</div></div><a href="/mail/settings" className="inline-flex h-9 items-center justify-center rounded-md border bg-background px-3 text-sm font-medium hover:bg-muted focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50">打开专用配置</a></div>;
     return <div key={role.role} className="grid gap-4 p-4 lg:grid-cols-[minmax(10rem,1fr)_minmax(9rem,13rem)_minmax(9rem,13rem)_7rem] lg:items-center"><div className="flex gap-3"><span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted"><Icon className="size-4" aria-hidden /></span><div><p className="font-medium">{copy.label}</p><p className="text-xs leading-5 text-muted-foreground">{copy.hint}</p>{!role.ready && <p className="mt-1 text-xs text-amber-700 dark:text-amber-400">{role.problem}</p>}</div></div><Select value={role.providerId > 0 ? String(role.providerId) : undefined} onValueChange={(value) => void onChange(role, { providerId: Number(value) })}><SelectTrigger aria-label={`${copy.label}的模型厂商`}><SelectValue placeholder="选择厂商" /></SelectTrigger><SelectContent>{providers.filter((item) => role.role !== "vision" || item.models.some((model) => model.vision)).map((item) => <SelectItem key={item.id} value={String(item.id)}>{item.name}</SelectItem>)}</SelectContent></Select><Select value={role.modelId || undefined} disabled={!provider} onValueChange={(value) => void onChange(role, { modelId: value })}><SelectTrigger aria-label={`${copy.label}的模型`}><SelectValue placeholder="选择模型" /></SelectTrigger><SelectContent>{models.map((model) => <SelectItem key={model.id} value={model.id}>{model.name || model.id}</SelectItem>)}</SelectContent></Select><Select value={role.thinking || "off"} disabled={!provider || !role.modelId} onValueChange={(value) => void onChange(role, { thinking: value })}><SelectTrigger aria-label={`${copy.label}的思考强度`}><SelectValue /></SelectTrigger><SelectContent>{levels.map((level) => <SelectItem key={level} value={level}>{THINKING_TEXT[level] ?? level}</SelectItem>)}</SelectContent></Select></div>;
   })}{!loading && roles.length === 0 && <p className="p-5 text-sm text-muted-foreground">暂无用途配置。请先添加模型厂商。</p>}</div></section>;
 }

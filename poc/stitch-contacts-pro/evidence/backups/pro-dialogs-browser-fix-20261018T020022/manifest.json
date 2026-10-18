@@ -1,0 +1,10 @@
+[
+  {
+    "path": "src/components/CommandPalette.tsx",
+    "sha256": "238AA4C3C8407341489533119932F8CB0C3AEB084615EA8299E3C86BD9B7EE95"
+  },
+  {
+    "path": "src/components/ContactEditor.tsx",
+    "sha256": "01B31602214EA3639AEE59953683538459661A18016170DB5C52DA865B7E1A04"
+  }
+]

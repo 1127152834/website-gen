@@ -1,0 +1,10 @@
+Scene ID: ES06
+Title: 资源放弃部分执行失败
+Reference kind: base_id:R04; partial_execution_panel; phase_one_recovery_target
+Common style: prompts/common-style.txt
+
+Create one static 1490x1056 desktop scene for ES06, “资源放弃部分执行失败”, an essential state of R04. Use prompts/common-style.txt and the R04 surface as design references; do not assume a future PNG exists. Show one readable focal state, not a collage. This is an authorized phase-one static target, not proof of implementation.
+
+Show the R04 execution panel for an explicitly unlinked fictional resource demo-resource.example after a non-atomic cleanup stops partway through. Divide the steps into three clear groups: “已完成”, “失败”, and “未执行”. Example rows may show local index cleanup completed, remote mailbox removal failed, and domain release not started. State “整体未成功” and keep each step’s 10/17/2026 PT time, operation result, and rollback boundary visible. Offer only “重试失败步骤”, “取消未执行部分”, and “返回资源”; do not rerun completed steps, claim full rollback, or display a green overall success state. The panel must explain that completed remote effects may not be reversible and that retry applies only to the failed step. This is an authorized phase-one recovery target, not evidence that current source implements the relationship preflight, orchestration, idempotency, or rollback behavior.
+
+Use fictional data dated 10/17/2026 PT and MM/DD/YYYY. Keep Alex Morgan · C001, Northline LLC, northline.example, and hello@northline.example consistent where relevant. Only gateway applications use 申请负责人; otherwise use 操作人. Mail stays safe local plain text with no remote content or link access. Do not add unsupported automation or engineering notes to the UI.

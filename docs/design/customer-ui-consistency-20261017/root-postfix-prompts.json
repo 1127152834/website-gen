@@ -1,0 +1,14 @@
+[
+  {
+    "id": "C04-company-ui-v3",
+    "prompt": "Precise single-text correction ONLY. In this existing UI, the 企业办理记录 row's 记录日期 was accidentally changed. Restore ONLY its value from 09/25/2026 to 09/15/2026. Keep the two bottom enterprise document upload dates 09/25/2026 unchanged. Preserve every other pixel intent: newly-muted palette, 操作人 李敏, all seven field values, operator names, all headings, buttons, sidebar, date10/16/2026, layout and canvas. No other edits."
+  },
+  {
+    "id": "C05-bank-ui-v3",
+    "prompt": "Precise color-only localized edit. In the top 公户信息 three-column card, change ONLY the three clickable operator NAMES 王芳, 陈杰, 李敏 (after their 操作人：labels) to the same bright-blue link color already used by the file-table operator names below. Do NOT recolor the 操作人 labels. Keep every value, date, account zeros, fields, upload button 上传文件, navy/gray palette, sidebar, body layout and all other details exactly unchanged."
+  },
+  {
+    "id": "C10-bank-ui-v3",
+    "prompt": "Precise localized color-only edit. In the upper-right 当前申请 amber card, change ONLY the currently red-orange heading 当前申请 and PayPal · 待补件 text to the restrained dark amber/brown #9a4a0c used by other customer dossier cards. Keep the amber dot and pale amber background. This is pending-information status, NOT failure. Preserve every date, table6rows,operatornames,timestamps,allnav,filters/reset,source labels,copy and geometry. Do not change other image areas."
+  }
+]

@@ -1,0 +1,36 @@
+{
+  "checked_at_utc": "2026-10-17T17:07:16.071264+00:00",
+  "stage": "DISCUSSION_DRAFT_NOT_APPROVED",
+  "scope": "W01-W12 and O-W01-O-W14; reuse customer association designs",
+  "checks": {
+    "main_view_ids": 12,
+    "overlay_ids": 14,
+    "unique_and_complete_ids": true,
+    "baseline_files_unchanged": 63,
+    "business_review": "PASS_NO_DEFINITE_CONFLICTS",
+    "local_markdown_links": "PASS"
+  },
+  "not_performed": [
+    "Image generation",
+    "Application code changes",
+    "Live browser validation",
+    "Build or runtime tests",
+    "Remote API calls",
+    "Deployment",
+    "Stitch authentication retry"
+  ],
+  "changed_files": [
+    "README.md",
+    "design-brief-v1.md",
+    "source-evidence.md",
+    "baseline.json",
+    "verification.json"
+  ],
+  "sha256": {
+    "README.md": "d567445c3d78c5c2ae7e45a85b237bf0faeca925eefc185837d60cc64813b7d6",
+    "design-brief-v1.md": "5c3917b6de87932387e75b9df6663e25f9e1dd7cd0f074a65dfa64c869014fe3",
+    "source-evidence.md": "e9eda4196ac0957ea3ff8d93e0ad154cd43894bcbbfd2fa867f64b1676e793ea",
+    "baseline.json": "d8951c8f3ad0ca2ecf55b29983e965b2cf178acfab8f8d55acecb1cb01b431f5"
+  },
+  "rollback": "Only a new design group directory; prior designs untouched. Pre-source-review discussion draft backup retained at F:/projects/website-gen/.tmp/website-module-design-20261017/design-brief-before-source-review.md. No deployment or business data rollback."
+}

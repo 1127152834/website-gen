@@ -1,0 +1,202 @@
+[
+  {
+    "id": "M01",
+    "status": "static_pass",
+    "file": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M01-v2.png",
+    "candidate_file": null,
+    "review_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/evidence/mail-module-regression.md",
+    "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/M01-v2-mail-actual-prompt.txt",
+    "verification": "static_visual_only; no interactions or real services",
+    "sha256": "5BB5A5BD6037E1222299A50CFF25F80F84ED01B49B43DFEBE28B3F6680F0C4F2"
+  },
+  {
+    "id": "M02",
+    "status": "static_pass",
+    "file": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M02-v2.png",
+    "candidate_file": null,
+    "review_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/evidence/mail-module-regression.md",
+    "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/M02-v2-mail-actual-prompt.txt",
+    "verification": "static_visual_only; no interactions or real services",
+    "sha256": "24BFC2AAD4B08B9A46C4FDC6A3BAF902D1A8B320565BE8F3D021CA72E4F8328A"
+  },
+  {
+    "id": "M03",
+    "status": "static_pass",
+    "file": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M03-v3.png",
+    "candidate_file": null,
+    "review_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/evidence/mail-module-regression.md",
+    "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/M03-v3-mail-actual-prompt.txt",
+    "verification": "static_visual_only; no interactions or real services",
+    "sha256": "55D3F3D174AFFAFC88E7B5C9D40D51571029C2716AF22637FD74CB97EF10598F"
+  },
+  {
+    "id": "M04",
+    "status": "pending_generation",
+    "file": null,
+    "candidate_file": null,
+    "review_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/evidence/mail-module-regression.md",
+    "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/M04-v1-mail-render.txt",
+    "verification": "static_visual_only; no interactions or real services",
+    "sha256": null
+  },
+  {
+    "id": "M05",
+    "status": "static_pass",
+    "file": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M05-v4.png",
+    "candidate_file": null,
+    "review_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/evidence/mail-module-regression.md",
+    "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/M05-v4-mail-actual-prompt.txt",
+    "verification": "static_visual_only; no interactions or real services",
+    "sha256": "5B3810DC710E32D925B2A1CF462823B765A4A5C4A2DAC79A366A75DE1D9DE712"
+  },
+  {
+    "id": "M06",
+    "status": "static_pass",
+    "file": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M06-v2.png",
+    "candidate_file": null,
+    "review_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/evidence/mail-module-regression.md",
+    "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/M06-v2-mail-actual-prompt.txt",
+    "verification": "static_visual_only; no interactions or real services",
+    "sha256": "592609A3E3F0C8DE6304D62437A4BCFDC24AECBAFB09B29215B9682480A0B440"
+  },
+  {
+    "id": "M07",
+    "status": "needs_copy_fix",
+    "file": null,
+    "candidate_file": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M07-v1.png",
+    "review_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/evidence/mail-module-regression.md",
+    "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/M07-v2-mail-actual-prompt.txt",
+    "verification": "static_visual_only; no interactions or real services",
+    "sha256": null
+  },
+  {
+    "id": "M08",
+    "status": "pending_generation",
+    "file": null,
+    "candidate_file": null,
+    "review_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/evidence/mail-module-regression.md",
+    "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/M08-v1-mail-render.txt",
+    "verification": "static_visual_only; no interactions or real services",
+    "sha256": null
+  },
+  {
+    "id": "O-M01",
+    "status": "pending_generation",
+    "file": null,
+    "candidate_file": null,
+    "review_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/evidence/mail-module-regression.md",
+    "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/O-M01-v1-mail-render.txt",
+    "verification": "static_visual_only; no interactions or real services",
+    "sha256": null
+  },
+  {
+    "id": "O-M02",
+    "status": "pending_generation",
+    "file": null,
+    "candidate_file": null,
+    "review_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/evidence/mail-module-regression.md",
+    "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/O-M02-v1-mail-render.txt",
+    "verification": "static_visual_only; no interactions or real services",
+    "sha256": null
+  },
+  {
+    "id": "O-M04",
+    "status": "pending_generation",
+    "file": null,
+    "candidate_file": null,
+    "review_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/evidence/mail-module-regression.md",
+    "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/O-M04-v1-mail-render.txt",
+    "verification": "static_visual_only; no interactions or real services",
+    "sha256": null
+  },
+  {
+    "id": "O-M05",
+    "status": "pending_generation",
+    "file": null,
+    "candidate_file": null,
+    "review_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/evidence/mail-module-regression.md",
+    "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/O-M05-v1-mail-render.txt",
+    "verification": "static_visual_only; no interactions or real services",
+    "sha256": null
+  },
+  {
+    "id": "O-M06",
+    "status": "pending_generation",
+    "file": null,
+    "candidate_file": null,
+    "review_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/evidence/mail-module-regression.md",
+    "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/O-M06-v1-mail-render.txt",
+    "verification": "static_visual_only; no interactions or real services",
+    "sha256": null
+  },
+  {
+    "id": "O-M07",
+    "status": "pending_generation",
+    "file": null,
+    "candidate_file": null,
+    "review_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/evidence/mail-module-regression.md",
+    "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/O-M07-v1-mail-render.txt",
+    "verification": "static_visual_only; no interactions or real services",
+    "sha256": null
+  },
+  {
+    "id": "O-M08",
+    "status": "pending_generation",
+    "file": null,
+    "candidate_file": null,
+    "review_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/evidence/mail-module-regression.md",
+    "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/O-M08-v1-mail-render.txt",
+    "verification": "static_visual_only; no interactions or real services",
+    "sha256": null
+  },
+  {
+    "id": "O-M09",
+    "status": "pending_generation",
+    "file": null,
+    "candidate_file": null,
+    "review_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/evidence/mail-module-regression.md",
+    "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/O-M09-v1-mail-render.txt",
+    "verification": "static_visual_only; no interactions or real services",
+    "sha256": null
+  },
+  {
+    "id": "ES01",
+    "status": "pending_generation",
+    "file": null,
+    "candidate_file": null,
+    "review_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/evidence/mail-module-regression.md",
+    "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/ES01-v1-mail-render.txt",
+    "verification": "static_visual_only; no interactions or real services",
+    "sha256": null
+  },
+  {
+    "id": "ES02",
+    "status": "pending_generation",
+    "file": null,
+    "candidate_file": null,
+    "review_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/evidence/mail-module-regression.md",
+    "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/ES02-v1-mail-render.txt",
+    "verification": "static_visual_only; no interactions or real services",
+    "sha256": null
+  },
+  {
+    "id": "ES03",
+    "status": "pending_generation",
+    "file": null,
+    "candidate_file": null,
+    "review_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/evidence/mail-module-regression.md",
+    "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/ES03-v1-mail-render.txt",
+    "verification": "static_visual_only; no interactions or real services",
+    "sha256": null
+  },
+  {
+    "id": "ES04",
+    "status": "pending_generation",
+    "file": null,
+    "candidate_file": null,
+    "review_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/evidence/mail-module-regression.md",
+    "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/ES04-v1-mail-render.txt",
+    "verification": "static_visual_only; no interactions or real services",
+    "sha256": null
+  }
+]

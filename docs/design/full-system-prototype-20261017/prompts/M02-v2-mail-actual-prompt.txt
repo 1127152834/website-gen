@@ -1,0 +1,1 @@
+Edit the FIRST image only. Preserve layout, all dates, counts, mail snippets and palette. Change main heading “文件夹 / 邮件列表” to “收件箱”. Change breadcrumb to “邮箱 / hello@northline.example / 收件箱”. Do not change any other data.

@@ -1,0 +1,10 @@
+Scene ID: ES05
+Title: Token 无效与过期快照
+Reference kind: base_id:R01; resource_shell
+Common style: prompts/common-style.txt
+
+Create one static 1490x1056 desktop scene for ES05, “Token 无效与过期快照”, an essential state of R01. Use prompts/common-style.txt and the R01 surface as design references; do not assume a future PNG exists. Show one readable focal state, not a collage. This is an authorized phase-one static target, not proof of implementation.
+
+Show R01 after the Hostinger token validation fails. The account row remains “Northline Hostinger（演示）”, with only “Token 尾号 DEMO”; never display a secret. Put the current remote state in an explicit “未知” status and show “Token 验证失败”. Keep the previous domain data in a separate muted block labelled “上次同步快照（已过期）”, including northline.example and the old 10/17/2026 09:40 PT timestamp, but do not present its domain status or expiry as current truth. Offer “更新 Token” and “重新验证”; do not claim that a new validation was performed, that the provider is down, or that the token is definitely revoked. A concise warning should say “过期快照仅供核对，不能代表远端当前状态”. Do not infer renewal, availability, ownership changes, or a purchasing path from the stale snapshot.
+
+Use fictional data dated 10/17/2026 PT and MM/DD/YYYY. Keep Alex Morgan · C001, Northline LLC, northline.example, and hello@northline.example consistent where relevant. Only gateway applications use 申请负责人; otherwise use 操作人. Mail stays safe local plain text with no remote content or link access. Do not add unsupported automation or engineering notes to the UI.

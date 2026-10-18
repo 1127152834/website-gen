@@ -1,0 +1,308 @@
+[
+  {
+    "id": "C04-company-ui-v3",
+    "before": "F:/projects/website-gen/docs/design/group-01-customer-dossier/C04-company-v2.png",
+    "after": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C04-company-ui-v3.png",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-eab549c0-d24c-46c0-9703-bd7ca13a3f86.png",
+    "prompt": "Use case: precise-object-edit. Asset type: existing Chinese desktop business UI static prototype. First image is the ONLY layout and data to edit; second image is color-role reference only, NEVER copy its old manual-create entry or simplify the first image navigation. Make ONLY the corrections below. Preserve canvas size, every existing business value, all rows, customer identity, dual status, sidebar items/order, selected tab, data and controls not named below. No redesign, no collage, no cropping. Color correction when requested: near-black ink navy headings (#101b46), dark navy normal values (#17264d), muted slate/gray-blue navigation labels/icons/secondary labels (#62769a), pale blue-gray borders (#dfe6f1), flat white backgrounds, deep navy primary buttons (#14264f). Bright saturated blue ONLY for actual links, copy/open icons, clickable operator names; not ordinary dates, numbers, labels or inactive navigation. Retain semantic green approval and amber pending states.\nChanges: Correct excessive vivid-blue ordinary labels, sidebar icons/navigation and dates to the reference muted palette. In enterprise handling row change ONLY label 记录人： to 操作人：, keep 李敏 and date09/15/2026. Keep all7field values,2files,operator names and current layout unchanged.",
+    "refs": [
+      "F:/projects/website-gen/docs/design/group-01-customer-dossier/C04-company-v2.png",
+      "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+    ],
+    "issues": [
+      "C04 palette and terminology"
+    ],
+    "review": {
+      "status": "passed",
+      "method": "root visual review plus independent 11-pair cross-review",
+      "evidence": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/findings/root-cross-review.md",
+      "checks": [
+        "操作人标签；墨蓝/灰蓝色阶；办理日期09/15/2026；7字段和2文件保留。"
+      ]
+    },
+    "revisions": [
+      {
+        "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-44a2239b-f19e-4437-a357-dfb424fe62cc.png",
+        "workspace": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/history/root/C04-company-ui-v3-draft1.png",
+        "prompt": "Use case: precise-object-edit. Asset type: existing Chinese desktop business UI static prototype. First image is the ONLY layout and data to edit; second image is color-role reference only, NEVER copy its old manual-create entry or simplify the first image navigation. Make ONLY the corrections below. Preserve canvas size, every existing business value, all rows, customer identity, dual status, sidebar items/order, selected tab, data and controls not named below. No redesign, no collage, no cropping. Color correction when requested: near-black ink navy headings (#101b46), dark navy normal values (#17264d), muted slate/gray-blue navigation labels/icons/secondary labels (#62769a), pale blue-gray borders (#dfe6f1), flat white backgrounds, deep navy primary buttons (#14264f). Bright saturated blue ONLY for actual links, copy/open icons, clickable operator names; not ordinary dates, numbers, labels or inactive navigation. Retain semantic green approval and amber pending states.\nChanges: Correct excessive vivid-blue ordinary labels, sidebar icons/navigation and dates to the reference muted palette. In enterprise handling row change ONLY label 记录人： to 操作人：, keep 李敏 and date09/15/2026. Keep all7field values,2files,operator names and current layout unchanged."
+      }
+    ],
+    "postfixes": [
+      {
+        "prompt": "Precise single-text correction ONLY. In this existing UI, the 企业办理记录 row's 记录日期 was accidentally changed. Restore ONLY its value from 09/25/2026 to 09/15/2026. Keep the two bottom enterprise document upload dates 09/25/2026 unchanged. Preserve every other pixel intent: newly-muted palette, 操作人 李敏, all seven field values, operator names, all headings, buttons, sidebar, date10/16/2026, layout and canvas. No other edits.",
+        "refs": [
+          "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/history/root/C04-company-ui-v3-draft1.png"
+        ],
+        "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-eab549c0-d24c-46c0-9703-bd7ca13a3f86.png"
+      }
+    ]
+  },
+  {
+    "id": "C05-bank-ui-v3",
+    "before": "F:/projects/website-gen/docs/design/group-01-customer-dossier/C05-bank-v2.png",
+    "after": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C05-bank-ui-v3.png",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-b46a3d31-85c6-475e-9d27-3e6eb0781ca6.png",
+    "prompt": "Use case: precise-object-edit. Asset type: existing Chinese desktop business UI static prototype. First image is the ONLY layout and data to edit; second image is color-role reference only, NEVER copy its old manual-create entry or simplify the first image navigation. Make ONLY the corrections below. Preserve canvas size, every existing business value, all rows, customer identity, dual status, sidebar items/order, selected tab, data and controls not named below. No redesign, no collage, no cropping. Color correction when requested: near-black ink navy headings (#101b46), dark navy normal values (#17264d), muted slate/gray-blue navigation labels/icons/secondary labels (#62769a), pale blue-gray borders (#dfe6f1), flat white backgrounds, deep navy primary buttons (#14264f). Bright saturated blue ONLY for actual links, copy/open icons, clickable operator names; not ordinary dates, numbers, labels or inactive navigation. Retain semantic green approval and amber pending states.\nChanges: Correct excessive vivid blue ordinary labels, inactive navigation/icons, bank values and dates to muted reference palette. Change the existing bank attachment section outlined button text 上传材料 to 上传文件, keeping same button position/size. Preserve three bank values (account10zeros,routing9zeros),all3attachments,operators,dates,links and three-column information layout.",
+    "refs": [
+      "F:/projects/website-gen/docs/design/group-01-customer-dossier/C05-bank-v2.png",
+      "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+    ],
+    "issues": [
+      "C05 palette and upload terminology"
+    ],
+    "review": {
+      "status": "passed",
+      "method": "root visual review plus independent 11-pair cross-review",
+      "evidence": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/findings/root-cross-review.md",
+      "checks": [
+        "普通正文/导航色阶；3名操作人链接；上传文件按钮；3字段及3文件保留。"
+      ]
+    },
+    "revisions": [
+      {
+        "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-50cc3d02-b58d-446c-8c78-63c5aaf3353e.png",
+        "workspace": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/history/root/C05-bank-ui-v3-draft1.png",
+        "prompt": "Use case: precise-object-edit. Asset type: existing Chinese desktop business UI static prototype. First image is the ONLY layout and data to edit; second image is color-role reference only, NEVER copy its old manual-create entry or simplify the first image navigation. Make ONLY the corrections below. Preserve canvas size, every existing business value, all rows, customer identity, dual status, sidebar items/order, selected tab, data and controls not named below. No redesign, no collage, no cropping. Color correction when requested: near-black ink navy headings (#101b46), dark navy normal values (#17264d), muted slate/gray-blue navigation labels/icons/secondary labels (#62769a), pale blue-gray borders (#dfe6f1), flat white backgrounds, deep navy primary buttons (#14264f). Bright saturated blue ONLY for actual links, copy/open icons, clickable operator names; not ordinary dates, numbers, labels or inactive navigation. Retain semantic green approval and amber pending states.\nChanges: Correct excessive vivid blue ordinary labels, inactive navigation/icons, bank values and dates to muted reference palette. Change the existing bank attachment section outlined button text 上传材料 to 上传文件, keeping same button position/size. Preserve three bank values (account10zeros,routing9zeros),all3attachments,operators,dates,links and three-column information layout."
+      }
+    ],
+    "postfixes": [
+      {
+        "prompt": "Precise color-only localized edit. In the top 公户信息 three-column card, change ONLY the three clickable operator NAMES 王芳, 陈杰, 李敏 (after their 操作人：labels) to the same bright-blue link color already used by the file-table operator names below. Do NOT recolor the 操作人 labels. Keep every value, date, account zeros, fields, upload button 上传文件, navy/gray palette, sidebar, body layout and all other details exactly unchanged.",
+        "refs": [
+          "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/history/root/C05-bank-ui-v3-draft1.png"
+        ],
+        "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-b46a3d31-85c6-475e-9d27-3e6eb0781ca6.png"
+      }
+    ]
+  },
+  {
+    "id": "C10-bank-ui-v3",
+    "before": "F:/projects/website-gen/docs/design/group-01-customer-dossier/C10-attribution-v2.png",
+    "after": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-bank-ui-v3.png",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-485bffaf-6fd2-490e-9930-761cf39d3407.png",
+    "prompt": "Use case: precise-object-edit. Asset type: existing Chinese desktop business UI static prototype. First image is the ONLY layout and data to edit; second image is color-role reference only, NEVER copy its old manual-create entry or simplify the first image navigation. Make ONLY the corrections below. Preserve canvas size, every existing business value, all rows, customer identity, dual status, sidebar items/order, selected tab, data and controls not named below. No redesign, no collage, no cropping. Color correction when requested: near-black ink navy headings (#101b46), dark navy normal values (#17264d), muted slate/gray-blue navigation labels/icons/secondary labels (#62769a), pale blue-gray borders (#dfe6f1), flat white backgrounds, deep navy primary buttons (#14264f). Bright saturated blue ONLY for actual links, copy/open icons, clickable operator names; not ordinary dates, numbers, labels or inactive navigation. Retain semantic green approval and amber pending states.\nChanges: Correct all excessive electric-blue body text/navigation to reference palette. Keep every6row value/time exactly (full existing AM times retained),timezone label and tablegeometry. Set six table headers consistently to 资料项 / 当前值 / 状态 (this is ONE combined column header '当前值 / 状态') / 操作人 / 操作 / 来源 (ONE combined column header '操作 / 来源') / 操作时间 / 查看. Thus exactly SIX columns: [资料项][当前值 / 状态][操作人][操作 / 来源][操作时间][查看]. At current 重置 link position use a small white outlined navy-text secondary button labelled 重置 (about80x44) with pale border, without moving filters or table. Keep row actions 查看字段/查看文件.",
+    "refs": [
+      "F:/projects/website-gen/docs/design/group-01-customer-dossier/C10-attribution-v2.png",
+      "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+    ],
+    "issues": [
+      "C10 bank palette/table/reset"
+    ],
+    "review": {
+      "status": "passed",
+      "method": "root visual review plus independent 11-pair cross-review",
+      "evidence": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/findings/root-cross-review.md",
+      "checks": [
+        "6行银行归属表、统一六列表头及重置控件、墨蓝/灰蓝配色；全部日期与AM时间保留。"
+      ]
+    },
+    "revisions": [
+      {
+        "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-0ae8ee70-8e4f-4783-8c5a-6bb54c86919e.png",
+        "workspace": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/history/root/C10-bank-ui-v3-draft1.png",
+        "prompt": "Use case: precise-object-edit. Asset type: existing Chinese desktop business UI static prototype. First image is the ONLY layout and data to edit; second image is color-role reference only, NEVER copy its old manual-create entry or simplify the first image navigation. Make ONLY the corrections below. Preserve canvas size, every existing business value, all rows, customer identity, dual status, sidebar items/order, selected tab, data and controls not named below. No redesign, no collage, no cropping. Color correction when requested: near-black ink navy headings (#101b46), dark navy normal values (#17264d), muted slate/gray-blue navigation labels/icons/secondary labels (#62769a), pale blue-gray borders (#dfe6f1), flat white backgrounds, deep navy primary buttons (#14264f). Bright saturated blue ONLY for actual links, copy/open icons, clickable operator names; not ordinary dates, numbers, labels or inactive navigation. Retain semantic green approval and amber pending states.\nChanges: Correct all excessive electric-blue body text/navigation to reference palette. Keep every6row value/time exactly (full existing AM times retained),timezone label and tablegeometry. Set six table headers consistently to 资料项 / 当前值 / 状态 (this is ONE combined column header '当前值 / 状态') / 操作人 / 操作 / 来源 (ONE combined column header '操作 / 来源') / 操作时间 / 查看. Thus exactly SIX columns: [资料项][当前值 / 状态][操作人][操作 / 来源][操作时间][查看]. At current 重置 link position use a small white outlined navy-text secondary button labelled 重置 (about80x44) with pale border, without moving filters or table. Keep row actions 查看字段/查看文件."
+      }
+    ],
+    "postfixes": [
+      {
+        "prompt": "Precise localized color-only edit. In the upper-right 当前申请 amber card, change ONLY the currently red-orange heading 当前申请 and PayPal · 待补件 text to the restrained dark amber/brown #9a4a0c used by other customer dossier cards. Keep the amber dot and pale amber background. This is pending-information status, NOT failure. Preserve every date, table6rows,operatornames,timestamps,allnav,filters/reset,source labels,copy and geometry. Do not change other image areas.",
+        "refs": [
+          "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/history/root/C10-bank-ui-v3-draft1.png"
+        ],
+        "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-485bffaf-6fd2-490e-9930-761cf39d3407.png"
+      }
+    ]
+  },
+  {
+    "id": "C10-personal-page1-ui-v2",
+    "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C10-personal-page1-v1.png",
+    "after": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-personal-page1-ui-v2.png",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-0933cac2-b185-4620-992d-18ea1d8640bd.png",
+    "prompt": "Use case: precise-object-edit. Asset type: existing Chinese desktop business UI static prototype. First image is the ONLY layout and data to edit; second image is color-role reference only, NEVER copy its old manual-create entry or simplify the first image navigation. Make ONLY the corrections below. Preserve canvas size, every existing business value, all rows, customer identity, dual status, sidebar items/order, selected tab, data and controls not named below. No redesign, no collage, no cropping. Color correction when requested: near-black ink navy headings (#101b46), dark navy normal values (#17264d), muted slate/gray-blue navigation labels/icons/secondary labels (#62769a), pale blue-gray borders (#dfe6f1), flat white backgrounds, deep navy primary buttons (#14264f). Bright saturated blue ONLY for actual links, copy/open icons, clickable operator names; not ordinary dates, numbers, labels or inactive navigation. Retain semantic green approval and amber pending states.\nChanges: Correct excessive vivid-blue inactive sidebar and inactive tabs/ordinary data to reference palette. Make all6table header labels equal darknavy weight: [资料项][当前值 / 状态][操作人][操作 / 来源][操作时间][查看]. Replace header text only in existing columns,do notaddcolumns. Keep 10 rows,all dates,values,operatornames,pagination and original relative layout. Keep existing white outline 重置 button. No new timestamps or dates.",
+    "refs": [
+      "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C10-personal-page1-v1.png",
+      "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+    ],
+    "issues": [
+      "C10 personal1 palette/headers"
+    ],
+    "review": {
+      "status": "passed",
+      "method": "root visual review plus independent 11-pair cross-review",
+      "evidence": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/findings/root-cross-review.md",
+      "checks": [
+        "第1页10行、六列表头、重置控件与颜色角色一致；值及归因保留。"
+      ]
+    }
+  },
+  {
+    "id": "C10-personal-page2-ui-v2",
+    "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C10-personal-page2-v1.png",
+    "after": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-personal-page2-ui-v2.png",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-d1acaed5-617a-44ce-90e9-62cc12246ee1.png",
+    "prompt": "Use case: precise-object-edit. Asset type: existing Chinese desktop business UI static prototype. First image is the ONLY layout and data to edit; second image is color-role reference only, NEVER copy its old manual-create entry or simplify the first image navigation. Make ONLY the corrections below. Preserve canvas size, every existing business value, all rows, customer identity, dual status, sidebar items/order, selected tab, data and controls not named below. No redesign, no collage, no cropping. Color correction when requested: near-black ink navy headings (#101b46), dark navy normal values (#17264d), muted slate/gray-blue navigation labels/icons/secondary labels (#62769a), pale blue-gray borders (#dfe6f1), flat white backgrounds, deep navy primary buttons (#14264f). Bright saturated blue ONLY for actual links, copy/open icons, clickable operator names; not ordinary dates, numbers, labels or inactive navigation. Retain semantic green approval and amber pending states.\nChanges: Correct excessive vivid-blue inactive sidebar/tabs and ordinary values to reference palette. Make all6table headers equal darknavy weight: [资料项][当前值 / 状态][操作人][操作 / 来源][操作时间][查看]. Keep every10rows,values,date,operator and pagination exactly. Restore a small blue '← 返回客户列表' link at x278 y100 in existing blank area above Alex Morgan, matching normal dossier; DO NOT shift header/tabs/table because blankspacealreadythere. Keep existing outlined 重置. No extra timestamp.",
+    "refs": [
+      "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C10-personal-page2-v1.png",
+      "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+    ],
+    "issues": [
+      "C10 personal2 palette/headers/return"
+    ],
+    "review": {
+      "status": "passed",
+      "method": "root visual review plus independent 11-pair cross-review",
+      "evidence": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/findings/root-cross-review.md",
+      "checks": [
+        "第2页10行、返回入口及六列表头修复；正式双地址和归因保留。"
+      ]
+    }
+  },
+  {
+    "id": "C10-company-ui-v2",
+    "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C10-company-v1.png",
+    "after": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-company-ui-v2.png",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-5af2b3ab-346b-4505-8640-6a1e0bf97042.png",
+    "prompt": "Use case: precise-object-edit. Asset type: existing Chinese desktop business UI static prototype. First image is the ONLY layout and data to edit; second image is color-role reference only, NEVER copy its old manual-create entry or simplify the first image navigation. Make ONLY the corrections below. Preserve canvas size, every existing business value, all rows, customer identity, dual status, sidebar items/order, selected tab, data and controls not named below. No redesign, no collage, no cropping. Color correction when requested: near-black ink navy headings (#101b46), dark navy normal values (#17264d), muted slate/gray-blue navigation labels/icons/secondary labels (#62769a), pale blue-gray borders (#dfe6f1), flat white backgrounds, deep navy primary buttons (#14264f). Bright saturated blue ONLY for actual links, copy/open icons, clickable operator names; not ordinary dates, numbers, labels or inactive navigation. Retain semantic green approval and amber pending states.\nChanges: Correct excessive vivid-blue ordinary sidebar/tabs,field labels and source text to reference palette; clickable operator names mayblue. Six uniform darknavy headers [资料项][当前值 / 状态][操作人][操作 / 来源][操作时间][查看]. Preserve all11rows/values. Fix ONLY 办理状态 row date from09/25/2026 to09/15/2026 to match company archive. Allother dates stay09/25/2026. Keep optional办理说明 empty and—source/operator/time. At existing bottom whitespace below 企业资料·共11项 add small grayblue footer '仅当前资料，既有申请定稿不随当前修改变化。' with infoicon ifroom. No otherdata changes.",
+    "refs": [
+      "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C10-company-v1.png",
+      "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+    ],
+    "issues": [
+      "C10 company palette/headers/date/footer"
+    ],
+    "review": {
+      "status": "passed",
+      "method": "root visual review plus independent 11-pair cross-review",
+      "evidence": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/findings/root-cross-review.md",
+      "checks": [
+        "11行企业归属表及表头；办理状态日期09/15，其他记录09/25；字段值保留。"
+      ]
+    }
+  },
+  {
+    "id": "C01-loading-ui-v2",
+    "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C01-loading-v1.png",
+    "after": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C01-loading-ui-v2.png",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-ee29a54b-1282-4e1e-a3d9-a5a8b9caacbe.png",
+    "prompt": "Use case: precise-object-edit. Asset type: existing Chinese desktop business UI static prototype. First image is the ONLY layout and data to edit; second image is color-role reference only, NEVER copy its old manual-create entry or simplify the first image navigation. Make ONLY the corrections below. Preserve canvas size, every existing business value, all rows, customer identity, dual status, sidebar items/order, selected tab, data and controls not named below. No redesign, no collage, no cropping. Color correction when requested: near-black ink navy headings (#101b46), dark navy normal values (#17264d), muted slate/gray-blue navigation labels/icons/secondary labels (#62769a), pale blue-gray borders (#dfe6f1), flat white backgrounds, deep navy primary buttons (#14264f). Bright saturated blue ONLY for actual links, copy/open icons, clickable operator names; not ordinary dates, numbers, labels or inactive navigation. Retain semantic green approval and amber pending states.\nChanges: Do NOT recolor or redesign. Fix ONLY left list loading skeleton: normal customer rows have NO avatars. Remove six circular avatar placeholders. Shift each row's two horizontal text skeletons left to x287 (normal customer name start), keep their vertical baselines and widths approximatelysame. Keep six skeleton rows and right status skeletons, separators, disabled search, unknown total, right loading panel and upload button unchanged.",
+    "refs": [
+      "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C01-loading-v1.png",
+      "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+    ],
+    "issues": [
+      "C01 loading skeleton"
+    ],
+    "review": {
+      "status": "passed",
+      "method": "root visual review plus independent 11-pair cross-review",
+      "evidence": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/findings/root-cross-review.md",
+      "checks": [
+        "6行无头像骨架与正常列表对应；计数未知、禁用搜索及右侧加载保留。"
+      ]
+    }
+  },
+  {
+    "id": "C01-search-empty-ui-v2",
+    "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C01-search-empty-v1.png",
+    "after": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C01-search-empty-ui-v2.png",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-226bd875-41af-4d75-828c-9e12296d2c34.png",
+    "prompt": "Use case: precise-object-edit. Asset type: existing Chinese desktop business UI static prototype. First image is the ONLY layout and data to edit; second image is color-role reference only, NEVER copy its old manual-create entry or simplify the first image navigation. Make ONLY the corrections below. Preserve canvas size, every existing business value, all rows, customer identity, dual status, sidebar items/order, selected tab, data and controls not named below. No redesign, no collage, no cropping. Color correction when requested: near-black ink navy headings (#101b46), dark navy normal values (#17264d), muted slate/gray-blue navigation labels/icons/secondary labels (#62769a), pale blue-gray borders (#dfe6f1), flat white backgrounds, deep navy primary buttons (#14264f). Bright saturated blue ONLY for actual links, copy/open icons, clickable operator names; not ordinary dates, numbers, labels or inactive navigation. Retain semantic green approval and amber pending states.\nChanges: Do NOT recolor or redesign. Change ONLY the grayblue subtitle under right panel 未选择客户 to exactly '清除搜索后，可在左侧选择客户查看资料。' Preserve title,icons,empty search result,count6/results0,zzzz-demo search,buttons,allpositions and everything else.",
+    "refs": [
+      "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C01-search-empty-v1.png",
+      "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+    ],
+    "issues": [
+      "C01 search empty instruction"
+    ],
+    "review": {
+      "status": "passed",
+      "method": "root visual review plus independent 11-pair cross-review",
+      "evidence": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/findings/root-cross-review.md",
+      "checks": [
+        "右侧提示先清除搜索；全部6/结果0、关键词与按钮保留。"
+      ]
+    }
+  },
+  {
+    "id": "O-A04-unsaved-ui-v2",
+    "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/O-A04-unsaved-v1.png",
+    "after": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/O-A04-unsaved-ui-v2.png",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-d5c65d22-1743-40b7-876e-aed3233f4a2a.png",
+    "prompt": "Use case: precise-object-edit. Asset type: existing Chinese desktop business UI static prototype. First image is the ONLY layout and data to edit; second image is color-role reference only, NEVER copy its old manual-create entry or simplify the first image navigation. Make ONLY the corrections below. Preserve canvas size, every existing business value, all rows, customer identity, dual status, sidebar items/order, selected tab, data and controls not named below. No redesign, no collage, no cropping. Color correction when requested: near-black ink navy headings (#101b46), dark navy normal values (#17264d), muted slate/gray-blue navigation labels/icons/secondary labels (#62769a), pale blue-gray borders (#dfe6f1), flat white backgrounds, deep navy primary buttons (#14264f). Bright saturated blue ONLY for actual links, copy/open icons, clickable operator names; not ordinary dates, numbers, labels or inactive navigation. Retain semantic green approval and amber pending states.\nChanges: Do NOT recolor or redesign. Edit ONLY the two currently blank visible input fields in the DIMMED EDIT DRAWER's left 驾照地址 column under the foreground unsaved modal. Restore first street input '78 Sample St' and second city input 'Dallas', matching underlying permanent licenseaddress. Preserve current住址 input '130 Example Ave' onright,statesTX Texas and ZIP75201/78701. Do not alter any pixel intent of the foreground unsaved-change modal,其余17fields,buttons,mask,layout. This is unsaved current address only,licenseaddressneverchanged.",
+    "refs": [
+      "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/O-A04-unsaved-v1.png",
+      "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+    ],
+    "issues": [
+      "O-A04 preserved license inputs"
+    ],
+    "review": {
+      "status": "passed",
+      "method": "root visual review plus independent 11-pair cross-review",
+      "evidence": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/findings/root-cross-review.md",
+      "checks": [
+        "灰底驾照78 Sample St/Dallas恢复；未保存当前地址130及弹窗不变。"
+      ]
+    }
+  },
+  {
+    "id": "O-A05-conflict-ui-v2",
+    "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/O-A05-conflict-v1.png",
+    "after": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/O-A05-conflict-ui-v2.png",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-be5d84fd-4374-4efb-a100-ebb2bbb0a740.png",
+    "prompt": "Use case: precise-object-edit. Asset type: existing Chinese desktop business UI static prototype. First image is the ONLY layout and data to edit; second image is color-role reference only, NEVER copy its old manual-create entry or simplify the first image navigation. Make ONLY the corrections below. Preserve canvas size, every existing business value, all rows, customer identity, dual status, sidebar items/order, selected tab, data and controls not named below. No redesign, no collage, no cropping. Color correction when requested: near-black ink navy headings (#101b46), dark navy normal values (#17264d), muted slate/gray-blue navigation labels/icons/secondary labels (#62769a), pale blue-gray borders (#dfe6f1), flat white backgrounds, deep navy primary buttons (#14264f). Bright saturated blue ONLY for actual links, copy/open icons, clickable operator names; not ordinary dates, numbers, labels or inactive navigation. Retain semantic green approval and amber pending states.\nChanges: Do NOT recolor or redesign. Edit ONLY graybackdrop left 驾照地址 card street value from128 Example Ave to78 Sample St. Keep its Dallas/TX/75201 untouched. Foreground conflict drawer must be entirely unchanged: current住址 conflict values128 Example Ave(opened),130 Example Ave(savedby陈杰),132 Example Ave(myinput),17otherunchanged fields,10/17/202610:42AM,buttons/labels/all data.",
+    "refs": [
+      "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/O-A05-conflict-v1.png",
+      "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+    ],
+    "issues": [
+      "O-A05 license backdrop"
+    ],
+    "review": {
+      "status": "passed",
+      "method": "root visual review plus independent 11-pair cross-review",
+      "evidence": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/findings/root-cross-review.md",
+      "checks": [
+        "灰底驾照78 Sample St/Dallas/TX75201；冲突128/130/132、操作人和时间不变。"
+      ]
+    },
+    "revisions": [
+      {
+        "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-fc17eb94-fbe8-41b0-8324-b112aab52b80.png",
+        "workspace": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/history/root/O-A05-conflict-ui-v2-draft1.png",
+        "prompt": "Use case: precise-object-edit. Asset type: existing Chinese desktop business UI static prototype. First image is the ONLY layout and data to edit; second image is color-role reference only, NEVER copy its old manual-create entry or simplify the first image navigation. Make ONLY the corrections below. Preserve canvas size, every existing business value, all rows, customer identity, dual status, sidebar items/order, selected tab, data and controls not named below. No redesign, no collage, no cropping. Color correction when requested: near-black ink navy headings (#101b46), dark navy normal values (#17264d), muted slate/gray-blue navigation labels/icons/secondary labels (#62769a), pale blue-gray borders (#dfe6f1), flat white backgrounds, deep navy primary buttons (#14264f). Bright saturated blue ONLY for actual links, copy/open icons, clickable operator names; not ordinary dates, numbers, labels or inactive navigation. Retain semantic green approval and amber pending states.\nChanges: Do NOT recolor or redesign. Edit ONLY graybackdrop left 驾照地址 card street value from128 Example Ave to78 Sample St. Keep its Dallas/TX/75201 untouched. Foreground conflict drawer must be entirely unchanged: current住址 conflict values128 Example Ave(opened),130 Example Ave(savedby陈杰),132 Example Ave(myinput),17otherunchanged fields,10/17/202610:42AM,buttons/labels/all data."
+      }
+    ],
+    "postfixes": [
+      {
+        "prompt": "Precise single-text edit ONLY to this existing static prototype. In the dimmed backdrop's lower-left 驾照地址 card, change ONLY 城市 value Austin to Dallas. The fixed street 78 Sample St, TX, ZIP75201 must remain. This card is license address, not current residential address. Foreground conflict drawer MUST remain unchanged with 128 Example Ave /130 Example Ave/132 Example Ave, 陈杰,10/17/2026 10:42 AM,17 other fields and all buttons. Preserve all other text,color,layout,canvas.",
+        "refs": [
+          "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/history/root/O-A05-conflict-ui-v2-draft1.png"
+        ],
+        "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-be5d84fd-4374-4efb-a100-ebb2bbb0a740.png"
+      }
+    ]
+  },
+  {
+    "id": "C10-actor-detail-ui-v2",
+    "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C10-actor-detail-v1.png",
+    "after": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-actor-detail-ui-v2.png",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-4d5329ac-70d8-427a-ae0e-de1b91d04c1e.png",
+    "prompt": "Use case: precise-object-edit. Asset type: existing Chinese desktop business UI static prototype. First image is the ONLY layout and data to edit; second image is color-role reference only, NEVER copy its old manual-create entry or simplify the first image navigation. Make ONLY the corrections below. Preserve canvas size, every existing business value, all rows, customer identity, dual status, sidebar items/order, selected tab, data and controls not named below. No redesign, no collage, no cropping. Color correction when requested: near-black ink navy headings (#101b46), dark navy normal values (#17264d), muted slate/gray-blue navigation labels/icons/secondary labels (#62769a), pale blue-gray borders (#dfe6f1), flat white backgrounds, deep navy primary buttons (#14264f). Bright saturated blue ONLY for actual links, copy/open icons, clickable operator names; not ordinary dates, numbers, labels or inactive navigation. Retain semantic green approval and amber pending states.\nChanges: Do NOT recolor or redesign. Only normalize oversized heading typography in rightdrawer: title 操作人详情 approx32px darknavy semibold matching other drawers; section headings 当前正式字段 and 来源与确认 approx24px semibold. Keep their left/top anchors and surrounding cards/rows at samepositions,no reflow. All sourcevalues,actors,dates/times,footer,buttons and graybackdrop remain unchanged.",
+    "refs": [
+      "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C10-actor-detail-v1.png",
+      "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+    ],
+    "issues": [
+      "C10 drawer typography"
+    ],
+    "review": {
+      "status": "passed",
+      "method": "root visual review plus independent 11-pair cross-review",
+      "evidence": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/findings/root-cross-review.md",
+      "checks": [
+        "标题层级缩小；正式操作人/导入/识别发起/人工确认四段数据及位置保留。"
+      ]
+    }
+  }
+]

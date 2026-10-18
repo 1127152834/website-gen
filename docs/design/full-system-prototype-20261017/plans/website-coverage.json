@@ -1,0 +1,1495 @@
+{
+  "schema_version": 1,
+  "as_of": "10/17/2026",
+  "scope": "W01-W12 and O-W01-O-W14 only",
+  "status": "coverage_inventory_complete_pending_image_and_state_generation",
+  "existing_image_meaning": "Existing static PNG located or identified; not independent visual approval, user approval of every state, implemented UI, or live validation.",
+  "selection": {
+    "W02": "choice_3_bulk_workbook",
+    "W04": "choice_1_manifest_summary",
+    "W03": "unchanged"
+  },
+  "counts": {
+    "base_interfaces": 26,
+    "existing_primary_images": 12,
+    "pending_primary_images": 14
+  },
+  "constraints": [
+    "每客户一家企业一个网站；多客户批量各自独立资料。",
+    "三条DEMO不是数量上限；滚动/分页/筛选不得改变完整提交集合。",
+    "W02选方案3，W04选方案1，W03不动；旧图保留。",
+    "状态仅为设计队列；只审实际画面才可更新覆盖结论。",
+    "不写应用代码、不真实调用服务、不推测客户下一步。"
+  ],
+  "priority_queue": [
+    "O-W03",
+    "O-W04",
+    "O-W05",
+    "O-W06",
+    "O-W11",
+    "O-W12",
+    "O-W02",
+    "O-W13",
+    "O-W14",
+    "O-W07",
+    "O-W08",
+    "O-W09",
+    "O-W10",
+    "O-W01"
+  ],
+  "shared_states": [
+    "未保存/保存失败/并发修改/权限/对象不存在复用已完成客户通用交互，不在本盘点另造主页面ID。",
+    "W02客户选择、W03资源冲突、W04提交未知等保留在所属states中供根任务排图。"
+  ],
+  "screens": [
+    {
+      "id": "W01",
+      "title": "建站总览",
+      "kind": "page",
+      "purpose": "汇总真实建站任务、站点异常与资源事实，不推测客户下一步。",
+      "existing_image": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W01-v1.png",
+      "coverage": "existing_static_candidate",
+      "capability": "existing_function_ui_optimization",
+      "required_content": [
+        "真实站点执行/上线统计",
+        "进行中批次和可定位异常",
+        "域名到期提醒以实际资源时间为据",
+        "客户业务完成与网站状态分开"
+      ],
+      "actions": [
+        "进入批次",
+        "进入异常站点",
+        "进入现有资源详情"
+      ],
+      "states": [
+        {
+          "key": "W01-1",
+          "description": "正常汇总候选",
+          "coverage": "existing_static_candidate",
+          "existing_image": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W01-v1.png"
+        },
+        {
+          "key": "W01-2",
+          "description": "首次无任务空态",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W01-3",
+          "description": "读取失败与局部数据缺失，不能将失败显示为零",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "W02",
+      "title": "新建网站：客户与经营资料",
+      "kind": "wizard_step",
+      "purpose": "第一步选择一个或多个已有客户，核对各自企业资料并填写各自订单/运输时效。",
+      "existing_image": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/W02-option-03.png",
+      "coverage": "existing_static_candidate",
+      "capability": "existing_wizard_plus_customer_integration_design",
+      "required_content": [
+        "已选方案3：批量时效工作表＋独立当前客户只读摘要",
+        "每客户独立企业、地址、个人电话、商业邮箱来源",
+        "EIN及企业资料就绪，不将EIN公开",
+        "处理与运输均为客户网站承诺工作日，不是生成网站耗时",
+        "全部已选数量；三条DEMO非上限；下方摘要显式当前客户"
+      ],
+      "actions": [
+        "选择客户",
+        "查看当前客户资料",
+        "分别编辑处理/运输时效",
+        "明确移出本次清单",
+        "下一步：站点配置"
+      ],
+      "states": [
+        {
+          "key": "W02-1",
+          "description": "三客户正常工作表",
+          "coverage": "existing_static_candidate",
+          "existing_image": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/W02-option-03.png"
+        },
+        {
+          "key": "W02-2",
+          "description": "选择客户：多选、已有网站不可重复新建、企业/EIN缺失有具体原因",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W02-3",
+          "description": "无已选客户与无匹配客户分别展示",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W02-4",
+          "description": "多客户滚动/分页保留所有选择和输入，不能仅提交可见行",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "W03",
+      "title": "新建网站：站点配置",
+      "kind": "wizard_step",
+      "purpose": "第二步逐客户设置域名、商业邮箱、品牌、品类、数量和价格，不实际提交。",
+      "existing_image": "F:/projects/website-gen/docs/design/group-03-website-management/W03-site-configuration-v1.png",
+      "coverage": "existing_static_candidate",
+      "capability": "existing_configuration_plus_customer_integration_design",
+      "required_content": [
+        "W03原图不动，每客户一行",
+        "客户/企业/域名/邮箱持续对应",
+        "Jamie展开独立参数：60件、USD25–120、处理2–4/运输5–10工作日",
+        "资源选择不等于SMTP连接或已购买",
+        "品类可搜索/细分，不限制示例大类"
+      ],
+      "actions": [
+        "选域名与对应商业邮箱",
+        "编辑品牌/品类/数量/价格",
+        "展开或收起当前行",
+        "移出本次项",
+        "上一步",
+        "下一步：确认启动"
+      ],
+      "states": [
+        {
+          "key": "W03-1",
+          "description": "三客户正常配置",
+          "coverage": "existing_static_candidate",
+          "existing_image": "F:/projects/website-gen/docs/design/group-03-website-management/W03-site-configuration-v1.png"
+        },
+        {
+          "key": "W03-2",
+          "description": "资源读取中/失败与没有可用资源区分",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W03-3",
+          "description": "域名重复/资源占用/客户关联冲突行内定位",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W03-4",
+          "description": "数量范围或价格区间错误保留输入",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W03-5",
+          "description": "多客户切换不串值、不丢隐藏项",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "W04",
+      "title": "新建网站：确认启动",
+      "kind": "wizard_step",
+      "purpose": "第三步复核完整本次提交集合，人工确认后才发起建站。",
+      "existing_image": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/W04-option-01.png",
+      "coverage": "existing_static_candidate",
+      "capability": "existing_submit_plus_customer_integration_design",
+      "required_content": [
+        "已选方案1：纵向建站清单＋固定全局确认侧栏",
+        "每客户最终企业、域名、邮箱、品牌/品类、数量/价格及处理/运输时效",
+        "全局总数是完整集合，不是可见行或筛选结果",
+        "操作人、外部服务及可能模型费用",
+        "生成后维护模式、人工检查上线、建站完成不等于网关获批",
+        "当前尚未提交"
+      ],
+      "actions": [
+        "查看对应经营资料",
+        "返回修改对应配置并保留其他客户",
+        "勾选全局确认",
+        "上一步",
+        "确认并开始建站（完整集合数量）"
+      ],
+      "states": [
+        {
+          "key": "W04-1",
+          "description": "正常未提交且已勾选确认",
+          "coverage": "existing_static_candidate",
+          "existing_image": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/W04-option-01.png"
+        },
+        {
+          "key": "W04-2",
+          "description": "未勾选时主按钮禁用",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W04-3",
+          "description": "提交中禁止重复点击",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W04-4",
+          "description": "提交失败保留输入并明确影响项",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W04-5",
+          "description": "提交结果未知先核验已有记录，不能盲目再建",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W04-6",
+          "description": "不就绪项定位并明确修正/移出，不能静默跳过",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "W05",
+      "title": "批次列表",
+      "kind": "page",
+      "purpose": "检索一次发起的建站任务集合，呈现完整批次的真实汇总。",
+      "existing_image": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W05-v1.png",
+      "coverage": "existing_static_candidate",
+      "capability": "existing_function_plus_customer_labels_design",
+      "required_content": [
+        "批次标识/发起时间/操作来源",
+        "完整客户或站点数量",
+        "真实排队/进行/等待/完成/失败计数",
+        "单项也可形成批次，不是同一企业多站"
+      ],
+      "actions": [
+        "搜索与真实状态筛选",
+        "进入批次详情"
+      ],
+      "states": [
+        {
+          "key": "W05-1",
+          "description": "正常批次列表",
+          "coverage": "existing_static_candidate",
+          "existing_image": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W05-v1.png"
+        },
+        {
+          "key": "W05-2",
+          "description": "无批次/搜索无结果",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W05-3",
+          "description": "读取失败；不能显示为无任务",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "W06",
+      "title": "批次详情",
+      "kind": "page",
+      "purpose": "按客户及其唯一网站查看本批次执行事实和失败项。",
+      "existing_image": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W06-v1.png",
+      "coverage": "existing_static_candidate",
+      "capability": "existing_function_plus_customer_labels_design",
+      "required_content": [
+        "批次及完整集合数量",
+        "每行客户/企业/域名和真实步骤状态",
+        "部分成功、失败、等待区分",
+        "错误可定位具体站点/步骤",
+        "操作人来源不得伪装为已实现姓名归因"
+      ],
+      "actions": [
+        "进入站点",
+        "查看步骤日志",
+        "适用失败项重试",
+        "适用站点上线前复核"
+      ],
+      "states": [
+        {
+          "key": "W06-1",
+          "description": "正常混合执行批次",
+          "coverage": "existing_static_candidate",
+          "existing_image": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W06-v1.png"
+        },
+        {
+          "key": "W06-2",
+          "description": "部分失败且已成功项保留",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W06-3",
+          "description": "步骤等待或结果未知不伪造完成",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W06-4",
+          "description": "多客户分页/筛选汇总不丢完整批次范围",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "W07",
+      "title": "站点列表",
+      "kind": "page",
+      "purpose": "以客户、企业、域名找到网站；网站执行与上线状态分开。",
+      "existing_image": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W07-v1.png",
+      "coverage": "existing_static_candidate",
+      "capability": "existing_function_plus_customer_labels_design",
+      "required_content": [
+        "客户/企业/品牌/域名",
+        "真实建站状态与独立上线状态",
+        "最近变化和可用操作",
+        "客户共享业务不引入固定客户负责人",
+        "旧已放弃历史不等于客户归档"
+      ],
+      "actions": [
+        "搜索与状态筛选",
+        "进入站点详情",
+        "打开对应客户档案"
+      ],
+      "states": [
+        {
+          "key": "W07-1",
+          "description": "正常站点列表",
+          "coverage": "existing_static_candidate",
+          "existing_image": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W07-v1.png"
+        },
+        {
+          "key": "W07-2",
+          "description": "无站点/无搜索结果/加载失败分开",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W07-3",
+          "description": "无关联的历史网站不能伪造客户归属",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "W08",
+      "title": "站点详情：概况",
+      "kind": "detail_tab",
+      "purpose": "查看单个网站执行、维护/上线状态、关联客户与可执行动作。",
+      "existing_image": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W08-v1.png",
+      "coverage": "existing_static_candidate",
+      "capability": "existing_function_plus_customer_context_design",
+      "required_content": [
+        "固定客户/企业/域名对象头部",
+        "执行步骤及实际结果",
+        "维护/上线与网关获批状态分开",
+        "适用动作由实际站点状态决定",
+        "客户关联不是已同步网站公开信息"
+      ],
+      "actions": [
+        "打开网站",
+        "返回客户",
+        "打开日志",
+        "重试失败步骤",
+        "上线前复核"
+      ],
+      "states": [
+        {
+          "key": "W08-1",
+          "description": "正常站点概况",
+          "coverage": "existing_static_candidate",
+          "existing_image": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W08-v1.png"
+        },
+        {
+          "key": "W08-2",
+          "description": "生成中或等待",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W08-3",
+          "description": "失败可定位重试",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W08-4",
+          "description": "生成完成仍维护模式",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W08-5",
+          "description": "上线请求失败或未知先核验",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "W09",
+      "title": "站点详情：AI对话",
+      "kind": "detail_tab",
+      "purpose": "保留现有AI修改网站能力，明确对话执行可改变实际网站。",
+      "existing_image": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W09-v1.png",
+      "coverage": "existing_static_candidate",
+      "capability": "existing_function_ui_optimization",
+      "required_content": [
+        "当前站点与客户上下文",
+        "消息、执行反馈和真实结果",
+        "直接应用修改的明确提示",
+        "人发起与AI执行来源分开",
+        "新对话不撤销已有网站变更"
+      ],
+      "actions": [
+        "发送修改要求",
+        "停止执行",
+        "新对话确认",
+        "查看相关变更记录"
+      ],
+      "states": [
+        {
+          "key": "W09-1",
+          "description": "正常对话",
+          "coverage": "existing_static_candidate",
+          "existing_image": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W09-v1.png"
+        },
+        {
+          "key": "W09-2",
+          "description": "执行中且可停止",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W09-3",
+          "description": "执行失败不显示修改成功",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W09-4",
+          "description": "无历史对话",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W09-5",
+          "description": "新对话确认走O-W07",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "W10",
+      "title": "站点详情：邮箱与交易发信",
+      "kind": "detail_tab",
+      "purpose": "管理网站邮箱/DNS/SMTP和交易发信，不替代客服收件箱。",
+      "existing_image": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W10-v1.png",
+      "coverage": "existing_static_candidate",
+      "capability": "existing_function_plus_inbox_navigation_design",
+      "required_content": [
+        "目标站点与商业邮箱",
+        "邮箱/DNS/SMTP分别展示事实状态",
+        "凭据不显示在通用日志",
+        "交易邮件是网站发信，不是付款测试",
+        "SMTP接受不等于最终收件人已收到"
+      ],
+      "actions": [
+        "查看配置",
+        "适用邮箱/DNS修复",
+        "验证与启用SMTP",
+        "凭据显示/重置的明确确认",
+        "发送交易测试邮件",
+        "前往现有收件箱"
+      ],
+      "states": [
+        {
+          "key": "W10-1",
+          "description": "正常配置",
+          "coverage": "existing_static_candidate",
+          "existing_image": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W10-v1.png"
+        },
+        {
+          "key": "W10-2",
+          "description": "缺凭据/连接拒绝/网络错误分开",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W10-3",
+          "description": "修复中/部分成功/结果未知",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W10-4",
+          "description": "测试邮件受理与最终送达边界",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "W11",
+      "title": "站点详情：变更记录",
+      "kind": "detail_tab",
+      "purpose": "显示既有网站变更与恢复记录，不扩成客户资料版本库。",
+      "existing_image": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W11-v1.png",
+      "coverage": "existing_static_candidate",
+      "capability": "existing_function_plus_actor_attribution_design",
+      "required_content": [
+        "变更摘要/目标/操作来源/时间/结果",
+        "定时恢复与执行状态",
+        "后置修改冲突事实",
+        "员工姓名级操作人属整合设计，不冒充旧pi/你标记已满足"
+      ],
+      "actions": [
+        "查看变更详情",
+        "整体恢复确认",
+        "取消定时恢复确认"
+      ],
+      "states": [
+        {
+          "key": "W11-1",
+          "description": "正常变更列表",
+          "coverage": "existing_static_candidate",
+          "existing_image": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W11-v1.png"
+        },
+        {
+          "key": "W11-2",
+          "description": "无变更",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W11-3",
+          "description": "执行/恢复失败",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W11-4",
+          "description": "恢复与后续修改冲突",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 3
+    },
+    {
+      "id": "W12",
+      "title": "站点详情：网站复核",
+      "kind": "detail_tab",
+      "purpose": "展示已有网站QA发现、证据、修复与复查，不替代客户材料审核。",
+      "existing_image": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W12-v1.png",
+      "coverage": "existing_static_candidate",
+      "capability": "existing_function_ui_optimization",
+      "required_content": [
+        "检查范围/时间/来源与实际执行状态",
+        "确定性/AI问题及证据",
+        "可自动修复与需要人工处理区分",
+        "旧证据不冒充当前站点实时画面",
+        "无问题仅适用实际检查范围，不保证网关获批"
+      ],
+      "actions": [
+        "看发现/证据",
+        "单项修复",
+        "修复可支持的全部项",
+        "重新检查",
+        "查看运行面板"
+      ],
+      "states": [
+        {
+          "key": "W12-1",
+          "description": "正常QA报告",
+          "coverage": "existing_static_candidate",
+          "existing_image": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/W12-v1.png"
+        },
+        {
+          "key": "W12-2",
+          "description": "检查中/失败与无发现分开",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W12-3",
+          "description": "部分修复成功，人工处理项仍保留",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "W12-4",
+          "description": "报告需更新或读取失败",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "O-W01",
+      "title": "CSV站点配置导入结果",
+      "kind": "panel",
+      "purpose": "展示既有站点CSV导入有效/无效行；客户逐项映射仍须显式设计，不得恢复一企多站。",
+      "existing_image": null,
+      "coverage": "pending",
+      "capability": "existing_import_with_pending_customer_mapping_design",
+      "required_content": [
+        "原行号/解析结果/具体错误",
+        "重复或不可用域名定位",
+        "有效配置只进入未提交清单",
+        "保留既有能力，不变为客户资料或Grist导入",
+        "客户匹配适配尚待细化，未知项标待确认而非猜测归属"
+      ],
+      "actions": [
+        "查看错误",
+        "修正后重新导入",
+        "明确采用有效配置",
+        "取消"
+      ],
+      "states": [
+        {
+          "key": "O-W01-1",
+          "description": "混合有效/无效行",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W01-2",
+          "description": "全无效",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W01-3",
+          "description": "客户映射未确认：不得自动建立或覆盖客户",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 4
+    },
+    {
+      "id": "O-W02",
+      "title": "移出本次建站项确认",
+      "kind": "modal",
+      "purpose": "仅移出未提交清单中的目标客户建站项。",
+      "existing_image": null,
+      "coverage": "pending",
+      "capability": "existing_remove_action_ui_optimization",
+      "required_content": [
+        "目标客户/企业及本次域名",
+        "移出前后完整集合数量",
+        "不删除客户、企业、文件或实际网站",
+        "保留其他客户配置"
+      ],
+      "actions": [
+        "取消",
+        "确认移出本次清单"
+      ],
+      "states": [
+        {
+          "key": "O-W02-1",
+          "description": "正常确认",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W02-2",
+          "description": "操作失败保持原清单",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W02-3",
+          "description": "最后一项移出后明确空清单",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 3
+    },
+    {
+      "id": "O-W03",
+      "title": "启动前条件提示",
+      "kind": "modal_or_panel",
+      "purpose": "按客户定位实际缺失或冲突，不混淆可绕过材料审核。",
+      "existing_image": null,
+      "coverage": "pending",
+      "capability": "existing_validation_plus_customer_prerequisite_design",
+      "required_content": [
+        "完整批次检查范围与失败项数量",
+        "客户/企业/域名及具体缺失或占用",
+        "企业/EIN前提、资源占用、邮箱读取状态分开",
+        "显示不在当前可见页的问题",
+        "不新增银行材料或网关获批前置"
+      ],
+      "actions": [
+        "跳转对应字段或档案",
+        "重新读取真实资源",
+        "返回修正",
+        "明确移出问题项后重新确认"
+      ],
+      "states": [
+        {
+          "key": "O-W03-1",
+          "description": "多客户部分未就绪",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W03-2",
+          "description": "资源读取失败不等于无资源",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W03-3",
+          "description": "提交时并发占用变化",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "O-W04",
+      "title": "重试建站确认与反馈",
+      "kind": "modal",
+      "purpose": "重试现有失败站点和步骤，不盲目再创建网站或采购资源。",
+      "existing_image": null,
+      "coverage": "pending",
+      "capability": "existing_retry_action_ui_optimization",
+      "required_content": [
+        "目标客户/网站/批次",
+        "原失败步骤及错误",
+        "从可支持的失败步骤继续",
+        "已完成项不伪造重新执行成功",
+        "未知结果先核验"
+      ],
+      "actions": [
+        "取消",
+        "确认重试",
+        "查看重试结果或日志"
+      ],
+      "states": [
+        {
+          "key": "O-W04-1",
+          "description": "确认失败步骤重试",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W04-2",
+          "description": "重试执行中",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W04-3",
+          "description": "重试失败",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W04-4",
+          "description": "结果未知先核验而非重复重试",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "O-W05",
+      "title": "上线前网站复核提示",
+      "kind": "modal",
+      "purpose": "读取最新QA并提示未解决项，人工决定是否继续上线。",
+      "existing_image": null,
+      "coverage": "pending",
+      "capability": "existing_launch_gate_ui_optimization",
+      "required_content": [
+        "目标网站/客户",
+        "本次QA读取时间/状态",
+        "具体未解决问题和来源",
+        "有问题可按已有规则确认继续",
+        "QA读取失败不等于通过且不执行上线"
+      ],
+      "actions": [
+        "取消",
+        "打开复核报告",
+        "仍然上线（已读取且适用时）",
+        "读取失败时重试"
+      ],
+      "states": [
+        {
+          "key": "O-W05-1",
+          "description": "有未解决项仍可人工确认上线",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W05-2",
+          "description": "读取失败禁用上线",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W05-3",
+          "description": "读取中",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W05-4",
+          "description": "无问题时仍区分检查事实与上线结果",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "O-W06",
+      "title": "运行步骤与日志详情",
+      "kind": "panel",
+      "purpose": "查看站点步骤、耗时和事件，日志不推断客户业务阶段。",
+      "existing_image": null,
+      "coverage": "pending",
+      "capability": "existing_execution_detail_ui_optimization",
+      "required_content": [
+        "所属客户/网站/批次/步骤",
+        "真实状态/开始结束时间/错误",
+        "来源与日志正文适当分层",
+        "无凭据或客户敏感原文泄露"
+      ],
+      "actions": [
+        "切换步骤",
+        "过滤日志",
+        "重试读取",
+        "返回详情"
+      ],
+      "states": [
+        {
+          "key": "O-W06-1",
+          "description": "正常步骤日志",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W06-2",
+          "description": "仍在执行",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W06-3",
+          "description": "日志读取失败",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W06-4",
+          "description": "无日志不等于执行成功",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 1
+    },
+    {
+      "id": "O-W07",
+      "title": "站点新对话确认",
+      "kind": "modal",
+      "purpose": "确认重置站点AI对话上下文，不撤销实际修改。",
+      "existing_image": null,
+      "coverage": "pending",
+      "capability": "existing_chat_reset_confirmation",
+      "required_content": [
+        "明确目标网站",
+        "将清空当前对话上下文",
+        "已经应用的网站变更保留",
+        "进行中任务的实际支持边界不编造"
+      ],
+      "actions": [
+        "取消",
+        "确认新对话"
+      ],
+      "states": [
+        {
+          "key": "O-W07-1",
+          "description": "正常新对话确认",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W07-2",
+          "description": "执行失败保持原上下文可见或明确未知",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 3
+    },
+    {
+      "id": "O-W08",
+      "title": "网站变更详情",
+      "kind": "drawer",
+      "purpose": "展示既有变更可提供的目标、摘要、来源、状态和恢复信息。",
+      "existing_image": null,
+      "coverage": "pending",
+      "capability": "new_detail_presentation_on_existing_change_records",
+      "required_content": [
+        "变更标识及目标站点",
+        "摘要/发起来源/时间/结果/错误",
+        "真实前后值存在才显示差异",
+        "恢复范围与是否有定时恢复",
+        "不得承诺无依据逐字段回滚"
+      ],
+      "actions": [
+        "返回记录",
+        "查看已有证据",
+        "适用时进入整体恢复确认"
+      ],
+      "states": [
+        {
+          "key": "O-W08-1",
+          "description": "正常详情",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W08-2",
+          "description": "失败变更详情",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W08-3",
+          "description": "无可用差异时说明而非捏造diff",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 3
+    },
+    {
+      "id": "O-W09",
+      "title": "整体恢复确认",
+      "kind": "modal",
+      "purpose": "确认恢复网站变更及冲突影响，不更改客户档案。",
+      "existing_image": null,
+      "coverage": "pending",
+      "capability": "existing_rollback_confirmation_ui_optimization",
+      "required_content": [
+        "目标变更与网站",
+        "可恢复的整体范围",
+        "与后续修改的冲突风险和真实检测结果",
+        "恢复不影响客户当前资料或网关定稿",
+        "失败不显示强制全部成功"
+      ],
+      "actions": [
+        "取消",
+        "确认整体恢复（适用时）",
+        "查看冲突详情"
+      ],
+      "states": [
+        {
+          "key": "O-W09-1",
+          "description": "正常恢复确认",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W09-2",
+          "description": "后续修改冲突",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W09-3",
+          "description": "恢复执行中/失败/未知",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 3
+    },
+    {
+      "id": "O-W10",
+      "title": "取消定时恢复确认",
+      "kind": "modal",
+      "purpose": "取消已设置的未来恢复任务，不立即恢复网站。",
+      "existing_image": null,
+      "coverage": "pending",
+      "capability": "existing_scheduled_restore_cancel_confirmation",
+      "required_content": [
+        "目标网站/变更/计划时间",
+        "任务当前状态",
+        "取消未来任务与立即恢复的区别"
+      ],
+      "actions": [
+        "取消",
+        "确认取消定时恢复"
+      ],
+      "states": [
+        {
+          "key": "O-W10-1",
+          "description": "正常确认",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W10-2",
+          "description": "任务已执行或状态变化时重新核验",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W10-3",
+          "description": "取消失败保持原状态",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 3
+    },
+    {
+      "id": "O-W11",
+      "title": "网站修复与复核运行面板",
+      "kind": "panel",
+      "purpose": "跟踪已支持QA修复/检查的逐项真实执行状态。",
+      "existing_image": null,
+      "coverage": "pending",
+      "capability": "existing_qa_run_presentation",
+      "required_content": [
+        "站点/执行范围/发起来源",
+        "排队/执行/完成/失败/人工处理",
+        "各项结果与汇总数量一致",
+        "部分失败不清除已完成结果",
+        "关闭面板不伪称后台任务已取消"
+      ],
+      "actions": [
+        "查看单项结果",
+        "重试真实支持的失败项",
+        "返回当前报告",
+        "关闭面板"
+      ],
+      "states": [
+        {
+          "key": "O-W11-1",
+          "description": "混合执行结果",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W11-2",
+          "description": "全部完成但含需人工处理项",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W11-3",
+          "description": "任务读取失败或未知",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "O-W12",
+      "title": "网站复核证据放大",
+      "kind": "overlay",
+      "purpose": "查看报告截图或证据，保留来源与获取时间。",
+      "existing_image": null,
+      "coverage": "pending",
+      "capability": "existing_qa_evidence_view",
+      "required_content": [
+        "目标网站与发现项",
+        "证据截图/内容及取得时间",
+        "旧证据不是实时网站状态",
+        "没有证据时不生成假证明"
+      ],
+      "actions": [
+        "放大/缩小",
+        "查看关联发现",
+        "关闭"
+      ],
+      "states": [
+        {
+          "key": "O-W12-1",
+          "description": "正常证据预览",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W12-2",
+          "description": "证据读取失败",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W12-3",
+          "description": "证据不存在或失效",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 2
+    },
+    {
+      "id": "O-W13",
+      "title": "邮箱修复与SMTP启用确认",
+      "kind": "modal",
+      "purpose": "明确目标邮箱、DNS/SMTP动作与密码影响后人工执行。",
+      "existing_image": null,
+      "coverage": "pending",
+      "capability": "existing_email_configuration_actions_ui_optimization",
+      "required_content": [
+        "站点/域名/商业邮箱",
+        "本次真实修复或启用动作",
+        "是否验证现有密码或生成新密码及影响",
+        "不静默更换邮箱或密码",
+        "配置完成不等于邮件最终送达"
+      ],
+      "actions": [
+        "取消",
+        "明确确认本次修复或SMTP启用",
+        "查看真实结果"
+      ],
+      "states": [
+        {
+          "key": "O-W13-1",
+          "description": "正常确认",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W13-2",
+          "description": "凭据验证失败",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W13-3",
+          "description": "部分步骤成功/失败",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W13-4",
+          "description": "结果未知先核验不重复改密码",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 3
+    },
+    {
+      "id": "O-W14",
+      "title": "交易测试邮件发送",
+      "kind": "modal",
+      "purpose": "人工指定收件地址并发送网站交易发信测试，不测试支付。",
+      "existing_image": null,
+      "coverage": "pending",
+      "capability": "existing_transactional_test_mail_action",
+      "required_content": [
+        "发信网站/商业邮箱",
+        "人工输入测试收件地址",
+        "操作人及明确发送按钮",
+        "非网关申请、非自动联系客户",
+        "SMTP受理与实际送达分别表述"
+      ],
+      "actions": [
+        "取消",
+        "发送测试邮件",
+        "未知时核验发送记录"
+      ],
+      "states": [
+        {
+          "key": "O-W14-1",
+          "description": "未发送确认",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W14-2",
+          "description": "发送中禁止重复提交",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W14-3",
+          "description": "发送受理",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W14-4",
+          "description": "发送失败",
+          "coverage": "pending",
+          "existing_image": null
+        },
+        {
+          "key": "O-W14-5",
+          "description": "结果未知不自动重复发",
+          "coverage": "pending",
+          "existing_image": null
+        }
+      ],
+      "source_refs": [
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#34-现有建站批次与站点",
+        "F:/projects/website-gen/docs/design/application-page-inventory-v1.md#44-建站站点与复核",
+        "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+        "F:/projects/website-gen/docs/design/scope-amendment-04-one-company-one-site.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+        "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-layout-options-20261017/selection-decision.md"
+      ],
+      "priority": 3
+    }
+  ]
+}

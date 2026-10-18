@@ -4,11 +4,17 @@ import { siteSteps } from "./batches.ts";
 import { siteContext } from "./pipeline.ts";
 import { enableSmtp, resetMailboxPassword, saveMailboxPassword, sendTestEmail, smtpStatus } from "./smtp.ts";
 import { deps, DOMAIN, EMAIL, fakeHostinger, fakeSite, key, runToEnd, setup } from "./testing.ts";
-import { unseal } from "./secrets.ts";
+import { seal, unseal } from "./secrets.ts";
 import { hasDefaultMailboxPassword, setDefaultMailboxPassword } from "./mail.ts";
 
-test("a new site sends its order emails through the support mailbox, and the test email is confirmed in the inbox", async () => {
+function seedSiteMailbox(db: ReturnType<typeof setup>["db"], siteId: number, password = "Saved1!pass") {
+  db.prepare("UPDATE sites SET mailbox_ciphertext=? WHERE id=?")
+    .run(seal(key, JSON.stringify({ address: EMAIL, password })), siteId);
+}
+
+test("a selected existing mailbox with saved credentials sends order emails and confirms the test email", async () => {
   const { db, siteId } = setup();
+  seedSiteMailbox(db, siteId);
   const { st, exec } = fakeHostinger();
   const { fetchImpl, wp } = fakeSite(st);
   const checked: string[] = [];
@@ -34,6 +40,7 @@ test("a new site sends its order emails through the support mailbox, and the tes
 
 test("if the test email cannot be sent, SMTP is switched off so order emails still go out through the host", async () => {
   const { db, siteId } = setup();
+  seedSiteMailbox(db, siteId);
   const { st, exec } = fakeHostinger();
   const { fetchImpl, wp } = fakeSite(st);
   wp.failSmtp = true;
@@ -50,7 +57,6 @@ test("if the test email cannot be sent, SMTP is switched off so order emails sti
 test("an existing mailbox needs its password first; a wrong password is rejected before anything is saved", async () => {
   const { db, siteId } = setup();
   const { st, exec } = fakeHostinger();
-  st.mailboxes.push({ id: "AC9", address: EMAIL, status: "active" });
   const { fetchImpl, wp } = fakeSite(st);
   const d = deps(db, exec, fetchImpl, []);
   await runToEnd(d, siteId);
@@ -72,6 +78,7 @@ test("an existing mailbox needs its password first; a wrong password is rejected
 
 test("a test email to another address is reported as sent; a missing delivery is reported, not hidden", async () => {
   const { db, siteId } = setup();
+  seedSiteMailbox(db, siteId);
   const { st, exec } = fakeHostinger();
   const { fetchImpl, wp } = fakeSite(st);
   const d = deps(db, exec, fetchImpl, []);
@@ -89,7 +96,6 @@ test("a test email to another address is reported as sent; a missing delivery is
 test("an existing mailbox can get a new app-generated password; it is saved before the change and verified by logging in", async () => {
   const { db, siteId } = setup();
   const { st, exec } = fakeHostinger();
-  st.mailboxes.push({ id: "AC9", address: EMAIL, status: "active" });
   const d = deps(db, exec, fakeSite(st).fetchImpl, []);
   await runToEnd(d, siteId);
 
@@ -107,47 +113,77 @@ test("an existing mailbox can get a new app-generated password; it is saved befo
   assert.equal(attempts, 2);
 });
 
-test("with a default mailbox password in settings, new mailboxes use it and order emails go out with it", async () => {
+test("an existing mailbox tries the configured default password once and reuses it when login succeeds", async () => {
   const { db, siteId } = setup();
   setDefaultMailboxPassword(db, key, "Default1!pass");
   const { st, exec } = fakeHostinger();
   const { fetchImpl, wp } = fakeSite(st);
-  await runToEnd(deps(db, exec, fetchImpl, []), siteId);
-  const saved = JSON.parse(unseal(key, (db.prepare("SELECT mailbox_ciphertext FROM sites WHERE id = ?").get(siteId) as { mailbox_ciphertext: Uint8Array }).mailbox_ciphertext));
-  assert.equal(saved.password, "Default1!pass");
-  assert.equal(wp.smtp!.password, "Default1!pass");
+  const tried: string[] = [];
+  await runToEnd(deps(db, exec, fetchImpl, [], {
+    login: async (creds) => { tried.push(creds.password); },
+    inbox: async () => true,
+  }), siteId);
+  assert.deepEqual(tried, ["Default1!pass"]);
+  const sealed = (db.prepare("SELECT mailbox_ciphertext FROM sites WHERE id = ?").get(siteId) as { mailbox_ciphertext: Uint8Array }).mailbox_ciphertext;
+  assert.deepEqual(JSON.parse(unseal(key, sealed)), { address: EMAIL, password: "Default1!pass" });
+  assert.equal(wp.smtp?.password, "Default1!pass");
+  assert.equal(st.calls.includes("mail_mailboxes_create-mailbox"), false);
+  assert.equal(st.calls.includes("mail_aliases_create-alias"), false);
+  assert.equal(st.calls.includes("mail_mailboxes_change-mailbox-password"), false);
 });
 
-test("an existing mailbox is tried with the default password once; only a password that logs in is saved", async () => {
-  for (const [actual, expectSaved] of [["Default1!pass", true], ["Other1!pass", false]] as const) {
-    const { db, siteId } = setup();
-    setDefaultMailboxPassword(db, key, "Default1!pass");
+test("a rejected default password is tried once but never saved or followed by a remote mailbox write", async () => {
+  const { db, siteId } = setup();
+  setDefaultMailboxPassword(db, key, "Default1!pass");
+  const { st, exec } = fakeHostinger();
+  const { fetchImpl, wp } = fakeSite(st);
+  const tried: string[] = [];
+  await runToEnd(deps(db, exec, fetchImpl, [], {
+    login: async (creds) => { tried.push(creds.password); throw new Error("[AUTHENTICATIONFAILED]"); },
+  }), siteId);
+  assert.deepEqual(tried, ["Default1!pass"]);
+  const row = db.prepare("SELECT mailbox_ciphertext FROM sites WHERE id = ?").get(siteId) as { mailbox_ciphertext: Uint8Array | null };
+  assert.equal(row.mailbox_ciphertext, null);
+  assert.equal(wp.smtp, null);
+  assert.equal(st.calls.includes("mail_mailboxes_create-mailbox"), false);
+  assert.equal(st.calls.includes("mail_aliases_create-alias"), false);
+  assert.equal(st.calls.includes("mail_mailboxes_change-mailbox-password"), false);
+});
+
+test("site provisioning reuses the exact cached mailbox credential that existed before the site", async () => {
+  const { db, siteId } = setup({ cachedMailbox: { password: "Cached1!pass" } });
+  const { st, exec } = fakeHostinger();
+  const { fetchImpl, wp } = fakeSite(st);
+  await runToEnd(deps(db, exec, fetchImpl, [], { inbox: async () => true }), siteId);
+  const sealed = (db.prepare("SELECT mailbox_ciphertext FROM sites WHERE id=?").get(siteId) as { mailbox_ciphertext: Uint8Array }).mailbox_ciphertext;
+  assert.deepEqual(JSON.parse(unseal(key, sealed)), { address: EMAIL, password: "Cached1!pass" });
+  assert.equal(wp.smtp?.password, "Cached1!pass");
+  for (const operation of ["mail_mailboxes_create-mailbox", "mail_aliases_create-alias", "mail_mailboxes_change-mailbox-password"])
+    assert.equal(st.calls.includes(operation), false, operation);
+});
+
+test("site provisioning never borrows cached credentials from another account or address", async () => {
+  for (const cachedMailbox of [
+    { accountId: 2, password: "Foreign1!pass" },
+    { address: `owner@${DOMAIN}`, password: "Other1!pass" },
+  ]) {
+    const { db, siteId } = setup({ cachedMailbox });
     const { st, exec } = fakeHostinger();
-    st.mailboxes.push({ id: "AC9", address: EMAIL, status: "active" });
     const { fetchImpl, wp } = fakeSite(st);
-    const tried: string[] = [];
-    const login = async (c: { password: string }) => {
-      tried.push(c.password);
-      if (c.password !== actual) throw new Error("[AUTHENTICATIONFAILED]");
-    };
-    await runToEnd(deps(db, exec, fetchImpl, [], { login }), siteId);
-    assert.deepEqual(tried, ["Default1!pass"]);
-    const row = db.prepare("SELECT mailbox_ciphertext FROM sites WHERE id = ?").get(siteId) as { mailbox_ciphertext: Uint8Array | null };
-    assert.equal(Boolean(row.mailbox_ciphertext), expectSaved);
-    assert.equal(Boolean(wp.smtp), expectSaved, expectSaved ? "order emails enabled" : "nothing enabled with an unknown password");
+    await runToEnd(deps(db, exec, fetchImpl, []), siteId);
+    const row = db.prepare("SELECT mailbox_ciphertext FROM sites WHERE id=?").get(siteId) as { mailbox_ciphertext: Uint8Array | null };
+    assert.equal(row.mailbox_ciphertext, null);
+    assert.equal(wp.smtp, null);
   }
 });
 
-test("without a mail order the steps say to claim the free trial in hPanel, not that the mailbox already existed", async () => {
+test("a vanished mail order blocks provisioning before the website is created", async () => {
   const { db, siteId } = setup();
   const { st, exec } = fakeHostinger();
   st.mailOrders = [];
-  await runToEnd(deps(db, exec, fakeSite(st).fetchImpl, []), siteId);
-  const steps = siteSteps(db, siteId);
-  assert.match(steps.find((s) => s.key === "mailbox")!.detail!, /hPanel.*免费试用/);
-  const smtp = steps.find((s) => s.key === "smtp")!.detail!;
-  assert.doesNotMatch(smtp, /之前就有/);
-  assert.match(smtp, /开通邮箱/);
+  await assert.rejects(runToEnd(deps(db, exec, fakeSite(st).fetchImpl, []), siteId), (error: Error) => error instanceof Error && /邮箱/.test(error.message));
+  assert.equal(st.calls.includes("hosting_websites_start-setup"), false);
+  assert.equal(st.calls.includes("mail_mailboxes_create-mailbox"), false);
 });
 
 test("the default mailbox password must meet Hostinger's rules", () => {

@@ -2,14 +2,18 @@ import { createHash, createHmac, randomBytes, randomUUID } from "node:crypto";
 import type { DatabaseSync } from "node:sqlite";
 import type {
   MailAttachment, MailEvent, MailFolder, MailListResult, MailMessageDetail, MailMessageSummary,
-  MailSendInput, MailboxSummary, MailCredentialSource, MailMonitorMode, MailDefaultPasswordResult,
+  MailSendInput, MailSendResult, MailboxSummary, MailCredentialSource, MailMonitorMode, MailDefaultPasswordResult,
 } from "../shared/mail-types.ts";
+import type { CaseSourceReaderRef, SourceReaderRef } from "../shared/mail-triage-types.ts";
 import { listAll, type HostingerExec } from "./hostinger.ts";
-import { parseMailText } from "./mailbox-parser.ts";
+import { parseMailText, type ParsedSafeMessage } from "./mailbox-parser.ts";
+import { cacheReadIdentity, cachedParsedMessage, fingerprintSource, invalidateCachedLocator, invalidateFolderGeneration, reconcileFolderSnapshot, recoverCachedSources, registerCachedSource, sourceTransaction, verifiedUidValidity, type SourceRegistrationHooks } from "./mail-triage-source.ts";
+import { CaseSourceMessageOutputSchema, CaseSourceReaderRefSchema, ReviewSourceMessageOutputSchema, ReviewSourcePreviewInputSchema } from "./mail-triage-schema.ts";
 import { MailboxMonitor } from "./mailbox-monitor.ts";
 import type { MailCredentials, MailTransport, MailTransportFactory, RemoteMessage } from "./mailbox-transport.ts";
 import { getSecret, seal, unseal } from "./secrets.ts";
-import { createMailTransport } from "./mailbox-adapter.ts";
+import { createMailTransport, MailSentAppendError } from "./mailbox-adapter.ts";
+import { prepareMailSend, settleMailSendAccepted, settleMailSendFailure, validateMailSendSelection } from "./mail-triage-send.ts";
 
 const MAX_INCOMING = 25 * 1024 * 1024;
 const MAX_ATTACHMENTS = 20 * 1024 * 1024;
@@ -49,15 +53,30 @@ export interface MailboxServiceDeps {
   push(event: MailEvent): void;
   monitor?: { idleLimit?: number; pollMs?: number; backoffMs?: number };
   readOnly?: boolean;
+  triageSourceHooks?: SourceRegistrationHooks;
+  /** Task9 注入 lifecycle/worker；所有 DB 回调同步，abort 只在 SAVEPOINT 提交后调用。 */
+  triageLifecycleHooks?: {
+    invalidateScope?(input: { mailboxIds: number[]; reason: "disable" | "scope_removed" | "mailbox_delete" | "abandon" }, now: number): { abortSourceIds: string[] };
+    invalidateSource?(sourceId: string, reason: "stale" | "missing" | "explicit_delete", now: number): void;
+    abortSources?(sourceIds: string[]): void;
+  };
 }
 
 export interface MailboxService {
   list(): MailboxSummary[];
+  /** 与队列/worker共享的进程内 deleting/closed guard。 */
+  isAvailable(mailboxId: number): boolean;
   sync(accountId?: number): Promise<MailboxSummary[]>;
   reconcile(): Promise<void>;
+  /** 内部授权握手：完整同步和同步提交在同一串行槽；不得 await/reenter。 */
+  withInboxSnapshot<T>(mailboxId: number, commit: (snapshot: { uidValidity: string; maxUid: number; complete: true }) => T): Promise<T>;
   folders(mailboxId: number): Promise<MailFolder[]>;
   messages(input: { mailboxId: number; folder: string; query?: string; page?: number; pageSize?: number }): Promise<MailListResult>;
   message(input: { mailboxId: number; folder: string; uid: number }): Promise<MailMessageDetail>;
+  /** 申请详情专用的本地缓存读取；完整来源绑定失效时绝不退回旧三元组 reader。 */
+  sourceMessage(input: CaseSourceReaderRef): { ref: CaseSourceReaderRef; message: MailMessageDetail };
+  /** 待确认页专用的当前授权来源缓存读取；不要求或伪造 case 关系。 */
+  sourcePreview(input: { sourceId: string; sourceVersion: number }): { sourceRef: SourceReaderRef; readerRef: CaseSourceReaderRef | null; message: MailMessageDetail };
   saveCredential(input: { mailboxId: number; password: string }): Promise<{ ok: true }>;
   tryDefaultCredentials(input?: { mailboxId?: number; retry?: boolean; accountId?: number }): Promise<MailDefaultPasswordResult>;
   resetCredential(input: { mailboxId: number; confirmed: boolean }): Promise<{ ok: true }>;
@@ -65,7 +84,7 @@ export interface MailboxService {
   markSeen(input: { mailboxId: number; folder: string; uid: number; seen: boolean }): Promise<{ ok: true }>;
   trash(input: { mailboxId: number; folder: string; uid: number; confirmed: boolean }): Promise<{ ok: true }>;
   deleteMailbox(input: { mailboxId: number; confirmed: boolean }): Promise<{ ok: true }>;
-  send(input: MailSendInput): Promise<{ messageId: string; appended: boolean }>;
+  send(input: MailSendInput): Promise<MailSendResult>;
   attachment(input: { mailboxId: number; folder: string; uid: number; partId: string }): Promise<{ name: string; type: string; size: number; data: Buffer }>;
   stopDomain(domain: string): Promise<void>;
   close(): Promise<void>;
@@ -119,6 +138,27 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
   let closed = false;
   const deleting = new Set<number>();
   const deletedRemote = new Set<string>();
+  const abortSources = (ids: Iterable<string>) => {
+    const unique = [...new Set(ids)].sort();
+    if (!unique.length) return;
+    try { deps.triageLifecycleHooks?.abortSources?.(unique); } catch { /* 提交后的最佳努力；fence 已经失效。 */ }
+  };
+  const lifecycleSourceHooks = (invalidated: Set<string>): SourceRegistrationHooks => ({
+    onPendingSource: deps.triageSourceHooks?.onPendingSource,
+    onSourceInvalidated: (input) => {
+      const first = deps.triageSourceHooks?.onSourceInvalidated?.(input) as unknown;
+      if (first != null && typeof first === "object" && "then" in first) throw new Error("来源失效钩子必须同步 synchronous");
+      const second = deps.triageLifecycleHooks?.invalidateSource?.(input.sourceId, input.reason, input.now) as unknown;
+      if (second != null && typeof second === "object" && "then" in second) throw new Error("来源生命周期钩子必须同步 synchronous");
+      invalidated.add(input.sourceId);
+    },
+  });
+  const triageTransaction = <T>(work: (hooks: SourceRegistrationHooks) => T): T => {
+    const invalidated = new Set<string>();
+    const result = sourceTransaction(deps.db, () => work(lifecycleSourceHooks(invalidated)));
+    abortSources(invalidated);
+    return result;
+  };
   const assertWritable = () => {
     if (deps.readOnly) throw new Error("当前工作区是只读模式，不能执行会连接邮箱或修改数据的操作");
   };
@@ -132,6 +172,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
   type FolderMetadata = Awaited<ReturnType<MailTransport["listFolders"]>>;
   const folderMetadataCache = new Map<number, { expiresAt: number; value: FolderMetadata }>();
   const folderMetadataLoads = new Map<number, Promise<FolderMetadata>>();
+  const sendsInFlight = new Map<string, { fingerprint: string; promise: Promise<MailSendResult> }>();
   const folderMetadataGeneration = new Map<number, number>();
   const defaultFingerprint = (password: string) => createHmac("sha256", deps.key)
     .update("mail.defaultPassword\0").update(password).digest("hex");
@@ -164,7 +205,9 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
     return load;
   };
 
+  let inSnapshotCommit = false;
   const exclusive = <T>(work: () => Promise<T> | T): Promise<T> => {
+    if (inSnapshotCommit) throw new Error("快照提交不能再次进入 exclusive 串行槽");
     const task = serial.then(work, work);
     serial = task.then(() => undefined, () => undefined);
     return task;
@@ -200,8 +243,8 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
     deps.db.prepare("UPDATE mailboxes SET sync_state_json = ? WHERE id = ?").run(JSON.stringify(state), id);
   };
   const saveSiteCredential = (box: MailboxRow, creds: MailCredentials | null) => {
-    const sites = deps.db.prepare(`SELECT s.id,s.mailbox_ciphertext,b.entity_json FROM sites s JOIN batches b ON b.id=s.batch_id
-      WHERE s.domain=? COLLATE NOCASE`).all(box.domain) as unknown as { id: number; mailbox_ciphertext: Uint8Array | null; entity_json: string }[];
+    const sites = deps.db.prepare(`SELECT s.id,s.form_json,s.mailbox_ciphertext,b.entity_json FROM sites s JOIN batches b ON b.id=s.batch_id
+      WHERE s.domain=? COLLATE NOCASE`).all(box.domain) as unknown as { id: number; form_json: string; mailbox_ciphertext: Uint8Array | null; entity_json: string }[];
     for (const site of sites) {
       if (site.mailbox_ciphertext) {
         try {
@@ -211,8 +254,10 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
       } else {
         if (!creds) continue;
         try {
+          const form = JSON.parse(site.form_json) as { supportEmail?: string };
           const entity = JSON.parse(site.entity_json) as { supportEmail?: string };
-          const expected = entity.supportEmail === "auto" ? `support@${box.domain}` : entity.supportEmail?.trim();
+          const configured = form.supportEmail?.trim() || entity.supportEmail?.trim();
+          const expected = configured === "auto" ? `support@${box.domain}` : configured;
           if (!expected || expected.toLowerCase() !== box.address.toLowerCase()) continue;
         } catch { continue; }
       }
@@ -413,68 +458,104 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
     return result;
   }
 
+  function recoverSources(): number {
+    return recoverCachedSources(deps.db, deps.key, {
+      hooks: deps.triageSourceHooks,
+      isMailboxAvailable(mailboxId) {
+        if (closed) return false;
+        try { row(mailboxId); return true; } catch { return false; }
+      },
+    });
+  }
+
   function syncFolder(mailboxId: number, requestedFolder: string): Promise<void> {
     if (deps.readOnly) return Promise.reject(new Error("当前工作区是只读模式，不能执行会连接邮箱或修改数据的操作"));
     const folder = normalizeFolder(requestedFolder);
     const syncKey = `${mailboxId}\0${folder}`;
     const pending = folderSyncs.get(syncKey);
     if (pending) return pending;
-    const task = exclusive(async () => {
-      const box = row(mailboxId);
-      const state = parseState(box);
-      const previous = state.folders?.[folder]?.uidValidity;
-      const priorRows = deps.db.prepare("SELECT uid,seen,size FROM mail_messages WHERE mailbox_id=? AND folder=?").all(mailboxId, folder) as unknown as { uid: number; seen: number; size: number }[];
-      const prior = new Map(priorRows.map((item) => [item.uid, item]));
-      const before = new Set(prior.keys());
-      const nextFlags = new Map<number, string>();
-      const present = new Set<number>();
-      const fresh: number[] = [];
-      let validity: string | undefined;
-      let reset = false;
-      let metadataChanged = false;
-      let deleted = false;
-      try {
-        const upsert = deps.db.prepare(`INSERT INTO mail_messages(mailbox_id,folder,uid,message_id,from_json,to_json,cc_json,subject,date,snippet,seen,has_attachments,size,body_text,attachments_json,references_json,in_reply_to)
-          VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(mailbox_id,folder,uid) DO UPDATE SET
-          message_id=excluded.message_id,from_json=excluded.from_json,to_json=excluded.to_json,cc_json=excluded.cc_json,
-          subject=excluded.subject,date=excluded.date,snippet=excluded.snippet,seen=excluded.seen,has_attachments=excluded.has_attachments,
-          size=excluded.size,body_text=excluded.body_text,attachments_json=excluded.attachments_json,references_json=excluded.references_json,in_reply_to=excluded.in_reply_to`);
-        const transport = transportFactory();
-        const events = transport.streamMessages
-          ? transport.streamMessages(credentials(box), folder, { uidValidity: previous, uids: before })
-          : legacyMessageStream(transport, credentials(box), folder);
-        for await (const event of events) {
-          if (event.kind === "mailbox") {
-            validity = event.uidValidity;
-            if (previous && validity !== previous) {
-              reset = true;
-              deps.db.prepare("DELETE FROM mail_messages WHERE mailbox_id=? AND folder=?").run(mailboxId, folder);
-              before.clear();
-            }
-            continue;
-          }
-          const message = event.message;
-          present.add(message.uid);
-          const flags = [...new Set(message.flags.filter((flag) => flag !== "\\Seen"))].sort().join("\0");
-          nextFlags.set(message.uid, flags);
-          if (!before.has(message.uid)) fresh.push(message.uid);
-          else {
-            const old = prior.get(message.uid)!;
-            const seenChanged = old.seen !== (message.flags.includes("\\Seen") ? 1 : 0);
-            if (seenChanged || old.size !== message.size) metadataChanged = true;
-          }
-          if (message.source) {
-            const parsed = await safeParse(message);
+    const task = exclusive(() => performFolderSync(mailboxId, folder)).then(() => undefined);
+    folderSyncs.set(syncKey, task);
+    void task.then(
+      () => { if (folderSyncs.get(syncKey) === task) folderSyncs.delete(syncKey); },
+      () => { if (folderSyncs.get(syncKey) === task) folderSyncs.delete(syncKey); },
+    );
+    return task;
+  }
+
+  async function performFolderSync(mailboxId: number, folder: string) {
+    const box = row(mailboxId);
+    const state = parseState(box);
+    const previous = state.folders?.[folder]?.uidValidity;
+    const priorRows = deps.db.prepare("SELECT uid,seen,size,uid_validity,body_complete,body_issue FROM mail_messages WHERE mailbox_id=? AND folder=?").all(mailboxId, folder) as unknown as { uid: number; seen: number; size: number; uid_validity: string | null; body_complete: number; body_issue: string | null }[];
+    const prior = new Map(priorRows.map((item) => [item.uid, item]));
+    const before = new Set(prior.keys());
+    const knownUids = new Set(priorRows.filter((item) => item.uid_validity === previous && (item.body_complete === 1 || item.body_issue !== null)).map((item) => item.uid));
+    const nextFlags = new Map<number, string>();
+    const present = new Set<number>();
+    const fresh: number[] = [];
+    let validity: string | undefined;
+    let reset = false;
+    let metadataChanged = false;
+    let deleted = false;
+    try {
+      const upsert = deps.db.prepare(`INSERT INTO mail_messages(mailbox_id,folder,uid,message_id,from_json,to_json,cc_json,subject,date,snippet,seen,has_attachments,size,body_text,attachments_json,references_json,in_reply_to,uid_validity,body_complete,body_issue,from_addresses_json)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(mailbox_id,folder,uid) DO UPDATE SET
+        message_id=excluded.message_id,from_json=excluded.from_json,to_json=excluded.to_json,cc_json=excluded.cc_json,
+        subject=excluded.subject,date=excluded.date,snippet=excluded.snippet,seen=excluded.seen,has_attachments=excluded.has_attachments,
+        size=excluded.size,body_text=excluded.body_text,attachments_json=excluded.attachments_json,references_json=excluded.references_json,in_reply_to=excluded.in_reply_to,
+        uid_validity=excluded.uid_validity,body_complete=excluded.body_complete,body_issue=excluded.body_issue,from_addresses_json=excluded.from_addresses_json`);
+      const transport = transportFactory();
+      const events = transport.streamMessages
+        ? transport.streamMessages(credentials(box), folder, { uidValidity: verifiedUidValidity(previous) ? previous : undefined, uids: knownUids })
+        : legacyMessageStream(transport, credentials(box), folder);
+      for await (const event of events) {
+        if (event.kind === "mailbox") {
+          validity = event.uidValidity;
+          if (!validity || /[\0\r\n]/.test(validity)) throw new Error("服务器返回无效 UIDVALIDITY");
+          if (previous && validity !== previous) { reset = true; before.clear(); }
+          triageTransaction((hooks) => {
+            row(mailboxId);
+            if (verifiedUidValidity(validity)) invalidateFolderGeneration(deps.db, { mailboxId, folder, uidValidity: validity }, Date.now(), hooks);
+            // 已证实的世代重置立即撤销旧缓存；未验证的旧缓存保留给只读界面，逐封成功重建后才替换。
+            if (previous && validity !== previous) deps.db.prepare("DELETE FROM mail_messages WHERE mailbox_id=? AND folder=?")
+              .run(mailboxId, folder);
+          });
+          continue;
+        }
+        const message = event.message;
+        if (!validity) throw new Error("邮件 MIME 前必须提供 UIDVALIDITY");
+        if (message.uidValidity && message.uidValidity !== validity) throw new Error("邮件 UIDVALIDITY 与文件夹世代不匹配");
+        present.add(message.uid);
+        const flags = [...new Set(message.flags.filter((flag) => flag !== "\\Seen"))].sort().join("\0");
+        nextFlags.set(message.uid, flags);
+        if (!before.has(message.uid)) fresh.push(message.uid);
+        else {
+          const old = prior.get(message.uid)!;
+          const seenChanged = old.seen !== (message.flags.includes("\\Seen") ? 1 : 0);
+          if (seenChanged || old.size !== message.size) metadataChanged = true;
+        }
+        if (message.source) {
+          const parsed = await safeParse(message);
+          triageTransaction((hooks) => {
+            row(mailboxId);
             upsert.run(mailboxId, folder, message.uid, parsed.messageId, JSON.stringify(parsed.from), JSON.stringify(parsed.to), JSON.stringify(parsed.cc),
               parsed.subject, parsed.date, parsed.snippet, message.flags.includes("\\Seen") ? 1 : 0, parsed.attachments.length ? 1 : 0,
-              message.size, parsed.text, JSON.stringify(parsed.attachments), JSON.stringify(parsed.references), parsed.inReplyTo);
-          } else {
-            const changed = deps.db.prepare("UPDATE mail_messages SET seen=?,size=? WHERE mailbox_id=? AND folder=? AND uid=?")
-              .run(message.flags.includes("\\Seen") ? 1 : 0, message.size, mailboxId, folder, message.uid);
-            if (changed.changes !== 1) throw new Error(`邮件 ${folder}/${message.uid} 缺少 MIME 原文，无法建立索引`);
-          }
+              message.size, parsed.text, JSON.stringify(parsed.attachments), JSON.stringify(parsed.references), parsed.inReplyTo,
+              verifiedUidValidity(validity) ? validity : null, parsed.bodyComplete ? 1 : 0, parsed.bodyIssue, JSON.stringify(parsed.fromAddresses));
+            if (verifiedUidValidity(validity)) registerCachedSource(deps.db, { locator: { mailboxId, folder, uidValidity: validity, uid: message.uid }, mail: parsed, observedAt: Date.now() }, deps.key, hooks);
+          });
+        } else {
+          row(mailboxId);
+          const changed = deps.db.prepare("UPDATE mail_messages SET seen=?,size=? WHERE mailbox_id=? AND folder=? AND uid=?")
+            .run(message.flags.includes("\\Seen") ? 1 : 0, message.size, mailboxId, folder, message.uid);
+          if (changed.changes !== 1) throw new Error(`邮件 ${folder}/${message.uid} 缺少 MIME 原文，无法建立索引`);
         }
-        if (!validity) throw new Error(`邮件服务器没有返回 ${folder} 的 UIDVALIDITY`);
+      }
+      if (!validity) throw new Error(`邮件服务器没有返回 ${folder} 的 UIDVALIDITY`);
+      triageTransaction((hooks) => {
+        row(mailboxId);
+        if (verifiedUidValidity(validity)) reconcileFolderSnapshot(deps.db, { mailboxId, folder, uidValidity: validity, presentUids: [...present], complete: true }, Date.now(), hooks);
         for (const uid of before) if (!present.has(uid)) {
           deps.db.prepare("DELETE FROM mail_messages WHERE mailbox_id=? AND folder=? AND uid=?").run(mailboxId, folder, uid);
           deleted = true;
@@ -484,33 +565,45 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
         if (state.folders?.[folder]?.nonSeenFlagsDigest
           && state.folders[folder].nonSeenFlagsDigest !== nonSeenFlagsDigest) metadataChanged = true;
         const syncedAt = Date.now();
-        const nextState: SyncState = { ...state, lastError: null, folders: { ...(state.folders ?? {}), [folder]: { uidValidity: validity, syncedAt, nonSeenFlagsDigest } } };
+        const current = parseState(row(mailboxId));
+        const nextState: SyncState = { ...current, lastError: null, folders: { ...(current.folders ?? {}), [folder]: { uidValidity: validity, syncedAt, nonSeenFlagsDigest } } };
         deps.db.prepare("UPDATE mailboxes SET last_synced_at=?,sync_state_json=? WHERE id=?").run(syncedAt, JSON.stringify(nextState), mailboxId);
-      } catch (error) {
-        const safeError = state.credentialSource === "default"
-          ? new Error(redactPassword(error instanceof Error ? error.message : String(error), credentials(box).password)) : error;
-        writeState(mailboxId, { lastError: safeError instanceof Error ? safeError.message : String(safeError) });
-        throw safeError;
-      }
-      const unread = Number((deps.db.prepare("SELECT count(*) AS n FROM mail_messages WHERE mailbox_id=? AND folder='INBOX' AND seen=0").get(mailboxId) as { n: number }).n);
-      if (reset) deps.push({ type: "changed", mailboxId, folder });
-      else if (folder.toUpperCase() === "INBOX" && fresh.length) {
-        if (!previous) deps.push({ type: "changed", mailboxId, folder, unreadCount: unread });
-        else deps.push({ type: "new", mailboxId, folder, uid: Math.max(...fresh), unreadCount: unread });
-      }
-      else if (fresh.length) deps.push({ type: "changed", mailboxId, folder });
-      else if (deleted || metadataChanged) deps.push({ type: "changed", mailboxId, folder });
-    });
-    folderSyncs.set(syncKey, task);
-    void task.then(
-      () => { if (folderSyncs.get(syncKey) === task) folderSyncs.delete(syncKey); },
-      () => { if (folderSyncs.get(syncKey) === task) folderSyncs.delete(syncKey); },
-    );
-    return task;
+      });
+      recoverSources();
+    } catch (error) {
+      const safeError = state.credentialSource === "default"
+        ? new Error(redactPassword(error instanceof Error ? error.message : String(error), credentials(box).password)) : error;
+      writeState(mailboxId, { lastError: safeError instanceof Error ? safeError.message : String(safeError) });
+      throw safeError;
+    }
+    const unread = Number((deps.db.prepare("SELECT count(*) AS n FROM mail_messages WHERE mailbox_id=? AND folder='INBOX' AND seen=0").get(mailboxId) as { n: number }).n);
+    if (reset) deps.push({ type: "changed", mailboxId, folder });
+    else if (folder.toUpperCase() === "INBOX" && fresh.length) {
+      if (!previous) deps.push({ type: "changed", mailboxId, folder, unreadCount: unread });
+      else deps.push({ type: "new", mailboxId, folder, uid: Math.max(...fresh), unreadCount: unread });
+    }
+    else if (fresh.length) deps.push({ type: "changed", mailboxId, folder });
+    else if (deleted || metadataChanged) deps.push({ type: "changed", mailboxId, folder });
+    return { uidValidity: validity!, maxUid: Math.max(0, ...present), complete: true as const };
   }
 
-  async function safeParse(message: RemoteMessage) {
+  function withInboxSnapshot<T>(mailboxId: number, commit: (snapshot: { uidValidity: string; maxUid: number; complete: true }) => T): Promise<T> {
+    assertWritable();
+    if (commit.constructor.name === "AsyncFunction") return Promise.reject(new Error("快照 commit 必须同步 synchronous"));
+    return exclusive(async () => {
+      const snapshot = await performFolderSync(mailboxId, "INBOX");
+      if (!verifiedUidValidity(snapshot.uidValidity)) throw new Error("授权快照需要真实 UIDVALIDITY");
+      return sourceTransaction(deps.db, () => {
+        row(mailboxId);
+        inSnapshotCommit = true;
+        try { return commit(snapshot); } finally { inSnapshotCommit = false; }
+      });
+    });
+  }
+
+  async function safeParse(message: RemoteMessage): Promise<ParsedSafeMessage> {
     if (message.size > MAX_INCOMING || (message.source?.byteLength ?? 0) > MAX_INCOMING) return {
+      fromAddresses: [], bodyComplete: false, bodyIssue: "oversized",
       messageId: null, from: "", to: [] as string[], cc: [] as string[], subject: "邮件过大，未缓存正文", date: 0,
       text: "这封邮件超过 25 MB，本地没有解析正文。", snippet: "这封邮件超过 25 MB，本地没有解析正文。",
       inReplyTo: null, references: [] as string[], attachments: [] as MailAttachment[],
@@ -520,7 +613,7 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
       return await parseMailText(message.source);
     } catch {
       const text = "这封邮件的正文无法安全解析，本地没有渲染其 HTML 内容。";
-      return { messageId: null, from: "", to: [] as string[], cc: [] as string[], subject: "邮件正文无法安全解析", date: 0,
+      return { fromAddresses: [], bodyComplete: false, bodyIssue: "parse_failed", messageId: null, from: "", to: [] as string[], cc: [] as string[], subject: "邮件正文无法安全解析", date: 0,
         text, snippet: text, inReplyTo: null, references: [] as string[], attachments: [] as MailAttachment[] };
     }
   }
@@ -531,14 +624,72 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
     for (const message of messages) yield { kind: "message" as const, message };
   }
 
-  const messageFromRow = (item: Record<string, unknown>): MailMessageDetail => ({
+  const messageFromRow = (item: Record<string, unknown>): MailMessageDetail => {
+    let readIdentity:string|undefined;
+    try {
+      const uidValidity=String(item.uid_validity??"");
+      if(verifiedUidValidity(uidValidity)) readIdentity=cacheReadIdentity(deps.key,{mailboxId:Number(item.mailbox_id),folder:String(item.folder),uidValidity,uid:Number(item.uid)},fingerprintSource(deps.key,cachedParsedMessage(item)));
+    } catch { /* malformed cache rows remain readable but cannot receive annotations */ }
+    return {
     uid: Number(item.uid), folder: String(item.folder), from: JSON.parse(String(item.from_json)) as string,
     to: JSON.parse(String(item.to_json)) as string[], cc: JSON.parse(String(item.cc_json)) as string[],
     subject: String(item.subject), date: item.date == null ? 0 : Number(item.date), snippet: String(item.snippet),
     seen: Boolean(item.seen), hasAttachments: Boolean(item.has_attachments), size: Number(item.size), text: String(item.body_text ?? ""),
     messageId: item.message_id == null ? null : String(item.message_id), inReplyTo: item.in_reply_to == null ? null : String(item.in_reply_to),
     references: JSON.parse(String(item.references_json)) as string[], attachments: JSON.parse(String(item.attachments_json)) as MailAttachment[],
-  });
+    ...(readIdentity?{readIdentity}:{}),
+  };};
+
+  function sourceMessage(raw: CaseSourceReaderRef): { ref: CaseSourceReaderRef; message: MailMessageDetail } {
+    const input = CaseSourceReaderRefSchema.parse(raw);
+    const unavailable = (): never => { throw new Error("source_unavailable"); };
+    const source = deps.db.prepare(`SELECT s.source_hash,s.critical_headers_hash FROM mail_case_sources cs
+      JOIN mail_triage_sources s ON s.id=cs.source_id
+      JOIN mail_triage_source_aliases a ON a.source_id=s.id AND a.mailbox_id=s.mailbox_id
+        AND a.folder=? AND a.uid_validity=? AND a.uid=? AND a.active=1
+      JOIN mail_triage_settings cfg ON cfg.id=1 AND cfg.enabled=1 AND cfg.state<>'disabled'
+      JOIN mail_triage_scope scope ON scope.mailbox_id=s.mailbox_id AND scope.epoch=cfg.config_epoch
+        AND scope.state='authorized' AND scope.uid_validity=a.uid_validity AND scope.effective_at IS NOT NULL
+      JOIN mailboxes box ON box.id=s.mailbox_id AND box.status NOT IN ('deleting','closed','deleted')
+      WHERE cs.case_id=? AND cs.source_id=? AND s.source_version=? AND s.mailbox_id=? AND s.state='active'
+        AND NOT EXISTS(SELECT 1 FROM abandoned_domains abandoned WHERE abandoned.domain=box.domain COLLATE NOCASE)`)
+      .get(input.folder,input.uidValidity,input.uid,input.caseId,input.sourceId,input.sourceVersion,input.mailboxId) as { source_hash: string; critical_headers_hash: string } | undefined;
+    if (!source || closed || deleting.has(input.mailboxId)) return unavailable();
+    const cached = deps.db.prepare("SELECT * FROM mail_messages WHERE mailbox_id=? AND folder=? AND uid_validity=? AND uid=?")
+      .get(input.mailboxId,input.folder,input.uidValidity,input.uid) as Record<string, unknown> | undefined;
+    if (!cached) return unavailable();
+    let parsed: ParsedSafeMessage;
+    try { parsed = cachedParsedMessage(cached); } catch { return unavailable(); }
+    const fingerprints = fingerprintSource(deps.key, parsed);
+    if (fingerprints.sourceHash !== source.source_hash || fingerprints.criticalHeadersHash !== source.critical_headers_hash) return unavailable();
+    return CaseSourceMessageOutputSchema.parse({ ref: input, message: messageFromRow(cached) });
+  }
+
+  function sourcePreview(raw: { sourceId: string; sourceVersion: number }) {
+    const input = ReviewSourcePreviewInputSchema.parse(raw);
+    const unavailable = (): never => { throw new Error("source_unavailable"); };
+    const rows = deps.db.prepare(`SELECT s.source_hash,s.critical_headers_hash,s.mailbox_id,a.folder,a.uid_validity,a.uid
+      FROM mail_triage_sources s
+      JOIN mail_triage_source_aliases a ON a.source_id=s.id AND a.mailbox_id=s.mailbox_id AND a.active=1
+      JOIN mail_triage_settings cfg ON cfg.id=1 AND cfg.enabled=1 AND cfg.state<>'disabled'
+      JOIN mail_triage_scope scope ON scope.mailbox_id=s.mailbox_id AND scope.epoch=cfg.config_epoch AND scope.state='authorized' AND scope.uid_validity=a.uid_validity AND scope.effective_at IS NOT NULL
+      JOIN mailboxes box ON box.id=s.mailbox_id AND box.status NOT IN ('deleting','closed','deleted')
+      WHERE s.id=? AND s.source_version=? AND s.state='active'
+        AND NOT EXISTS(SELECT 1 FROM abandoned_domains abandoned WHERE abandoned.domain=box.domain COLLATE NOCASE)
+      ORDER BY a.folder,a.uid`).all(input.sourceId,input.sourceVersion) as { source_hash:string;critical_headers_hash:string;mailbox_id:number;folder:string;uid_validity:string;uid:number }[];
+    if(rows.length!==1)return unavailable();
+    const row=rows[0]!,mailboxId=Number(row.mailbox_id);
+    if(closed||deleting.has(mailboxId))return unavailable();
+    const cached=deps.db.prepare("SELECT * FROM mail_messages WHERE mailbox_id=? AND folder=? AND uid_validity=? AND uid=?").get(mailboxId,row.folder,row.uid_validity,row.uid) as Record<string,unknown>|undefined;
+    if(!cached)return unavailable();
+    let parsed:ParsedSafeMessage;try{parsed=cachedParsedMessage(cached);}catch{return unavailable();}
+    const fingerprints=fingerprintSource(deps.key,parsed);
+    if(fingerprints.sourceHash!==row.source_hash||fingerprints.criticalHeadersHash!==row.critical_headers_hash)return unavailable();
+    const sourceRef:SourceReaderRef={sourceId:input.sourceId,sourceVersion:input.sourceVersion,mailboxId,folder:row.folder,uidValidity:row.uid_validity,uid:Number(row.uid)};
+    const cases=deps.db.prepare("SELECT case_id FROM mail_case_sources WHERE source_id=? ORDER BY case_id LIMIT 2").all(input.sourceId) as {case_id:string}[];
+    const readerRef=cases.length===1?{...sourceRef,caseId:String(cases[0]!.case_id)}:null;
+    return ReviewSourceMessageOutputSchema.parse({sourceRef,readerRef,message:messageFromRow(cached)});
+  }
 
   async function getMessage(input: { mailboxId: number; folder: string; uid: number }): Promise<MailMessageDetail> {
     const box = row(input.mailboxId);
@@ -573,10 +724,78 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
     return { ok: true as const };
   }
 
+  async function performSend(input: MailSendInput): Promise<MailSendResult> {
+    assertWritable();
+    const box = row(input.mailboxId);
+    const selection = validateMailSendSelection(deps.db, input);
+    const creds = credentials(box);
+    const attachments = (input.attachments ?? []).map((attachment) => {
+      const content = Buffer.from(attachment.dataBase64, "base64");
+      if (content.byteLength !== attachment.size) throw new Error(`附件 ${attachment.name} 大小校验失败`);
+      return { filename: attachment.name, contentType: attachment.type || "application/octet-stream", content };
+    });
+    if (attachments.reduce((sum, item) => sum + item.content.byteLength, 0) > MAX_ATTACHMENTS) throw new Error("附件总大小不能超过 20 MB");
+    let to = normalizeEmailList(input.to), cc = normalizeEmailList(input.cc), subject = input.subject.trim(), text = input.text;
+    let inReplyTo: string | undefined;
+    let references: string[] | undefined;
+    if ((input.mode ?? "new") !== "new") {
+      if (!input.replyTo) throw new Error("回复或转发缺少原邮件");
+       const original = input.replyTo.readerRef
+         ? sourceMessage(input.replyTo.readerRef).message
+         : await getMessage({ mailboxId: input.mailboxId, folder: input.replyTo.folder, uid: input.replyTo.uid });
+      inReplyTo = original.messageId ?? undefined;
+      references = [...(original.references ?? []), ...(original.messageId ? [original.messageId] : [])];
+      if (input.mode === "reply") to = uniqueEmails([original.from]);
+      if (input.mode === "replyAll") {
+        to = uniqueEmails([original.from, ...original.to], box.address);
+        cc = uniqueEmails(original.cc, box.address).filter((address) => !to.some((target) => target.toLowerCase() === address.toLowerCase()));
+      }
+      const prefix = input.mode === "forward" ? "Fwd:" : "Re:";
+      if (!subject) subject = new RegExp(`^${prefix}`, "i").test(original.subject) ? original.subject : `${prefix} ${original.subject}`;
+      text = `${text.trim()}\n\n--- 原始邮件 ---\n发件人：${original.from}\n日期：${new Date(original.date).toISOString()}\n主题：${original.subject}\n\n${original.text}`;
+    }
+    if (!to.length) throw new Error("请填写收件人");
+    row(input.mailboxId); // 读取原邮件期间可能开始放弃域名；准备收据和 SMTP 前必须再拦一次。
+    const bcc = normalizeEmailList(input.bcc), messageId = `<${randomUUID()}@${box.domain}>`;
+    const prepared = prepareMailSend(deps.db, {
+      requestId: input.requestId, mailboxId: input.mailboxId, caseId: input.caseId,
+      selectedTaskIds: selection.selectedTaskIds, replySourceId: selection.replySourceId,
+      canonicalContent: {
+        from: box.address, to, cc, bcc, subject, text, inReplyTo: inReplyTo ?? null, references: references ?? [],
+        attachments: attachments.map((item) => ({ filename: item.filename, contentType: item.contentType, size: item.content.byteLength, sha256: createHash("sha256").update(item.content).digest("hex") })),
+      },
+    });
+    if (prepared.replay) {
+      if (!prepared.replay.appended) throw new Error(`发送成功，但未保存到已发送（${prepared.replay.messageId}）；请核对副本，不能直接重发`);
+      return prepared.replay;
+    }
+    let sent: Awaited<ReturnType<MailTransport["send"]>>;
+    try {
+      sent = await transportFactory().send(creds, { from: box.address, to, cc, bcc, subject, text, messageId, inReplyTo, references, attachments });
+    } catch (error) {
+      if (error instanceof MailSentAppendError) {
+        settleMailSendAccepted(deps.db, { receiptId: prepared.receiptId, caseId: input.caseId, selectedTaskIds: prepared.selectedTaskIds, messageId: error.messageId, appended: false, replySourceId: prepared.replySourceId });
+        throw new Error(`发送成功，但未保存到已发送（${error.messageId}）；请核对副本，不能直接重发`);
+      }
+      const knownNotDispatched = error !== null && typeof error === "object" && (error as { dispatched?: unknown }).dispatched === false;
+      settleMailSendFailure(deps.db, prepared.receiptId, knownNotDispatched ? "failed" : "unknown");
+      throw new Error(knownNotDispatched ? "邮件未出站；请使用新的发送操作重试" : "发送状态未知，请核对后再决定，系统不会自动重发");
+    }
+    return settleMailSendAccepted(deps.db, { receiptId: prepared.receiptId, caseId: input.caseId, selectedTaskIds: prepared.selectedTaskIds, messageId: sent.messageId, appended: sent.appended, replySourceId: prepared.replySourceId });
+  }
+
   return {
     list,
+    isAvailable(mailboxId) {
+      if (closed || deleting.has(mailboxId)) return false;
+      const state = deps.db.prepare("SELECT status FROM mailboxes WHERE id=?").get(mailboxId);
+      return Boolean(state && !["deleting", "closed", "deleted"].includes(String(state.status)));
+    },
+    withInboxSnapshot,
+    sourceMessage,
+    sourcePreview,
     sync: inventory,
-    async reconcile() { if (!closed && !deps.readOnly) await monitor.reconcile(); },
+    async reconcile() { if (!closed && !deps.readOnly) { await exclusive(() => recoverSources()); await monitor.reconcile(); } },
     async folders(mailboxId) {
       const box = row(mailboxId);
       if (deps.readOnly) {
@@ -663,8 +882,26 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
       if (!input.confirmed) throw new Error("删除邮件前必须确认");
       const box = row(input.mailboxId);
       const folder = normalizeFolder(input.folder);
+      const cached = deps.db.prepare("SELECT uid_validity FROM mail_messages WHERE mailbox_id=? AND folder=? AND uid=?")
+        .get(input.mailboxId, folder, input.uid) as { uid_validity: string | null } | undefined;
+      const fencedSource = await exclusive(() => {
+        return triageTransaction((hooks) => {
+          row(input.mailboxId);
+          return verifiedUidValidity(cached?.uid_validity)
+            ? invalidateCachedLocator(deps.db, { mailboxId: input.mailboxId, folder, uidValidity: cached.uid_validity, uid: input.uid }, Date.now(), hooks, "missing")
+            : null;
+        });
+      });
+      if (fencedSource && !fencedSource.lastAlias) abortSources([fencedSource.sourceId]);
+      // fence/abort 已提交后才接触远端；未知结果保持 missing/cancelled，不猜成功也不恢复自动化。
       await transportFactory().moveToTrash(credentials(box), folder, input.uid);
-      deps.db.prepare("DELETE FROM mail_messages WHERE mailbox_id=? AND folder=? AND uid=?").run(input.mailboxId, folder, input.uid);
+      await exclusive(() => triageTransaction((hooks) => {
+        row(input.mailboxId);
+        if (fencedSource?.lastAlias) hooks.onSourceInvalidated?.({ sourceId: fencedSource.sourceId, reason: "explicit_delete", now: Date.now() });
+        // 远端等待期间若世代已换，不能误删同 UID 的新邮件。
+        if (cached) deps.db.prepare("DELETE FROM mail_messages WHERE mailbox_id=? AND folder=? AND uid=? AND uid_validity IS ?")
+          .run(input.mailboxId, folder, input.uid, cached.uid_validity);
+      }));
       deps.push({ type: "changed", mailboxId: input.mailboxId, folder, uid: input.uid });
       return { ok: true };
     },
@@ -675,6 +912,9 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
       deleting.add(input.mailboxId);
       invalidateFolderMetadata(input.mailboxId);
       deps.db.prepare("UPDATE mailboxes SET monitoring=0 WHERE id=?").run(input.mailboxId);
+      const sourceIds = (deps.db.prepare("SELECT id FROM mail_triage_sources WHERE mailbox_id=? ORDER BY id").all(input.mailboxId) as { id: string }[]).map((item) => item.id);
+      const revoked = deps.triageLifecycleHooks?.invalidateScope?.({ mailboxIds: [input.mailboxId], reason: "mailbox_delete" }, Date.now());
+      abortSources(revoked?.abortSourceIds ?? sourceIds);
       await monitor.stopMailbox(input.mailboxId);
       try {
         let writeError: unknown;
@@ -682,8 +922,12 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
         const remaining = await listAll(accountExec(box.account_id), "mail_mailboxes_list", { orderId: box.order_id }) as { id: string | number }[];
         if (remaining.some((item) => String(item.id) === box.remote_id)) throw writeError instanceof Error ? writeError : new Error("Hostinger 没有确认邮箱已删除，请稍后重试");
         deletedRemote.add(`${box.account_id}:${box.remote_id}`);
-        saveSiteCredential(box, null);
-        deps.db.prepare("DELETE FROM mailboxes WHERE id=?").run(input.mailboxId);
+        sourceTransaction(deps.db, () => {
+          for (const sourceId of sourceIds) deps.triageLifecycleHooks?.invalidateSource?.(sourceId, "explicit_delete", Date.now());
+          saveSiteCredential(box, null);
+          deps.db.prepare("DELETE FROM mailboxes WHERE id=?").run(input.mailboxId);
+        });
+        abortSources(sourceIds);
         deps.push({ type: "changed", mailboxId: input.mailboxId });
         return { ok: true };
       } finally {
@@ -691,37 +935,18 @@ export function createMailboxService(deps: MailboxServiceDeps): MailboxService {
         await monitor.reconcile();
       }
     },
-    async send(input) {
-      assertWritable();
-      const box = row(input.mailboxId);
-      const creds = credentials(box);
-      const attachments = (input.attachments ?? []).map((attachment) => {
-        const content = Buffer.from(attachment.dataBase64, "base64");
-        if (content.byteLength !== attachment.size) throw new Error(`附件 ${attachment.name} 大小校验失败`);
-        return { filename: attachment.name, contentType: attachment.type || "application/octet-stream", content };
-      });
-      if (attachments.reduce((sum, item) => sum + item.content.byteLength, 0) > MAX_ATTACHMENTS) throw new Error("附件总大小不能超过 20 MB");
-      let to = normalizeEmailList(input.to), cc = normalizeEmailList(input.cc), subject = input.subject.trim(), text = input.text;
-      let inReplyTo: string | undefined;
-      let references: string[] | undefined;
-      if ((input.mode ?? "new") !== "new") {
-        if (!input.replyTo) throw new Error("回复或转发缺少原邮件");
-        const original = await getMessage({ mailboxId: input.mailboxId, ...input.replyTo });
-        inReplyTo = original.messageId ?? undefined;
-        references = [...(original.references ?? []), ...(original.messageId ? [original.messageId] : [])];
-        if (input.mode === "reply") to = uniqueEmails([original.from]);
-        if (input.mode === "replyAll") {
-          to = uniqueEmails([original.from, ...original.to], box.address);
-          cc = uniqueEmails(original.cc, box.address).filter((address) => !to.some((target) => target.toLowerCase() === address.toLowerCase()));
-        }
-        const prefix = input.mode === "forward" ? "Fwd:" : "Re:";
-        if (!subject) subject = new RegExp(`^${prefix}`, "i").test(original.subject) ? original.subject : `${prefix} ${original.subject}`;
-        text = `${text.trim()}\n\n--- 原始邮件 ---\n发件人：${original.from}\n日期：${new Date(original.date).toISOString()}\n主题：${original.subject}\n\n${original.text}`;
+    send(input) {
+      if (!input.requestId) return performSend(input);
+      const pending = sendsInFlight.get(input.requestId);
+      const fingerprint = createHash("sha256").update(JSON.stringify(input)).digest("hex");
+      if (pending) {
+        if (pending.fingerprint !== fingerprint) return Promise.reject(new Error("request_id_conflict：requestId 已用于不同内容"));
+        return pending.promise;
       }
-      if (!to.length) throw new Error("请填写收件人");
-      row(input.mailboxId); // 读取原邮件期间可能开始放弃域名；SMTP 前必须再拦一次。
-      const messageId = `<${randomUUID()}@${box.domain}>`;
-      return transportFactory().send(creds, { from: box.address, to, cc, bcc: normalizeEmailList(input.bcc), subject, text, messageId, inReplyTo, references, attachments });
+      const running = performSend(input);
+      sendsInFlight.set(input.requestId, { fingerprint, promise: running });
+      void running.finally(() => { if (sendsInFlight.get(input.requestId!)?.promise === running) sendsInFlight.delete(input.requestId!); }).catch(() => {});
+      return running;
     },
     async attachment(input) {
       assertWritable();

@@ -5,7 +5,7 @@ export interface EntityForm {
   /** 公司法定名称或个人经营者姓名 */
   name: string;
   address: string;
-  /** "auto" = 使用各站的 support@域名 */
+  /** 旧批次兼容字段；新批次的客服邮箱保存在各 SiteForm.supportEmail。 */
   supportEmail: string;
   phone: string;
   /** 处理时效（工作日，最少–最多）：你们自己发货的真实能力，写进运输政策（FTC 邮购规则） */
@@ -16,6 +16,8 @@ export interface EntityForm {
 
 export interface SiteForm {
   domain: string;
+  /** 该站点已在 Hostinger 申请的客服邮箱；旧历史记录可能没有。 */
+  supportEmail?: string;
   categories: string;
   count: number;
   priceMin: number | null;
@@ -38,7 +40,7 @@ export function validateBatch(f: BatchForm): Record<string, string> {
   const { entity } = f;
   if (blank(entity.name)) e["entity.name"] = entity.kind === "company" ? "请填写公司法定名称" : "请填写经营者姓名";
   if (blank(entity.address)) e["entity.address"] = "请填写地址，会显示在页脚和联系页";
-  if (entity.supportEmail !== "auto" && !EMAIL.test(entity.supportEmail.trim())) e["entity.supportEmail"] = "请填写有效的邮箱，或选择使用 support@各自域名";
+  if (entity.supportEmail !== "auto" && !EMAIL.test(entity.supportEmail.trim())) e["entity.supportEmail"] = "请填写有效的邮箱，或使用站点已绑定的实际邮箱";
   if (blank(entity.phone)) e["entity.phone"] = "请填写客服电话";
   const days = ([a, b]: [number, number], lo: number) => Number.isInteger(a) && Number.isInteger(b) && a >= lo && a <= b && b <= 60;
   if (!days(entity.processingDays, 0) || !days(entity.transitDays, 1)) e["entity.shipping"] = "请填写处理和运输的天数范围（整数，前小后大，不超过 60 天）";
@@ -49,6 +51,7 @@ export function validateBatch(f: BatchForm): Record<string, string> {
     if (blank(s.domain)) e[`sites.${i}.domain`] = "请选择域名";
     else if (seen.has(s.domain)) e[`sites.${i}.domain`] = "这个域名在本批次里重复了";
     seen.add(s.domain);
+    if (s.supportEmail != null && !EMAIL.test(s.supportEmail.trim())) e[`sites.${i}.supportEmail`] = "请选择该站点已申请的有效邮箱";
     if (blank(s.categories)) e[`sites.${i}.categories`] = "请填写商品类目";
     if (!Number.isInteger(s.count) || s.count < 1 || s.count > 200) e[`sites.${i}.count`] = "商品数量填 1–200";
     if (s.priceMin != null && s.priceMax != null && (s.priceMin <= 0 || s.priceMin > s.priceMax)) e[`sites.${i}.price`] = "售价区间不正确";

@@ -1,0 +1,1 @@
+Edit only the top 建成 status badge from blue background/text to pale green background and dark green text, matching the success style of 已上线 and the site list. Preserve every other pixel-content/layout relationship, table, values, dates, empty scheduled task area, controls, sidebar and typography. No redesign, no other changes. 1490x1056.

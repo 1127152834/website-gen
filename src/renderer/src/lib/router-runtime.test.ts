@@ -151,3 +151,27 @@ test("mail folder index and message reader share the generated folder parent wit
     assert.deepEqual(warnings.filter((args) => /remount|outlet|route match/i.test(args.map(String).join(" "))), []);
   } finally { console.warn = originalWarn; }
 });
+
+test("mail default entry is the board index while static mail sections never mount the legacy mailbox reader", async () => {
+  const board = await load("/mail", user("admin"));
+  assert.equal(board.state.matches.some((match) => match.routeId.endsWith("/mail/")), true);
+  assert.equal(board.state.matches.some((match) => match.routeId.endsWith("/mail/$mailboxId")), false);
+
+  for (const url of ["/mail/review", "/mail/notifications", "/mail/settings", "/mail/inbox", "/mail/manage"]) {
+    const router = await load(url, user("admin"));
+    assert.equal(router.state.statusCode, 200, url);
+    assert.equal(router.state.matches.some((match) => match.routeId.endsWith("/mail/$mailboxId/$folder")), false, url);
+  }
+});
+
+test("legacy encoded folder URL keeps decoded params on one stable mailbox parent", async () => {
+  const router = await load("/mail/7/Sent%20Messages/42", user("admin"));
+  const legacyRoute = router.state.matches.find((match) => match.routeId.endsWith("/mail/$mailboxId/$folder/$uid"));
+  assert.ok(legacyRoute);
+  assert.equal((legacyRoute.params as { folder?: string }).folder, "Sent Messages");
+  const mailboxParent = router.state.matches.find((match) => match.routeId.endsWith("/mail/$mailboxId"))?.routeId;
+  assert.ok(mailboxParent);
+  await router.navigate({ to: "/mail/$mailboxId/$folder/$uid", params: { mailboxId: "7", folder: "INBOX", uid: "43" } });
+  await router.load();
+  assert.equal(router.state.matches.filter((match) => match.routeId === mailboxParent).length, 1);
+});

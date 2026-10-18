@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "scope": "customer-crossflow-minimal-fixes",
+  "owner": "layout_visual_review",
+  "dispatch_by": "root_authorized_takeover_of_native_calls",
+  "mode": "native_imagegen_sequential",
+  "queue_status": "pending_images_not_complete",
+  "latest_review": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/evidence/customer-crossflow-review-results.json",
+  "ledger": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/evidence/customer-crossflow-fix-ledger.jsonl",
+  "known_running_native_handle": null,
+  "already_completed_excluded": [
+    "C02-v4",
+    "C09-active-v4"
+  ],
+  "execution_rules": [
+    "Read full UTF-8 prompt file verbatim; do not silently append new business content.",
+    "Inspect target locally before native edit; refs order is edit target then palette reference if present.",
+    "One native imagegen call at a time with 120000 ms yield; transparent_background false.",
+    "If target already exists, stop and inspect rather than overwrite.",
+    "Immediately copy each generated result to target PNG, preserving generated original; compare SHA-256.",
+    "Keep v3 original unchanged; record source/prompt/target hashes in dedicated ledger only.",
+    "After output is saved, request static visual recheck; no shared index or app-code changes by this queue."
+  ],
+  "items": [
+    {
+      "order": 1,
+      "id": "C09-idle",
+      "version": "v4",
+      "status": "generation_failed_no_artifact",
+      "attempts_completed": 2,
+      "full_prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/customer-crossflow-fixes/C09-idle-v4.txt",
+      "prompt_sha256": "45F3322EE6132F68CC0367E68D55A7C74DAD17B84AAC2B3F1C53FE70EB656520",
+      "refs": [
+        {
+          "path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/C09-idle-v3.png",
+          "role": "exact_edit_target",
+          "sha256": "C39F020D9218743E87AEFFAD5C69A12B49DB0EA58A7ABB50728E3CDB40351FB3"
+        },
+        {
+          "path": "F:/projects/website-gen/docs/design/group-03-website-management/W03-site-configuration-v1.png",
+          "role": "palette_only_reference"
+        }
+      ],
+      "target_png": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/C09-idle-v4.png",
+      "target_exists": false,
+      "required_fix": [
+        "普通非动作导航、图标、正文/标签灰蓝深蓝",
+        "页头增加 时间：PT"
+      ],
+      "invariants": [
+        "10/16/2026 开始 APP-002 前的无在办状态",
+        "客户已完成，只有 Stripe APP-001 历史；不增加 PayPal 或 Zen",
+        "Stripe 批准 10/12/2026 14:20、开始 09/28/2026 10:00、负责人王芳",
+        "审核未执行但仅参考，补充材料 1/1/1"
+      ]
+    },
+    {
+      "order": 2,
+      "id": "O-G04",
+      "version": "v4",
+      "status": "not_attempted",
+      "attempts_completed": 0,
+      "full_prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/customer-crossflow-fixes/O-G04-v4.txt",
+      "prompt_sha256": "EC29EB04DCBD523F0F13668016F37C50CDE2A4117445D581AEAD1291FAC1E61A",
+      "refs": [
+        {
+          "path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-G04-v3.png",
+          "role": "exact_edit_target",
+          "sha256": "74450AC09DD6D2C51087856091BCC32A04354FE14598577FB25F61B2FDAE0089"
+        }
+      ],
+      "target_png": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-G04-v4.png",
+      "target_exists": false,
+      "required_fix": [
+        "附件预览添加 文件 / 操作日期 / 操作人 列头"
+      ],
+      "invariants": [
+        "三行样本分别为 July PDF 王芳10/02/2026 10:30 PT、履行协议李敏10/12/2026、库存照片王芳10/15/2026",
+        "显示3/9、总26字段9附件不变",
+        "PayPal APP-002、申请负责人李敏、商业邮箱不变",
+        "两确认复选框未选、保存禁用、背景无在办；不表示已提交平台"
+      ]
+    }
+  ]
+}

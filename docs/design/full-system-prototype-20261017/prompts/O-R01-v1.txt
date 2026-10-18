@@ -1,0 +1,10 @@
+Scene ID: O-R01
+Title: 添加 Hostinger 账号弹窗
+Reference kind: white_overlay_on_dimmed_shared_shell
+Common style: prompts/common-style.txt
+
+Create the primary static ImageGen scene for O-R01, “添加 Hostinger 账号弹窗”. Use the supplied root reference and prompts/common-style.txt as the authoritative shell and visual system; do not restate or reinterpret its palette, typography, spacing, or navigation rules. Produce one 1490x1056 desktop screen, not a collage. Use navigation context “账号与域名” when applicable and the exact Chinese heading “添加 Hostinger 账号弹窗”. Use a crisp white overlay on a weak neutral-gray scrim. Keep the source page recognizable but subordinate; the overlay is the only focal layer.
+
+Approved purpose: 验证并保存账号名称与 API Token。 Exact scene data: Use the fixed Northline Hostinger demo account and northline.example resource context; credentials are masked and remote state is not verified. Required visible content: 账号名称；API Token密码框；生成位置说明；加密且不回显提示. Use these Chinese action labels where applicable: 验证并添加；取消. Show one normal or most important decision state, not every state simultaneously. Tables use compact aligned rows; forms use clear labels, validation space, and one unambiguous primary action. Every status is written as text, not color alone. Dates use MM/DD/YYYY and times include PT.
+
+All content is fictional static demo data dated 10/17/2026 PT. Where relevant, use only Alex Morgan · C001, Northline LLC, northline.example, and hello@northline.example. Keep “客户已完成”, Stripe APP-001 “已获批”, and PayPal APP-002 “待补件” separate. Only gateway applications may show “申请负责人：李敏”; elsewhere use “操作人”. Never invent a mail requirement unless its exact source quote is visible. Mail is safe local plain text: no remote images, tracking pixels, automatic body-link access, or translation replacing evidence. Secrets use bullets or suffix placeholders. Distinguish configured, unconfigured, untested, loading, failed, and confirmed states. Do not add customer import, domain purchasing, automatic payment applications, entity templates, test payments, managed follow-up, inferred next steps, success scores, or exaggerated AI capability.

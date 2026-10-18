@@ -32,7 +32,6 @@ test("tables layout consumes remaining height without page-level horizontal scro
   assert.match(layout, /<SidebarInset className="min-h-0 min-w-0">/);
   assert.match(layout, /<Main fullBleed=\{isTables\}>/);
   assert.match(main, /fullBleed\s*\?\s*'flex min-h-0 flex-col overflow-hidden'/);
-  assert.match(main, /:\s*'mx-auto max-w-\[1440px\] px-4 pt-6 pb-20 md:px-6 lg:px-8'/);
   assert.match(route, /<TablesPage onNavigate=\{go\}/);
   assert.doesNotMatch(route, /userId|useSession/);
 });

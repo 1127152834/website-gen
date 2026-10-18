@@ -1,0 +1,170 @@
+[
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\src\\App.tsx",
+    "Hash": "D3B3E0EFFDC6CFAA473AA9DB1A63C545862D3309785F9FB5FF803B9A667B2237"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\src\\main.tsx",
+    "Hash": "81DF18E0D166E771FAB98938D62CF02D971BC58C08BB368BB1D035A45B3B06CA"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\src\\styles.css",
+    "Hash": "D9FF6A0A92B6FB74D6CD0FBE3625695152FC4FE27F0CE20306BE26B045C00127"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\src\\types.ts",
+    "Hash": "E0E3A7DEB48771797697498E43F8BD3D49D328E45F19367D7C46B74C5F6407CB"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\src\\components\\Avatar.tsx",
+    "Hash": "C4A3DEFBB012059FC22FA88D31F6212F98D09F2EA3CACD34EBCCCAB236AE5972"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\src\\components\\ContactDetail.tsx",
+    "Hash": "237CA5C2BAB84AB5DACC4394186F229D6AA94BC7E8A9E9DE316D6C7119EA7929"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\src\\components\\ContactEditor.tsx",
+    "Hash": "11A04B4B7600F3D33C4054A809EE7F0AB27D67D85C905BF91E547FDB2A2BECC2"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\src\\components\\ContactList.tsx",
+    "Hash": "46FD1A2BA4C13CE4D1E691E85994972B159B3B8826E51568A9E5A4ACCB9B3AB2"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\src\\components\\DeleteDialog.tsx",
+    "Hash": "0D829AFAA1EEADA04E912A1AE8CD8703A130E5A3DF63CD1404FB361C99C1547E"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\src\\components\\DetailDialog.tsx",
+    "Hash": "6D3D33F46A04964B94848CF5BC8A83A4431414A9987E313E7085399CA8993C95"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\src\\components\\Favorites.tsx",
+    "Hash": "C27DD5678C25A08C085DEDD82576C6E1A9EFF7474AAE5BD15686A5F5E0368BAB"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\src\\components\\SearchBar.tsx",
+    "Hash": "0E9CB840E636FC2ACA83004A7D4F4D95CDEEA579E74BEDEC70F1241EE52F1A29"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\src\\components\\Sidebar.tsx",
+    "Hash": "95563898DAD0FA9504DBBA9C22E1C7A0D376D895265B71901DF65D2D6A09221B"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\src\\data\\mockData.ts",
+    "Hash": "6FF3D4CF6BBF046B0BACA5A8F5CA17A5DB5DC774F7020B662A435608F5CA51B9"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\src\\hooks\\useContactForm.ts",
+    "Hash": "DBD81697B716BF32CC354F8EFF447217AC07058A6AA0E2393D0FAF6B99858139"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\src\\hooks\\useContacts.ts",
+    "Hash": "9231381658528D9A908200CCF5A005CAD0883A7CFD2652A994C752A757AF7091"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\src\\hooks\\useContactWorkspace.ts",
+    "Hash": "298E7926096DC3A696677E106B9049D6301C4ACBB604BBB26BFEFD1EAF443A6F"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\src\\hooks\\useDialog.ts",
+    "Hash": "9F4E8BDAD61C45E69369ECB8E8B320502278B8C2B1C83A7FD64BDA50229FD0C1"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\src\\hooks\\usePresentation.ts",
+    "Hash": "8D0A7BED48C92FCF4FBC572B4838500CF7734527E4E421CA2334A444D49AD8C0"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\src\\lib\\contacts.test.ts",
+    "Hash": "16B3789184C85DBA12637699FB95A883854DFCF3BFB5A9A9BFF2A360E6CC87EE"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\src\\lib\\contacts.ts",
+    "Hash": "4A5A189E613AA498C872E85D0C33D58DFF5B1891815AA987A68AF4D956BE2EE9"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\.stitch\\DESIGN.md",
+    "Hash": "53548EFF568E15D3C04F132346129B5B92D0C5AEAAD5F5F4B2832FBAA9520F90"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\.stitch\\metadata.json",
+    "Hash": "0830B6B9A346E0B06CB0D5A0B0D82B52034DDE91BF30BB1CDA72439C0714FCE3"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\.stitch\\project.json",
+    "Hash": "76E76EBC23B0E9621EEA0A9589C59A79B533EDA7905B3FC1CD4A2D86D1B4E4D3"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\.stitch\\screens.json",
+    "Hash": "F4DF1B349CAC912548B74946D7532FD58C15BB8D75C3412C008DF0AE70735DA3"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\.stitch\\designs\\405b27e1eeec43c897505a28ac2fce54.html",
+    "Hash": "A2182EBFFE20F6437366E41AF282D4E7285E1C8AD832A0E3203CE9C3B9053D0D"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\.stitch\\designs\\405b27e1eeec43c897505a28ac2fce54.png",
+    "Hash": "9FEDB68A47B9E7AC4714E712EE171DC37CC15C4467CD89116696B21474856E3F"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\.stitch\\designs\\51ee07a503694f048f8928485b2ff981.html",
+    "Hash": "C42865886086B59B15E0E83FF67938C26AD65D7D4A09DAD0E0E7A94645D0CB3B"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\.stitch\\designs\\51ee07a503694f048f8928485b2ff981.png",
+    "Hash": "C6C19C75B9D009D59248130056BBC7AFF4753CCCFEE4263C7D381AD6A183E199"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\.stitch\\designs\\aa3d05228f4541bb91feef3fb85bd23d.html",
+    "Hash": "9C62B4AA14494C9F10C24D7432CCBC37261E21ED50FB1F8A1A144AAFB21B25C7"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\.stitch\\designs\\aa3d05228f4541bb91feef3fb85bd23d.png",
+    "Hash": "1FB93ED0E8628304C7AA957F9D3A2B18FE39D10C1C9F059567EBFE7FB09C57DF"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\.stitch\\designs\\b30596e03690472da8d3147affdc5432.html",
+    "Hash": "2DF27B52DB3F08DEC1F19D596EC3283A5EDFE8B1CB1A0E10573D482DE4B86E94"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\.stitch\\designs\\b30596e03690472da8d3147affdc5432.png",
+    "Hash": "424137897EAE8DEDA19020C77357A49CEFF4FD3016D10E1284A48846410EBD21"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\resources\\style-guide.json",
+    "Hash": "4C9F30F2BF9C5CE5F8A827C8D053DE4469F4B7E1C9BE63C09C6945CEB88414AC"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\dist\\index.html",
+    "Hash": "11A82FEDD09FC2EDE1509B1309FB067733F3569FC9C212E9C1F9F38BC80E5630"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\dist\\assets\\index-BxLkIKqI.css",
+    "Hash": "516650B153103068699CD5BD40A79A725594AE1201B6CBF7250870DC38DB6E58"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\dist\\assets\\index-C47dI_jX.js",
+    "Hash": "D64B81F1DC2DD040EB43CA7240366A125BD0949B203F8404DB09D03AEC724494"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\scripts\\validate.mjs",
+    "Hash": "06FE12AF9805290608AB68E9613EB244CBCF1D468E3E3BFE6F5DE9CEA0DD8B71"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\package.json",
+    "Hash": "3DBE54A2BE194EB9E141576FE5CDBF3F861F9DDDB3D66D222A7537A17ABB21C0"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\package-lock.json",
+    "Hash": "5DA33B02A3E2DD067123A3976F58594D4188DD874EE6B55EF62090040D948D3D"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\vite.config.ts",
+    "Hash": "2C62C8D16235FB62A1C7C659A7F253ABC2AA6AD1AC9562935C15BED673EF2856"
+  },
+  {
+    "Path": "F:\\projects\\website-gen\\poc\\stitch-contacts\\tsconfig.json",
+    "Hash": "5A79B08AC47F103B5F3815D809297543457BD6FB117DCCA328EF2D36A87FF046"
+  }
+]

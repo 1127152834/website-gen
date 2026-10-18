@@ -1,0 +1,1 @@
+Change exactly one bottom-most small helper line under 已选18位客户. Replace old 已选择18位客户（来自搜索结果，共18条）。切换页面会保留每位客户已输入的内容。 with 搜索仅筛选显示，不改变18位已选范围；切换页面保留各客户输入。 Preserve every other element, all selected checkboxes, Jamie highlighted row, all dates/contacts/values/layout and colors. No other edits.

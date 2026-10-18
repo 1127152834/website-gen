@@ -1,0 +1,10 @@
+Scene ID: ES10
+Title: 远端对象已删除的并发冲突
+Reference kind: base_id:O-A05; existing_conflict_visual_reference; future_state_variant
+Common style: prompts/common-style.txt
+
+Create one static 1490x1056 desktop scene for ES10, “远端对象已删除的并发冲突”, an essential state of O-A05. Use prompts/common-style.txt and the O-A05 surface as design references; do not assume a future PNG exists. Show one readable focal state, not a collage. This is an authorized phase-one static target, not proof of implementation.
+
+Show the existing O-A05 conflict dialog over a recognizable editor after the remote object was deleted while the local form remained open. The dialog title is “记录已被删除” and the status text says “无法覆盖保存，也不会重新创建对象”. Show a concise local edit summary, the remote deletion event, 操作人陈佳, and 10/17/2026 10:22 PT. The only actions are “比较”, “重新读取”, and “取消”. Do not offer any additional export, retry, restore, or overwrite action that could resurrect the deleted object. “比较” may reveal the local draft beside the deletion event, but it is inspection only. “重新读取” returns to the authoritative not-found state; “取消” leaves the dialog without saving. Treat this as a future static variant of O-A05, not an existing PNG or implemented handler.
+
+Use fictional data dated 10/17/2026 PT and MM/DD/YYYY. Keep Alex Morgan · C001, Northline LLC, northline.example, and hello@northline.example consistent where relevant. Only gateway applications use 申请负责人; otherwise use 操作人. Mail stays safe local plain text with no remote content or link access. Do not add unsupported automation or engineering notes to the UI.

@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-17",
+  "generator": "built-in image_gen",
+  "source_prompt_file": "docs/design/customer-management-completion-v1/04-common/prompts.json",
+  "source_indexes": [
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "items": [
+    {
+      "source_index": 4,
+      "id": "C01-empty-v1",
+      "title": "客户列表／暂无客户",
+      "output": "C01-empty-v1.png",
+      "refs": [
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/C01-list-preview-v4.png",
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+      ],
+      "prompt": "Create one production-quality Chinese desktop UI static prototype PNG, 1488x1056. Continue the exact provided app visual language, no redesign. First reference is layout/content context; the user palette reference governs color: almost-black navy headings, dark normal text, muted gray-blue labels/navigation, light gray-blue separators, flat white surfaces, dark navy primary buttons, bright blue ONLY links. No neon blue body text, gradients, illustrations, huge empty decorative panels, device frame, multiple-screen collage or browser chrome. Match sidebar and header proportions, readable Chinese typography, thin borders and modest radii. This is an internal staff tool, all data fictional DEMO. Current date 10/17/2026, every displayed date MM/DD/YYYY. No fixed customer owner, no standalone 材料 tab, no manual customer creation. One full actual UI state, not a diagram or design annotation sheet. Keep shared visible layout and business data from reference unless specifically changed. Derive a genuinely EMPTY customer-list state using reference shell. Keep main header 客户 and only top-right 上传驾照建档 / 支持单张或批量. Left tab 全部客户 0 and search box; remove all customer rows and their data. Center list empty region simple small file icon 暂无客户 / 先上传驾照正面，再人工核对建档。 no extra CTA needed because header has it. Right detail region 未选择客户 / 建档后可在这里查看资料. No previous Alex details, no fake counts. Preserve original 2-column widths and sidebar. Header date10/17/2026.",
+      "generated_source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14639-3e25-7b52-98e0-65a248b5d37c\\exec-38ba7db6-8ae5-4837-8461-5194ba1cdd05.png"
+    },
+    {
+      "source_index": 5,
+      "id": "C01-search-empty-v1",
+      "title": "客户列表／搜索无结果",
+      "output": "C01-search-empty-v1.png",
+      "refs": [
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/C01-list-preview-v4.png",
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+      ],
+      "prompt": "Create one production-quality Chinese desktop UI static prototype PNG, 1488x1056. Continue the exact provided app visual language, no redesign. First reference is layout/content context; the user palette reference governs color: almost-black navy headings, dark normal text, muted gray-blue labels/navigation, light gray-blue separators, flat white surfaces, dark navy primary buttons, bright blue ONLY links. No neon blue body text, gradients, illustrations, huge empty decorative panels, device frame, multiple-screen collage or browser chrome. Match sidebar and header proportions, readable Chinese typography, thin borders and modest radii. This is an internal staff tool, all data fictional DEMO. Current date 10/17/2026, every displayed date MM/DD/YYYY. No fixed customer owner, no standalone 材料 tab, no manual customer creation. One full actual UI state, not a diagram or design annotation sheet. Keep shared visible layout and business data from reference unless specifically changed. Search no-results state, not empty dataset. Keep 客户 header and sole 上传驾照建档 with single/batch caption. Total tab 全部客户 6 stays. Search field contains zzzz-demo with clear X. Left body 没有匹配的客户 / 请更换关键词或清除搜索, button 清除搜索. Footer 筛选结果 0 位 / 全部 6 位. Right column 未选择客户, no stale Alex data. No auto creation or manual creation. Preserve layout/sidebar palette, date10/17/2026.",
+      "generated_source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14639-3e25-7b52-98e0-65a248b5d37c\\exec-babf215d-d9c3-4553-a2cf-6bc3396b7dd1.png"
+    },
+    {
+      "source_index": 6,
+      "id": "C01-loading-v1",
+      "title": "客户列表／首次读取",
+      "output": "C01-loading-v1.png",
+      "refs": [
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/C01-list-preview-v4.png",
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+      ],
+      "prompt": "Create one production-quality Chinese desktop UI static prototype PNG, 1488x1056. Continue the exact provided app visual language, no redesign. First reference is layout/content context; the user palette reference governs color: almost-black navy headings, dark normal text, muted gray-blue labels/navigation, light gray-blue separators, flat white surfaces, dark navy primary buttons, bright blue ONLY links. No neon blue body text, gradients, illustrations, huge empty decorative panels, device frame, multiple-screen collage or browser chrome. Match sidebar and header proportions, readable Chinese typography, thin borders and modest radii. This is an internal staff tool, all data fictional DEMO. Current date 10/17/2026, every displayed date MM/DD/YYYY. No fixed customer owner, no standalone 材料 tab, no manual customer creation. One full actual UI state, not a diagram or design annotation sheet. Keep shared visible layout and business data from reference unless specifically changed. FIRST-LOAD state. Preserve header and sole upload action, sidebar. Left tab 全部客户 — not zero; search disabled placeholder 正在加载客户. Under it 6 neutral light-gray skeleton rows, no actual names/numbers/statuses. Right no old customer data, heading 正在读取客户列表 with small spinner and 一会儿即可选择客户查看资料。 Clearly not empty or failed. Header10/17/2026. No percentages, invented customer count or manual creation.",
+      "generated_source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14639-3e25-7b52-98e0-65a248b5d37c\\exec-12d0ac6b-fe89-41bc-b622-907b25509355.png"
+    },
+    {
+      "source_index": 7,
+      "id": "C01-read-failure-v1",
+      "title": "客户列表／局部读取失败",
+      "output": "C01-read-failure-v1.png",
+      "refs": [
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/C01-list-preview-v4.png",
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+      ],
+      "prompt": "Create one production-quality Chinese desktop UI static prototype PNG, 1488x1056. Continue the exact provided app visual language, no redesign. First reference is layout/content context; the user palette reference governs color: almost-black navy headings, dark normal text, muted gray-blue labels/navigation, light gray-blue separators, flat white surfaces, dark navy primary buttons, bright blue ONLY links. No neon blue body text, gradients, illustrations, huge empty decorative panels, device frame, multiple-screen collage or browser chrome. Match sidebar and header proportions, readable Chinese typography, thin borders and modest radii. This is an internal staff tool, all data fictional DEMO. Current date 10/17/2026, every displayed date MM/DD/YYYY. No fixed customer owner, no standalone 材料 tab, no manual customer creation. One full actual UI state, not a diagram or design annotation sheet. Keep shared visible layout and business data from reference unless specifically changed. One real partial-load failure state preserving original six customer rows, selected Alex Morgan, total6, header upload only. Replace ONLY entire right preview content with title 客户资料暂时无法读取, subtitle 列表已加载，当前档案读取失败。 A small neutral error box 服务暂不可用，请重试。 button 重试读取. Do NOT show old contact/status data in that failed pane or call Alex nonexistent. Keep selection and list intact. Muted red alert accent only; othercolors original.10/17/2026.",
+      "generated_source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14639-3e25-7b52-98e0-65a248b5d37c\\exec-c44c0b3f-5ca0-46ce-9596-d026b3a951af.png"
+    },
+    {
+      "source_index": 8,
+      "id": "C02-not-found-v1",
+      "title": "档案／对象不存在",
+      "output": "C02-not-found-v1.png",
+      "refs": [
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/C03-personal-v3.png",
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+      ],
+      "prompt": "Create one production-quality Chinese desktop UI static prototype PNG, 1488x1056. Continue the exact provided app visual language, no redesign. First reference is layout/content context; the user palette reference governs color: almost-black navy headings, dark normal text, muted gray-blue labels/navigation, light gray-blue separators, flat white surfaces, dark navy primary buttons, bright blue ONLY links. No neon blue body text, gradients, illustrations, huge empty decorative panels, device frame, multiple-screen collage or browser chrome. Match sidebar and header proportions, readable Chinese typography, thin borders and modest radii. This is an internal staff tool, all data fictional DEMO. Current date 10/17/2026, every displayed date MM/DD/YYYY. No fixed customer owner, no standalone 材料 tab, no manual customer creation. One full actual UI state, not a diagram or design annotation sheet. Keep shared visible layout and business data from reference unless specifically changed. Object no longer exists state for opening old deep link /customers/C001. Preserve sidebar and top breadcrumb 客户 / 档案不可用. REMOVE prior Alex header, statuses, tabs and all sensitive data entirely. Main compact centered message 客户档案不存在, supporting 该档案可能已被删除，原链接不再可用。 No customer full name/SSN/etc. Primary 返回客户列表, secondary 重新检查. Small note 邮箱中的原邮件不会自动恢复已删除档案。 Do not imply restore/history/recyclebin.10/17/2026.",
+      "generated_source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14639-3e25-7b52-98e0-65a248b5d37c\\exec-b757a4b1-4458-411d-a6cd-8b84dd113cf8.png"
+    },
+    {
+      "source_index": 9,
+      "id": "C02-forbidden-v1",
+      "title": "档案／无权访问",
+      "output": "C02-forbidden-v1.png",
+      "refs": [
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/C03-personal-v3.png",
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+      ],
+      "prompt": "Create one production-quality Chinese desktop UI static prototype PNG, 1488x1056. Continue the exact provided app visual language, no redesign. First reference is layout/content context; the user palette reference governs color: almost-black navy headings, dark normal text, muted gray-blue labels/navigation, light gray-blue separators, flat white surfaces, dark navy primary buttons, bright blue ONLY links. No neon blue body text, gradients, illustrations, huge empty decorative panels, device frame, multiple-screen collage or browser chrome. Match sidebar and header proportions, readable Chinese typography, thin borders and modest radii. This is an internal staff tool, all data fictional DEMO. Current date 10/17/2026, every displayed date MM/DD/YYYY. No fixed customer owner, no standalone 材料 tab, no manual customer creation. One full actual UI state, not a diagram or design annotation sheet. Keep shared visible layout and business data from reference unless specifically changed. Known access-denied state, not missing record or server failure. Keep sidebar and topbreadcrumb 客户 / 无权访问. Remove all old customer header/data/tab information. Center title 无权访问此档案, body 当前账号没有访问权限，请联系管理员确认。 Buttons 返回客户列表 and 重新检查权限. Current account bottom 王芳 · 员工. No role escalation button, customer data preview, owner assignment, or automatic permission grant. Date10/17/2026.",
+      "generated_source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14639-3e25-7b52-98e0-65a248b5d37c\\exec-7a143d85-36dd-4628-9086-2f27e273388a.png"
+    },
+    {
+      "source_index": 10,
+      "id": "O-A04-unsaved-v1",
+      "title": "共用／未保存离开确认",
+      "output": "O-A04-unsaved-v1.png",
+      "refs": [
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C04-personal-edit-v3.png",
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+      ],
+      "prompt": "Create one production-quality Chinese desktop UI static prototype PNG, 1488x1056. Continue the exact provided app visual language, no redesign. First reference is layout/content context; the user palette reference governs color: almost-black navy headings, dark normal text, muted gray-blue labels/navigation, light gray-blue separators, flat white surfaces, dark navy primary buttons, bright blue ONLY links. No neon blue body text, gradients, illustrations, huge empty decorative panels, device frame, multiple-screen collage or browser chrome. Match sidebar and header proportions, readable Chinese typography, thin borders and modest radii. This is an internal staff tool, all data fictional DEMO. Current date 10/17/2026, every displayed date MM/DD/YYYY. No fixed customer owner, no standalone 材料 tab, no manual customer creation. One full actual UI state, not a diagram or design annotation sheet. Keep shared visible layout and business data from reference unless specifically changed. Show ONE centered modal over a dimmed personal edit drawer based on reference. Close open state selector in backdrop, no nested modal. Modal width600 title 尚有未保存的修改. Body 当前住址的修改尚未保存，离开后将丢弃本次输入；已保存资料与申请定稿不变。 Context Alex Morgan / C001. Two buttons 继续编辑 (navy primary) and 放弃修改并离开 (outlined warning). Do not claim saved, no automatic save, no unrelated filename fields. Header/underlying personal fields mostlydimmed preserve. 10/17/2026 where datevisible.",
+      "generated_source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14639-3e25-7b52-98e0-65a248b5d37c\\exec-73fc8378-955a-44a7-8f92-e8d4ceb1fd57.png",
+      "repair": {
+        "date": "2026-10-17",
+        "issue": "Modal said current-address edit was unsaved while drawer still displayed saved 128 Example Ave.",
+        "change": "Changed only the drawer current-address street input to 130 Example Ave; underlying saved value remains 128 Example Ave.",
+        "previous_generated_source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14639-3e25-7b52-98e0-65a248b5d37c\\exec-305b3434-4241-4c60-be51-a783c37f2d8c.png",
+        "backup": "history/20261017T-final-unsaved-address-O-A04-unsaved-v1.png"
+      }
+    },
+    {
+      "source_index": 11,
+      "id": "O-A05-conflict-v1",
+      "title": "共用／同事修改冲突",
+      "output": "O-A05-conflict-v1.png",
+      "refs": [
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C04-personal-edit-v3.png",
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+      ],
+      "prompt": "Create one production-quality Chinese desktop UI static prototype PNG, 1488x1056. Continue the exact provided app visual language, no redesign. First reference is layout/content context; the user palette reference governs color: almost-black navy headings, dark normal text, muted gray-blue labels/navigation, light gray-blue separators, flat white surfaces, dark navy primary buttons, bright blue ONLY links. No neon blue body text, gradients, illustrations, huge empty decorative panels, device frame, multiple-screen collage or browser chrome. Match sidebar and header proportions, readable Chinese typography, thin borders and modest radii. This is an internal staff tool, all data fictional DEMO. Current date 10/17/2026, every displayed date MM/DD/YYYY. No fixed customer owner, no standalone 材料 tab, no manual customer creation. One full actual UI state, not a diagram or design annotation sheet. Keep shared visible layout and business data from reference unless specifically changed. Wide right-side conflict panel replacing original edit drawer (not stacked modal), muted original customer backdrop. Title 资料已被同事更新, subtitle Alex Morgan · C001. Info 本次尚未保存，不会自动覆盖他人的修改。 Table for ONE changed field 当前住址街道 with columns 打开时 128 Example Ave; 当前已保存 130 Example Ave / 操作人陈杰 / 10/17/2026 10:42 AM; 我的未保存输入 132 Example Ave. Keep original untouched remainingfields as collapsed count 其他17项未改动，保留各自操作人. Primary 重新读取并核对, secondary 返回编辑, textbutton 取消本次修改. Note 保留本次输入供重新核对，不能直接覆盖。已有申请定稿不变。 No force overwrite button, no merge-success claim or intermediate history library. Current login 李敏.",
+      "generated_source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14639-3e25-7b52-98e0-65a248b5d37c\\exec-d21f4d0d-aceb-4fc0-9249-17d658ffda2c.png"
+    }
+  ]
+}

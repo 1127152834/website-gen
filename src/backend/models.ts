@@ -1,7 +1,7 @@
 // 模型层：每个用户可以维护自己的提供方、独立 Key、模型目录和用途路由。
 // 数据库存 pi-ai 可直接使用的模型形状；RPC 只返回安全的展示字段，绝不返回 Key 明文。
 import type { DatabaseSync } from "node:sqlite";
-import { createModels, createProvider, getSupportedThinkingLevels, type Model, type ModelThinkingLevel } from "@earendil-works/pi-ai";
+import { createModels, createProvider, getSupportedThinkingLevels, type Model, type ModelThinkingLevel, type Context, type AssistantMessageEventStream } from "@earendil-works/pi-ai";
 import { anthropicMessagesApi } from "@earendil-works/pi-ai/api/anthropic-messages.lazy";
 import { openAICompletionsApi } from "@earendil-works/pi-ai/api/openai-completions.lazy";
 import { DEEPSEEK_MODELS } from "@earendil-works/pi-ai/providers/deepseek.models";
@@ -9,14 +9,14 @@ import type { ModelRole, ProviderSummary, RoleSummary } from "../shared/protocol
 import { seal, unseal } from "./secrets.ts";
 import { withModelRetry } from "./model-retry.ts";
 
-export const ROLES: ModelRole[] = ["agent", "vision", "bulk", "review"];
+export const ROLES: ModelRole[] = ["agent", "vision", "bulk", "review", "translation", "mail_triage"];
 type Protocol = ProviderSummary["protocol"];
 type AnyModel = Model<"openai-completions" | "anthropic-messages">;
 type StoredModel = Omit<AnyModel, "api" | "provider" | "baseUrl">;
 type FetchLike = (input: string | URL | Request, init?: RequestInit) => Promise<Response>;
 const API = { openai: "openai-completions", anthropic: "anthropic-messages" } as const;
 const THINKING_LEVELS = ["off", "minimal", "low", "medium", "high", "max"] as const;
-const ROLE_NAMES: Record<ModelRole, string> = { agent: "建站与对话", vision: "看截图", bulk: "批量文案", review: "合规审查" };
+const ROLE_NAMES: Record<ModelRole, string> = { agent: "建站与对话", vision: "看截图", bulk: "批量文案", review: "合规审查", translation: "邮件翻译", mail_triage: "邮件预审" };
 
 export interface ModelPrice {
   input: number;
@@ -69,6 +69,7 @@ interface ProviderRow {
   api_key_ciphertext: Uint8Array | null;
   api_key_hint: string | null;
   models_json: string;
+  config_revision: number;
   created_at: number;
 }
 
@@ -213,6 +214,7 @@ export function listProviders(db: DatabaseSync): ProviderDetail[] {
     name: row.name,
     protocol: row.protocol,
     baseUrl: row.base_url,
+    configRevision: row.config_revision,
     hasKey: row.api_key_ciphertext !== null,
     keyHint: row.api_key_hint,
     models: modelsOf(row).map(publicModel),
@@ -244,13 +246,23 @@ export function createProviderConfig(db: DatabaseSync, key: Buffer, input: {
   }
 }
 
+function invalidateBoundTriage(db:DatabaseSync,providerId:number,now:number):string[] {
+  const bound=db.prepare("SELECT 1 FROM model_roles WHERE role='mail_triage' AND provider_id=?").get(providerId);
+  if(!bound)return [];
+  const sourceIds=(db.prepare("SELECT id FROM mail_triage_sources WHERE state='active' ORDER BY id").all() as {id:string}[]).map(row=>row.id);
+  db.prepare("UPDATE mail_triage_attempts SET outcome='cancelled',settled_at=? WHERE outcome='reserved' AND job_id IN (SELECT id FROM mail_triage_jobs WHERE provider_id=?)").run(now,providerId);
+  db.prepare("UPDATE mail_triage_jobs SET state='cancelled',lease_token=NULL,lease_expires_at=NULL,last_error='configuration_changed',updated_at=? WHERE provider_id=? AND state<>'cancelled'").run(now,providerId);
+  db.prepare("UPDATE mail_triage_settings SET enabled=0,state='blocked_config',config_epoch=config_epoch+1,model_config_revision=model_config_revision+1,consent_provider_revision=NULL,version=version+1 WHERE id=1").run();
+  return sourceIds;
+}
+
 export function updateProviderConfig(db: DatabaseSync, key: Buffer, providerId: number, input: {
   name: string;
   protocol: Protocol;
   baseUrl: string;
   apiKey?: string;
   models: ProviderModelInput[];
-}): void {
+}): string[] {
   const current = providerRows(db).find((row) => row.id === providerId);
   if (!current) throw new Error(`模型厂商 ${providerId} 不存在`);
   const name = cleanName(input.name, "厂商名称");
@@ -258,6 +270,7 @@ export function updateProviderConfig(db: DatabaseSync, key: Buffer, providerId: 
   const baseUrl = cleanBaseUrl(input.baseUrl);
   const apiKey = input.apiKey?.trim();
   const mayKeepStoredKey = !apiKey && protocol === current.protocol && new URL(baseUrl).origin === new URL(current.base_url).origin;
+  db.exec("BEGIN IMMEDIATE");
   try {
     db.prepare(`UPDATE model_providers SET name = ?, protocol = ?, base_url = ?, api_key_ciphertext = ?, api_key_hint = ?, models_json = ? WHERE id = ?`).run(
       name,
@@ -267,19 +280,26 @@ export function updateProviderConfig(db: DatabaseSync, key: Buffer, providerId: 
       apiKey ? apiKey.slice(-4) : mayKeepStoredKey ? current.api_key_hint : null,
       JSON.stringify(normalizeModels(input.models)), providerId,
     );
+    db.prepare("UPDATE model_providers SET config_revision=config_revision+1 WHERE id=?").run(providerId);
+    const aborted=invalidateBoundTriage(db,providerId,Date.now());
+    db.exec("COMMIT");
+    return aborted;
   } catch (error) {
+    db.exec("ROLLBACK");
     if (/UNIQUE constraint failed: model_providers\.name/.test(String(error))) throw new Error(`已经有名为「${name}」的模型厂商`);
     throw error;
   }
 }
 
-export function deleteProviderConfig(db: DatabaseSync, providerId: number): void {
+export function deleteProviderConfig(db: DatabaseSync, providerId: number): string[] {
   if (!providerRows(db).some((row) => row.id === providerId)) throw new Error(`模型厂商 ${providerId} 不存在`);
-  db.exec("BEGIN");
+  db.exec("BEGIN IMMEDIATE");
   try {
+    const aborted=invalidateBoundTriage(db,providerId,Date.now());
     db.prepare("DELETE FROM model_roles WHERE provider_id = ?").run(providerId);
     db.prepare("DELETE FROM model_providers WHERE id = ?").run(providerId);
     db.exec("COMMIT");
+    return aborted;
   } catch (error) {
     db.exec("ROLLBACK");
     throw error;
@@ -287,11 +307,17 @@ export function deleteProviderConfig(db: DatabaseSync, providerId: number): void
 }
 
 /** Key 只更新指定提供方，不再按域名共享。 */
-export function setProviderKey(db: DatabaseSync, key: Buffer, providerId: number, apiKey: string): void {
+export function setProviderKey(db: DatabaseSync, key: Buffer, providerId: number, apiKey: string): string[] {
   const value = apiKey.trim();
   if (!value) throw new Error("请填写 API Key");
   if (!providerRows(db).some((row) => row.id === providerId)) throw new Error(`模型厂商 ${providerId} 不存在`);
-  db.prepare("UPDATE model_providers SET api_key_ciphertext = ?, api_key_hint = ? WHERE id = ?").run(seal(key, value), value.slice(-4), providerId);
+  db.exec("BEGIN IMMEDIATE");
+  try {
+    db.prepare("UPDATE model_providers SET api_key_ciphertext = ?, api_key_hint = ?, config_revision=config_revision+1 WHERE id = ?").run(seal(key, value), value.slice(-4), providerId);
+    const aborted=invalidateBoundTriage(db,providerId,Date.now());
+    db.exec("COMMIT");
+    return aborted;
+  } catch(error) { db.exec("ROLLBACK"); throw error; }
 }
 
 function modelsEndpoint(row: ProviderRow): string {
@@ -467,4 +493,13 @@ export function buildRuntime(db: DatabaseSync, key: Buffer) {
       return { model, thinking: choice.thinking as ModelThinkingLevel };
     },
   };
+}
+
+/** 邮件预审专用窄接缝：不经过 completeText/withModelRetry；调用者持有传输限额与真正截止 signal。 */
+export function streamRoleOnce(db:DatabaseSync,key:Buffer,role:"mail_triage",context:Context,options:{signal:AbortSignal;fetch:typeof fetch;maxTokens:number;maxRetries:0;timeoutMs:number}):AssistantMessageEventStream {
+  if(role!=="mail_triage"||options.maxRetries!==0||options.timeoutMs<1||options.timeoutMs>60_000)throw new Error("invalid single-call options");
+  const runtime=buildRuntime(db,key),{model,thinking}=runtime.resolve(role);
+  // Anthropic 的 simple 适配器会把思考预算加到 maxTokens；把模型上限也压到本次上限，禁止暗中扩大出站预算。
+  const cap=Math.min(4096,model.maxTokens,options.maxTokens);
+  return runtime.models.streamSimple({...model,maxTokens:cap},context,{signal:options.signal,fetch:options.fetch,maxTokens:cap,maxRetries:0,timeoutMs:options.timeoutMs,reasoning:thinking==="off"?undefined:thinking,cacheRetention:"none",transport:"sse"});
 }

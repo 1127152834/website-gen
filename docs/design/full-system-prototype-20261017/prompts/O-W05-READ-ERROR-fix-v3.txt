@@ -1,0 +1,1 @@
+Correct only the historical CASEY-Q01 finding text in this exact image: it must read 页脚联系方式排版需人工核对, not 顶部联系方式排版需人工核对. Keep the same CASEY-Q01 ID, timestamp 10/17/2026 13:40 PT, historical label, disabled publish, read-error state, all other data/layout/style and 李敏 logged-in footer. Do not change anything else.

@@ -1,0 +1,191 @@
+{
+  "version": 1,
+  "generated_on": "10/17/2026",
+  "status": "prompt_ready_not_generated",
+  "scope": "只归并customer-gateway-coverage内A模块与other-modules-scenes的主场景差集；不将所有required_states提示扩成额外队列。",
+  "sources": [
+    {
+      "path": "plans/customer-gateway-coverage.json",
+      "sha256": "4CD760687892BEF69F3A8860496329B6F7B9BCC884C0D7F185D9EE7CB88A5029",
+      "selector": "screens[*] where id starts A or O-A",
+      "records": 16
+    },
+    {
+      "path": "prompts/other-modules-scenes.json",
+      "sha256": "FA4E098BA5B766E1E21B42D2F9AB5BC5C779E2C90AD401F2BDB6A9B4A7C7C26A",
+      "selector": "items[*] where id starts A or O-A",
+      "records": 13
+    },
+    {
+      "path": "docs/design/application-page-inventory-v1.md",
+      "evidence_lines": [
+        62,
+        63,
+        64,
+        65,
+        177,
+        276,
+        279,
+        280,
+        306
+      ]
+    }
+  ],
+  "literal_missing_coverage_ids": [
+    "A03-forced",
+    "A03-voluntary",
+    "A08/O-A01",
+    "A01-session-expired",
+    "A01-narrow-navigation"
+  ],
+  "resolved_aliases": [
+    {
+      "coverage_id": "A03-voluntary",
+      "existing_prompt_id": "A03",
+      "evidence": "既有A03明确给出“当前密码 / 新密码 / 确认新密码 / 取消 / 保存新密码”，另在required_states要求单独强制态。",
+      "disposition": "现有A03主场景按主动改密登记；不新增重复主动改密图。",
+      "visual_acceptance": "成图必须保留可取消返回；不得将该图同时标为强制改密。"
+    },
+    {
+      "coverage_id": "A08/O-A01",
+      "existing_prompt_id": "A08",
+      "evidence": "coverage与页清单O-A01均说明承载A08搜索弹窗，现有A08已指定Alex搜索结果。",
+      "disposition": "同一搜索覆盖层一次登记；不另画O-A01。"
+    }
+  ],
+  "normalized_missing_coverage_ids": [
+    "A03-forced",
+    "A01-session-expired",
+    "A01-narrow-navigation"
+  ],
+  "split_reason": "A01-session-expired记录明确同时包含“会话失效/身份复核失败区别”，恢复动作分别是重新登录与重试；一张原因模糊的遮罩不能同时覆盖，因此拆为两个状态图。",
+  "count": 4,
+  "items": [
+    {
+      "id": "A03-forced",
+      "parent": "A03",
+      "coverage_id": "A03-forced",
+      "title": "首次强制修改密码",
+      "status": "awaiting_generation",
+      "prompt_file": "prompts/global-gap-scenes.json",
+      "english_word_count": 209,
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+      ],
+      "required_content": [
+        "A03 强制模式，账号 li.min / 李敏；无客户注册",
+        "当前/新/确认密码均遮蔽，能显示/隐藏；不编造新的密码规则",
+        "必须成功修改才可进入系统；无取消返回工作台的绕过路径",
+        "保存新密码 / 退出登录；此画面尚未提交",
+        "与既有 A03 主动改密同结构但返回行为不同"
+      ],
+      "existing_image": null
+    },
+    {
+      "id": "A01-session-expired",
+      "parent": "A01",
+      "coverage_id": "A01-session-expired",
+      "title": "会话已失效",
+      "status": "awaiting_generation",
+      "prompt_file": "prompts/global-gap-scenes.json",
+      "english_word_count": 218,
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C12-batch-upload-v4.png"
+      ],
+      "required_content": [
+        "已确定会话失效，不与暂时身份复核失败混用",
+        "保护内容不再可见；不在透明遮罩后露客户/文件/邮件",
+        "唯一恢复主入口重新登录→既有 A02",
+        "未保存输入尚未提交，可能重新填写；无服务器草稿承诺或写入重放",
+        "不新增注册/找回密码/自动保存能力"
+      ],
+      "existing_image": null
+    },
+    {
+      "id": "A01-identity-recheck-failed",
+      "parent": "A01-session-expired",
+      "coverage_id": "A01-session-expired",
+      "title": "身份复核暂时失败",
+      "status": "awaiting_generation",
+      "prompt_file": "prompts/global-gap-scenes.json",
+      "english_word_count": 222,
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C12-batch-upload-v4.png"
+      ],
+      "required_content": [
+        "映射 coverage A01-session-expired 中另一种原因，不新建一级页",
+        "临时连接异常≠会话已失效/账号停用/密码错误",
+        "重试身份复核为主、返回登录为次；不永久遮罩",
+        "敏感主区隐藏，受保护操作暂停；未保存未提交",
+        "重试不重放业务写入，不声称已经恢复连接"
+      ],
+      "existing_image": null
+    },
+    {
+      "id": "A01-narrow-navigation",
+      "parent": "A01",
+      "coverage_id": "A01-narrow-navigation",
+      "title": "窄屏单栏客户详情与导航入口",
+      "status": "awaiting_generation",
+      "prompt_file": "prompts/global-gap-scenes.json",
+      "english_word_count": 230,
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/C09-applications-active-v2.png"
+      ],
+      "required_content": [
+        "1490×1056交付画布内仅一个864×1056真实窄视口，无多图拼贴",
+        "折叠菜单入口、返回客户列表、单栏详情；不并排列表详情",
+        "Alex完成，Stripe10/12有效获批，PayPal10/16在办待补件",
+        "申请负责人李敏仅在申请区；无固定客户负责人",
+        "公司/域名/邮箱完整可读；复制和完整档案入口复用",
+        "不是新增移动端业务模块；静态代表态不等于响应式交互已验证"
+      ],
+      "existing_image": null
+    }
+  ],
+  "existing_image_reuse": [
+    {
+      "id": "A01",
+      "existing_image": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C12-batch-upload-v4.png",
+      "disposition": "复用现有壳，不重绘一张正常壳。"
+    },
+    {
+      "id": "O-A04",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/O-A04-unsaved-ui-v2.png",
+      "disposition": "复用已有未保存离开确认，不重复生成。"
+    },
+    {
+      "id": "O-A05",
+      "existing_image": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/O-A05-conflict-ui-v2.png",
+      "disposition": "复用已有并发冲突，不重复生成。"
+    }
+  ],
+  "already_has_main_scene": [
+    "A02",
+    "A03",
+    "A04",
+    "A05",
+    "A06",
+    "A07",
+    "A08",
+    "A09",
+    "O-A02",
+    "O-A03"
+  ],
+  "not_counted_as_complete": "这里只确认提示词或已归档引用存在；未检查尚未生成的A图。A03/A08别名必须在最终图审核后才能声称视觉覆盖。",
+  "not_expanded": [
+    "不新增登录注册/密码找回/安全中心/持久草稿能力。",
+    "A02提交/错误、A08无结果、A09模型缺失、工具确认过期等既有状态不在本次A主场景差集追加队列内，不表示这些交互已经实现或已经画完。",
+    "A01窄屏仅为一个真实窄视口代表态，不宣称跨尺寸交互或键盘行为已验证。"
+  ],
+  "baseline": {
+    "new_files_absent_before_write": true,
+    "modified_existing_files": [],
+    "backup": "无需覆盖备份；目标为新增文件，来源文件原样保留。"
+  },
+  "rollback": "仅移除本次新增 prompts/global-gap-scenes.json 与 plans/global-gap-queue.json；不触碰现有图或索引。"
+}
+

@@ -1,0 +1,1 @@
+Edit the FIRST image only. Preserve the entire layout, all values, sidebar, dimensions and white/deep navy palette. Make exactly two copy changes: main heading “邮箱管理主页面” becomes “邮箱”; top breadcrumb becomes “资源 / 邮箱”. Do not alter anything else.

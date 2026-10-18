@@ -1,43 +1,22 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, ChevronLeft, ChevronRight, Download, Forward, Inbox, KeyRound, LoaderCircle, Mail, MailOpen, MoreVertical, Paperclip, PenLine, RefreshCw, Reply, ReplyAll, Search, Send, Trash2 } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import type { MailAttachment, MailFolder, MailListResult, MailMessageDetail, MailMessageSummary, MailboxSummary } from "../../../../shared/mail-types.ts";
-import { MailBody } from "./mail-body.ts";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ArrowLeft, Download, LoaderCircle, Mail, PenLine, RefreshCw } from "lucide-react";
+import type { MailAttachment, MailFolder, MailListResult, MailMessageDetail, MailMessageSummary, MailboxSummary, MailTranslation } from "../../../../shared/mail-types.ts";
+import type { CaseSourceReaderRef, MailMessageAnnotation, MailMessageAnnotationsResult, ReviewSourcePreview } from "../../../../shared/mail-triage-types.ts";
 import { toast, useConfirm } from "@/components/feedback";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { PasswordInput } from "@/components/password-input";
 import { call, invalidateRpcData, useRpcData } from "@/lib/backend.ts";
 import { cn } from "@/lib/utils";
-import { folderUnread, MailOpenState, mailSelectionRedirect } from "./mail-open-state.ts";
-import { isValidMailAddressList, normalizeMailAddress, splitMailAddresses } from "./mail-form.ts";
+import { MailOpenState, mailSelectionRedirect } from "./mail-open-state.ts";
+import { ComposeDialog, type ComposeHandoff, type ComposeMode, type ComposeState } from "./compose-dialog.tsx";
+import { MailboxPane } from "./mailbox-pane.tsx";
+import { MessageListPane } from "./message-list-pane.tsx";
+import { MessageReaderPane } from "./message-reader-pane.tsx";
 
 const PAGE_SIZE = 30;
-const MAX_ATTACHMENTS = 20 * 1024 * 1024;
-
-type ComposeMode = "new" | "reply" | "reply-all" | "forward";
-type Upload = { name: string; type: string; size: number; dataBase64: string };
 type SeenQueue = { confirmed: boolean; pending: { id: number; seen: boolean }[]; chain: Promise<void> };
+type TranslationSource = { key: string; subject: string; text: string };
+type TranslationState = { source: TranslationSource; busy: boolean; showOriginal: boolean; value?: MailTranslation; error?: string };
 
-const credentialSchema = z.object({ password: z.string().min(1, "请输入邮箱密码") });
-type CredentialForm = z.infer<typeof credentialSchema>;
-
-const composeSchema = z.object({
-  to: z.string().refine((value) => isValidMailAddressList(value, true), "请输入有效的收件人邮箱，多个地址用逗号分隔"),
-  cc: z.string().refine((value) => isValidMailAddressList(value), "请输入有效的抄送邮箱，多个地址用逗号分隔"),
-  bcc: z.string().refine((value) => isValidMailAddressList(value), "请输入有效的密送邮箱，多个地址用逗号分隔"),
-  subject: z.string(),
-  text: z.string().trim().min(1, "请输入邮件正文"),
-});
-type ComposeForm = z.infer<typeof composeSchema>;
-
-const date = (value: number) => new Date(value).toLocaleString("zh-CN", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
-const quote = (message: MailMessageDetail) => `\n\n--- 原邮件 ---\n发件人：${message.from}\n日期：${new Date(message.date).toLocaleString("zh-CN")}\n主题：${message.subject}\n\n${message.text.split("\n").map((line) => `> ${line}`).join("\n")}`;
 const routeFor = (mailboxId: number, folder: string, uid?: number) => `/mail/${mailboxId}/${encodeURIComponent(folder)}${uid == null ? "" : `/${uid}`}`;
 const canEnterPassword = (mailbox: MailboxSummary) => !mailbox.credentialSaved && (mailbox.defaultPasswordStatus === "unconfigured" || mailbox.defaultPasswordStatus === "rejected");
 const isTryingDefaultPassword = (mailbox: MailboxSummary) => !mailbox.credentialSaved && (mailbox.defaultPasswordStatus === "pending" || mailbox.defaultPasswordStatus === "trying");
@@ -49,7 +28,7 @@ function mailboxStatusText(mailbox: MailboxSummary): string {
   return "需要密码";
 }
 
-export function MailPage({ mailboxId, folder, uid, onNavigate }: { mailboxId?: number; folder?: string; uid?: number; onNavigate: (path: string) => void }) {
+export function MailPage({ mailboxId, folder, uid, sourceRef, composeHandoff, onNavigate }: { mailboxId?: number; folder?: string; uid?: number; sourceRef?: CaseSourceReaderRef; composeHandoff?: ComposeHandoff; onNavigate: (path: string) => void }) {
   const confirm = useConfirm();
   const activeFolder = folder ?? "INBOX";
   const listScope = `${mailboxId ?? ""}\u0000${activeFolder}`;
@@ -57,7 +36,7 @@ export function MailPage({ mailboxId, folder, uid, onNavigate }: { mailboxId?: n
   const mailboxes = mailboxesState.data ?? null;
   const activeMailbox = mailboxes?.find((item) => item.id === mailboxId) ?? null;
   const credentialSaved = activeMailbox?.credentialSaved ?? false;
-  const foldersState = useRpcData<MailFolder[]>("mail.folders", mailboxId && credentialSaved ? { mailboxId } : null, { topics: ["mail"] });
+  const foldersState = useRpcData<MailFolder[]>("mail.folders", mailboxId && credentialSaved && !sourceRef ? { mailboxId } : null, { topics: ["mail"] });
   const folders = foldersState.data ?? [];
   const [messages, setMessages] = useState<MailListResult | null>(null);
   const [message, setMessage] = useState<MailMessageDetail | null>(null);
@@ -69,19 +48,30 @@ export function MailPage({ mailboxId, folder, uid, onNavigate }: { mailboxId?: n
   const [error, setError] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [retryingDefaultFor, setRetryingDefaultFor] = useState<number | null>(null);
-  const [credentialFor, setCredentialFor] = useState<MailboxSummary | null>(null);
-  const [compose, setCompose] = useState<{ mailbox: MailboxSummary; mode: ComposeMode; original?: MailMessageDetail } | null>(null);
+  const [compose, setCompose] = useState<ComposeState | null>(null);
+  const [correctionReason,setCorrectionReason]=useState(""),[correctionTag,setCorrectionTag]=useState(""),[correctionBusy,setCorrectionBusy]=useState(false),[correctionError,setCorrectionError]=useState<string|null>(null);
+  const openedHandoff = useRef("");
+  const [translationState, setTranslationState] = useState<TranslationState | null>(null);
+  const translationSource = useRef<TranslationSource | null>(null);
+  const translationPending = useRef<TranslationSource | null>(null);
+  useEffect(() => () => { translationSource.current = null; translationPending.current = null; }, []);
   const seenQueues = useRef(new Map<string, SeenQueue>());
   const seenSequence = useRef(0);
   const messagesScope = useRef(listScope);
   const messageIdentity = useRef<string | null>(null);
-  const routeRef = useRef({ mailboxId, folder: activeFolder, uid });
-  routeRef.current = { mailboxId, folder: activeFolder, uid };
+  const sourceIdentity=sourceRef?`${sourceRef.caseId}\u0000${sourceRef.sourceId}\u0000${sourceRef.sourceVersion}\u0000${sourceRef.uidValidity}`:"";
+  const routeRef = useRef({ mailboxId, folder: activeFolder, uid, sourceIdentity });
+  routeRef.current = { mailboxId, folder: activeFolder, uid, sourceIdentity };
   const openState = useRef(new MailOpenState());
-  const messagesParams = mailboxId && credentialSaved ? { mailboxId, folder: activeFolder, query: debouncedQuery.trim() || undefined, page, pageSize: PAGE_SIZE } : null;
+  const messagesParams = mailboxId && credentialSaved && !sourceRef ? { mailboxId, folder: activeFolder, query: debouncedQuery.trim() || undefined, page, pageSize: PAGE_SIZE } : null;
   const messagesState = useRpcData<MailListResult>("mail.messages", messagesParams, { topics: ["mail"] });
-  const detailParams = mailboxId && uid != null && credentialSaved ? { mailboxId, folder: activeFolder, uid } : null;
-  const detailState = useRpcData<MailMessageDetail>("mail.message", detailParams, { topics: ["mail"] });
+  const annotationParams=messagesParams&&messagesState.data?{mailboxId:messagesParams.mailboxId,folder:messagesParams.folder,messages:messagesState.data.items.flatMap(item=>item.readIdentity?[{uid:item.uid,readIdentity:item.readIdentity}]:[])}:null;
+  const annotationsState=useRpcData<MailMessageAnnotationsResult>("mail.triage.messageAnnotations",annotationParams,{topics:["mail_triage"]});
+  const annotations=useMemo(()=>Object.fromEntries((annotationsState.data?.items??[]).map(item=>[item.uid,item])) as Record<number,MailMessageAnnotation>,[annotationsState.data]);
+  const selectedAnnotation=uid==null?null:annotations[uid]??null;
+  const annotationPreview=useRpcData<ReviewSourcePreview>("mail.triage.sourcePreview",selectedAnnotation?{sourceId:selectedAnnotation.sourceId,sourceVersion:selectedAnnotation.sourceVersion}:null,{topics:["mail_triage"]});
+  const detailParams = mailboxId && uid != null && (credentialSaved||Boolean(sourceRef)) ? sourceRef??{ mailboxId, folder: activeFolder, uid } : null;
+  const detailState = useRpcData<MailMessageDetail|{ref:CaseSourceReaderRef;message:MailMessageDetail}>(sourceRef?"mail.cases.sourceMessage":"mail.message", detailParams, { topics: sourceRef?["mail_triage"]:["mail"] });
 
   const updateSeen = useCallback((targetMailboxId: number, targetFolder: string, targetUid: number, seen: boolean, previousSeen: boolean) => {
     const key = `${targetMailboxId}\u0000${targetFolder}\u0000${targetUid}`;
@@ -139,15 +129,18 @@ export function MailPage({ mailboxId, folder, uid, onNavigate }: { mailboxId?: n
   useEffect(() => {
     setMessage(null);
     messageIdentity.current = null;
-    if (!mailboxId || uid == null || !credentialSaved) { if (uid == null) openState.current.leaveMessage(); return; }
-    const item = detailState.data;
-    if (!item) return;
+    if (!mailboxId || uid == null || (!credentialSaved&&!sourceRef)) { if (uid == null) openState.current.leaveMessage(); return; }
+    const response = detailState.data;
+    if (!response) return;
+    if(sourceRef&&!("message" in response))return;
+    if(sourceRef&&"message" in response){const ref=response.ref;if(ref.caseId!==sourceRef.caseId||ref.sourceId!==sourceRef.sourceId||ref.sourceVersion!==sourceRef.sourceVersion||ref.mailboxId!==sourceRef.mailboxId||ref.folder!==sourceRef.folder||ref.uidValidity!==sourceRef.uidValidity||ref.uid!==sourceRef.uid)return;}
+    const item = sourceRef&&"message" in response?response.message:response as MailMessageDetail;
     const route = routeRef.current;
-    if (route.mailboxId !== mailboxId || route.folder !== activeFolder || route.uid !== uid) return;
-    messageIdentity.current = `${listScope}\u0000${uid}`;
+    if (route.mailboxId !== mailboxId || route.folder !== activeFolder || route.uid !== uid || route.sourceIdentity!==sourceIdentity) return;
+    messageIdentity.current = `${listScope}\u0000${uid}\u0000${sourceIdentity}`;
     setMessage(item);
-    if (openState.current.shouldAutoMark(mailboxId, activeFolder, uid, item.seen)) updateSeen(mailboxId, activeFolder, uid, true, item.seen);
-  }, [activeFolder, credentialSaved, detailState.data, listScope, mailboxId, uid, updateSeen]);
+    if (!sourceRef&&openState.current.shouldAutoMark(mailboxId, activeFolder, uid, item.seen)) updateSeen(mailboxId, activeFolder, uid, true, item.seen);
+  }, [activeFolder, credentialSaved, detailState.data, listScope, mailboxId, sourceIdentity, sourceRef, uid, updateSeen]);
   useEffect(() => {
     const reason = mailboxesState.error ?? foldersState.error ?? messagesState.error ?? detailState.error;
     if (reason) setError(reason.message);
@@ -188,6 +181,19 @@ export function MailPage({ mailboxId, folder, uid, onNavigate }: { mailboxId?: n
     try { await call("mail.trash", { mailboxId, folder: activeFolder, uid: message.uid, confirmed: true }); invalidateRpcData("mail.list"); invalidateRpcData("mail.folders"); invalidateRpcData("mail.messages"); invalidateRpcData("mail.message"); toast("已移到废纸篓"); onNavigate(routeFor(mailboxId, activeFolder)); }
     catch (reason) { toast((reason as Error).message, "error"); }
   };
+  const translateMessage = async () => {
+    const source = translationSource.current;
+    if (!currentMessage || !mailboxId || !source || translationPending.current === source) return;
+    translationPending.current = source;
+    setTranslationState({ source, busy: true, showOriginal: false });
+    try {
+      const value = await call<MailTranslation>("mail.translate", { mailboxId, folder: activeFolder, uid: currentMessage.uid });
+      if (translationSource.current !== source) return;
+      setTranslationState({ source, value, busy: false, showOriginal: false });
+    } catch (reason) {
+      if (translationSource.current === source) setTranslationState({ source, busy: false, showOriginal: false, error: (reason as Error).message });
+    } finally { if (translationPending.current === source) translationPending.current = null; }
+  };
 
   const byDomain = useMemo(() => {
     const groups = new Map<string, MailboxSummary[]>();
@@ -196,9 +202,22 @@ export function MailPage({ mailboxId, folder, uid, onNavigate }: { mailboxId?: n
   }, [mailboxes]);
   const visibleMessages = listIdentity === listScope && messagesScope.current === listScope ? messages : null;
   const visibleFolders = folders;
-  const currentMessage = message && messageIdentity.current === `${listScope}\u0000${uid}` && message.uid === uid && message.folder === activeFolder ? message : null;
+  const currentMessage = message && messageIdentity.current === `${listScope}\u0000${uid}\u0000${sourceIdentity}` && message.uid === uid && message.folder === activeFolder ? message : null;
+  const currentAnnotation=currentMessage?.readIdentity&&selectedAnnotation?.readIdentity===currentMessage.readIdentity?selectedAnnotation:null;
+  const strictAnnotationPreview=currentAnnotation&&annotationPreview.data?.sourceRef.sourceId===currentAnnotation.sourceId&&annotationPreview.data.sourceRef.sourceVersion===currentAnnotation.sourceVersion&&annotationPreview.data.message.readIdentity===currentMessage?.readIdentity?annotationPreview.data:null;
   const selectedSummary = uid == null ? null : visibleMessages?.items.find((item) => item.uid === uid) ?? null;
   const readerHeader = currentMessage ?? selectedSummary;
+  const translationKey = `${listScope}\u0000${uid}`;
+  // 路由或正文版本改变时立即隔离旧请求，包括 A → B → A 和同 UID 的缓存更新。
+  if (!currentMessage) translationSource.current = null;
+  else if (translationSource.current?.key !== translationKey || translationSource.current.subject !== currentMessage.subject || translationSource.current.text !== currentMessage.text) {
+    translationSource.current = { key: translationKey, subject: currentMessage.subject, text: currentMessage.text };
+  }
+  const translation = translationState?.source === translationSource.current ? translationState : null;
+  const translatedMessage = translation?.value && !translation.showOriginal ? translation.value : null;
+  useEffect(()=>{setCorrectionReason("");setCorrectionTag(currentAnnotation?.tag??"");setCorrectionError(null);},[currentAnnotation?.readIdentity,currentAnnotation?.manualVersion,currentAnnotation?.tag]);
+  const correctAnnotationTag=async()=>{if(!currentAnnotation||!strictAnnotationPreview||!currentMessage?.readIdentity)return;setCorrectionBusy(true);setCorrectionError(null);try{await call("mail.triage.correct",{requestId:crypto.randomUUID(),reason:correctionReason.trim(),target:{type:"source",id:currentAnnotation.sourceId,sourceVersion:currentAnnotation.sourceVersion},expectedVersion:currentAnnotation.manualVersion,field:"tag",value:correctionTag,sourceRef:strictAnnotationPreview.sourceRef,readIdentity:currentMessage.readIdentity});invalidateRpcData("mail.triage.messageAnnotations");invalidateRpcData("mail.triage.sourcePreview");await annotationsState.refresh();toast("短标签已更正");}catch(reason){setCorrectionError((reason as Error).message);}finally{setCorrectionBusy(false);}};
+  useEffect(()=>{if(!composeHandoff||!currentMessage||!activeMailbox)return;const key=`${composeHandoff.caseId}\0${composeHandoff.selectedTaskIds.join("\0")}\0${composeHandoff.readerRef.sourceId}\0${composeHandoff.readerRef.sourceVersion}`;if(openedHandoff.current===key)return;openedHandoff.current=key;setCompose({mailbox:activeMailbox,mode:"reply",original:currentMessage,handoff:composeHandoff});},[activeMailbox,composeHandoff,currentMessage]);
 
   if (mailboxes === null) return <div className="space-y-4"><header><h1 className="text-2xl font-semibold">邮箱</h1><p className="text-sm text-muted-foreground">{mailboxesState.error ? "暂时无法读取邮箱。" : "正在读取邮箱…"}</p></header>{mailboxesState.error ? <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-5"><p role="alert" className="text-sm text-destructive">{mailboxesState.error.message}</p><Button className="mt-3" variant="outline" onClick={() => void mailboxesState.refresh().catch(() => undefined)}>重新读取</Button></div> : <div className="h-[34rem] animate-pulse rounded-lg bg-muted" />}</div>;
   if (mailboxes.length === 0) return <div className="space-y-6"><header className="flex items-start justify-between gap-4"><div><h1 className="text-2xl font-semibold">邮箱</h1><p className="mt-1 text-sm text-muted-foreground">集中收发所有已接入 Hostinger 账号下的邮件。</p></div><Button variant="outline" onClick={() => void sync()} disabled={syncing}>{syncing ? <LoaderCircle className="animate-spin" aria-hidden /> : <RefreshCw aria-hidden />}同步</Button></header>{error && <p role="alert" className="text-sm text-destructive">{error}</p>}<div className="rounded-lg border border-dashed p-10 text-center text-sm"><Mail className="mx-auto mb-3 size-8 text-muted-foreground" aria-hidden /><p className="font-medium">还没有邮箱</p><p className="mt-1 text-muted-foreground">先在「账号」接入 Hostinger 账号并同步；账号下的邮箱会自动出现在这里。</p></div></div>;
@@ -206,86 +225,19 @@ export function MailPage({ mailboxId, folder, uid, onNavigate }: { mailboxId?: n
   const showMailboxPane = !mailboxId;
   const showListPane = Boolean(mailboxId) && uid == null;
   const showReaderPane = Boolean(mailboxId) && uid != null;
+  const attachmentSlot=currentMessage?.attachments.length?(sourceRef?<p className="mt-8 border-t pt-4 text-sm text-muted-foreground">含 {currentMessage.attachments.length} 个附件。只读来源不会下载或预览附件。</p>:<Attachments mailboxId={activeMailbox?.id??0} folder={activeFolder} uid={currentMessage.uid} items={currentMessage.attachments}/>):null;
   return <div className="space-y-4">
-    <header className="flex flex-wrap items-start justify-between gap-3"><div><h1 className="text-2xl font-semibold">邮箱</h1><p className="mt-1 text-sm text-muted-foreground">邮件正文只显示纯文本；应用不会访问邮件中的链接、图片或其他远程资源。</p></div><div className="flex gap-2"><Button variant="outline" onClick={() => void sync()} disabled={syncing}>{syncing ? <LoaderCircle className="animate-spin" aria-hidden /> : <RefreshCw aria-hidden />}同步</Button>{activeMailbox?.credentialSaved && <Button onClick={() => setCompose({ mailbox: activeMailbox, mode: "new" })}><PenLine aria-hidden />写邮件</Button>}</div></header>
-    {error && <p role="alert" className="rounded-md border border-destructive/30 bg-destructive/5 p-2 text-sm text-destructive">{error}</p>}
-    <div className="grid min-h-[calc(100dvh-12rem)] overflow-hidden rounded-xl border bg-card xl:grid-cols-[17rem_minmax(18rem,24rem)_minmax(22rem,1fr)]">
-      <aside aria-label="邮箱列表" className={cn("border-r", !showMailboxPane && "hidden xl:block")}>
-        <div className="border-b px-4 py-3 text-sm font-medium">全部邮箱 <span className="font-normal text-muted-foreground">{mailboxes.length}</span></div>
-        <div className="max-h-[calc(100dvh-16rem)] overflow-auto p-2">{byDomain.map(([domain, items]) => <section key={domain} className="mb-4"><h2 className="px-2 pb-1 text-xs font-medium text-muted-foreground">{domain}</h2>{items.map((item) => <div key={item.id} className={cn("mb-1 rounded-md p-2", item.id === mailboxId ? "bg-accent" : "hover:bg-muted/60")}><button type="button" className="w-full text-left" onClick={() => onNavigate(routeFor(item.id, "INBOX"))}><span className="flex items-center justify-between gap-2 text-sm font-medium"><span className="truncate">{item.address}</span>{item.unreadCount > 0 && <Badge>{item.unreadCount}</Badge>}</span><span className="mt-1 block text-xs text-muted-foreground">{mailboxStatusText(item)}</span></button><div className="mt-2 flex flex-wrap gap-1">{item.credentialSaved ? <Button size="sm" variant="ghost" onClick={() => void setMonitoring(item, !item.monitoring)}>{item.monitoring ? "停止监听" : "开始监听"}</Button> : canEnterPassword(item) ? <><Button size="sm" variant="ghost" onClick={() => setCredentialFor(item)}>输入密码</Button>{item.defaultPasswordStatus === "rejected" && <Button size="sm" variant="ghost" disabled={retryingDefaultFor === item.id} onClick={() => void retryDefaultPassword(item)}>{retryingDefaultFor === item.id && <LoaderCircle className="animate-spin" aria-hidden />}用默认密码重试</Button>}</> : null}<Button size="icon-sm" variant="ghost" aria-label={`删除邮箱 ${item.address}`} onClick={() => void deleteMailbox(item)}><Trash2 aria-hidden /></Button></div></div>)}</section>)}</div>
-      </aside>
-      <section aria-label="邮件列表" className={cn("min-w-0 border-r", !showListPane && "hidden xl:block")}>
-        {activeMailbox ? <><div className="border-b p-3"><Button className="mb-2 xl:hidden" size="sm" variant="ghost" onClick={() => onNavigate("/mail")}><ArrowLeft aria-hidden />邮箱</Button><div className="flex items-center justify-between gap-2"><div className="min-w-0"><p className="truncate text-sm font-medium">{activeMailbox.address}</p><p className="text-xs text-muted-foreground">{activeFolder}</p></div>{(activeMailbox.credentialSaved || canEnterPassword(activeMailbox)) && <Button variant="ghost" size="icon-sm" aria-label="邮箱凭据" onClick={() => setCredentialFor(activeMailbox)}><MoreVertical aria-hidden /></Button>}</div>{activeMailbox.credentialSaved && <><div className="mt-3 flex gap-2 overflow-x-auto">{visibleFolders.map((item) => <Button key={item.path} size="sm" variant={item.path === activeFolder ? "secondary" : "ghost"} onClick={() => onNavigate(routeFor(activeMailbox.id, item.path))}>{item.name}{folderUnread(item, activeMailbox) > 0 && <span className="tabular-nums">{folderUnread(item, activeMailbox)}</span>}</Button>)}</div><label className="relative mt-3 block"><Search className="absolute top-2.5 left-2.5 size-4 text-muted-foreground" aria-hidden /><Input className="pl-8" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索发件人或主题" /></label></>}</div>{!activeMailbox.credentialSaved ? <MailboxCredentialState mailbox={activeMailbox} retrying={retryingDefaultFor === activeMailbox.id} onEnter={() => setCredentialFor(activeMailbox)} onRetry={() => void retryDefaultPassword(activeMailbox)} /> : <><div aria-busy={listBusy} className={cn("max-h-[calc(100dvh-22rem)] overflow-auto transition-opacity", listBusy && visibleMessages !== null && "opacity-60")}>{visibleMessages === null ? <div role="status" aria-label="正在读取邮件">{Array.from({ length: 6 }, (_, index) => <MessageRowSkeleton key={index} />)}</div> : visibleMessages.items.length === 0 ? <div className="p-8 text-center text-sm"><Inbox className="mx-auto mb-2 size-7 text-muted-foreground" aria-hidden /><p className="font-medium">{query ? "没有匹配的邮件" : "这个文件夹是空的"}</p></div> : visibleMessages.items.map((item) => <MessageRow key={item.uid} item={item} active={item.uid === uid} onOpen={() => onNavigate(routeFor(activeMailbox.id, activeFolder, item.uid))} />)}</div>{visibleMessages && visibleMessages.total > PAGE_SIZE && <div className="flex items-center justify-between border-t p-2 text-xs text-muted-foreground"><span>第 {visibleMessages.page} 页，共 {Math.ceil(visibleMessages.total / visibleMessages.pageSize)} 页</span><div><Button variant="ghost" size="icon-sm" aria-label="上一页" disabled={page <= 1} onClick={() => setPage((value) => value - 1)}><ChevronLeft aria-hidden /></Button><Button variant="ghost" size="icon-sm" aria-label="下一页" disabled={page * PAGE_SIZE >= visibleMessages.total} onClick={() => setPage((value) => value + 1)}><ChevronRight aria-hidden /></Button></div></div>}</>}</> : <p className="p-8 text-sm text-muted-foreground">请先选择邮箱。</p>}
-      </section>
-      <article aria-label="邮件正文" aria-busy={showReaderPane && !currentMessage} className={cn("min-w-0", !showReaderPane && "hidden xl:block")}>
-        {activeMailbox && showReaderPane ? <><header className="border-b p-4"><Button className="mb-3 xl:hidden" size="sm" variant="ghost" onClick={() => onNavigate(routeFor(activeMailbox.id, activeFolder))}><ArrowLeft aria-hidden />邮件列表</Button><div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><h2 className="break-words text-lg font-semibold">{readerHeader?.subject || "（无主题）"}</h2><p className="mt-2 break-all text-sm">发件人：{readerHeader?.from || "正在读取…"}</p>{currentMessage && <p className="mt-1 break-all text-xs text-muted-foreground">收件人：{currentMessage.to.join("、")}{currentMessage.cc.length ? ` · 抄送：${currentMessage.cc.join("、")}` : ""}</p>}<p className="mt-1 text-xs text-muted-foreground">{readerHeader ? new Date(readerHeader.date).toLocaleString("zh-CN") : "正在读取…"}</p></div>{currentMessage && <div className="flex flex-wrap gap-1"><Button variant="ghost" size="sm" onClick={() => setCompose({ mailbox: activeMailbox, mode: "reply", original: currentMessage })}><Reply aria-hidden />回复</Button><Button variant="ghost" size="sm" onClick={() => setCompose({ mailbox: activeMailbox, mode: "reply-all", original: currentMessage })}><ReplyAll aria-hidden />全部回复</Button><Button variant="ghost" size="sm" onClick={() => setCompose({ mailbox: activeMailbox, mode: "forward", original: currentMessage })}><Forward aria-hidden />转发</Button><Button variant="ghost" size="icon-sm" aria-label={currentMessage.seen ? "标为未读" : "标为已读"} onClick={() => void setSeen(!currentMessage.seen)}>{currentMessage.seen ? <Mail aria-hidden /> : <MailOpen aria-hidden />}</Button><Button variant="ghost" size="icon-sm" aria-label="移到废纸篓" onClick={() => void trash()}><Trash2 aria-hidden /></Button></div>}</div></header>{currentMessage ? <div className="p-5"><MailBody text={currentMessage.text} />{currentMessage.attachments.length > 0 && <Attachments mailboxId={activeMailbox.id} folder={activeFolder} uid={currentMessage.uid} items={currentMessage.attachments} />}</div> : <MailDetailSkeleton />}</> : <div className="grid h-full min-h-80 place-content-center p-8 text-center text-sm text-muted-foreground">{activeMailbox && <Button className="mb-6 xl:hidden" size="sm" variant="ghost" onClick={() => onNavigate(routeFor(activeMailbox.id, activeFolder))}><ArrowLeft aria-hidden />邮件列表</Button>}<MailOpen className="mx-auto mb-2 size-8" aria-hidden /><p>选择一封邮件阅读。</p><p className="mt-1 max-w-sm">正文始终按纯文本显示，URL 不可点击，也不会加载远程图片或跟踪像素。</p></div>}
-      </article>
+    <header className="flex flex-wrap items-start justify-between gap-3"><div><h1 className="text-2xl font-semibold">{sourceRef?"来源邮件":"邮箱"}</h1><p className="mt-1 text-sm text-muted-foreground">{sourceRef?(composeHandoff?"这是已选择回复义务绑定的原邮件；发送前服务端会再次核验来源。":"来源绑定的只读纯文本预览；不会标已读、翻译、删除或下载附件。尚未选择回复义务时不能写信。") : "邮件正文只显示纯文本；应用不会访问邮件中的链接、图片或其他远程资源。"}</p></div>{sourceRef?<Button variant="outline" onClick={()=>onNavigate(`/mail/cases/${sourceRef.caseId}`)}><ArrowLeft/>返回申请详情</Button>:<div className="flex gap-2"><Button variant="outline" onClick={()=>void sync()} disabled={syncing}>{syncing?<LoaderCircle className="animate-spin"/>:<RefreshCw/>}同步</Button><Button variant="outline" onClick={()=>onNavigate("/mail/manage")}>邮箱管理</Button>{activeMailbox?.credentialSaved?<Button onClick={()=>setCompose({mailbox:activeMailbox,mode:"new"})}><PenLine/>写邮件</Button>:null}</div>}</header>
+    {error?<p role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{error}</p>:null}
+    <div className={cn("grid min-h-[calc(100dvh-12rem)] overflow-hidden rounded-xl border bg-card",sourceRef?"grid-cols-1":"xl:grid-cols-[17rem_minmax(18rem,24rem)_minmax(22rem,1fr)]")}>
+      {!sourceRef?<div className={cn(!showMailboxPane&&"hidden xl:block")}><MailboxPane mailboxes={mailboxes} activeMailboxId={mailboxId} folders={visibleFolders} activeFolder={activeFolder} onSelectMailbox={id=>onNavigate(routeFor(id,"INBOX"))} onSelectFolder={(id,path)=>onNavigate(routeFor(id,path))}/></div>:null}
+      {!sourceRef?<div className={cn(!showListPane&&"hidden xl:block")}><MessageListPane mailbox={activeMailbox} folder={activeFolder} query={query} busy={listBusy} messages={visibleMessages} annotations={annotations} selectedUid={uid} pageSize={PAGE_SIZE} onQuery={setQuery} onOpen={selected=>activeMailbox&&onNavigate(routeFor(activeMailbox.id,activeFolder,selected))} onPrevious={()=>setPage(value=>value-1)} onNext={()=>setPage(value=>value+1)}/></div>:null}
+      <div className={cn(!sourceRef&&!showReaderPane&&"hidden xl:block")}><MessageReaderPane header={readerHeader??null} message={currentMessage} annotation={currentAnnotation} annotationAssessment={strictAnnotationPreview?.assessment??null} annotationError={currentAnnotation&&!strictAnnotationPreview?(annotationPreview.error?.message??"来源世代已变化，证据与更正已停用；请重新读取邮件。"):correctionError} correctionReason={correctionReason} correctionTag={correctionTag} correctionBusy={correctionBusy} onCorrectionReason={setCorrectionReason} onCorrectionTag={setCorrectionTag} onCorrectTag={currentAnnotation&&strictAnnotationPreview?()=>void correctAnnotationTag():undefined} translated={translatedMessage} translationAvailable={Boolean(translation?.value)} translating={translation?.busy} translationError={translation?.error} sourcePreview={Boolean(sourceRef)} onTranslate={!sourceRef?()=>translation?.value?setTranslationState({...translation,showOriginal:!translation.showOriginal}):void translateMessage():undefined} onCompose={!sourceRef&&activeMailbox&&currentMessage?(mode:ComposeMode)=>setCompose({mailbox:activeMailbox,mode,original:currentMessage}):undefined} onSeen={!sourceRef?(seen:boolean)=>void setSeen(seen):undefined} onTrash={!sourceRef?()=>void trash():undefined} attachmentSlot={attachmentSlot}/></div>
     </div>
-    <CredentialDialog mailbox={credentialFor} onClose={() => setCredentialFor(null)} onSaved={() => setCredentialFor(null)} />
-    <ComposeDialog state={compose} onClose={() => setCompose(null)} onSent={() => setCompose(null)} />
+    <ComposeDialog state={compose} onClose={()=>setCompose(null)} onSent={()=>setCompose(null)}/>
   </div>;
 }
 
-function MailboxCredentialState({ mailbox, retrying, onEnter, onRetry }: { mailbox: MailboxSummary; retrying: boolean; onEnter: () => void; onRetry: () => void }) {
-  if (isTryingDefaultPassword(mailbox)) return <div role="status" aria-live="polite" className="p-8 text-center text-sm"><LoaderCircle className="mx-auto mb-2 size-7 animate-spin text-muted-foreground" aria-hidden /><p className="font-medium">正在用默认密码登录…</p><p className="mt-1 text-muted-foreground">验证成功后会自动保存凭据、开启监听并开始索引。</p></div>;
-  if (mailbox.defaultPasswordStatus === "unavailable") return <div role="status" aria-live="polite" className="p-8 text-center text-sm"><RefreshCw className="mx-auto mb-2 size-7 text-muted-foreground" aria-hidden /><p className="font-medium">默认密码验证暂未完成</p><p className="mt-1 text-muted-foreground">{mailbox.lastError || "将在下次同步时重试默认密码，不会把连接问题记成密码错误。"}</p></div>;
-  const rejected = mailbox.defaultPasswordStatus === "rejected";
-  return <div className="p-8 text-center text-sm"><KeyRound className="mx-auto mb-2 size-7 text-muted-foreground" aria-hidden /><p className="font-medium">{rejected ? "默认密码不对，请输入这个邮箱的密码" : "未设置默认邮箱密码，可在设置里填写或单独输入"}</p><p className="mt-1 text-muted-foreground">密码会先通过 IMAP 登录验证，再加密保存。</p><div className="mt-4 flex flex-wrap justify-center gap-2"><Button size="sm" onClick={onEnter}>输入密码</Button>{rejected && <Button size="sm" variant="outline" disabled={retrying} onClick={onRetry}>{retrying && <LoaderCircle className="animate-spin" aria-hidden />}用默认密码重试</Button>}</div></div>;
-}
-
-function MessageRow({ item, active, onOpen }: { item: MailMessageSummary; active: boolean; onOpen: () => void }) {
-  return <button type="button" className={cn("block min-h-[5.75rem] w-full border-b p-3 text-left hover:bg-muted/60", active && "bg-accent", !item.seen && "border-l-2 border-l-primary bg-primary/5")} onClick={onOpen}><span className="flex items-center justify-between gap-2"><span className={cn("truncate text-sm", !item.seen && "font-semibold")}>{item.from || "未知发件人"}</span><span className="shrink-0 text-xs text-muted-foreground">{date(item.date)}</span></span><span className={cn("mt-1 block truncate text-sm", !item.seen && "font-medium")}>{item.subject || "（无主题）"}</span><span className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">{item.hasAttachments && <Paperclip className="size-3" aria-label="有附件" />}<span className="truncate">{item.snippet}</span></span></button>;
-}
-
-function MessageRowSkeleton() {
-  return <div data-testid="mail-row-skeleton" aria-hidden="true" className="min-h-[5.75rem] animate-pulse border-b p-3"><div className="flex justify-between gap-4"><div className="h-4 w-2/5 rounded bg-muted" /><div className="h-3 w-16 rounded bg-muted" /></div><div className="mt-2 h-4 w-3/4 rounded bg-muted" /><div className="mt-2 h-3 w-full rounded bg-muted" /></div>;
-}
-
-function MailDetailSkeleton() {
-  return <div data-testid="mail-detail-skeleton" aria-hidden="true" className="animate-pulse space-y-3 p-5"><div className="h-4 w-full rounded bg-muted" /><div className="h-4 w-11/12 rounded bg-muted" /><div className="h-4 w-4/5 rounded bg-muted" /><div className="h-4 w-10/12 rounded bg-muted" /></div>;
-}
-
 function Attachments({ mailboxId, folder, uid, items }: { mailboxId: number; folder: string; uid: number; items: MailAttachment[] }) {
-  return <section className="mt-8 border-t pt-4"><h3 className="text-sm font-medium">附件</h3><ul className="mt-2 space-y-2">{items.map((item) => <li key={item.partId} className="flex items-center justify-between gap-3 rounded-md border p-2 text-sm"><span className="min-w-0 truncate">{item.name} <span className="text-xs text-muted-foreground">{Math.ceil(item.size / 1024)} KB · {item.type}</span></span><Button variant="outline" size="sm" asChild><a download={item.name} href={`/api/mail/attachments?mailboxId=${mailboxId}&folder=${encodeURIComponent(folder)}&uid=${uid}&partId=${encodeURIComponent(item.partId)}`}><Download aria-hidden />下载</a></Button></li>)}</ul><p className="mt-2 text-xs text-muted-foreground">仅在你点击“下载”后请求附件；附件强制下载，不在页面内预览。</p></section>;
-}
-
-function MailboxPasswordReveal({ mailbox }: { mailbox: MailboxSummary | null }) {
-  const confirm = useConfirm();
-  const [secret, setSecret] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-  useEffect(() => { setSecret(null); }, [mailbox?.id]);
-  if (!mailbox?.credentialSaved) return null;
-  const reveal = async () => {
-    if (secret) { setSecret(null); return; }
-    if (!await confirm({ title: "显示已保存的邮箱密码？", description: "密码会显示在屏幕上。请避开共享屏幕，复制后及时隐藏；其他客户端可使用这个密码。", confirmText: "显示密码" })) return;
-    setBusy(true);
-    try {
-      const result = await call<{ address: string; password: string } | null>("mail.password", { mailboxId: mailbox.id });
-      setSecret(result?.password ?? null);
-      if (!result) toast("没有可显示的已保存密码", "error");
-    } catch (reason) { toast((reason as Error).message, "error"); }
-    finally { setBusy(false); }
-  };
-  return <div className="space-y-2 rounded-md border bg-muted/30 p-3 text-sm"><p>密码：{secret ? <code className="select-all break-all rounded bg-muted px-1.5 py-0.5">{secret}</code> : "已加密保存"}</p><Button type="button" size="sm" variant="outline" disabled={busy} onClick={() => void reveal()}>{secret ? "隐藏密码" : "显示已保存密码"}</Button></div>;
-}
-
-function CredentialDialog({ mailbox, onClose, onSaved }: { mailbox: MailboxSummary | null; onClose: () => void; onSaved: () => void }) {
-  const confirm = useConfirm();
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const form = useForm<CredentialForm>({ resolver: zodResolver(credentialSchema), defaultValues: { password: "" } });
-  useEffect(() => { form.reset({ password: "" }); setError(null); }, [form, mailbox?.id]);
-  const save = async ({ password }: CredentialForm) => { if (!mailbox) return; setBusy(true); setError(null); try { await call("mail.credential.save", { mailboxId: mailbox.id, password }); invalidateRpcData("mail.list"); invalidateRpcData("mail.folders"); invalidateRpcData("mail.messages"); toast("密码已通过 IMAP 验证并加密保存"); form.reset(); onSaved(); } catch (reason) { setError((reason as Error).message); } finally { setBusy(false); } };
-  const reset = async () => { if (!mailbox || !await confirm({ title: `重置 ${mailbox.address} 的密码？`, description: "旧密码会立即失效。其他邮件客户端、手机和网页邮箱都必须改用新密码，否则会停止收发邮件。", confirmText: "确认重置密码", destructive: true })) return; setBusy(true); setError(null); try { await call("mail.credential.reset", { mailboxId: mailbox.id, confirmed: true }); invalidateRpcData("mail.list"); invalidateRpcData("mail.folders"); invalidateRpcData("mail.messages"); toast("新密码已加密保存"); onSaved(); } catch (reason) { setError((reason as Error).message); } finally { setBusy(false); } };
-  return <Dialog open={mailbox !== null} onOpenChange={(open) => { if (!open) { form.reset(); setError(null); onClose(); } }}><DialogContent><DialogHeader><DialogTitle>邮箱凭据</DialogTitle><DialogDescription>{mailbox?.address} 只有在密码验证成功后才能读取或发信。密码默认隐藏；只有明确点击“显示已保存密码”并确认后才会显示。</DialogDescription></DialogHeader><MailboxPasswordReveal key={mailbox?.id} mailbox={mailbox} /><form onSubmit={form.handleSubmit(save)} className="space-y-3" noValidate><div className="space-y-2"><Label htmlFor="mailbox-password">邮箱密码</Label><PasswordInput id="mailbox-password" autoComplete="off" {...form.register("password")} aria-invalid={Boolean(form.formState.errors.password)} aria-describedby={form.formState.errors.password ? "mailbox-password-error" : undefined} />{form.formState.errors.password && <p id="mailbox-password-error" role="alert" className="text-xs text-destructive">{form.formState.errors.password.message}</p>}</div>{error && <p role="alert" className="text-sm text-destructive">{error}</p>}<DialogFooter><Button type="button" variant="outline" onClick={onClose}>取消</Button><Button type="button" variant="ghost" disabled={busy} onClick={() => void reset()}>不知道密码？重置</Button><Button type="submit" disabled={busy}>{busy && <LoaderCircle className="animate-spin" aria-hidden />}验证并保存</Button></DialogFooter></form></DialogContent></Dialog>;
-}
-
-function ComposeDialog({ state, onClose, onSent }: { state: { mailbox: MailboxSummary; mode: ComposeMode; original?: MailMessageDetail } | null; onClose: () => void; onSent: () => void }) {
-  const confirm = useConfirm();
-  const [files, setFiles] = useState<Upload[]>([]); const [busy, setBusy] = useState(false); const [error, setError] = useState<string | null>(null); const input = useRef<HTMLInputElement>(null);
-  const form = useForm<ComposeForm>({ resolver: zodResolver(composeSchema), defaultValues: { to: "", cc: "", bcc: "", subject: "", text: "" } });
-  useEffect(() => { if (!state) return; const original = state.original; setFiles([]); setError(null); const values: ComposeForm = { to: "", cc: "", bcc: "", subject: "", text: "" }; if (original && state.mode === "forward") values.subject = /^Fwd:/i.test(original.subject) ? original.subject : `Fwd: ${original.subject}`; else if (original && state.mode !== "new") { values.to = normalizeMailAddress(original.from); values.cc = state.mode === "reply-all" ? [...original.to, ...original.cc].map(normalizeMailAddress).filter((address) => address.toLowerCase() !== state.mailbox.address.toLowerCase()).join(", ") : ""; values.subject = /^Re:/i.test(original.subject) ? original.subject : `Re: ${original.subject}`; } form.reset(values); }, [form, state]);
-  const choose = async (event: ChangeEvent<HTMLInputElement>) => { const selected = [...(event.target.files ?? [])]; const total = selected.reduce((sum, file) => sum + file.size, files.reduce((sum, file) => sum + file.size, 0)); if (total > MAX_ATTACHMENTS) { setError("附件总大小不能超过 20 MB。"); event.target.value = ""; return; } const loaded = await Promise.all(selected.map((file) => new Promise<Upload>((resolve, reject) => { const reader = new FileReader(); reader.onerror = () => reject(reader.error); reader.onload = () => resolve({ name: file.name, type: file.type || "application/octet-stream", size: file.size, dataBase64: String(reader.result).split(",")[1] ?? "" }); reader.readAsDataURL(file); }))); setFiles((current) => [...current, ...loaded]); event.target.value = ""; };
-  const send = async (values: ComposeForm) => { if (!state) return; const recipients = [...splitMailAddresses(values.to), ...splitMailAddresses(values.cc), ...splitMailAddresses(values.bcc)]; if (!await confirm({ title: "发送这封邮件？", description: `将以 ${state.mailbox.address} 向 ${recipients.length} 位收件人发送邮件。发送后无法撤回。`, confirmText: "确认发送" })) return; setBusy(true); setError(null); try { await call("mail.send", { mailboxId: state.mailbox.id, to: splitMailAddresses(values.to), cc: splitMailAddresses(values.cc), bcc: splitMailAddresses(values.bcc), subject: values.subject, text: values.text, mode: state.mode === "reply-all" ? "replyAll" : state.mode, replyTo: state.original ? { folder: state.original.folder, uid: state.original.uid } : undefined, attachments: files }); invalidateRpcData("mail.folders"); invalidateRpcData("mail.messages"); toast("邮件已发送，并已核对已发送文件夹"); onSent(); } catch (reason) { const message = (reason as Error).message; if (/^邮件已发送（.+），但无法确认 Sent 副本/.test(message)) { invalidateRpcData("mail.folders"); invalidateRpcData("mail.messages"); toast(message, "error"); onSent(); } else setError(message); } finally { setBusy(false); } };
-  return <Dialog open={state !== null} onOpenChange={(open) => { if (!open && !busy) onClose(); }}><DialogContent className="sm:max-w-2xl"><DialogHeader><DialogTitle>{state?.mode === "reply" ? "回复" : state?.mode === "reply-all" ? "全部回复" : state?.mode === "forward" ? "转发" : "写邮件"}</DialogTitle><DialogDescription>从 {state?.mailbox.address} 发送纯文本邮件。附件总大小上限 20 MB。</DialogDescription></DialogHeader><form onSubmit={form.handleSubmit(send)} className="space-y-3" noValidate><div className="grid gap-3 sm:grid-cols-2"><div className="space-y-1"><Label htmlFor="compose-to">收件人</Label><Input id="compose-to" type="text" {...form.register("to")} placeholder="多个地址用逗号分隔" aria-invalid={Boolean(form.formState.errors.to)} aria-describedby={form.formState.errors.to ? "compose-to-error" : undefined} />{form.formState.errors.to && <p id="compose-to-error" role="alert" className="text-xs text-destructive">{form.formState.errors.to.message}</p>}</div><div className="space-y-1"><Label htmlFor="compose-cc">抄送</Label><Input id="compose-cc" type="text" {...form.register("cc")} aria-invalid={Boolean(form.formState.errors.cc)} aria-describedby={form.formState.errors.cc ? "compose-cc-error" : undefined} />{form.formState.errors.cc && <p id="compose-cc-error" role="alert" className="text-xs text-destructive">{form.formState.errors.cc.message}</p>}</div></div><div className="space-y-1"><Label htmlFor="compose-bcc">密送</Label><Input id="compose-bcc" type="text" {...form.register("bcc")} aria-invalid={Boolean(form.formState.errors.bcc)} aria-describedby={form.formState.errors.bcc ? "compose-bcc-error" : undefined} />{form.formState.errors.bcc && <p id="compose-bcc-error" role="alert" className="text-xs text-destructive">{form.formState.errors.bcc.message}</p>}</div><div className="space-y-1"><Label htmlFor="compose-subject">主题</Label><Input id="compose-subject" {...form.register("subject")} /></div><div className="space-y-1"><Label htmlFor="compose-text">正文（纯文本）</Label><textarea id="compose-text" rows={12} {...form.register("text")} aria-invalid={Boolean(form.formState.errors.text)} aria-describedby={form.formState.errors.text ? "compose-text-error" : undefined} className="w-full resize-y rounded-md border border-input bg-background px-3 py-2 font-mono text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring" />{form.formState.errors.text && <p id="compose-text-error" role="alert" className="text-xs text-destructive">{form.formState.errors.text.message}</p>}</div>{state?.original && <details className="rounded-md border bg-muted/30 p-3 text-sm"><summary className="cursor-pointer text-muted-foreground">查看将由服务端安全引用的原邮件</summary><div className="mt-3 max-h-40 overflow-auto"><MailBody text={quote(state.original)} /></div></details>}<input ref={input} className="sr-only" type="file" multiple onChange={(event) => void choose(event)} /><div className="flex flex-wrap items-center gap-2"><Button type="button" variant="outline" size="sm" onClick={() => input.current?.click()}><Paperclip aria-hidden />添加附件</Button>{files.map((file, index) => <button type="button" key={`${file.name}-${index}`} className="rounded bg-muted px-2 py-1 text-xs" onClick={() => setFiles((current) => current.filter((_, itemIndex) => itemIndex !== index))}>{file.name} ×</button>)}</div>{error && <p role="alert" className="text-sm text-destructive">{error}</p>}<DialogFooter><Button type="button" variant="outline" disabled={busy} onClick={onClose}>取消</Button><Button type="submit" disabled={busy}>{busy ? <LoaderCircle className="animate-spin" aria-hidden /> : <Send aria-hidden />}发送</Button></DialogFooter></form></DialogContent></Dialog>;
+  return <section className="mt-8 border-t pt-4"><h3 className="text-sm font-medium">附件</h3><ul className="mt-2 space-y-2">{items.map(item=><li key={item.partId} className="flex items-center justify-between gap-3 rounded-lg border p-2 text-sm"><span className="min-w-0 truncate">{item.name} <span className="text-xs text-muted-foreground">{Math.ceil(item.size/1024)} KB · {item.type}</span></span><Button variant="outline" size="sm" asChild><a download={item.name} href={`/api/mail/attachments?mailboxId=${mailboxId}&folder=${encodeURIComponent(folder)}&uid=${uid}&partId=${encodeURIComponent(item.partId)}`}><Download/>下载</a></Button></li>)}</ul><p className="mt-2 text-xs text-muted-foreground">仅在你点击“下载”后请求附件；不会自动解析或预览。</p></section>;
 }

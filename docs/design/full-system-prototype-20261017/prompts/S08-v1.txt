@@ -1,0 +1,12 @@
+Scene ID: S08
+Title: 内部用户管理
+Reference kind: shared_application_shell
+Common style: prompts/common-style.txt
+
+Create the primary static ImageGen scene for S08, “内部用户管理”. Use the supplied root reference and prompts/common-style.txt as the authoritative shell and visual system; do not restate or reinterpret its palette, typography, spacing, or navigation rules. Produce one 1490x1056 desktop screen, not a collage. Use navigation context “用户管理” when applicable and the exact Chinese heading “内部用户管理”. Keep one focal workflow and enough shell context to identify location.
+
+Approved purpose: 管理员管理内部账号、角色、启停与密码重置，不创建客户。 Exact scene data: Show 李敏/管理员, 陈佳/普通用户（职责备注：运营）, 王磊/普通用户（职责备注：运营） as enabled. “运营” is not a selectable permission role; Alex Morgan is not a user. Required visible content: 用户表；用户名；角色；状态；必须改密；创建时间MM/DD/YYYY；操作入口. Use these Chinese action labels where applicable: 创建用户；重置密码；启用/停用；搜索/筛选. Show one normal or most important decision state, not every state simultaneously. Tables use compact aligned rows; forms use clear labels, validation space, and one unambiguous primary action. Every status is written as text, not color alone. Dates use MM/DD/YYYY and times include PT.
+
+All content is fictional static demo data dated 10/17/2026 PT. Where relevant, use only Alex Morgan · C001, Northline LLC, northline.example, and hello@northline.example. Keep “客户已完成”, Stripe APP-001 “已获批”, and PayPal APP-002 “待补件” separate. Only gateway applications may show “申请负责人：李敏”; elsewhere use “操作人”. Never invent a mail requirement unless its exact source quote is visible. Mail is safe local plain text: no remote images, tracking pixels, automatic body-link access, or translation replacing evidence. Secrets use bullets or suffix placeholders. Distinguish configured, unconfigured, untested, loading, failed, and confirmed states. Do not add customer import, domain purchasing, automatic payment applications, entity templates, test payments, managed follow-up, inferred next steps, success scores, or exaggerated AI capability.
+
+UI title correction: The user-facing heading must be exactly '内部用户'. Do not show the design inventory label, ID, the word page/dialog/drawer, or a slash-separated responsibility name as a user-facing title.

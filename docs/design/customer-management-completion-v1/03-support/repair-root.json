@@ -1,0 +1,17 @@
+[
+  {
+    "file": "O-C08-preview-unsupported-v1.png",
+    "prompt": "Make an extremely narrow edit to this existing approved-style Chinese UI prototype, preserve exact full canvas, navy/white palette, layout, fonts, all labels and data. The XLSX file is explicitly NOT supported for online preview. In the pale blue file toolbar below the metadata, REMOVE ONLY the paging controls (left/right arrows, 1 / 1) and all zoom controls (-,100%,+), including their separator lines. Leave clean empty pale-blue toolbar space between the unchanged left filename and right 下载 button. Do not move the filename or 下载 button. Keep the large unsupported-format empty panel, 下载文件 button, all metadata, sidebar and background and footer unchanged. No other edits.",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-d9189c59-ce59-4c1b-9821-388bccda030b.png"
+  },
+  {
+    "file": "O-C08-preview-unavailable-v1.png",
+    "prompt": "Make an extremely narrow edit to this existing Chinese UI prototype; preserve exact full canvas, navy/white palette, layout, fonts, all labels and data. PDF preview has failed to load, so pagination and zoom cannot be used. In the pale blue file toolbar below the metadata, REMOVE ONLY all paging controls (left/right arrows, 1 / 1) and zoom controls (-,100%,+), including separators. Leave clean pale-blue empty space between unchanged left filename and right 下载 button. Keep filename and 下载 fixed. Preserve the 无法读取文件预览 message, 重试预览 and 下载文件 actions, metadata, sidebar, gray backdrop, footer and all else. No other edits.",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-73c7911d-50b6-4285-856f-148657a6fdd1.png"
+  },
+  {
+    "file": "O-C16-delete-execution-v1.png",
+    "prompt": "Edit only the dimmed BACKDROP of this Chinese UI prototype. The central white deletion execution-result dialog MUST be retained exactly, same position, dimensions, every existing label/data/button/color. The customer dossier and attachments in its first result row have been deleted, so the currently visible dossier in background must no longer remain readable or appear accessible. Preserve the left navigation rail and top global bar, but replace everything in the BACKDROP CONTENT area to the right of sidebar and under top bar with an empty neutral light gray-blue surface underneath the same dark gray scrim. Remove the background customer identity/header, tabs, address/details/cards/customer status and old customer breadcrumb; change top breadcrumb only to 客户. Do not add new list, rows, cards, counts or other UI. The modal with Alex Morgan/C001 is an operation-result reference, remains unchanged, including partial result, deleted data rows, failed website, unknown domain, retained mailbox/original email and 3 bottom actions. Keep result dialog fully legible. No other edits.",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-462b86fa-14c6-434b-b5f7-d17fdfd991be.png"
+  }
+]

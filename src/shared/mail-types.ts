@@ -46,6 +46,8 @@ export interface MailMessageSummary {
   seen: boolean;
   hasAttachments: boolean;
   size: number;
+  /** Server-produced opaque identity for binding additive annotations to this exact cached generation. */
+  readIdentity?: string;
 }
 
 export interface MailAttachment {
@@ -93,6 +95,24 @@ export interface MailSendInput {
   subject: string;
   text: string;
   mode?: "new" | "reply" | "replyAll" | "forward";
-  replyTo?: { folder: string; uid: number };
+  replyTo?: { folder: string; uid: number; readerRef?: CaseSourceReaderRef };
   attachments?: MailSendAttachment[];
+  /** 显式发送幂等键；同键不同最终内容拒绝，同键 prepared/unknown 不自动重发。 */
+  requestId?: string;
+  /** 卡片回复时由专用 UI 传入；服务器仍会重新校验 case/task/source/mailbox 关系。 */
+  caseId?: string;
+  selectedTaskIds?: string[];
 }
+
+export interface MailSendResult {
+  messageId: string;
+  appended: boolean;
+  sendReceiptId: string;
+  /** SMTP 接受后的本地任务投影/已发送副本核对状态；不表示收件方送达。 */
+  reviewState: "none" | "pending" | "cleared";
+  reviewCode: "task_outcome_pending" | "sent_append_unconfirmed" | "task_binding_conflict" | "task_projection_failed" | null;
+}
+
+export interface MailTranslateInput { mailboxId: number; folder: string; uid: number }
+export interface MailTranslation { subject: string; text: string }
+import type { CaseSourceReaderRef } from "./mail-triage-types.ts";

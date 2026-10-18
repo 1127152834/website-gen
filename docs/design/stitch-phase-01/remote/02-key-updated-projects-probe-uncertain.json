@@ -1,0 +1,7 @@
+{
+  "tool": "list_projects",
+  "elapsed_seconds": 1.25,
+  "error_type": "HTTPError",
+  "message": "401 Client Error: Unauthorized for url: https://stitch.googleapis.com/mcp",
+  "retry_write": false
+}

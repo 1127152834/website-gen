@@ -2,8 +2,8 @@
 import { mkdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { DatabaseSync } from "node:sqlite";
-import type { ModelRole, Push, RunEvent } from "../shared/protocol.ts";
-import type { BatchForm } from "../shared/forms.ts";
+import type { DomainMailboxes, ModelRole, Push, RunEvent } from "../shared/protocol.ts";
+import { validateBatch, type BatchForm } from "../shared/forms.ts";
 import { accountToken, addAccount, listAccounts, listDomains, removeAccount, syncWithStoredToken } from "./accounts.ts";
 import { batchSites, createBatch, listBatches, listFreeDomains, PROVISION_JOB, retrySite, siteSteps } from "./batches.ts";
 import { createCj, setCjKey, type CjGet } from "./cj.ts";
@@ -45,8 +45,17 @@ import { createMailboxService } from "./mailbox-service.ts";
 import { createGristService } from "./grist-settings.ts";
 import type { GristClient } from "./grist.ts";
 import { createAssistant, type AssistantAdminCapability } from "./assistant.ts";
-import { assistantRpcToolByMethod, assistantRpcToolDefinitions } from "./assistant-tools.ts";
+import { assistantRpcToolDefinitions } from "./assistant-tools.ts";
 import { gristToolDefinitions } from "./grist-tools.ts";
+import { translateCachedMail } from "./mail-translation.ts";
+import { readDomainMailboxes } from "./site-mailbox.ts";
+import { createTriageScheduler, type TriageScheduler } from "./mail-triage-scheduler.ts";
+import { createTriageQueue } from "./mail-triage-queue.ts";
+import { createTriageWorker } from "./mail-triage-worker.ts";
+import { completeTriageOnce, type TriageModelCaller } from "./mail-triage-model.ts";
+import { createMailTriageService, type MailTriageService, type ServerActor } from "./mail-triage-service.ts";
+import { recordTaskOutcome } from "./mail-triage-send.ts";
+import { workspaceRpcRisk } from "./workspace-rpc-policy.ts";
 
 export interface Workspace {
   handlers: Handlers;
@@ -59,15 +68,18 @@ export interface Workspace {
 
 export function createWorkspace(opts: {
   userDir: string; key: Buffer; resourcesDir?: string;
+  /** 只接受WorkspaceManager从管理库/会话边界传入的用户ID；绝不从userDir反推。 */
+  ownerUserId?: number;
   /** 服务器跨用户查看停用工作区时，不得恢复建站、监听、同步或定时回滚。 */
   backgroundTasks?: boolean;
   /** 管理员跨用户查询：SQLite 只读，不迁移、不创建目录，邮件仅查本地缓存。 */
   readOnly?: boolean;
   /** 测试只注入进程内替身，不触发 MCP 子进程或真实 IMAP / SMTP。 */
-  dependencies?: { hostingerPool?: ReturnType<typeof createHostingerPool>; mailTransport?: MailTransportFactory };
+  dependencies?: { hostingerPool?: ReturnType<typeof createHostingerPool>; mailTransport?: MailTransportFactory; mailTranslate?: Parameters<typeof translateCachedMail>[3]; triageCaller?: TriageModelCaller; triageScheduler?: TriageScheduler; clock?: () => number };
 }): Workspace {
   const userData = resolve(opts.userDir);
   const backgroundEnabled = opts.backgroundTasks !== false && !opts.readOnly;
+  const clock = opts.dependencies?.clock ?? Date.now;
   const resourcesDir = opts.resourcesDir ?? resolve(import.meta.dirname, "../../resources");
   if (opts.key.length !== 32) throw new Error("用户密钥必须为 32 字节");
   if (!opts.readOnly) {
@@ -128,13 +140,40 @@ export function createWorkspace(opts: {
   const requireKey = () => opts.key;
 
   const hostinger = opts.dependencies?.hostingerPool ?? createHostingerPool();
+  const currentDomainMailboxes = (domain: string) => {
+    if (opts.readOnly) throw new Error("只读工作区不能连接 Hostinger 实时读取邮箱");
+    return readDomainMailboxes(db, domain, (accountId) => hostinger.forAccount(accountId, accountToken(db, requireKey(), accountId)));
+  };
+  let triageService: MailTriageService | undefined;
   const mailboxes = createMailboxService({
     db, key: opts.key,
     readOnly: opts.readOnly,
     accounts: () => listAccounts(db).map(({ id }) => ({ id, exec: hostinger.forAccount(id, accountToken(db, requireKey(), id)) })),
     transport: opts.dependencies?.mailTransport,
     push: (event) => push({ kind: "mail", event }),
+    triageSourceHooks: {
+      onPendingSource(input) { return triageService?.sourceHooks.onPendingSource?.(input); },
+    },
+    triageLifecycleHooks: {
+      invalidateScope(input, now) { return triageService?.lifecycleHooks.invalidateScope(input, now) ?? { abortSourceIds: [] }; },
+      invalidateSource(sourceId, reason, now) { triageService?.lifecycleHooks.invalidateSource(sourceId, reason, now); },
+      abortSources(sourceIds) { triageService?.lifecycleHooks.abortSources(sourceIds); },
+    },
   });
+  const ownsTriageScheduler = !opts.dependencies?.triageScheduler;
+  const triageScheduler = opts.dependencies?.triageScheduler ?? createTriageScheduler(4);
+  const triageQueue = createTriageQueue(db, clock, { isMailboxAvailable: (id) => mailboxes.isAvailable(id) });
+  const triageWorker = createTriageWorker({
+    db, key: opts.key, workspaceKey: userData, queue: triageQueue, scheduler: triageScheduler, clock,
+    isMailboxAvailable: (id) => mailboxes.isAvailable(id),
+    push: () => push({ kind: "changed", topic: "mail_triage" }),
+    callOnce: (request, signal, prepared) => opts.dependencies?.triageCaller
+      ? opts.dependencies.triageCaller(request, signal, prepared)
+      : completeTriageOnce(request, signal, { db, key: opts.key, prepared }),
+  });
+  const actor: ServerActor | null = Number.isSafeInteger(opts.ownerUserId) && Number(opts.ownerUserId) > 0 ? { userId: Number(opts.ownerUserId) } : null;
+  triageService = createMailTriageService({ db, key: opts.key, mailboxes, worker: triageWorker, clock, push: () => push({ kind: "changed", topic: "mail_triage" }), readOnly: Boolean(opts.readOnly), actor });
+  if (backgroundEnabled) { triageWorker.start(); triageService.start(); }
   // 服务启动会打开所有启用用户的工作区；已保存的监听开关不依赖浏览器在线。
   if (backgroundEnabled) void track(mailboxes.reconcile()).catch(() => {});
   const syncing = new Map<number, Promise<unknown>>();
@@ -215,6 +254,7 @@ export function createWorkspace(opts: {
             while (mailWork.get(normalized)?.size) await Promise.allSettled([...mailWork.get(normalized)!]);
             await mailboxes.stopDomain(domain);
           },
+          triageLifecycleHooks: triageService!.lifecycleHooks,
           emit,
         }, job);
       },
@@ -348,11 +388,13 @@ export function createWorkspace(opts: {
     "models.update": async (p) => {
       const input = p as { providerId: number; name: string; protocol: "openai" | "anthropic"; baseUrl: string; apiKey?: string; models: ProviderModelInput[] };
       await assertPublicBaseUrl(String(input.baseUrl ?? "").trim());
-      updateProviderConfig(db, requireKey(), Number(input.providerId), input);
+      const aborted = updateProviderConfig(db, requireKey(), Number(input.providerId), input);
+      triageWorker.abortSources(aborted);
       return listProviders(db);
     },
     "models.delete": (p) => {
-      deleteProviderConfig(db, Number((p as { providerId: number }).providerId));
+      const aborted = deleteProviderConfig(db, Number((p as { providerId: number }).providerId));
+      triageWorker.abortSources(aborted);
       return listProviders(db);
     },
     "models.fetch": async (p) => {
@@ -362,14 +404,44 @@ export function createWorkspace(opts: {
     },
     "models.setKey": (p) => {
       const { providerId, apiKey } = p as { providerId: number; apiKey: string };
-      setProviderKey(db, requireKey(), Number(providerId), String(apiKey ?? ""));
+      const aborted = setProviderKey(db, requireKey(), Number(providerId), String(apiKey ?? ""));
+      triageWorker.abortSources(aborted);
       return listProviders(db);
     },
     "models.setRole": (p) => {
       const { role, providerId, modelId, thinking } = p as { role: ModelRole; providerId: number; modelId: string; thinking: string };
+      if (role === "mail_triage") throw new Error("邮件预审用途只能通过专用设置确认流程修改");
       setRole(db, role, { providerId: Number(providerId), modelId: String(modelId), thinking: String(thinking) });
       return listRoles(db);
     },
+    "mail.triage.settings": () => triageService!.settings(),
+    "mail.triage.status": () => triageService!.status(),
+    "mail.triage.result": (p) => triageService!.result(p as { sourceId: string }),
+    "mail.cases.list": (p) => triageService!.casesList(p),
+    "mail.cases.detail": (p) => triageService!.caseDetail(p as { caseId: string }),
+    "mail.cases.sourceMessage": (p) => mailboxes.sourceMessage(p as Parameters<typeof mailboxes.sourceMessage>[0]),
+    "mail.triage.reviewQueue": (p) => triageService!.reviewQueue(p),
+    "mail.triage.messageAnnotations": (p) => triageService!.messageAnnotations(p),
+    "mail.triage.sourcePreview": (p) => triageService!.sourcePreview(p),
+    "mail.triage.evaluationStatus": (p) => triageService!.evaluationStatus(p),
+    "mail.triage.saveEvaluationReport": (p) => triageService!.saveEvaluationReport(p),
+    "mail.triage.approveNotificationRouting": (p) => triageService!.approveNotificationRouting(p),
+    "mail.triage.auditOutcome": (p) => triageService!.auditOutcome(p),
+    "mail.triage.configure": (p) => triageService!.configure(p),
+    "mail.triage.backfillPreview": (p) => triageService!.backfillPreview(p),
+    "mail.triage.enqueue": (p) => triageService!.enqueue(p),
+    "mail.triage.retry": (p) => triageService!.retry(p),
+    "mail.triage.cancel": (p) => triageService!.cancel(p),
+    "mail.triage.contacts.list": (p) => triageService!.contactsList(p),
+    "mail.triage.contacts.save": (p) => triageService!.contactsSave(p),
+    "mail.triage.contacts.remove": (p) => triageService!.contactsRemove(p),
+    "mail.triage.correct": (p) => triageService!.correct(p),
+    "mail.cases.link": (p) => triageService!.link(p),
+    "mail.cases.split": (p) => triageService!.split(p),
+    "mail.cases.confirm": (p) => triageService!.confirmCase(p),
+    "mail.cases.independentFact": (p) => triageService!.independentFact(p),
+    "mail.cases.appeal": (p) => triageService!.appeal(p),
+    "mail.triage.undo": (p) => triageService!.undo(p),
     // 发一句极短的请求验证 Key 和地址：只回复 OK
     "models.test": async (p) => {
       const { providerId, modelId } = p as { providerId: number; modelId: string };
@@ -378,10 +450,28 @@ export function createWorkspace(opts: {
     },
 
     "domains.free": () => listFreeDomains(db),
+    "domains.mailboxes": (p) => currentDomainMailboxes(String((p as { domain?: string } | undefined)?.domain ?? "")),
     "batches.list": () => listBatches(db),
     "batches.sites": (p) => batchSites(db, Number((p as { batchId: number }).batchId)).filter((site) => site.status !== "abandoned"),
-    "batches.create": (p) => {
-      const r = createBatch(db, p as BatchForm, Date.now());
+    "batches.create": async (p) => {
+      const input = p as Partial<BatchForm> | undefined;
+      if (!input?.entity || !Array.isArray(input.sites)) throw new Error("建站表单无效");
+      // 新批次不接受经营主体共享邮箱；字段仅为旧历史解析兼容而保留。
+      const form = {
+        entity: { ...input.entity, supportEmail: "auto" },
+        sites: input.sites.map((site) => ({ ...site })),
+      } as BatchForm;
+      let problems: string[];
+      try {
+        problems = Object.values(validateBatch(form));
+      } catch {
+        throw new Error("建站表单无效");
+      }
+      if (problems.length > 0) throw new Error(problems[0]);
+      const verified: DomainMailboxes[] = [];
+      // 远端读取期间不写批次；全部站点验证成功后才进入 createBatch 的单次事务。
+      for (const site of form.sites) verified.push(await currentDomainMailboxes(site.domain));
+      const r = createBatch(db, form, Date.now(), verified);
       push({ kind: "changed", topic: "batches" });
       tick();
       return r;
@@ -480,6 +570,7 @@ export function createWorkspace(opts: {
     "mail.folders": (p) => mailboxes.folders(Number((p as { mailboxId: number }).mailboxId)),
     "mail.messages": (p) => mailboxes.messages(p as Parameters<typeof mailboxes.messages>[0]),
     "mail.message": (p) => mailboxes.message(p as Parameters<typeof mailboxes.message>[0]),
+    "mail.translate": (p) => translateCachedMail(db, requireKey(), p as Parameters<typeof translateCachedMail>[2], opts.dependencies?.mailTranslate),
     "mail.credential.save": (p) => mailboxes.saveCredential(p as Parameters<typeof mailboxes.saveCredential>[0]),
     "mail.credential.retryDefault": (p) => mailboxes.tryDefaultCredentials({ mailboxId: Number((p as { mailboxId: number }).mailboxId), retry: true }),
     "mail.credential.reset": (p) => mailboxes.resetCredential(p as Parameters<typeof mailboxes.resetCredential>[0]),
@@ -488,6 +579,12 @@ export function createWorkspace(opts: {
     "mail.trash": (p) => mailboxes.trash(p as Parameters<typeof mailboxes.trash>[0]),
     "mail.delete": (p) => mailboxes.deleteMailbox(p as Parameters<typeof mailboxes.deleteMailbox>[0]),
     "mail.send": (p) => mailboxes.send(p as Parameters<typeof mailboxes.send>[0]),
+    "mail.tasks.recordOutcome": (p) => {
+      if (!actor) throw new Error("当前工作区缺少服务端操作者身份");
+      const result = recordTaskOutcome(db, p as Parameters<typeof recordTaskOutcome>[1], actor, clock());
+      push({ kind: "changed", topic: "mail_triage" });
+      return result;
+    },
     // 交易邮件发信：状态、填已有邮箱的密码（先 IMAP 验证）后启用、发测试邮件、关闭
     "smtp.status": (p) => smtpStatus(siteContext(pipelineDeps(), siteIdOf(p))),
     "smtp.enable": async (p) => {
@@ -554,7 +651,7 @@ export function createWorkspace(opts: {
       return { ok: true };
     },
     "abandon.start": (p) => {
-      const result = queueAbandon(db, p as Parameters<typeof queueAbandon>[1]);
+      const result = queueAbandon(db, p as Parameters<typeof queueAbandon>[1], clock(), triageService!.lifecycleHooks);
       push({ kind: "changed", topic: "batches" });
       push({ kind: "changed", topic: "accounts" });
       tick();
@@ -571,7 +668,11 @@ export function createWorkspace(opts: {
 
   const guarded: Handlers = Object.fromEntries(Object.entries(handlers).map(([method, handler]) => [method, (params: unknown) => {
     if (closing) throw new Error("工作区已关闭");
-    if ((opts.readOnly || opts.backgroundTasks === false) && assistantRpcToolByMethod(method)?.risk !== "read") throw new Error("临时工作区只允许已登记的只读查询");
+    if ((opts.readOnly || opts.backgroundTasks === false) && workspaceRpcRisk(method) !== "read") throw new Error("临时工作区只允许已登记的只读查询");
+    if ((method.startsWith("mail.triage.") || method.startsWith("mail.cases.") || method.startsWith("mail.tasks.")) && params && typeof params === "object") {
+      const supplied = params as Record<string, unknown>;
+      if (Object.hasOwn(supplied, "actor") || Object.hasOwn(supplied, "userId") || Object.hasOwn(supplied, "workspaceId")) throw new Error("操作者与工作区身份只能来自服务端会话");
+    }
     const siteId = Number((params as { siteId?: number } | undefined)?.siteId);
     const mailboxId = Number((params as { mailboxId?: number } | undefined)?.mailboxId);
     let task = Promise.resolve().then(() => handler(params));
@@ -622,8 +723,11 @@ export function createWorkspace(opts: {
       clearInterval(revertTimer);
       listeners.clear();
       closeTask = (async () => {
-        await assistant.close();
+        triageService!.stopAccepting();
         await mailboxes.close();
+        await triageService!.close();
+        if (ownsTriageScheduler) triageScheduler.close();
+        await assistant.close();
         await chats.close();
         await runner.stop();
         while (background.size) await Promise.allSettled([...background]);

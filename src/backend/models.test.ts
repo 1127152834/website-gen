@@ -71,12 +71,37 @@ test("defaults remain compatible and seed only once", () => {
   const db = fresh();
   seedModelDefaults(db);
   const providers = listProviders(db);
+  assert.ok(providers.every((provider) => Number.isInteger(provider.configRevision) && provider.configRevision > 0));
   assert.deepEqual(providers.map((provider) => [provider.protocol, provider.baseUrl]), [
     ["openai", "https://api.deepseek.com"],
     ["anthropic", "https://api.deepseek.com/anthropic"],
   ]);
   assert.deepEqual(providers[0].models.map((model) => model.id).sort(), ["deepseek-flash", "deepseek-v4-pro"]);
-  assert.equal(listRoles(db).length, 4);
+  const roles = listRoles(db);
+  assert.equal(roles.length, 6);
+  const translation = roles.find((role) => role.role === "translation");
+  assert.deepEqual(translation, {
+    role: "translation",
+    providerId: 0,
+    modelId: "",
+    thinking: "off",
+    ready: false,
+    problem: "未配置「邮件翻译」用途，请前往 设置 → 模型厂商",
+  });
+});
+
+test("mail triage has no default fallback and its binding does not change translation or agent", async () => {
+  const db = fresh();
+  try {
+    const before = listRoles(db).filter((role) => role.role !== "mail_triage");
+    const unconfigured = listRoles(db).find((role) => role.role === "mail_triage");
+    assert.deepEqual(unconfigured, { role: "mail_triage", providerId: 0, modelId: "", thinking: "off", ready: false, problem: "未配置「邮件预审」用途，请前往 设置 → 模型厂商" });
+    await assert.rejects(() => completeText(db, key, "mail_triage", "fixture"), /用途「邮件预审」尚未配置/);
+    const id = createProviderConfig(db, key, { name: "Triage", protocol: "openai", baseUrl: "https://triage.example.test/v1", apiKey: "fixture-key", models: [textModel] });
+    setRole(db, "mail_triage", { providerId: id, modelId: textModel.id, thinking: "high" });
+    assert.equal(listRoles(db).find((role) => role.role === "mail_triage")?.ready, true);
+    assert.deepEqual(listRoles(db).filter((role) => role.role !== "mail_triage"), before);
+  } finally { db.close(); }
 });
 
 test("provider CRUD returns rich metadata but never returns API keys in clear", () => {
@@ -135,6 +160,38 @@ test("vision role rejects text-only models and role upsert supports new assignme
   assert.throws(() => setRole(db, "vision", { providerId: id, modelId: textModel.id, thinking: "high" }), /支持图片/);
   setRole(db, "vision", { providerId: id, modelId: visionModel.id, thinking: "high" });
   assert.equal(listRoles(db).find((role) => role.role === "vision")?.modelId, visionModel.id);
+});
+
+test("translation role is configured and persisted independently from other roles", async () => {
+  const db = fresh();
+  const originalBulk = listRoles(db).find((role) => role.role === "bulk")!;
+  const originalAgent = listRoles(db).find((role) => role.role === "agent")!;
+  await assert.rejects(() => completeText(db, key, "translation", "hello"), /用途「邮件翻译」尚未配置/);
+  const id = createProviderConfig(db, key, {
+    name: "Translation Gateway",
+    protocol: "openai",
+    baseUrl: "https://translation.example/v1",
+    apiKey: "translation-secret-3333",
+    models: [textModel],
+  });
+
+  setRole(db, "translation", { providerId: id, modelId: textModel.id, thinking: "high" });
+
+  const roles = listRoles(db);
+  assert.deepEqual(roles.find((role) => role.role === "translation"), {
+    role: "translation",
+    providerId: id,
+    modelId: textModel.id,
+    thinking: "high",
+    ready: true,
+    problem: null,
+  });
+  assert.deepEqual(roles.find((role) => role.role === "bulk"), originalBulk);
+  assert.deepEqual(roles.find((role) => role.role === "agent"), originalAgent);
+  assert.deepEqual(
+    { ...db.prepare("SELECT role, provider_id, model_id, thinking FROM model_roles WHERE role = 'translation'").get() },
+    { role: "translation", provider_id: id, model_id: textModel.id, thinking: "high" },
+  );
 });
 
 test("fetch models parses OpenAI and Anthropic lists with the provider-specific auth headers", async () => {

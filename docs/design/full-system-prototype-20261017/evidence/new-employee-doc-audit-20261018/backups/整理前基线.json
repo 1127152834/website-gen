@@ -1,0 +1,34 @@
+{
+  "approach": "Add a reader-friendly copy; keep existing images and indexes; only append a backed-up entry link after verification",
+  "original_documents": [
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\README.md",
+      "sha256": "52DDB85272BF8C46BB4F8BCCA2498A3527469BC8A10EC753C50329E25E8F059E"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\coverage.json",
+      "sha256": "6CC160D1EB37EA9189F243E3640089CAFB1EE21F94ED441324A0D93F40991FE8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\coverage.md",
+      "sha256": "0F61557BD8B9F0FFA5CD87B7C39FF8A435A7D510DE5950E3493171CFEF3E5A9D"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\galleries\\customer.md",
+      "sha256": "9E26819214A81C13224BF447C9DA08AD0BB6734F41612B73981273DA7EAFF52E"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\galleries\\website.md",
+      "sha256": "74F47C0B622430031741DF1F0072A94CBC0201CEE61F417152327FEFB8E3B7BE"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\galleries\\remaining.md",
+      "sha256": "C701D8AF86655184EF410428942671DEE72955A77543F1BD4AB595B86B9C930E"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\galleries\\continuation-20261018.md",
+      "sha256": "D948F6ABD705B0DC46F8E8286F2A6AF8E5834EC070ED941E0E97B96E1027A5D3"
+    }
+  ],
+  "captured_at": "2026-10-18T04:06:22.2952652-07:00"
+}

@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "scope": "customer-crossflow-4-images",
+  "review_type": "static_self_check",
+  "reviewer": "layout_visual_review",
+  "date": "10/17/2026 PT",
+  "overall_status": "partial_2_of_4_complete",
+  "interaction_verified": false,
+  "app_code_changed": false,
+  "shared_index_changed": false,
+  "evidence": "evidence/customer-crossflow-recheck.md",
+  "baseline": "evidence/customer-crossflow-minimal-fix-baseline.md",
+  "ledger": "evidence/customer-crossflow-fix-ledger.jsonl",
+  "items": [
+    {
+      "id": "C02",
+      "baseline_image": "screens/C02-v3.png",
+      "candidate_image": "screens/C02-v4.png",
+      "status": "static_self_check_pass",
+      "required_change": "页头统一时间：PT",
+      "image_exists": true,
+      "sha256": "C609E37D3A2C61B2AAE69A002B67A193D8AAEF633D68AB36155DFFBB75EFDE46",
+      "dimensions": {
+        "width": 1484,
+        "height": 1060
+      },
+      "original_unchanged": true,
+      "copy_verified": true,
+      "non_target_semantic_changes_detected": false,
+      "prompt": "prompts/customer-crossflow-fixes/C02-v4.txt"
+    },
+    {
+      "id": "C09-active",
+      "baseline_image": "screens/C09-active-v3.png",
+      "candidate_image": "screens/C09-active-v4.png",
+      "status": "static_self_check_pass",
+      "required_change": "普通导航、标签和正文恢复深蓝灰蓝",
+      "image_exists": true,
+      "sha256": "60238DF015109CC0ADB85B77F6F9D963B0C43689B043D57ACF6EDF4901F2831F",
+      "dimensions": {
+        "width": 1489,
+        "height": 1056
+      },
+      "original_unchanged": true,
+      "copy_verified": true,
+      "non_target_semantic_changes_detected": false,
+      "prompt": "prompts/customer-crossflow-fixes/C09-active-v4.txt",
+      "notes": [
+        "返回客户列表导航由亮蓝变为灰蓝，文字、位置和含义不变；主要操作按钮/详情链接仍为蓝色。"
+      ]
+    },
+    {
+      "id": "C09-idle",
+      "baseline_image": "screens/C09-idle-v3.png",
+      "candidate_image": null,
+      "planned_image": "screens/C09-idle-v4.png",
+      "status": "generation_failed_no_artifact",
+      "required_change": "深蓝灰蓝色板与页头时间：PT",
+      "image_exists": false,
+      "error": "native image generation connection failed: error sending request",
+      "attempts": 2,
+      "recovery_probe_failed": true,
+      "retry_ready": true,
+      "prompt": "prompts/customer-crossflow-fixes/C09-idle-v4.txt",
+      "baseline_unchanged": true
+    },
+    {
+      "id": "O-G04",
+      "baseline_image": "screens/O-G04-v3.png",
+      "candidate_image": null,
+      "planned_image": "screens/O-G04-v4.png",
+      "status": "not_attempted_pending_service_recovery",
+      "required_change": "附件预览列头：文件 / 操作日期 / 操作人",
+      "image_exists": false,
+      "attempts": 0,
+      "prompt": "prompts/customer-crossflow-fixes/O-G04-v4.txt",
+      "baseline_unchanged": true
+    }
+  ],
+  "remaining_queue": [
+    "C09-idle-v4",
+    "O-G04-v4"
+  ],
+  "known_running_native_handle": null,
+  "rollback": "保留四张 v3 原图；已生成 v4 为新文件，无覆盖原图。"
+}

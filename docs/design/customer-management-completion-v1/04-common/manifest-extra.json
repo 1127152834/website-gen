@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-17",
+  "scope": "04-common prompts.json indexes 4-11 only",
+  "generator": "built-in image_gen",
+  "count": 8,
+  "verification": {
+    "all_files_present": true,
+    "all_source_hashes_match": true,
+    "all_visual_reviews_passed": true,
+    "all_dimensions_recorded": true,
+    "native_dimensions_summary": "7 files 1489x1056; C02-forbidden-v1.png 1490x1056"
+  },
+  "items": [
+    {
+      "id": "C01-empty-v1",
+      "file": "C01-empty-v1.png",
+      "width": 1489,
+      "height": 1056,
+      "bytes": 1453762,
+      "sha256": "2aaa3ba312518e961e4841dc62939b1806fee89e00f41b0daeba06190fb651f1",
+      "generated_source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14639-3e25-7b52-98e0-65a248b5d37c\\exec-38ba7db6-8ae5-4837-8461-5194ba1cdd05.png",
+      "generated_source_sha256": "2aaa3ba312518e961e4841dc62939b1806fee89e00f41b0daeba06190fb651f1",
+      "source_copy_match": true,
+      "prompt_source_index": 4,
+      "references": [
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/C01-list-preview-v4.png",
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+      ],
+      "visual_review": "passed"
+    },
+    {
+      "id": "C01-search-empty-v1",
+      "file": "C01-search-empty-v1.png",
+      "width": 1489,
+      "height": 1056,
+      "bytes": 1066443,
+      "sha256": "6a69e129bf49bbb625ffa21e2f4423148aef2864863460cb48f202337cb3598d",
+      "generated_source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14639-3e25-7b52-98e0-65a248b5d37c\\exec-babf215d-d9c3-4553-a2cf-6bc3396b7dd1.png",
+      "generated_source_sha256": "6a69e129bf49bbb625ffa21e2f4423148aef2864863460cb48f202337cb3598d",
+      "source_copy_match": true,
+      "prompt_source_index": 5,
+      "references": [
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/C01-list-preview-v4.png",
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+      ],
+      "visual_review": "passed"
+    },
+    {
+      "id": "C01-loading-v1",
+      "file": "C01-loading-v1.png",
+      "width": 1489,
+      "height": 1056,
+      "bytes": 1074895,
+      "sha256": "706c36eb6d75ad0480475de52a27fc40dac489c2eaf8320abab2d2298cf3ac25",
+      "generated_source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14639-3e25-7b52-98e0-65a248b5d37c\\exec-12d0ac6b-fe89-41bc-b622-907b25509355.png",
+      "generated_source_sha256": "706c36eb6d75ad0480475de52a27fc40dac489c2eaf8320abab2d2298cf3ac25",
+      "source_copy_match": true,
+      "prompt_source_index": 6,
+      "references": [
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/C01-list-preview-v4.png",
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+      ],
+      "visual_review": "passed"
+    },
+    {
+      "id": "C01-read-failure-v1",
+      "file": "C01-read-failure-v1.png",
+      "width": 1489,
+      "height": 1056,
+      "bytes": 1536429,
+      "sha256": "373bc127ac434854a2293540217765f345facf97d69aae64f3459f2c7d3e6143",
+      "generated_source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14639-3e25-7b52-98e0-65a248b5d37c\\exec-c44c0b3f-5ca0-46ce-9596-d026b3a951af.png",
+      "generated_source_sha256": "373bc127ac434854a2293540217765f345facf97d69aae64f3459f2c7d3e6143",
+      "source_copy_match": true,
+      "prompt_source_index": 7,
+      "references": [
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/C01-list-preview-v4.png",
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+      ],
+      "visual_review": "passed"
+    },
+    {
+      "id": "C02-not-found-v1",
+      "file": "C02-not-found-v1.png",
+      "width": 1489,
+      "height": 1056,
+      "bytes": 1063803,
+      "sha256": "58329ac11ac4442c08c50957fbaf14c25f52e81d4a5223db385b8048007af44e",
+      "generated_source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14639-3e25-7b52-98e0-65a248b5d37c\\exec-b757a4b1-4458-411d-a6cd-8b84dd113cf8.png",
+      "generated_source_sha256": "58329ac11ac4442c08c50957fbaf14c25f52e81d4a5223db385b8048007af44e",
+      "source_copy_match": true,
+      "prompt_source_index": 8,
+      "references": [
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/C03-personal-v3.png",
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+      ],
+      "visual_review": "passed"
+    },
+    {
+      "id": "C02-forbidden-v1",
+      "file": "C02-forbidden-v1.png",
+      "width": 1490,
+      "height": 1056,
+      "bytes": 1053799,
+      "sha256": "a9519237542731b9121df18f17ad64a5eb1304268d1152093f3d986172bb662f",
+      "generated_source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14639-3e25-7b52-98e0-65a248b5d37c\\exec-7a143d85-36dd-4628-9086-2f27e273388a.png",
+      "generated_source_sha256": "a9519237542731b9121df18f17ad64a5eb1304268d1152093f3d986172bb662f",
+      "source_copy_match": true,
+      "prompt_source_index": 9,
+      "references": [
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/C03-personal-v3.png",
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+      ],
+      "visual_review": "passed"
+    },
+    {
+      "id": "O-A04-unsaved-v1",
+      "file": "O-A04-unsaved-v1.png",
+      "width": 1489,
+      "height": 1056,
+      "bytes": 1614118,
+      "sha256": "c9ecd638a43f9127b7f6a764438a9b5dd27dfd2e92e7e4a71fc6912531d093ab",
+      "generated_source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14639-3e25-7b52-98e0-65a248b5d37c\\exec-73fc8378-955a-44a7-8f92-e8d4ceb1fd57.png",
+      "generated_source_sha256": "c9ecd638a43f9127b7f6a764438a9b5dd27dfd2e92e7e4a71fc6912531d093ab",
+      "source_copy_match": true,
+      "prompt_source_index": 10,
+      "references": [
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C04-personal-edit-v3.png",
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+      ],
+      "visual_review": "passed-after-address-repair",
+      "repair": {
+        "date": "2026-10-17",
+        "backup": "history/20261017T-final-unsaved-address-O-A04-unsaved-v1.png",
+        "scope": "drawer current-address street input only"
+      }
+    },
+    {
+      "id": "O-A05-conflict-v1",
+      "file": "O-A05-conflict-v1.png",
+      "width": 1489,
+      "height": 1056,
+      "bytes": 1396376,
+      "sha256": "2152b3b246162b8128948a767231a35c14671bde0669abb8fd7c5f7f5112b0c8",
+      "generated_source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14639-3e25-7b52-98e0-65a248b5d37c\\exec-d21f4d0d-aceb-4fc0-9249-17d658ffda2c.png",
+      "generated_source_sha256": "2152b3b246162b8128948a767231a35c14671bde0669abb8fd7c5f7f5112b0c8",
+      "source_copy_match": true,
+      "prompt_source_index": 11,
+      "references": [
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C04-personal-edit-v3.png",
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+      ],
+      "visual_review": "passed"
+    }
+  ]
+}

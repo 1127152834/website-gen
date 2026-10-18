@@ -10,7 +10,7 @@ import { resolve, join } from "node:path";
 import { chromium, type Browser, type Page } from "playwright-core";
 
 const root = resolve(import.meta.dirname, "..");
-const distDir = join(root, "dist");
+const distDir = resolve(process.env.SMOKE_DIST_DIR || join(root, "dist"));
 if (!existsSync(join(distDir, "index.html"))) throw new Error("找不到 dist/index.html；请先运行 npm run build");
 
 const temp = mkdtempSync(join(tmpdir(), "website-gen-smoke-"));
@@ -82,6 +82,16 @@ async function logout(page: Page, username: string): Promise<void> {
   await page.getByRole("heading", { name: "登录" }).waitFor();
 }
 
+async function assertCompactMain(page: Page): Promise<number> {
+  const gutters = await page.locator("#page-content").evaluate((main) => {
+    const parent = main.parentElement!.getBoundingClientRect();
+    const content = main.firstElementChild!.getBoundingClientRect();
+    return { left: content.left - parent.left, right: parent.right - content.right };
+  });
+  assert.ok(Math.abs(gutters.left - 24) <= 1 && Math.abs(gutters.right - 24) <= 1, `桌面主区域应保持左右各 24px：${JSON.stringify(gutters)}`);
+  return gutters.left;
+}
+
 try {
   const port = await freePort(), baseUrl = `http://127.0.0.1:${port}`;
   server = spawn(process.execPath, ["src/server/index.ts"], {
@@ -114,19 +124,29 @@ try {
 
   const nav = page.getByRole("navigation", { name: "主导航" });
   await page.getByRole("heading", { name: "总览", exact: true }).waitFor();
+  await page.setViewportSize({ width: 1920, height: 1080 });
+  const overviewGutter = await assertCompactMain(page);
   await page.getByText("还没有站点", { exact: true }).waitFor();
   await nav.getByRole("link", { name: "批次", exact: true }).click();
   await page.getByText("还没有建站批次").waitFor();
   await nav.getByRole("link", { name: "建站", exact: true }).click();
   await page.getByRole("heading", { name: "建站", exact: true }).waitFor();
+  assert.equal(await assertCompactMain(page), overviewGutter, "建站表单和总览应使用相同的左右留白");
+  assert.equal(await page.getByText("客服邮箱", { exact: true }).count(), 0, "经营主体步骤不再设置客服邮箱");
   assert.ok(await page.getByRole("button", { name: "下一步" }).isDisabled());
+  await page.setViewportSize({ width: 1440, height: 960 });
   await nav.getByRole("link", { name: "站点", exact: true }).click();
   await page.getByText("还没有站点", { exact: true }).waitFor();
   await nav.getByRole("link", { name: "账号", exact: true }).click();
   await page.getByText("还没有接入账号").waitFor();
   await nav.getByRole("link", { name: "邮箱", exact: true }).click();
+  await page.getByRole("heading", { name: "网关申请进度", exact: true }).waitFor();
+  for (const column of ["需要你处理", "等待平台", "结果回执"]) await page.getByRole("heading", { name: new RegExp(column) }).waitFor();
+  await page.getByText("当前筛选下没有申请。", { exact: false }).first().waitFor();
+  await page.goto(`${baseUrl}/mail/inbox`, { waitUntil: "domcontentloaded" });
+  await page.getByRole("heading", { name: "邮箱", exact: true }).waitFor();
   await page.getByText("还没有邮箱", { exact: true }).waitFor();
-  console.log("✔ 总览、建站、批次、站点、账号、邮箱页空状态正常");
+  console.log("✔ 总览、建站、批次、站点、账号、邮件看板与旧收件箱空状态正常");
 
   // 使用明确的本地模型服务夹具，真实经过 RPC、密钥解密、HTTP 和模型 SDK；不依赖外网可用性。
   modelFixture = createHttpServer((request, response) => {
@@ -165,7 +185,7 @@ try {
   // 真实 URL 重载 + 两个目标视口。设 SMOKE_KEEP_SCREENSHOTS=1 可保留成功截图供人工审查。
   for (const width of [1280, 390]) {
     await page.setViewportSize({ width, height: 900 });
-    for (const [path, title] of [["/", "总览"], ["/new", "建站"], ["/batches", "批次"], ["/sites", "站点"], ["/accounts", "Hostinger 账号"], ["/mail", "邮箱"], ["/settings", "设置"]]) {
+    for (const [path, title] of [["/", "总览"], ["/new", "建站"], ["/batches", "批次"], ["/sites", "站点"], ["/accounts", "Hostinger 账号"], ["/mail", "网关申请进度"], ["/mail/inbox", "邮箱"], ["/settings", "设置"]]) {
       await page.goto(`${baseUrl}${path}`, { waitUntil: "domcontentloaded" });
       await page.getByRole("heading", { name: title, exact: true }).waitFor();
       await page.getByText("后台已连接").waitFor();

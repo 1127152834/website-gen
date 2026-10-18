@@ -1,0 +1,27 @@
+{
+  "captured_at_utc": "2026-10-17T17:12:25.001946+00:00",
+  "planned_existing_edit": "README.md only",
+  "backup": "F:/projects/website-gen/.tmp/website-module-ui-v2-20261017/README-before-v2.md",
+  "files": [
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/baseline.json",
+      "sha256": "d8951c8f3ad0ca2ecf55b29983e965b2cf178acfab8f8d55acecb1cb01b431f5"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v1.md",
+      "sha256": "5c3917b6de87932387e75b9df6663e25f9e1dd7cd0f074a65dfa64c869014fe3"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/README.md",
+      "sha256": "d567445c3d78c5c2ae7e45a85b237bf0faeca925eefc185837d60cc64813b7d6"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+      "sha256": "e9eda4196ac0957ea3ff8d93e0ad154cd43894bcbbfd2fa867f64b1676e793ea"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/verification.json",
+      "sha256": "bc41726332b2f7ab10ebc44493ff186c8715e287595456f5cb1b9efc5c1f9d3e"
+    }
+  ]
+}

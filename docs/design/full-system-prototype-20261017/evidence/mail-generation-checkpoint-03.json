@@ -1,0 +1,27 @@
+{
+  "state": "image_generation_unavailable_after_single_resume_probe",
+  "current": {
+    "M01": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M01-v2.png",
+    "M02": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M02-v2.png",
+    "M03": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M03-v3.png",
+    "M05": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M05-v4.png",
+    "M06": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M06-v2.png"
+  },
+  "counts": {
+    "static_pass": 5,
+    "needs_copy_fix": 1,
+    "pending_generation": 14
+  },
+  "resume_probe": {
+    "id": "M07-v2",
+    "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/M07-v2-mail-actual-prompt.txt",
+    "source_image": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M07-v1.png",
+    "result": "connection failed: error sending request",
+    "duration_seconds": 51.2,
+    "new_image": false
+  },
+  "hanging_calls": 0,
+  "retry_policy": "Latest parent instruction: stop after failed single probe; no dense retries or alternative generators",
+  "next_after_recovery": "Retry M07-v2 saved minimal edit; then M08, M04, O-M01/O-M02/O-M04/O-M05/O-M06/O-M07/O-M08/O-M09, ES01-ES04",
+  "evidence": "mail-review-results.json and mail-module-regression.md"
+}

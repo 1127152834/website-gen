@@ -1,0 +1,77 @@
+{
+  "head": "6a9e314759426b2fd759cb2d669d3dc094f5ec48",
+  "status": [
+    " M src/backend/assistant-tools.ts",
+    " M src/backend/index.ts",
+    " M src/renderer/src/features/mail/mail-interaction.test.ts",
+    " M src/renderer/src/features/mail/mail-page.tsx",
+    " M src/shared/mail-types.ts",
+    "?? .cindy-worktrees/",
+    "?? src/backend/mail-translation-workspace.test.ts",
+    "?? src/backend/mail-translation.test.ts",
+    "?? src/backend/mail-translation.ts"
+  ],
+  "hashes": [
+    {
+      "hash": "417020D0E9A34200E8BC0E3710EE4EA534F7649FAF38AF489FBB8B150E8535C4",
+      "path": "src/backend/mailbox-service.ts"
+    },
+    {
+      "hash": "EC969780337964E84454701397814E7CE00F9ECEAEF785D69CC0EE3C7F86A3BA",
+      "path": "src/backend/mailbox-monitor.ts"
+    },
+    {
+      "hash": "E1D72841460D923D0ECC9004434CB9A674F39CCAEA44A3BD750F0D8E31D9EA78",
+      "path": "src/backend/mailbox-parser.ts"
+    },
+    {
+      "hash": "C76EFD74C42B690907215D77C34A1EB0CBB9FF672EDAD69A9018B3BCD33AC20A",
+      "path": "src/backend/mailbox-adapter.ts"
+    },
+    {
+      "hash": "4B2FDB6918A683C8D06BB54C07EBF93DA56728F13DBE3C88B88A3EF7EA893195",
+      "path": "src/backend/models.ts"
+    },
+    {
+      "hash": "BAA7196CC91943AC8F96F41412EA473442F305814B7477BCF42AE7753DCCF69F",
+      "path": "src/backend/migrations.ts"
+    },
+    {
+      "hash": "31FB57AAFCB4B77D8F14439F4DEA4A3D51538FAAC091B725C17BBC3218A79E0F",
+      "path": "src/backend/index.ts"
+    },
+    {
+      "hash": "7ED685D4979C90C8E6FA2A04FED9771324FE4085A6CA6E3FD79AB663108E856F",
+      "path": "src/backend/mail-translation.ts"
+    },
+    {
+      "hash": "B9393D87FBF1BA4C271A5FD13A9A5CAF2C4FFDA894B14A044E106A4D0BB7081E",
+      "path": "src/shared/mail-types.ts"
+    },
+    {
+      "hash": "D036997E6F9F01CCF43D7E2FE4DCE42CBB7B7B262FA2BEBA419DD6C9B4E94F7B",
+      "path": "src/shared/protocol.ts"
+    },
+    {
+      "hash": "12B7538D7A712ED9F56DD4AEDAE78E7D0467470AB58B018A74E972FDF89F1FD5",
+      "path": "src/renderer/src/features/mail/mail-page.tsx"
+    },
+    {
+      "hash": "FE755B09C0C98206973D71EEF609FB0702F341F56547BA6B8376706CCBEFFBE5",
+      "path": "src/renderer/src/features/mail/mail-body.ts"
+    },
+    {
+      "hash": "0F952A5BE96FEA1720111C1ADD907857E8E9A3EC59EA5764C405C1E610A69D9B",
+      "path": "src/renderer/src/features/settings/settings.tsx"
+    }
+  ],
+  "targets": {
+    "glossary": false,
+    "contextMap": false,
+    "spec": false,
+    "asset": false
+  },
+  "selectedImageSha256": "C12079E28710F419240E48F1D8819BC54554C10AB6C38C9A08AFE636DFE00F5C",
+  "scope": "design-only",
+  "reviewBackup": "F:\\projects\\website-gen\\.tmp\\mail-triage-design-review-20261016"
+}

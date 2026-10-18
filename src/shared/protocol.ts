@@ -36,14 +36,24 @@ export interface DomainSummary {
   abandoned?: boolean;
 }
 
-/** 模型用途：agent 对话与建站，vision 看截图，bulk 批量文案，review 合规审查 */
-export type ModelRole = "agent" | "vision" | "bulk" | "review";
+/** 站点选择后，从其唯一 Hostinger 账号实时读取的有效邮箱。 */
+export interface DomainMailboxes {
+  domain: string;
+  accountId: number;
+  mailboxes: { address: string }[];
+  /** 仅有一个实际邮箱时自动采用；多个邮箱时为空，需用户选择，不偏好任何前缀。 */
+  defaultEmail: string | null;
+}
+
+/** 模型用途：agent 对话与建站，vision 看截图，bulk 批量文案，review 合规审查，translation 邮件翻译，mail_triage 邮件预审 */
+export type ModelRole = "agent" | "vision" | "bulk" | "review" | "translation" | "mail_triage";
 
 export interface ProviderSummary {
   id: number;
   name: string;
   protocol: "openai" | "anthropic";
   baseUrl: string;
+  configRevision: number;
   hasKey: boolean;
   /** Key 末 4 位 */
   keyHint: string | null;
@@ -295,7 +305,7 @@ export type Response =
 export type Push =
   | { kind: "event"; event: RunEvent }
   // 某类数据在后台变了（例如定时同步完成），界面收到后重新拉取
-  | { kind: "changed"; topic: "accounts" | "batches" | "changes" | "mail" }
+  | { kind: "changed"; topic: "accounts" | "batches" | "changes" | "mail" | "mail_triage" }
   // 邮件只推送索引变动；正文始终通过当前用户的工作区读取。
   | { kind: "mail"; event: MailEvent }
   | { kind: "assistant"; event: AssistantEvent }

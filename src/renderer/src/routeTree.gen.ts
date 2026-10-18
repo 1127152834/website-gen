@@ -28,11 +28,18 @@ import { Route as AuthenticatedSitesIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedMailIndexRouteImport } from './routes/_authenticated.mail.index'
 import { Route as AuthenticatedBatchesIndexRouteImport } from './routes/_authenticated.batches.index'
 import { Route as AuthenticatedSitesSiteIdRouteImport } from './routes/_authenticated.sites.$siteId'
+import { Route as AuthenticatedMailSettingsRouteImport } from './routes/_authenticated.mail.settings'
+import { Route as AuthenticatedMailReviewRouteImport } from './routes/_authenticated.mail.review'
+import { Route as AuthenticatedMailRemindersRouteImport } from './routes/_authenticated.mail.reminders'
+import { Route as AuthenticatedMailNotificationsRouteImport } from './routes/_authenticated.mail.notifications'
+import { Route as AuthenticatedMailManageRouteImport } from './routes/_authenticated.mail.manage'
+import { Route as AuthenticatedMailInboxRouteImport } from './routes/_authenticated.mail.inbox'
 import { Route as AuthenticatedMailMailboxIdRouteImport } from './routes/_authenticated.mail.$mailboxId'
 import { Route as AuthenticatedBatchesBatchIdRouteImport } from './routes/_authenticated.batches.$batchId'
 import { Route as AuthenticatedSitesSiteIdIndexRouteImport } from './routes/_authenticated.sites.$siteId.index'
 import { Route as AuthenticatedMailMailboxIdIndexRouteImport } from './routes/_authenticated.mail.$mailboxId.index'
 import { Route as AuthenticatedSitesSiteIdTabRouteImport } from './routes/_authenticated.sites.$siteId.$tab'
+import { Route as AuthenticatedMailCasesCaseIdRouteImport } from './routes/_authenticated.mail.cases.$caseId'
 import { Route as AuthenticatedMailMailboxIdFolderRouteImport } from './routes/_authenticated.mail.$mailboxId.$folder'
 import { Route as AuthenticatedMailMailboxIdFolderIndexRouteImport } from './routes/_authenticated.mail.$mailboxId.$folder.index'
 import { Route as AuthenticatedMailMailboxIdFolderUidRouteImport } from './routes/_authenticated.mail.$mailboxId.$folder.$uid'
@@ -133,6 +140,39 @@ const AuthenticatedSitesSiteIdRoute =
     path: '/$siteId',
     getParentRoute: () => AuthenticatedSitesRoute,
   } as any)
+const AuthenticatedMailSettingsRoute =
+  AuthenticatedMailSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedMailRoute,
+  } as any)
+const AuthenticatedMailReviewRoute = AuthenticatedMailReviewRouteImport.update({
+  id: '/review',
+  path: '/review',
+  getParentRoute: () => AuthenticatedMailRoute,
+} as any)
+const AuthenticatedMailRemindersRoute =
+  AuthenticatedMailRemindersRouteImport.update({
+    id: '/reminders',
+    path: '/reminders',
+    getParentRoute: () => AuthenticatedMailRoute,
+  } as any)
+const AuthenticatedMailNotificationsRoute =
+  AuthenticatedMailNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedMailRoute,
+  } as any)
+const AuthenticatedMailManageRoute = AuthenticatedMailManageRouteImport.update({
+  id: '/manage',
+  path: '/manage',
+  getParentRoute: () => AuthenticatedMailRoute,
+} as any)
+const AuthenticatedMailInboxRoute = AuthenticatedMailInboxRouteImport.update({
+  id: '/inbox',
+  path: '/inbox',
+  getParentRoute: () => AuthenticatedMailRoute,
+} as any)
 const AuthenticatedMailMailboxIdRoute =
   AuthenticatedMailMailboxIdRouteImport.update({
     id: '/$mailboxId',
@@ -162,6 +202,12 @@ const AuthenticatedSitesSiteIdTabRoute =
     id: '/$tab',
     path: '/$tab',
     getParentRoute: () => AuthenticatedSitesSiteIdRoute,
+  } as any)
+const AuthenticatedMailCasesCaseIdRoute =
+  AuthenticatedMailCasesCaseIdRouteImport.update({
+    id: '/cases/$caseId',
+    path: '/cases/$caseId',
+    getParentRoute: () => AuthenticatedMailRoute,
   } as any)
 const AuthenticatedMailMailboxIdFolderRoute =
   AuthenticatedMailMailboxIdFolderRouteImport.update({
@@ -199,11 +245,18 @@ export interface FileRoutesByFullPath {
   '/errors/500': typeof Errors500Route
   '/batches/$batchId': typeof AuthenticatedBatchesBatchIdRoute
   '/mail/$mailboxId': typeof AuthenticatedMailMailboxIdRouteWithChildren
+  '/mail/inbox': typeof AuthenticatedMailInboxRoute
+  '/mail/manage': typeof AuthenticatedMailManageRoute
+  '/mail/notifications': typeof AuthenticatedMailNotificationsRoute
+  '/mail/reminders': typeof AuthenticatedMailRemindersRoute
+  '/mail/review': typeof AuthenticatedMailReviewRoute
+  '/mail/settings': typeof AuthenticatedMailSettingsRoute
   '/sites/$siteId': typeof AuthenticatedSitesSiteIdRouteWithChildren
   '/batches/': typeof AuthenticatedBatchesIndexRoute
   '/mail/': typeof AuthenticatedMailIndexRoute
   '/sites/': typeof AuthenticatedSitesIndexRoute
   '/mail/$mailboxId/$folder': typeof AuthenticatedMailMailboxIdFolderRouteWithChildren
+  '/mail/cases/$caseId': typeof AuthenticatedMailCasesCaseIdRoute
   '/sites/$siteId/$tab': typeof AuthenticatedSitesSiteIdTabRoute
   '/mail/$mailboxId/': typeof AuthenticatedMailMailboxIdIndexRoute
   '/sites/$siteId/': typeof AuthenticatedSitesSiteIdIndexRoute
@@ -223,9 +276,16 @@ export interface FileRoutesByTo {
   '/errors/500': typeof Errors500Route
   '/': typeof AuthenticatedIndexRoute
   '/batches/$batchId': typeof AuthenticatedBatchesBatchIdRoute
+  '/mail/inbox': typeof AuthenticatedMailInboxRoute
+  '/mail/manage': typeof AuthenticatedMailManageRoute
+  '/mail/notifications': typeof AuthenticatedMailNotificationsRoute
+  '/mail/reminders': typeof AuthenticatedMailRemindersRoute
+  '/mail/review': typeof AuthenticatedMailReviewRoute
+  '/mail/settings': typeof AuthenticatedMailSettingsRoute
   '/batches': typeof AuthenticatedBatchesIndexRoute
   '/mail': typeof AuthenticatedMailIndexRoute
   '/sites': typeof AuthenticatedSitesIndexRoute
+  '/mail/cases/$caseId': typeof AuthenticatedMailCasesCaseIdRoute
   '/sites/$siteId/$tab': typeof AuthenticatedSitesSiteIdTabRoute
   '/mail/$mailboxId': typeof AuthenticatedMailMailboxIdIndexRoute
   '/sites/$siteId': typeof AuthenticatedSitesSiteIdIndexRoute
@@ -251,11 +311,18 @@ export interface FileRoutesById {
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/batches/$batchId': typeof AuthenticatedBatchesBatchIdRoute
   '/_authenticated/mail/$mailboxId': typeof AuthenticatedMailMailboxIdRouteWithChildren
+  '/_authenticated/mail/inbox': typeof AuthenticatedMailInboxRoute
+  '/_authenticated/mail/manage': typeof AuthenticatedMailManageRoute
+  '/_authenticated/mail/notifications': typeof AuthenticatedMailNotificationsRoute
+  '/_authenticated/mail/reminders': typeof AuthenticatedMailRemindersRoute
+  '/_authenticated/mail/review': typeof AuthenticatedMailReviewRoute
+  '/_authenticated/mail/settings': typeof AuthenticatedMailSettingsRoute
   '/_authenticated/sites/$siteId': typeof AuthenticatedSitesSiteIdRouteWithChildren
   '/_authenticated/batches/': typeof AuthenticatedBatchesIndexRoute
   '/_authenticated/mail/': typeof AuthenticatedMailIndexRoute
   '/_authenticated/sites/': typeof AuthenticatedSitesIndexRoute
   '/_authenticated/mail/$mailboxId/$folder': typeof AuthenticatedMailMailboxIdFolderRouteWithChildren
+  '/_authenticated/mail/cases/$caseId': typeof AuthenticatedMailCasesCaseIdRoute
   '/_authenticated/sites/$siteId/$tab': typeof AuthenticatedSitesSiteIdTabRoute
   '/_authenticated/mail/$mailboxId/': typeof AuthenticatedMailMailboxIdIndexRoute
   '/_authenticated/sites/$siteId/': typeof AuthenticatedSitesSiteIdIndexRoute
@@ -281,11 +348,18 @@ export interface FileRouteTypes {
     | '/errors/500'
     | '/batches/$batchId'
     | '/mail/$mailboxId'
+    | '/mail/inbox'
+    | '/mail/manage'
+    | '/mail/notifications'
+    | '/mail/reminders'
+    | '/mail/review'
+    | '/mail/settings'
     | '/sites/$siteId'
     | '/batches/'
     | '/mail/'
     | '/sites/'
     | '/mail/$mailboxId/$folder'
+    | '/mail/cases/$caseId'
     | '/sites/$siteId/$tab'
     | '/mail/$mailboxId/'
     | '/sites/$siteId/'
@@ -305,9 +379,16 @@ export interface FileRouteTypes {
     | '/errors/500'
     | '/'
     | '/batches/$batchId'
+    | '/mail/inbox'
+    | '/mail/manage'
+    | '/mail/notifications'
+    | '/mail/reminders'
+    | '/mail/review'
+    | '/mail/settings'
     | '/batches'
     | '/mail'
     | '/sites'
+    | '/mail/cases/$caseId'
     | '/sites/$siteId/$tab'
     | '/mail/$mailboxId'
     | '/sites/$siteId'
@@ -332,11 +413,18 @@ export interface FileRouteTypes {
     | '/_authenticated/'
     | '/_authenticated/batches/$batchId'
     | '/_authenticated/mail/$mailboxId'
+    | '/_authenticated/mail/inbox'
+    | '/_authenticated/mail/manage'
+    | '/_authenticated/mail/notifications'
+    | '/_authenticated/mail/reminders'
+    | '/_authenticated/mail/review'
+    | '/_authenticated/mail/settings'
     | '/_authenticated/sites/$siteId'
     | '/_authenticated/batches/'
     | '/_authenticated/mail/'
     | '/_authenticated/sites/'
     | '/_authenticated/mail/$mailboxId/$folder'
+    | '/_authenticated/mail/cases/$caseId'
     | '/_authenticated/sites/$siteId/$tab'
     | '/_authenticated/mail/$mailboxId/'
     | '/_authenticated/sites/$siteId/'
@@ -488,6 +576,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSitesSiteIdRouteImport
       parentRoute: typeof AuthenticatedSitesRoute
     }
+    '/_authenticated/mail/settings': {
+      id: '/_authenticated/mail/settings'
+      path: '/settings'
+      fullPath: '/mail/settings'
+      preLoaderRoute: typeof AuthenticatedMailSettingsRouteImport
+      parentRoute: typeof AuthenticatedMailRoute
+    }
+    '/_authenticated/mail/review': {
+      id: '/_authenticated/mail/review'
+      path: '/review'
+      fullPath: '/mail/review'
+      preLoaderRoute: typeof AuthenticatedMailReviewRouteImport
+      parentRoute: typeof AuthenticatedMailRoute
+    }
+    '/_authenticated/mail/reminders': {
+      id: '/_authenticated/mail/reminders'
+      path: '/reminders'
+      fullPath: '/mail/reminders'
+      preLoaderRoute: typeof AuthenticatedMailRemindersRouteImport
+      parentRoute: typeof AuthenticatedMailRoute
+    }
+    '/_authenticated/mail/notifications': {
+      id: '/_authenticated/mail/notifications'
+      path: '/notifications'
+      fullPath: '/mail/notifications'
+      preLoaderRoute: typeof AuthenticatedMailNotificationsRouteImport
+      parentRoute: typeof AuthenticatedMailRoute
+    }
+    '/_authenticated/mail/manage': {
+      id: '/_authenticated/mail/manage'
+      path: '/manage'
+      fullPath: '/mail/manage'
+      preLoaderRoute: typeof AuthenticatedMailManageRouteImport
+      parentRoute: typeof AuthenticatedMailRoute
+    }
+    '/_authenticated/mail/inbox': {
+      id: '/_authenticated/mail/inbox'
+      path: '/inbox'
+      fullPath: '/mail/inbox'
+      preLoaderRoute: typeof AuthenticatedMailInboxRouteImport
+      parentRoute: typeof AuthenticatedMailRoute
+    }
     '/_authenticated/mail/$mailboxId': {
       id: '/_authenticated/mail/$mailboxId'
       path: '/$mailboxId'
@@ -522,6 +652,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/sites/$siteId/$tab'
       preLoaderRoute: typeof AuthenticatedSitesSiteIdTabRouteImport
       parentRoute: typeof AuthenticatedSitesSiteIdRoute
+    }
+    '/_authenticated/mail/cases/$caseId': {
+      id: '/_authenticated/mail/cases/$caseId'
+      path: '/cases/$caseId'
+      fullPath: '/mail/cases/$caseId'
+      preLoaderRoute: typeof AuthenticatedMailCasesCaseIdRouteImport
+      parentRoute: typeof AuthenticatedMailRoute
     }
     '/_authenticated/mail/$mailboxId/$folder': {
       id: '/_authenticated/mail/$mailboxId/$folder'
@@ -597,12 +734,26 @@ const AuthenticatedMailMailboxIdRouteWithChildren =
 
 interface AuthenticatedMailRouteChildren {
   AuthenticatedMailMailboxIdRoute: typeof AuthenticatedMailMailboxIdRouteWithChildren
+  AuthenticatedMailInboxRoute: typeof AuthenticatedMailInboxRoute
+  AuthenticatedMailManageRoute: typeof AuthenticatedMailManageRoute
+  AuthenticatedMailNotificationsRoute: typeof AuthenticatedMailNotificationsRoute
+  AuthenticatedMailRemindersRoute: typeof AuthenticatedMailRemindersRoute
+  AuthenticatedMailReviewRoute: typeof AuthenticatedMailReviewRoute
+  AuthenticatedMailSettingsRoute: typeof AuthenticatedMailSettingsRoute
   AuthenticatedMailIndexRoute: typeof AuthenticatedMailIndexRoute
+  AuthenticatedMailCasesCaseIdRoute: typeof AuthenticatedMailCasesCaseIdRoute
 }
 
 const AuthenticatedMailRouteChildren: AuthenticatedMailRouteChildren = {
   AuthenticatedMailMailboxIdRoute: AuthenticatedMailMailboxIdRouteWithChildren,
+  AuthenticatedMailInboxRoute: AuthenticatedMailInboxRoute,
+  AuthenticatedMailManageRoute: AuthenticatedMailManageRoute,
+  AuthenticatedMailNotificationsRoute: AuthenticatedMailNotificationsRoute,
+  AuthenticatedMailRemindersRoute: AuthenticatedMailRemindersRoute,
+  AuthenticatedMailReviewRoute: AuthenticatedMailReviewRoute,
+  AuthenticatedMailSettingsRoute: AuthenticatedMailSettingsRoute,
   AuthenticatedMailIndexRoute: AuthenticatedMailIndexRoute,
+  AuthenticatedMailCasesCaseIdRoute: AuthenticatedMailCasesCaseIdRoute,
 }
 
 const AuthenticatedMailRouteWithChildren =

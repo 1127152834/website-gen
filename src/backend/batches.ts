@@ -1,8 +1,9 @@
 // 批次与站点：可选域名、创建批次（站点 + 任务一起入库）、进度查询、失败重试。
 import type { DatabaseSync } from "node:sqlite";
-import { PROVISION_STEPS, type BatchSummary, type FreeDomain, type SiteProgress, type StepState } from "../shared/protocol.ts";
+import { PROVISION_STEPS, type BatchSummary, type DomainMailboxes, type FreeDomain, type SiteProgress, type StepState } from "../shared/protocol.ts";
 import { validateBatch, type BatchForm } from "../shared/forms.ts";
 import { enqueue, requeue } from "./jobs.ts";
+import { selectDomainMailbox } from "./site-mailbox.ts";
 
 export const PROVISION_JOB = "site.provision";
 
@@ -14,23 +15,49 @@ export function listFreeDomains(db: DatabaseSync): FreeDomain[] {
     FROM domains d JOIN hostinger_accounts a ON a.id = d.account_id
     WHERE (d.status IS NULL OR d.status = 'active') AND d.domain <> ''
       AND NOT EXISTS (SELECT 1 FROM abandoned_domains x WHERE x.domain = d.domain COLLATE NOCASE)
-      AND NOT EXISTS (SELECT 1 FROM hosting_websites w WHERE w.domain = d.domain)
-      AND NOT EXISTS (SELECT 1 FROM sites s WHERE s.domain = d.domain)
+      AND NOT EXISTS (SELECT 1 FROM hosting_websites w WHERE w.domain = d.domain COLLATE NOCASE)
+      AND NOT EXISTS (SELECT 1 FROM sites s WHERE s.domain = d.domain COLLATE NOCASE)
     ORDER BY d.domain`).all() as { domain: string; account_id: number; label: string; expires_at: string | null; has_mail: number }[];
-  return rows.map((r) => ({ domain: r.domain, accountId: r.account_id, accountLabel: r.label, hasMail: Boolean(r.has_mail), expiresAt: r.expires_at }));
+  return rows.map((r) => ({ domain: r.domain.toLowerCase(), accountId: r.account_id, accountLabel: r.label, hasMail: Boolean(r.has_mail), expiresAt: r.expires_at }));
 }
 
-export function createBatch(db: DatabaseSync, form: BatchForm, now: number): { batchId: number; siteIds: number[] } {
+export function createBatch(db: DatabaseSync, form: BatchForm, now: number, verifiedMailboxes: readonly DomainMailboxes[]): { batchId: number; siteIds: number[] } {
   const errors = Object.values(validateBatch(form));
   if (errors.length > 0) throw new Error(errors[0]);
-  const free = new Set(listFreeDomains(db).map((d) => d.domain));
-  for (const s of form.sites) if (!free.has(s.domain)) throw new Error(`域名 ${s.domain} 不可用：可能已经有网站，或已在其他批次里`);
+  if (!Array.isArray(verifiedMailboxes) || verifiedMailboxes.length !== form.sites.length) throw new Error("创建批次前必须逐站实时验证邮箱");
 
-  db.exec("BEGIN");
+  db.exec("BEGIN IMMEDIATE");
   try {
+    const free = new Set(listFreeDomains(db).map((item) => item.domain.toLowerCase()));
+    const verifiedByDomain = new Map<string, DomainMailboxes>();
+    for (const item of verifiedMailboxes) {
+      const key = item.domain.trim().toLowerCase();
+      if (!key || verifiedByDomain.has(key)) throw new Error("邮箱验证结果与站点不匹配");
+      verifiedByDomain.set(key, item);
+    }
+    const savedSites = form.sites.map((site) => {
+      const domain = site.domain.trim().toLowerCase();
+      if (!free.has(domain)) throw new Error(`域名 ${site.domain} 不可用：可能已经有网站，或已在其他批次里`);
+      const owners = db.prepare(`SELECT DISTINCT d.account_id, d.status AS domain_status, a.status AS account_status
+        FROM domains d JOIN hostinger_accounts a ON a.id=d.account_id WHERE d.domain=? COLLATE NOCASE`).all(domain) as unknown as
+        { account_id: number; domain_status: string | null; account_status: string }[];
+      if (owners.length !== 1 || owners[0].domain_status !== "active" || owners[0].account_status !== "ok") {
+        throw new Error(`${domain} 的 Hostinger 域名归属或状态已变化，请重新选择站点`);
+      }
+      const verified = verifiedByDomain.get(domain);
+      if (!verified || verified.accountId !== owners[0].account_id) throw new Error(`${domain} 的邮箱账号归属已变化，请重新读取邮箱`);
+      for (const mailbox of verified.mailboxes) {
+        const addressDomain = mailbox.address.trim().toLowerCase().split("@").at(-1);
+        if (addressDomain !== domain) throw new Error(`邮箱 ${mailbox.address} 不属于域名 ${domain}`);
+      }
+      const supportEmail = selectDomainMailbox(verified, site.supportEmail);
+      return { ...site, domain, supportEmail };
+    });
+    if (verifiedByDomain.size !== savedSites.length) throw new Error("邮箱验证结果包含未选择的站点");
+
     const batchId = (db.prepare("INSERT INTO batches (entity_json, created_at) VALUES (?, ?) RETURNING id").get(JSON.stringify(form.entity), now) as { id: number }).id;
     const insSite = db.prepare("INSERT INTO sites (batch_id, domain, form_json, created_at, updated_at) VALUES (?, ?, ?, ?, ?) RETURNING id");
-    const siteIds = form.sites.map((s) => {
+    const siteIds = savedSites.map((s) => {
       const id = (insSite.get(batchId, s.domain, JSON.stringify(s), now, now) as { id: number }).id;
       enqueue(db, PROVISION_JOB, id, now);
       return id;

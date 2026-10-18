@@ -1,0 +1,82 @@
+{
+  "scope": "mail baseline5 fresh static review",
+  "review_date": "10/18/2026 PT",
+  "reviewer": "/root/next_module_scope",
+  "method": "Fresh direct view_image of current PNGs, side-by-side-in-context style comparison and line-by-line canonical E-101 matching; current source docs reread",
+  "independence_note": "Fresh review independent of earlier pass labels, but this reviewer previously generated these five images; not a distinct-author or external reviewer approval.",
+  "status": "PASS",
+  "passed": 5,
+  "needs_fix": 0,
+  "interaction_verified": false,
+  "real_services_verified": false,
+  "source_refs": [
+    "plans/shared-mail-evidence.md",
+    "plans/other-module-demo-data.md",
+    "prompts/common-style.txt"
+  ],
+  "items": [
+    {
+      "id": "M01",
+      "image": "screens/M01-v2.png",
+      "status": "PASS",
+      "notes": [
+        "邮箱/域名/客户固定对象一致，凭据、监听与最近同步分层；09:42 PT正确。",
+        "无邮件正文或推断下一步，主入口与底部不同步自动回复说明清楚。"
+      ],
+      "minor": [],
+      "sha256": "5BB5A5BD6037E1222299A50CFF25F80F84ED01B49B43DFEBE28B3F6680F0C4F2"
+    },
+    {
+      "id": "M02",
+      "image": "screens/M02-v2.png",
+      "status": "PASS",
+      "notes": [
+        "收件箱12/已发送8/草稿0/废纸篓1正确；当前3条与4页分页不把可见条目当完整集合。",
+        "E-101主题/发件/09:18、E-001主题/发件/10/12 14:20正确，无串源、月份或截止要求。"
+      ],
+      "minor": [
+        "Stripe列表预览是概述性短句，未标原文；如实现为正文摘录，应直接截取规范原文而非改写。"
+      ],
+      "sha256": "24BFC2AAD4B08B9A46C4FDC6A3BAF902D1A8B320565BE8F3D021CA72E4F8328A"
+    },
+    {
+      "id": "M03",
+      "image": "screens/M03-v3.png",
+      "status": "PASS",
+      "notes": [
+        "E-101两句完整原文逐字匹配共享证据；来源ID、收发身份与09:18 PT匹配。",
+        "附件0不把来信要求当已附带文件；预审建议与候选关联均未冒充人工确认，历史授权标签存在。"
+      ],
+      "minor": [
+        "部分静态邮箱元数据仍偏蓝，未造成信息误读；后续实现宜用深蓝文本、亮蓝仅动作。"
+      ],
+      "sha256": "55D3F3D174AFFAFC88E7B5C9D40D51571029C2716AF22637FD74CB97EF10598F"
+    },
+    {
+      "id": "M05",
+      "image": "screens/M05-v4.png",
+      "status": "PASS",
+      "notes": [
+        "完整E-101原文与证据摘句准确；只提最近一期流水及一张库存照片，无E-102月份泄入。",
+        "陈佳10/17/2026 09:31 PT纠正记录及原因匹配；当前登录李敏不取代历史操作人。",
+        "分析已完成不等于关联已确认；不确定项/候选待人工确认清楚，未改变APP-002审批状态。"
+      ],
+      "minor": [
+        "同步时间及计数保留蓝色强调；候选行较密但文字未遮挡。"
+      ],
+      "sha256": "5B3810DC710E32D925B2A1CF462823B765A4A5C4A2DAC79A366A75DE1D9DE712"
+    },
+    {
+      "id": "M06",
+      "image": "screens/M06-v2.png",
+      "status": "PASS",
+      "notes": [
+        "待确认1/未关联1；收件时间09:18 PT与E-101逐字原文一致。",
+        "客户、申请、站点、平台每项均标候选尚未确认；没有把来源规则当已确认身份。",
+        "当前1/1时加载更多禁用；所有操作仍是入口，不画已执行结果。"
+      ],
+      "minor": [],
+      "sha256": "592609A3E3F0C8DE6304D62437A4BCFDC24AECBAFB09B29215B9682480A0B440"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+Make ONLY three small text corrections in the RIGHT time-fields pane of this exact image. Preserve entire layout, shell, color, all other text/data, tabs, company/address/phone/email, input values2/4/5/10, footer, dimensions and spacing.
+1. Heading above the right pane currently "设置建站时效": replace with "发货与配送时效". Keep the adjacent "仅用于 Jamie Chen".
+2. Small helper beneath the ORDER PROCESSING 2–4 input currently says "从确认需求到开始建站的预计时间。": replace EXACTLY with "收到订单后至发货的处理时间。"
+3. Small helper beneath the SHIPPING 5–10 input currently says "从开始建站到网站上线的预计时间。": replace EXACTLY with "发货后至送达的运输时间。"
+These are order fulfillment/shipping times, NOT website build or launch duration. This precise copy edit only, no additional changes, same small slateblue text, no newboxes.

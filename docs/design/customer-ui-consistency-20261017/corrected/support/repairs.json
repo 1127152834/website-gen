@@ -1,0 +1,112 @@
+[
+  {
+    "id": "O-C04-company-edit-v2",
+    "before": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C04-company-edit-v2.png",
+    "after": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\support\\O-C04-company-edit-v2.png",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14639-3e25-7b52-98e0-65a248b5d37c\\exec-7d6a0670-53ce-4853-bae1-bf46db91a48a.png",
+    "prompt": "Use case: precise-object-edit\nAsset type: static desktop UI prototype correction\nPrimary request: Edit only the header attribution placement in this existing company-edit drawer.\nExact change: Keep the title “编辑企业资料” alone on the first row with the close X unchanged. Remove “操作人：李敏 · 系统记录” and “查看字段操作人” from the title row. On the existing second header row, keep “Alex Morgan · C001 / Northline LLC” and the “示例数据” badge exactly as they are on the left, and place the compact right-aligned text “本次操作人：李敏” followed by the blue link “查看字段操作人” in the unused space on the right.\nLayout constraints: Do not change the drawer width. Do not add a new row, increase header height, move the divider, push any form field downward, or cause overflow. If needed, use the same compact small typography as the personal-edit reference. Keep clear spacing before the close X.\nInvariants: Preserve every field label and value exactly: Northline LLC, 男士服装, 00-0000000, 260 Demo Blvd, Austin, TX Texas, 78702. Preserve all helper text, DEMO badges, footer copy, fixed footer, Cancel and Save buttons, dimmed background data, colors, spacing, and image dimensions. Do not add permissions or workflow. Change nothing else.",
+    "refs": [
+      "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C04-company-edit-v2.png"
+    ],
+    "issues": [
+      "Move current operator and field-operator link out of the title row into the subtitle row right-side space."
+    ],
+    "sha256": "c88a4019d3499340c2d6a43928d043894ec09999face9f381a08645ad97f9667",
+    "review": {
+      "status": "passed",
+      "source_copy_match": true,
+      "before_dimensions": "1489x1056",
+      "after_dimensions": "1489x1056",
+      "checks": [
+        "title isolated",
+        "operator/link right-aligned on subtitle row",
+        "Northline LLC, 男士服装, EIN and address unchanged",
+        "drawer width and fixed footer visually unchanged",
+        "no new permission or workflow"
+      ]
+    }
+  },
+  {
+    "id": "O-C04-bank-edit-v2",
+    "before": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C04-bank-edit-v2.png",
+    "after": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\support\\O-C04-bank-edit-v2.png",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14639-3e25-7b52-98e0-65a248b5d37c\\exec-939e3c1e-db3c-4fac-b60e-6b1f22822585.png",
+    "prompt": "Use case: precise-object-edit\nAsset type: static desktop UI prototype correction\nPrimary request: Edit only the current-operator attribution placement in this existing bank-edit drawer.\nExact change: Keep the title “编辑银行资料” alone on the first row with the close X unchanged. On the existing second header row, keep “Alex Morgan · C001” and the “示例数据” badge unchanged on the left, and add compact right-aligned text “本次操作人：李敏” followed by the blue link “查看字段操作人” in the unused space on the right. Remove the existing lower-body row “操作人：李敏 · 系统记录” and its “查看字段操作人” link so attribution appears only once.\nLayout constraints: Do not change the drawer width. Do not add a new row, increase header height, move the divider, push form fields or helper copy downward, or cause overflow. Use the compact typography and hierarchy of the personal-edit drawer header.\nInvariants: Preserve every field label and value exactly: Example Bank, 0000000000, 000000000, all three DEMO badges, and all Chinese helper text. Preserve footer copy, fixed footer, Cancel and Save buttons, dimmed bank page background, colors, spacing, and image dimensions. Do not add permissions or workflow. Change nothing else.",
+    "refs": [
+      "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C04-bank-edit-v2.png"
+    ],
+    "issues": [
+      "Move current operator and field-operator link from the lower body into the subtitle row right-side space."
+    ],
+    "sha256": "6e6ac2a8467c89dbf6bf9a043f83274358c12529ecc324c8db2198e61112d784",
+    "review": {
+      "status": "passed",
+      "source_copy_match": true,
+      "before_dimensions": "1486x1059",
+      "after_dimensions": "1485x1059",
+      "checks": [
+        "operator/link present once in subtitle row",
+        "lower duplicate removed",
+        "Example Bank and both account values unchanged",
+        "field and footer positions visually unchanged",
+        "drawer width visually unchanged",
+        "no new permission or workflow"
+      ]
+    }
+  },
+  {
+    "id": "O-C07-upload-states-v1",
+    "before": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C07-upload-states-v1.png",
+    "after": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\support\\O-C07-upload-states-v1.png",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14639-3e25-7b52-98e0-65a248b5d37c\\exec-212bf5ad-b661-4e60-b8c6-a9f33c916deb.png",
+    "prompt": "Use case: precise-object-edit\nAsset type: static desktop UI prototype correction\nPrimary request: Correct exactly one date in this existing upload-state drawer.\nExact change: In the first successful file row for “银行流水-03.pdf”, change only the timestamp text from “10/17/2026 10:12 AM” to exactly “10/16/2026 10:12 AM”.\nInvariants: Keep the file name, 1.2 MB, green dot, “上传成功”, “操作人：李敏”, all other file rows, statuses, progress percentage, buttons, footer summary, drawer width, dimmed background, page date 10/16/2026, colors, typography, spacing, and image dimensions unchanged. Do not alter any other date or text. Do not add permissions or workflow.",
+    "refs": [
+      "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C07-upload-states-v1.png"
+    ],
+    "issues": [
+      "Successful upload timestamp was one day later than the page date."
+    ],
+    "sha256": "6ccfea0ac7912de73ffd7240287ebbc4bc5ca38ad12dddb850bd16e6f7219219",
+    "review": {
+      "status": "passed",
+      "source_copy_match": true,
+      "before_dimensions": "1489x1056",
+      "after_dimensions": "1489x1056",
+      "checks": [
+        "success timestamp is 10/16/2026 10:12 AM",
+        "page date remains 10/16/2026",
+        "five queue states unchanged",
+        "footer counts and controls unchanged",
+        "no new permission or workflow"
+      ]
+    }
+  },
+  {
+    "id": "O-C15-delete-confirm-v1",
+    "before": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C15-delete-confirm-v1.png",
+    "after": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\support\\O-C15-delete-confirm-v1.png",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14639-3e25-7b52-98e0-65a248b5d37c\\exec-96d44162-1d9b-42ec-8fff-d819c4a4261b.png",
+    "prompt": "Use case: precise-object-edit\nAsset type: static desktop UI prototype correction\nPrimary request: Change only the state of the bottom-right “确认删除” button in this existing delete-customer confirmation modal.\nExact change: Keep the independent checkbox “我确认仍要删除含在办申请的客户” visibly unchecked. Change the “确认删除” button from active solid red to a clearly disabled neutral gray state: light gray fill, muted gray text and border, no red emphasis, visually non-clickable. Keep the button label exactly “确认删除”.\nInvariants: Preserve the warning about one active PayPal application, current operator 李敏 · 管理员, unchecked checkbox, delete/retain scope cards, domain, website and mailbox text, informational note, Cancel button, modal size and position, dimmed background, all dates, colors outside the button, spacing, and image dimensions unchanged. Do not add another confirmation, permission, or workflow. Change nothing else.",
+    "refs": [
+      "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C15-delete-confirm-v1.png"
+    ],
+    "issues": [
+      "Active-application acknowledgement remained unchecked while destructive confirmation appeared enabled."
+    ],
+    "sha256": "ec83fceaf39688e16ea5a2a14da93a21a957bd1d4677996363e3d77f309a1c62",
+    "review": {
+      "status": "passed",
+      "source_copy_match": true,
+      "before_dimensions": "1487x1058",
+      "after_dimensions": "1485x1059",
+      "checks": [
+        "active-application checkbox remains unchecked",
+        "Confirm Delete button is neutral gray disabled",
+        "Cancel remains enabled secondary action",
+        "delete and retain scopes unchanged",
+        "administrator example unchanged",
+        "no new permission or workflow"
+      ]
+    }
+  }
+]

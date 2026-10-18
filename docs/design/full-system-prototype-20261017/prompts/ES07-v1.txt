@@ -1,0 +1,10 @@
+Scene ID: ES07
+Title: Grist 尚未配置空态
+Reference kind: base_id:T01; shared_shell:A01; native_grist_boundary
+Common style: prompts/common-style.txt
+
+Create one static 1490x1056 desktop scene for ES07, “Grist 尚未配置空态”, an essential state of T01. Use prompts/common-style.txt and the T01 surface as design references; do not assume a future PNG exists. Show one readable focal state, not a collage. This is an authorized phase-one static target, not proof of implementation.
+
+Show the authenticated T01 host route with Grist not configured. Keep the application shell and page heading, replacing the iframe region with an empty state labelled “Grist 尚未配置”. Explain “完成设置后，第三方 Grist 原生文档将在此区域打开” and provide one action, “前往 Grist 设置”. Add a visible boundary label “第三方原生界面区域” without drawing a fake spreadsheet, custom table editor, login form, document error, or iframe-internal diagnostics. Do not imply that a connection attempt occurred, that credentials failed, or that the host can inspect cross-origin internals. The settings route may be named, but no Base URL, API key, token, customer import, or example document is shown in this state. Distinguish this unconfigured state from an unknown load failure; ordinary host-side read failures can reuse A07 rather than appearing inside the empty iframe area.
+
+Use fictional data dated 10/17/2026 PT and MM/DD/YYYY. Keep Alex Morgan · C001, Northline LLC, northline.example, and hello@northline.example consistent where relevant. Only gateway applications use 申请负责人; otherwise use 操作人. Mail stays safe local plain text with no remote content or link access. Do not add unsupported automation or engineering notes to the UI.

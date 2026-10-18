@@ -1,0 +1,524 @@
+{
+  "verified_at_utc": "2026-10-17T18:30:00.3657899Z",
+  "result": "PASS_STATIC_PROTOTYPES",
+  "scope": "Two requested new main screens W02 and W04; W03 unchanged; no application implementation",
+  "images": [
+    {
+      "id": "W02",
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/W02-customer-business-info-v1.png",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14607-58e5-7831-b3b1-33bf0fc130de/exec-222547b6-b51c-40ad-9827-fe6ce2667824.png",
+      "sha256": "65efae238acc56073d9eba8a4bd63a3b4d50a36fbeb732207b65a9f87255644d",
+      "source_copy_match": true,
+      "width": 1490,
+      "height": 1056
+    },
+    {
+      "id": "W04",
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/W04-confirm-start-v1.png",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14607-58e5-7831-b3b1-33bf0fc130de/exec-48f36e80-840d-4c5d-92e0-dec95a8f4918.png",
+      "sha256": "a7b43b82630338c4cba7b74ea450fb84f14c96b503d885bbb0f2db75d400849b",
+      "source_copy_match": true,
+      "width": 1489,
+      "height": 1056
+    }
+  ],
+  "previous_group_files_checked": 13,
+  "previous_group_files_unchanged": 12,
+  "expected_existing_file_changes": [
+    "README.md"
+  ],
+  "unexpected_changes": [],
+  "group_baseline_checks": [
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/baseline-v2.json",
+      "before": "e250ea35b9b989be3e261e07ddb20c3a5b5d6474059d03b3fb675a3a25ed59d4",
+      "after": "e250ea35b9b989be3e261e07ddb20c3a5b5d6474059d03b3fb675a3a25ed59d4",
+      "unchanged": true,
+      "expected_readme_update": false
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/baseline.json",
+      "before": "d8951c8f3ad0ca2ecf55b29983e965b2cf178acfab8f8d55acecb1cb01b431f5",
+      "after": "d8951c8f3ad0ca2ecf55b29983e965b2cf178acfab8f8d55acecb1cb01b431f5",
+      "unchanged": true,
+      "expected_readme_update": false
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v1.md",
+      "before": "5c3917b6de87932387e75b9df6663e25f9e1dd7cd0f074a65dfa64c869014fe3",
+      "after": "5c3917b6de87932387e75b9df6663e25f9e1dd7cd0f074a65dfa64c869014fe3",
+      "unchanged": true,
+      "expected_readme_update": false
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/design-brief-v2.md",
+      "before": "d86c108a7bba00cc8c25567f6d9f9ea8103a085ec4d4b9d08c3b63e3d8446b2b",
+      "after": "d86c108a7bba00cc8c25567f6d9f9ea8103a085ec4d4b9d08c3b63e3d8446b2b",
+      "unchanged": true,
+      "expected_readme_update": false
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/README.md",
+      "before": "e6033b6e0d606ee44c43c5de9d10434a9daea6a0ca0bbac3e9aebd8c4546f8ce",
+      "after": "738fec490e8eb5191c859471023ebf3b8a9badbc4e7164b1565d78abad90fcd5",
+      "unchanged": false,
+      "expected_readme_update": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/source-evidence.md",
+      "before": "e9eda4196ac0957ea3ff8d93e0ad154cd43894bcbbfd2fa867f64b1676e793ea",
+      "after": "e9eda4196ac0957ea3ff8d93e0ad154cd43894bcbbfd2fa867f64b1676e793ea",
+      "unchanged": true,
+      "expected_readme_update": false
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/verification-v2.json",
+      "before": "e434e457d2f4650b0905343a8decfe2f036c9c7c5143f0ba818b393fbc2ef3f3",
+      "after": "e434e457d2f4650b0905343a8decfe2f036c9c7c5143f0ba818b393fbc2ef3f3",
+      "unchanged": true,
+      "expected_readme_update": false
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/verification.json",
+      "before": "bc41726332b2f7ab10ebc44493ff186c8715e287595456f5cb1b9efc5c1f9d3e",
+      "after": "bc41726332b2f7ab10ebc44493ff186c8715e287595456f5cb1b9efc5c1f9d3e",
+      "unchanged": true,
+      "expected_readme_update": false
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/W03-design-notes.md",
+      "before": "61bb05d56fba5c1ab968846e80ad0214fca7af35e942fd14f7620d0da37de0ce",
+      "after": "61bb05d56fba5c1ab968846e80ad0214fca7af35e942fd14f7620d0da37de0ce",
+      "unchanged": true,
+      "expected_readme_update": false
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/W03-site-configuration-v1.png",
+      "before": "ce0fcc7052fc017fd3733cc0ec6d7a9139c7e772722446dbaeec46379fa4ecde",
+      "after": "ce0fcc7052fc017fd3733cc0ec6d7a9139c7e772722446dbaeec46379fa4ecde",
+      "unchanged": true,
+      "expected_readme_update": false
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/W03-evidence/baseline.json",
+      "before": "93cba8db378eb3d85aa48ba9da5ff184f78c52c2fa417a106208b1bdcae2ec0b",
+      "after": "93cba8db378eb3d85aa48ba9da5ff184f78c52c2fa417a106208b1bdcae2ec0b",
+      "unchanged": true,
+      "expected_readme_update": false
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/W03-evidence/prompt-v1.txt",
+      "before": "7c44ca66a2b06e6e84dc6ca4596bfd82082d76b23cb999e5f8814765ce813b73",
+      "after": "7c44ca66a2b06e6e84dc6ca4596bfd82082d76b23cb999e5f8814765ce813b73",
+      "unchanged": true,
+      "expected_readme_update": false
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/W03-evidence/verification.json",
+      "before": "f438c42810718569264cdcd9dce6f7c0350f1d29ce0e84d73c556e0f78776f35",
+      "after": "f438c42810718569264cdcd9dce6f7c0350f1d29ce0e84d73c556e0f78776f35",
+      "unchanged": true,
+      "expected_readme_update": false
+    }
+  ],
+  "prior_design_files_checked": 63,
+  "prior_design_files_unchanged": 63,
+  "prior_design_regression": [
+    {
+      "path": "F:/projects/website-gen/docs/design/application-page-inventory-v1.md",
+      "sha256": "c419018e941858ca9b41259e0e715cfe54b9584e74d5162b3c66dc4bddfd021b",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/prototype-groups-v1.md",
+      "sha256": "bd14b02315eac95af1ffe3126bc5ad31d35d709ac308dc9f41028fe852ee4493",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/ui-conventions-v1.md",
+      "sha256": "17586dcf47cf9e35f323be7feec0d3af4882aee487e976b3abd10eba4ea4bb16",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/scope-amendment-01-no-materials-page.md",
+      "sha256": "b1ceee664df52f901713d6b4a41c92a8748dbf3ca007fcd88c780b26883b2ba9",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/scope-amendment-02-latest-actor.md",
+      "sha256": "4b369af6654fdd82e70b48a37b38450237cb7f8d77892047ed0a3390c8b0c93a",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/scope-amendment-03-license-required.md",
+      "sha256": "6e04d2a37af9254b23bb00dba0d377a35389d92be408c2d7424865494076f75e",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/customer-business-structure-v1.md",
+      "sha256": "b4f066ffb4d9eaac05da80277e59d58718af8cf82e85c35e3a6d00b4ee05cfc4",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/catalog.json",
+      "sha256": "5be46fc732e714b7aba29301f2934f9dd4a333bedd95f670a1b493b0b56f38f6",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+      "sha256": "60fd3efbd322730a432116dfa8d5b9dddde3e165e571b8800968101a7a2e01c5",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-01-customer-dossier/C01-list-preview-v4.png",
+      "sha256": "3ce62a5609dcc158225bf5a926e8c3f0a38f1d10d6167b23ca1e11abb6fe602a",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-01-customer-dossier/C02-overview-v2.png",
+      "sha256": "104af41887e2bb2f2808873303e1a8b07d2de0aa574a853347950d145eead3f2",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-01-customer-dossier/C03-personal-v3.png",
+      "sha256": "461fd963d169852c4558ead342fe7eeab55853fee885e25b743f187fad0a9999",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C04-company-ui-v3.png",
+      "sha256": "cbde693fca6e014f2097019c4cbe48212ea4ea4a0fccd355aa04be176b41dd3c",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C05-bank-ui-v3.png",
+      "sha256": "1e5656822e6cf3cd26636a13511edd86e7076e313ccb3a4597037b47cb78071d",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-bank-ui-v3.png",
+      "sha256": "b3115e20012ce31e912198dcbc7ee926a8d988de68845b2198175b373438eeee",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C04-personal-edit-v3.png",
+      "sha256": "5ffde99df45f793404bc00b21be68ec62f665095065bb8e9e2f6a6af33be9fab",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/support/O-C04-company-edit-v2.png",
+      "sha256": "c88a4019d3499340c2d6a43928d043894ec09999face9f381a08645ad97f9667",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/support/O-C04-bank-edit-v2.png",
+      "sha256": "6e6ac2a8467c89dbf6bf9a043f83274358c12529ecc324c8db2198e61112d784",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C05-company-status-v2.png",
+      "sha256": "3ea9715faba58ca5f4cad147b688f9f1792c6a01d8e995c6466e9e6c05ae0f82",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C07-upload-v2.png",
+      "sha256": "6ffd1c858cef8b2101ef79d5c40762757ccd8d5b5df130955c8b6ba6b29d62ba",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C08-preview-v2.png",
+      "sha256": "bd7ad2bc7a71578873d0ddcadc3d4d9fab9713988c77cecac550274dbb226360",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C09-replace-v2.png",
+      "sha256": "19eacc7399c0540a2756d87d21f40312f215d3d9f309e4f9b7b32e5f76bf52a6",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C10-remove-v2.png",
+      "sha256": "8469d5b03be4c99421b2c0350014697c911d4b1462882e32778013fd2efc8d03",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C12-batch-upload-v4.png",
+      "sha256": "828e965458f590916f694a82e0351bf7fcaae777e171abaa60ad246173e2955c",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/C13-recognition-review-v4.png",
+      "sha256": "03512c4bc9787c8daa11bcec04cf88e059a8d1d377f6018e266ae48e630c6ead",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/C14-creation-results-v3.png",
+      "sha256": "7939202cbd54605b1602f2484d388506e8c3f793ed23870b1cfcaf8041edcae3",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/O-C02-duplicate-v2.png",
+      "sha256": "0588d8b445e47f54c2397b97efb9f024630d71f191cc7b2a9bd993537722ab7b",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/O-C03-differences-v2.png",
+      "sha256": "87226ae0fe967e543dd060395ecb591a43b76f87c22c71e43b1fc9c235086384",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/C12-upload-states-v2.png",
+      "sha256": "20f1cd8827537943f84b50f6e7c6faf5c60f72cc89a1aa28b53eae8d5590b951",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/onboarding/C13-manual-transcription-v2.png",
+      "sha256": "8ed27d2f12152efe9323e41dcc66c6d2a074f2a905519658350e293cb1c686c1",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-management-completion-v1/01-onboarding/C14-unknown-result-v1.png",
+      "sha256": "90322c656c78a081d532113bf6156358d774b0358605a8dbe45fa0300f155a72",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/C07-website-mail-v1.png",
+      "sha256": "d77c945427002cc16f39cbc25fa9330a8f4d26a2e725123a5cb6a0b1770cc662",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-C11-link-site-v2.png",
+      "sha256": "3e7b2c945fd5b19f2765cbd026295b96d81c75859d56b905c228c02d8e9b59f6",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-C12-link-mail-v2.png",
+      "sha256": "f2aeeec12c2bd91741268e81ed88eabf99b2dcd4270c4a490e991ff827f56193",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-C13-unlink-confirm-v2.png",
+      "sha256": "5b31be99d308ae35af0619b8dcde85f128f36fee1158b3bd7fa586c062843101",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-C14-public-info-v2.png",
+      "sha256": "e8688047b9c46354ce0ec49de4b3473a7c9009d5adc861a45461d6883f86f4e1",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/C08-review-v2.png",
+      "sha256": "623b77f127b0568c2c454d4771ee65e73c884fcbea18e4bf75762fc40400d1a3",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-G01-review-scope-v1.png",
+      "sha256": "c31f479182a431bed498c97a7debf01d141168015f259c2dd1a2aefaaa5226f8",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-G02-review-running-v1.png",
+      "sha256": "6d2cb3a282728d40ac4ed0cc78c75d218ef10d5dbf0eb07e1b2edd5139078db3",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-G03-finding-detail-v1.png",
+      "sha256": "c16a17676f912fd74912af1208eb23721a6c838a0c41008dad7d4d88dabee71c",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/C09-applications-active-v2.png",
+      "sha256": "9bcd2c1c6fb697c9e4c59bc6fe85295579395a116f8f06fbf208ff2682537850",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/C09-applications-idle-v2.png",
+      "sha256": "de71174d7c9c80dc6802cf389c9c663aa1124388bdb821ae758ec69d6697bb11",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-G04-start-application-v2.png",
+      "sha256": "1dc713c50293938d6e131f9195811731d1b76575941322a9ef56b47a1fdda473",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/support/O-C07-upload-states-v1.png",
+      "sha256": "6ccfea0ac7912de73ffd7240287ebbc4bc5ca38ad12dddb850bd16e6f7219219",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C08-preview-unavailable-v1.png",
+      "sha256": "d2ccf24da343691b210c4fd6d2c564e69613f4d80ea953ce30c11435c4abf7a2",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C08-preview-unsupported-v1.png",
+      "sha256": "494d2821a73471d0459ea0df782efb6f042c2a18dd70c07663cb927343b909a3",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C09-replace-failure-v1.png",
+      "sha256": "4ebdc1e774fc392e50ca1088fb155c5629b5a6a82b29064e9701733bb786acaa",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C10-remove-failure-v1.png",
+      "sha256": "c4036a387f7c0331822f8f1f8779b6a8388acce2f3b1207b1a11549426197113",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C04-save-failure-v1.png",
+      "sha256": "17c6fd7b3dee0c99317d928e549173a9badc767da70a6138f1554e10dff917fd",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/support/O-C15-delete-confirm-v1.png",
+      "sha256": "ec83fceaf39688e16ea5a2a14da93a21a957bd1d4677996363e3d77f309a1c62",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support/O-C16-delete-execution-v1.png",
+      "sha256": "93d49a72e487fc48ac324cdd5e8d88c94c273043ff28679db61809976db0d911",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-personal-page1-ui-v2.png",
+      "sha256": "daf8977a72192b8ed7d12df24277b5e74b2e548259c221e309bfcc426199bae8",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-personal-page2-ui-v2.png",
+      "sha256": "1a5c984ab085daa0d9a170718f42ac8bd2c9e0e3d19bbd37eee00fc354271a44",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-company-ui-v2.png",
+      "sha256": "7a99bfceb49ab37006fa9ef52ed9782aaae4d82b818a17ce853d9bba7193497c",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C10-actor-detail-ui-v2.png",
+      "sha256": "f0bd3a554cea687b168caad24eebf4d3754bcbc1456ec211cd7565fde9771e40",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C01-empty-v1.png",
+      "sha256": "2aaa3ba312518e961e4841dc62939b1806fee89e00f41b0daeba06190fb651f1",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C01-search-empty-ui-v2.png",
+      "sha256": "3fb4c56d8283d3fdd6493d8dc3f27e49e23a56f1d4eef13fbd871c3ffdaeb11c",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/C01-loading-ui-v2.png",
+      "sha256": "f637287ca810da4db61b59fc77b3a756be5d039ad03238ad94a1db1c4f6b3c4c",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C01-read-failure-v1.png",
+      "sha256": "373bc127ac434854a2293540217765f345facf97d69aae64f3459f2c7d3e6143",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C02-not-found-v1.png",
+      "sha256": "58329ac11ac4442c08c50957fbaf14c25f52e81d4a5223db385b8048007af44e",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-management-completion-v1/04-common/C02-forbidden-v1.png",
+      "sha256": "a9519237542731b9121df18f17ad64a5eb1304268d1152093f3d986172bb662f",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/O-A04-unsaved-ui-v2.png",
+      "sha256": "18737f1ab0a2095c9fa4f814db6cd0c1fc03f07635a761ed648ce4503eef05b4",
+      "unchanged": true
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/O-A05-conflict-ui-v2.png",
+      "sha256": "67816f7e4231172b8244038d576468343aa653007a0b604d678bbb44ae531397",
+      "unchanged": true
+    }
+  ],
+  "broken_readme_links": [],
+  "independent_review_ready": true,
+  "independent_review_sha256": "70664ee5c4fbd6fa801c92c42cef646851caaa02ea31ca13e11d99e10738e77e",
+  "visual_review": [
+    "W02/W03/W04 same three customers, companies, domains and commercial mailboxes",
+    "Jamie address and phone agree between W02 and W04",
+    "Jamie quantity60 priceUSD25-120 processing2-4 transit5-10 agree",
+    "Active step1/2/3 and action progression correct; no submission before confirmation",
+    "White/navy/slate style preserved; no obvious clipping",
+    "W04 misleading shared-enterprise helper fixed and compared; not pixel-identical"
+  ],
+  "generation_recovery": "First W04 run returned no result and waiting stopped; retry returned a draft; one helper-text correction generated final image; remote cancellation not claimed",
+  "rollback": {
+    "backup_matches_baseline": true,
+    "guidance": "Check subsequent edits before restoring README. New image/doc files can remain as unaccepted drafts. No live changes.",
+    "readme_backup": "F:/projects/website-gen/.tmp/website-W02-W04-prototypes-20261017/README-before-W02-W04.md"
+  },
+  "new_artifacts": [
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/W02-customer-business-info-v1.png",
+      "sha256": "65efae238acc56073d9eba8a4bd63a3b4d50a36fbeb732207b65a9f87255644d"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-design-notes.md",
+      "sha256": "89fefc93f0067945bca51e9c2dd93471d95a93bd4716227bab9bd75c112e1fe8"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/W04-confirm-start-v1.png",
+      "sha256": "a7b43b82630338c4cba7b74ea450fb84f14c96b503d885bbb0f2db75d400849b"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-evidence/baseline.json",
+      "sha256": "c6d43e83de87cfe7feb661a1935a68df477d495bcfcce04753f6a2442ce40fc6"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-evidence/design-notes-before-final-review.md",
+      "sha256": "a4465c7e1b62f0136a8cf4ce5ed88f00dc99d67862b4c06b0185d82a1b377bd7"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-evidence/generation-recovery.md",
+      "sha256": "560bb84994215dceda9f8fa3093d3388d60e940c8caf74a555daf8fec5bbf8ee"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-evidence/independent-review-before-W04.md",
+      "sha256": "8cdf0ce98ad0279e42c4db50d6d7d7be33b94381b235a42aa177fdd0ec625a0f"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-evidence/independent-review.md",
+      "sha256": "70664ee5c4fbd6fa801c92c42cef646851caaa02ea31ca13e11d99e10738e77e"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-evidence/W02-prompt-v1.txt",
+      "sha256": "523ea9ff8a12e27d7804d3bf4367e8d060a5bdff9c2ec01dafa32791d568adb3"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-evidence/W04-before-copy-fix.png",
+      "sha256": "6594abb3367326eaf28308e3b09ef3d2bab58485ec4ca2e108810c102314c8cd"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-evidence/W04-copy-fix-prompt.txt",
+      "sha256": "b0240c9a8be94e131f2a123fa84b718cb1b59ffb150741c5fe7cd83d8afd2d31"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-evidence/W04-prompt-retry-1.txt",
+      "sha256": "1d32e80c7ec6b55284bc83b94d6a4b2893ed3b08bef23d550dab9c592d27140b"
+    },
+    {
+      "path": "F:/projects/website-gen/docs/design/group-03-website-management/W02-W04-evidence/W04-prompt-v1.txt",
+      "sha256": "7cf5a3115f420272ce5865a0c69484c16c7746680902830f3a76b47e23540854"
+    }
+  ],
+  "updated_readme_sha256": "738fec490e8eb5191c859471023ebf3b8a9badbc4e7164b1565d78abad90fcd5",
+  "not_verified": [
+    "Actual form interaction",
+    "Browser keyboard/responsiveness",
+    "Real Hostinger/CJ/model business calls",
+    "Website creation and deployment",
+    "Other website module pages and exception overlays"
+  ],
+  "user_approval": "Pending layout review",
+  "application_code_written_by_this_task": false
+}

@@ -1,0 +1,21 @@
+
+> stitch-contacts@1.0.0 test
+> node --test --test-isolation=none src/lib/contacts.test.ts
+
+✔ seed data is safe, deterministic demo content (0.5189ms)
+✔ persisted contacts round-trip and corrupted content fails closed (0.9769ms)
+✔ read-only persistence never reads or overwrites unknown content (0.149ms)
+✔ persistence transaction rejects stale snapshots without writing (0.099ms)
+✔ persistence transaction catches read and write failures and returns its new snapshot (0.204ms)
+✔ filterContacts combines query and filter without mutating source (5.7086ms)
+✔ validation requires only a name and allows empty phone and email (0.1409ms)
+✔ validation checks optional formats and domain length limits (0.1615ms)
+✔ upsert, favorite toggle, and remove return new values (0.1805ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 38.695

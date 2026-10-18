@@ -1,0 +1,41 @@
+{
+  "type": "Static visual design draft; not interactive and not implemented",
+  "date": "2026-10-16 America/Los_Angeles",
+  "generation": "Built-in image_gen",
+  "scope": "Three key screens; existing visual tokens; fictional example data",
+  "assets": [
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-key-pages-v1\\01-customer-list.png",
+      "sha256": "DB0DFB8757270A1CAF209EF678D92F8FFD195F0A8406210A27472EEA11723466",
+      "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-6d7e3daf-690d-4573-98a5-98eef2b85f5d.png"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-key-pages-v1\\02-customer-dossier.png",
+      "sha256": "47EBD951DA7538CB55CE7446DA53357932F1A0C3757D675812B4C74C9E789D0D",
+      "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-79516b71-55a1-40fd-9bb7-9fc916e64e96.png"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-key-pages-v1\\03-batch-license-review.png",
+      "sha256": "2673C4A115D9873AC5A79E3D647F407026BDCB61488901DC7B5C3569F4FA38BE",
+      "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-5545990c-3299-4204-8660-90dd4baba243.png"
+    }
+  ],
+  "businessBaselineUnchanged": true,
+  "backendConnected": false,
+  "runtimeTests": "not run",
+  "rollback": "Only new artifacts were created in this directory. Original generated images and business source files remain unchanged. To roll back, remove only these new artifacts after hash verification; no production deployment exists.",
+  "visualReview": {
+    "scope": "Actual inspection of three final images and consistency with agreed business rules",
+    "status": "passed",
+    "notValidated": [
+      "interaction",
+      "permissions",
+      "runtime state transitions",
+      "real OCR or remote services"
+    ]
+  },
+  "supportingDocuments": [
+    "F:\\projects\\website-gen\\docs\\design\\customer-key-pages-v1\\README.md",
+    "F:\\projects\\website-gen\\docs\\design\\customer-key-pages-v1\\design-brief.md"
+  ]
+}

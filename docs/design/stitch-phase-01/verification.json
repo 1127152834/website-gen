@@ -1,0 +1,54 @@
+{
+  "checked_at_utc": "2026-10-17T16:18:04.992810+00:00",
+  "local_checks": {
+    "json_parse": "PASS",
+    "unique_screen_keys": 54,
+    "catalog_source_mapping": "54/54",
+    "source_images_unchanged_sha256": "54/54",
+    "catalog_unchanged_sha256": true,
+    "groups": {
+      "01-core": 14,
+      "02-onboarding": 8,
+      "03-links": 12,
+      "04-support": 8,
+      "05-common": 12
+    },
+    "reference_kinds": {
+      "main_reference": 13,
+      "overlay_reference": 29,
+      "state_reference": 12
+    },
+    "required_forbidden_exact_overlap": 0,
+    "required_forbidden_substring_overlap": 0,
+    "business_cross_review": "Reviewed DESIGN, BUSINESS, MASTER-PROMPT and all 54 screen specs; repaired wording conflicts. Remote output fidelity unverified."
+  },
+  "remote_checks": {
+    "list_projects_http_status": 401,
+    "authentication": "FAIL_INVALID_API_KEY",
+    "project_created": false,
+    "screens_created": 0,
+    "remote_write_calls_sent": 0,
+    "visual_fidelity": "NOT_RUN",
+    "prototype_navigation": "NOT_RUN",
+    "original_request_complete": false
+  },
+  "rollback": "New design folder only; original prototypes unchanged; no remote assets created.",
+  "boundaries": [
+    "No application source changes",
+    "No deployment",
+    "No global MCP configuration changes",
+    "No real customer data uploaded",
+    "No secrets saved"
+  ],
+  "hashes": {
+    "DESIGN.md": "98fffe14ac403cd7662480b68788b0fb94a05b1061b8ea33e261043409b87260",
+    "BUSINESS.md": "8e6afe883079958f8971fcca81e5558648c2317bdf2af36f1c09195c565f9256",
+    "MASTER-PROMPT.md": "32c7311b611bd0acfc0e3d2bde3ad71a2b11f10217e7aeb062bf703b489186c3",
+    "source-baseline.json": "19001b74b9b3a7c9889760ee7aa7c5806c4b6da81a8e399be6b6855162e057f6",
+    "connection-status.json": "139a4a332e9347f6ce7057fa2130d049105fd89e35023d2079eb8a78eeea3201",
+    "migration-manifest.json": "37d6e6847e33a03f26381443d8b4859ea05ac508650ae20526cbf1de5e128d03",
+    "prompts/core-common.json": "c53dae99c557b23c487d3d3adf003e4ed3294bd92277f4b466726b76bd8c0e41",
+    "prompts/links.json": "0205f3df086099d3e748045eb263d6bb48b2850f543f94b4627fd1e4418f7037",
+    "prompts/onboarding-support.json": "c349f69c0682b3f2da386da2c467028bd64589e4bfba5c92fad0ed943fe2963b"
+  }
+}

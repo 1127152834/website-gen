@@ -1,0 +1,234 @@
+[
+  {
+    "id": "G01",
+    "title": "网关申请工作台",
+    "prompt": "Draw one standalone 1490 × 1056 desktop prototype for the screen below. Do not create a collage. Use Chinese interface labels exactly as specified and the supplied common application style. This is fictional DEMO data, not evidence of a real submission or provider result.\n\nDesign a global gateway application workspace with search, platform and application-owner filters, and one calm table. Show exactly two application rows for Alex Morgan, C001, Northline LLC. APP-001 is Stripe, approved on 10/12/2026 14:20 PT, application owner 王芳. APP-002 is PayPal, started 10/16/2026, currently awaiting documents, application owner 李敏, latest evidence 10/17/2026 09:20 PT. Their shared customer completion remains completed because the Stripe approval is valid. Use one row per application, not one row per customer; show customer, platform, application ID, current owner, application status, source, and updated time. Include current and history filters without hiding the distinction between the two records. A top action selects a customer before starting an internal record; it must not start a second active application for Alex. Row actions open the same application detail used by the customer dossier.\n\nKeep the primary action unambiguous and all identifiers readable. Do not add a customer owner, reassignment controls, payment testing, an independent materials page, or automatic external application submission. Preserve the specified distinction between current records and immutable application snapshots.\n\nExact visible Chinese copy:\n标题「网关申请」；筛选「全部」「在办」「已结束」；列名「客户 / 企业」「支付平台」「申请编号」「申请负责人」「申请状态」「状态来源」「更新时间（PT）」「操作」；状态「已获批」「待补件」；客户说明「客户已完成 · 首个有效获批：Stripe · 10/12/2026」；按钮「开始申请」「查看申请」。",
+    "reference_kind": "gateway_workspace",
+    "required_states": [
+      "正常申请工作台",
+      "同一客户历史获批与唯一在办分行",
+      "客户完成状态独立"
+    ]
+  },
+  {
+    "id": "G02",
+    "title": "单次申请详情概览",
+    "prompt": "Draw one standalone 1490 × 1056 desktop prototype for the screen below. Do not create a collage. Use Chinese interface labels exactly as specified and the supplied common application style. This is fictional DEMO data, not evidence of a real submission or provider result.\n\nDesign the overview of APP-002, the PayPal application for Alex Morgan C001, Northline LLC, northline.example, hello@northline.example. Repeat this identity in a compact fixed header. Show application owner 李敏, start time 10/16/2026 14:00 PT, current status awaiting documents, and latest update 10/17/2026 09:20 PT from email AI. A separate customer indicator remains completed through the valid Stripe APP-001 approval dated 10/12/2026 14:20 PT. Provide tabs for overview, emails and explicit requests, status history, and immutable snapshot. The main content separates application facts, source evidence, and a short internal snapshot summary of 26 fields and 9 attachments saved at the start. Offer links to the original email, customer dossier, commercial mailbox, and snapshot. Manual correction and ending this application are secondary actions. Do not put a start-another-application primary button on this active record.\n\nKeep the primary action unambiguous and all identifiers readable. Do not add a customer owner, reassignment controls, payment testing, an independent materials page, or automatic external application submission. Preserve the specified distinction between current records and immutable application snapshots.\n\nExact visible Chinese copy:\n页签「概览」「邮件与明确要求」「状态与纠正记录」「申请定稿」；标签「申请负责人」「客户已完成」「PayPal · 待补件」「来源：邮件 AI」；动作「查看原邮件」「打开客户档案」「打开邮箱」「查看申请定稿」「人工纠正」「结束本次申请」；说明「系统只记录申请与资料定稿，仍需人工向支付平台办理。」",
+    "reference_kind": "gateway_detail",
+    "required_states": [
+      "PayPal待补件",
+      "Alex已完成仍有后续申请",
+      "人工外部办理边界"
+    ]
+  },
+  {
+    "id": "G03",
+    "title": "申请邮件与明确要求",
+    "prompt": "Draw one standalone 1490 × 1056 desktop prototype for the screen below. Do not create a collage. Use Chinese interface labels exactly as specified and the supplied common application style. This is fictional DEMO data, not evidence of a real submission or provider result.\n\nDesign the emails and explicit requests tab of Alex's PayPal APP-002. Keep the same identity, completed customer indicator, and waiting-for-documents application state. Display a short evidence list and one selected request, not a second inbox implementation. Use fictional email E-102, received 10/17/2026 09:20 PT at hello@northline.example, subject Additional statements for APP-002. Its exact body excerpt is: “Please provide bank statements for July, August, and September 2026.” Summarize only that explicit requirement as the three completed calendar months 07/2026–09/2026. No deadline is present in the source, so display no specified deadline rather than inventing a date. The current dossier contains two statement files, but uploading them is not evidence of sending or acceptance. Separate source, employee handling record, and correspondence status. Give original-email, request-details, and reply-in-mailbox actions. Do not recommend unrelated next steps.\n\nKeep the primary action unambiguous and all identifiers readable. Do not add a customer owner, reassignment controls, payment testing, an independent materials page, or automatic external application submission. Preserve the specified distinction between current records and immutable application snapshots.\n\nExact visible Chinese copy:\n标题「邮件与明确要求」；要求「提供 07/2026–09/2026 银行对账单」；期限「邮件未注明期限」；文件说明「当前档案有 2 份流水，上传不等于已发送。」；状态「待处理」「尚未记录发送」；动作「查看原邮件」「查看要求」「去邮箱回复」「关联邮件」。",
+    "reference_kind": "gateway_detail",
+    "required_states": [
+      "有明确原文的补件要求",
+      "没有明确期限",
+      "上传与发送和平台确认分开"
+    ]
+  },
+  {
+    "id": "G04",
+    "title": "申请状态与纠正记录",
+    "prompt": "Draw one standalone 1490 × 1056 desktop prototype for the screen below. Do not create a collage. Use Chinese interface labels exactly as specified and the supplied common application style. This is fictional DEMO data, not evidence of a real submission or provider result.\n\nDesign an evidence-backed application history for Alex's PayPal APP-002. Use a readable vertical sequence or clean table, with before and after statuses, source, operator, timestamp, and evidence link. Show four records: internal application and snapshot saved on 10/16/2026 14:00 PT by 李敏; email E-100 incorrectly classified as approval at 17:00; 李敏 corrected that interpretation to under review at 17:10 with a reason; new email E-102 on 10/17/2026 09:20 explicitly requested July through September statements and advanced the record to awaiting documents. Preserve the original email and the correction record; do not rewrite either. Alex remains completed throughout because Stripe APP-001 is independently approved. Explain that replaying the already handled E-100 does not override the correction, whereas new attributable evidence can advance the application. Keep evidence actions visible and avoid a material-edit audit trail.\n\nKeep the primary action unambiguous and all identifiers readable. Do not add a customer owner, reassignment controls, payment testing, an independent materials page, or automatic external application submission. Preserve the specified distinction between current records and immutable application snapshots.\n\nExact visible Chinese copy:\n标题「状态与纠正记录」；列「时间（PT）」「状态变化」「来源 / 操作人」「依据」；记录「已获批 → 审核中」「审核中 → 待补件」；说明「新邮件可继续推进；重复处理旧邮件不覆盖人工纠正。」；提示「客户仍已完成：Stripe APP-001 有效获批。」；动作「查看原邮件」「查看纠正说明」。",
+    "reference_kind": "gateway_detail",
+    "required_states": [
+      "人工纠正事实",
+      "后续新邮件继续推进",
+      "旧邮件重复不覆盖"
+    ]
+  },
+  {
+    "id": "G02-snapshot",
+    "title": "申请时点定稿",
+    "prompt": "Draw one standalone 1490 × 1056 desktop prototype for the screen below. Do not create a collage. Use Chinese interface labels exactly as specified and the supplied common application style. This is fictional DEMO data, not evidence of a real submission or provider result.\n\nDesign the immutable snapshot tab of PayPal APP-002 for Alex Morgan C001. The snapshot was confirmed by 李敏 on 10/16/2026 14:00 PT, with 李敏 also the application owner at that time. Clearly separate these roles from each field's last successful operator. Show a compact summary of 26 saved fields and 9 saved attachments, then a category navigation and a readable company-and-bank sample. Company legal name is Northline LLC, company address 260 Demo Blvd, Austin, TX 78702, and commercial mailbox hello@northline.example. Use explicitly fictional EIN text and never show a full SSN. Include independent operator and date columns for sample fields and files, with a detail link. Note that one current attachment was replaced later but the snapshot retains its original bytes and attribution. Provide only copying, viewing, and single-file downloading; no editing, replacement, deletion, or restoration of a material version.\n\nKeep the primary action unambiguous and all identifiers readable. Do not add a customer owner, reassignment controls, payment testing, an independent materials page, or automatic external application submission. Preserve the specified distinction between current records and immutable application snapshots.\n\nExact visible Chinese copy:\n标题「申请定稿 · 只读」；摘要「26 项字段」「9 份附件」「定稿时间：10/16/2026 14:00 PT」「定稿确认操作人：李敏」「当时申请负责人：李敏」；列「资料项」「定稿值」「操作人」「操作时间」「查看」；EIN「DEMO-EIN」；SSN「未展示 · DEMO」；说明「当前档案后续修改，不会重写本次定稿。」",
+    "reference_kind": "gateway_detail",
+    "required_states": [
+      "26字段9附件的只读时点记录",
+      "当前档案变更不回写",
+      "当时归因可查"
+    ]
+  },
+  {
+    "id": "O-G-snapshot-preview",
+    "title": "申请定稿附件预览",
+    "prompt": "Draw one standalone 1490 × 1056 desktop prototype for the screen below. Do not create a collage. Use Chinese interface labels exactly as specified and the supplied common application style. This is fictional DEMO data, not evidence of a real submission or provider result.\n\nDesign one large read-only attachment preview drawer over a subdued PayPal APP-002 snapshot page. The foreground identifies Alex Morgan C001, the application, and the exact snapshot timestamp 10/16/2026 14:00 PT. Preview a deliberately generic PDF page watermarked DEMO, titled bank-statement-2026-07.pdf, not a realistic bank document or credential. Show the file's saved operator 王芳 and recorded upload time 10/02/2026 10:30 PT. Distinguish this file attribution from snapshot confirmer 李敏 and application owner 李敏. A restrained note explains that the current dossier later replaced its corresponding attachment, while this snapshot remains unchanged. The only file actions are download, zoom or page navigation, and close. Do not display replace, remove, delete, restore-version, or upload controls, even on the background where they might be confused with this file. Keep the snapshot-only identity near the preview title, not merely in a distant footer.\n\nKeep the primary action unambiguous and all identifiers readable. Do not add a customer owner, reassignment controls, payment testing, an independent materials page, or automatic external application submission. Preserve the specified distinction between current records and immutable application snapshots.\n\nExact visible Chinese copy:\n标题「申请定稿附件 · 只读」；副标题「Alex Morgan · C001 · PayPal APP-002」；标签「定稿保存文件」「操作人：王芳」「10/02/2026 10:30 PT」；提示「这是申请当时保存的文件，不是当前档案附件。」；说明「当前文件后续替换，不影响此定稿。」；按钮「下载此文件」「关闭」。",
+    "reference_kind": "snapshot_preview_drawer",
+    "required_states": [
+      "只读定稿文件",
+      "无替换删除",
+      "当时文件归因"
+    ]
+  },
+  {
+    "id": "O-G05",
+    "title": "人工更新或纠正申请状态",
+    "prompt": "Draw one standalone 1490 × 1056 desktop prototype for the screen below. Do not create a collage. Use Chinese interface labels exactly as specified and the supplied common application style. This is fictional DEMO data, not evidence of a real submission or provider result.\n\nDesign a manual status correction drawer for a separate customer, Casey Parker C005, Meadow Home LLC, meadow-home.example, hello@meadow-home.example. This is APP-003 with Stripe, the customer's only application in this scenario, owned by 李敏. The current recorded status is approved due to an incorrect email interpretation at 10/17/2026 11:00 PT. Show original email E-300: “Your documents have been received. Your application remains under review.” The selected corrected status is under review. Include a required reason already filled to explain that receipt of documents is not approval, an evidence link, and the read-only current operator 李敏. Show an explicit before-and-after preview: no other valid approvals exist, therefore customer completed will change to incomplete when this correction succeeds. State that no other active application exists. Keep the save action distinct from preview and allow canceling without changing official values. Never apply this incomplete outcome to Alex.\n\nKeep the primary action unambiguous and all identifiers readable. Do not add a customer owner, reassignment controls, payment testing, an independent materials page, or automatic external application submission. Preserve the specified distinction between current records and immutable application snapshots.\n\nExact visible Chinese copy:\n标题「人工纠正申请状态」；客户「Casey Parker · C005」；现值「已获批」；目标下拉「审核中」；理由「原邮件仅确认材料收到，未批准申请。」；预览「客户状态：已完成 → 未完成」「其他有效获批：0」「其他在办申请：0」；说明「保存成功后同步重算客户状态；后续新邮件仍可推进。」；按钮「取消」「保存纠正」。",
+    "reference_kind": "correction_drawer",
+    "required_states": [
+      "Casey唯一误判获批纠正预览",
+      "无其他在办",
+      "保存前后明确"
+    ]
+  },
+  {
+    "id": "O-G06",
+    "title": "结束本次申请确认",
+    "prompt": "Draw one standalone 1490 × 1056 desktop prototype for the screen below. Do not create a collage. Use Chinese interface labels exactly as specified and the supplied common application style. This is fictional DEMO data, not evidence of a real submission or provider result.\n\nDesign a centered confirmation modal for ending Alex Morgan's PayPal APP-002, currently awaiting documents and owned by 李敏. The dimmed background is that exact application detail, not a customer deletion screen. Show platform, application identifier, current status, and owner before the editable reason. Use an explicit internal outcome of terminated or withdrawn as a record label, with a filled fictional reason that the team has decided not to continue this attempt. Make clear that this action does not communicate with PayPal or prove the external platform has withdrawn the case. Explain that the active slot is released only after the internal change saves successfully. The existing Stripe approval remains valid, so Alex's completed status will remain completed. Keep original emails and the immutable snapshot available as history; do not delete either. Provide one confirm-ending primary action and a cancel action, without presenting the change as already complete.\n\nKeep the primary action unambiguous and all identifiers readable. Do not add a customer owner, reassignment controls, payment testing, an independent materials page, or automatic external application submission. Preserve the specified distinction between current records and immutable application snapshots.\n\nExact visible Chinese copy:\n标题「结束本次申请？」；对象「PayPal · APP-002」；字段「结束方式」「原因」「操作人：李敏」；选项「终止记录」；说明「仅结束系统内记录，不代表平台端撤回成功。」；影响「保存成功后释放在办名额。客户仍已完成，Stripe 获批记录保留。」；按钮「取消」「确认结束」。",
+    "reference_kind": "gateway_modal",
+    "required_states": [
+      "只结束内部记录",
+      "不声称远端撤回",
+      "释放在办需成功保存"
+    ]
+  },
+  {
+    "id": "O-G07",
+    "title": "邮件与申请关联确认",
+    "prompt": "Draw one standalone 1490 × 1056 desktop prototype for the screen below. Do not create a collage. Use Chinese interface labels exactly as specified and the supplied common application style. This is fictional DEMO data, not evidence of a real submission or provider result.\n\nDesign a mailbox-evidence association drawer over Alex's PayPal APP-002. The selected fictional email E-102 was received at hello@northline.example on 10/17/2026 09:20 PT and explicitly mentions APP-002 and July through September statements. Show its subject and a compact original-text excerpt. Next to that evidence, provide two existing application candidates belonging to the same customer: Stripe APP-001, approved, and PayPal APP-002, awaiting documents. Select PayPal because the platform and identifier match, not merely because the commercial mailbox matches. Show customer, company, domain, and identifiers clearly enough to confirm the relationship. State that only this selected email will be associated and that no new application, customer, or second active slot is created. Include a pending-review alternative if the employee cannot establish ownership. Confirmation must not assert that materials have been sent or that the gateway has approved anything. Provide cancel, retain-pending, and confirm-association controls.\n\nKeep the primary action unambiguous and all identifiers readable. Do not add a customer owner, reassignment controls, payment testing, an independent materials page, or automatic external application submission. Preserve the specified distinction between current records and immutable application snapshots.\n\nExact visible Chinese copy:\n标题「确认邮件归属」；分组「原邮件」「关联到已有申请」；候选「Stripe · APP-001 · 已获批」「PayPal · APP-002 · 待补件」；提示「相同邮箱不等于同一次申请，需核对平台与申请编号。」；范围「仅关联本封邮件，不新建申请。」；按钮「取消」「保持待核对」「确认关联」。",
+    "reference_kind": "gateway_drawer",
+    "required_states": [
+      "归属核对",
+      "邮箱相同不足以确认",
+      "仅关联选定邮件"
+    ]
+  },
+  {
+    "id": "O-G08",
+    "title": "明确要求与处理记录",
+    "prompt": "Draw one standalone 1490 × 1056 desktop prototype for the screen below. Do not create a collage. Use Chinese interface labels exactly as specified and the supplied common application style. This is fictional DEMO data, not evidence of a real submission or provider result.\n\nDesign a single-request detail drawer for Alex's PayPal APP-002, sourced from email E-102 received 10/17/2026 09:20 PT. Display the exact excerpt requesting bank statements for July, August, and September 2026. Translate that into the requested completed-month range 07/2026–09/2026, and explicitly show that the email supplied no deadline. Separate three evidence layers: the platform's original request; customer current files selected by an employee; and the actual correspondence or handling record. Show two current statement files for July and September, with their individual last operators and dates, but do not claim that this request is satisfied or automatically deduce another task from file count. In this screenshot no sending event is recorded. Provide a link to open the commercial mailbox reply composer rather than a send button inside this drawer. Allow a written handling note and evidence association without changing the original email or immutable starting snapshot.\n\nKeep the primary action unambiguous and all identifiers readable. Do not add a customer owner, reassignment controls, payment testing, an independent materials page, or automatic external application submission. Preserve the specified distinction between current records and immutable application snapshots.\n\nExact visible Chinese copy:\n标题「明确要求与处理记录」；要求「07/2026–09/2026 银行对账单」；期限「邮件未注明」；分组「来源原文」「关联的当前资料」「处理记录」；文件「bank-statement-2026-07.pdf」「bank-statement-2026-09.pdf」；状态「已关联资料 · 尚未记录发送」；说明「上传或关联文件不等于已发送，发送也不等于平台认可。」；按钮「去邮箱回复」「保存处理说明」。",
+    "reference_kind": "gateway_drawer",
+    "required_states": [
+      "原文明确月份",
+      "材料已上传但未发送",
+      "不虚构期限"
+    ]
+  },
+  {
+    "id": "O-G09",
+    "title": "纠正前的在办冲突",
+    "prompt": "Draw one standalone 1490 × 1056 desktop prototype for the screen below. Do not create a collage. Use Chinese interface labels exactly as specified and the supplied common application style. This is fictional DEMO data, not evidence of a real submission or provider result.\n\nDesign a conflict preflight modal for a separate Casey Parker C005 branch, not the normal Casey correction example and never Alex. APP-003 with Stripe was mistakenly recorded approved at 10/17/2026 11:00 PT; a later Zen Payments APP-004 started at 12:00 and is currently under review. The employee now proposes correcting APP-003 to under review, which would create two active applications. Display both records, their owners 李敏 and 王芳, and their timestamps. Explicitly state that this proposed correction has not yet been applied. Preserve the entered evidence and reason while preventing a silent transition to a second active record. Show the projected customer completion becoming incomplete after a valid correction, not a false already-saved result. Provide links to inspect each application and resolve or explicitly end the later attempt through its own confirmation flow. Disable the apply-correction action until the conflict is resolved. Never automatically terminate, delete, or reassign either application.\n\nKeep the primary action unambiguous and all identifiers readable. Do not add a customer owner, reassignment controls, payment testing, an independent materials page, or automatic external application submission. Preserve the specified distinction between current records and immutable application snapshots.\n\nExact visible Chinese copy:\n标题「在办申请冲突，纠正尚未应用」；原申请「Stripe · APP-003 · 当前记录已获批 → 拟改为审核中」；已有在办「Zen Payments · APP-004 · 审核中」；提示「将出现 2 条在办申请。请先人工处理现有在办记录。」；预览「纠正生效后，客户状态将重算为未完成。」；按钮「返回继续核对」「查看在办申请」；禁用按钮「应用纠正」。",
+    "reference_kind": "gateway_conflict_modal",
+    "required_states": [
+      "独立Casey冲突分支",
+      "纠正未应用",
+      "先处理唯一在办约束"
+    ]
+  },
+  {
+    "id": "O-G10",
+    "title": "事项身份确认与误归组拆分",
+    "prompt": "Draw one standalone 1490 × 1056 desktop prototype for the screen below. Do not create a collage. Use Chinese interface labels exactly as specified and the supplied common application style. This is fictional DEMO data, not evidence of a real submission or provider result.\n\nDesign a focused evidence regrouping modal for Alex Morgan's two existing applications. The source email item is currently grouped with Stripe APP-001, but selected email E-102 explicitly names PayPal APP-002. Show source and target identities, their platform, application identifier, customer, and domain. Present a short list of three source events, with only E-102 selected for movement; leave the actual Stripe approval evidence E-001 dated 10/12/2026 14:20 PT and its receipt event unselected. A visible scope count says one event is being reassociated. The target is the already existing PayPal APP-002, not a new case or new application. Explain that regrouping selected evidence does not rewrite original email content, automatically move every email at the same domain, erase Stripe's valid approval, or mark Alex incomplete. If no reliable target can be established, retain a pending-identity state. Use explicit confirm-selected and cancel actions, with a compact impact summary above them.\n\nKeep the primary action unambiguous and all identifiers readable. Do not add a customer owner, reassignment controls, payment testing, an independent materials page, or automatic external application submission. Preserve the specified distinction between current records and immutable application snapshots.\n\nExact visible Chinese copy:\n标题「确认事项身份 / 拆分误归组邮件」；分组「原事项：Stripe · APP-001」「目标事项：PayPal · APP-002」；范围「已选择 1 条事件」；提示「仅重新关联所选证据，原邮件内容不变。」；保护说明「Stripe 有效获批及客户已完成状态不受影响。」；按钮「取消」「确认重新关联所选事件」。",
+    "reference_kind": "gateway_modal",
+    "required_states": [
+      "仅拆分选定证据",
+      "不搬迁同域名全部邮件",
+      "不改业务结果"
+    ]
+  },
+  {
+    "id": "O-G11",
+    "title": "分类与待办纠正",
+    "prompt": "Draw one standalone 1490 × 1056 desktop prototype for the screen below. Do not create a collage. Use Chinese interface labels exactly as specified and the supplied common application style. This is fictional DEMO data, not evidence of a real submission or provider result.\n\nDesign a correction drawer for one analysis result attached to email E-102 in Alex's PayPal APP-002. Keep original email evidence read-only on top, followed by an original-versus-corrected comparison. The incorrect extracted task says a full bank account history is required; the corrected task says statements for July through September 2026, exactly matching the original request. Its category remains document request, and the deadline field remains unspecified because the email has none. Provide a filled reason explaining the narrower original wording, read-only operator 李敏, and the time 10/17/2026 10:05 PT. Explain that this saves a correction to the selected classification or handling item, not the original email, the customer's current financial records, or all tasks. A secondary action may view or revoke the last manual decision, but must require its own confirmation rather than silently applying an undo. If the item has changed concurrently, use the shared conflict treatment instead of overwriting.\n\nKeep the primary action unambiguous and all identifiers readable. Do not add a customer owner, reassignment controls, payment testing, an independent materials page, or automatic external application submission. Preserve the specified distinction between current records and immutable application snapshots.\n\nExact visible Chinese copy:\n标题「纠正分类与明确要求」；分组「原值」「修正值」「原邮件依据」；原值「提供全部历史流水」；修正值「提供 07/2026–09/2026 银行对账单」；分类「补充材料」；期限「未注明」；理由「按原文限定月份，不扩大要求。」；说明「只修正此项分析结果，不改写原邮件。」；按钮「取消」「保存纠正」；次级入口「查看最近人工决定」。",
+    "reference_kind": "gateway_drawer",
+    "required_states": [
+      "只修选定分析结果",
+      "原文不改",
+      "不自动撤销全部事项"
+    ]
+  },
+  {
+    "id": "O-G12",
+    "title": "要求处理结果记录",
+    "prompt": "Draw one standalone 1490 × 1056 desktop prototype for the screen below. Do not create a collage. Use Chinese interface labels exactly as specified and the supplied common application style. This is fictional DEMO data, not evidence of a real submission or provider result.\n\nDesign a compact result-recording modal for one explicit request in Alex's PayPal APP-002. The background is the request list, not the mailbox composer. Show request identity REQ-01 and its original statement requirement for 07/2026–09/2026. In this separate later handling scene, the employee is recording an already sent reply, supported by fictional outbound email OUT-201 at 10/17/2026 10:30 PT from hello@northline.example. Let the result selector distinguish reply sent, action completed, ignored with reason, and blocked. Select reply sent and display an evidence picker plus a concise employee note. Keep operator 李敏 system-recorded. Explicitly preserve the difference between recording a send event and the platform acknowledging or approving the material. Do not change the whole application's status to approved, close all other requests, or mark all customer materials accepted. Offer save-record and cancel, with no actual send control or automatic download in this modal.\n\nKeep the primary action unambiguous and all identifiers readable. Do not add a customer owner, reassignment controls, payment testing, an independent materials page, or automatic external application submission. Preserve the specified distinction between current records and immutable application snapshots.\n\nExact visible Chinese copy:\n标题「记录本项处理结果」；要求「REQ-01 · 07/2026–09/2026 银行对账单」；结果「已发送回复」；证据「OUT-201 · 10/17/2026 10:30 PT」；字段「处理说明」「操作人：李敏」；提示「已发送不等于平台已认可；其他未完成要求保持开放。」；按钮「取消」「保存处理记录」。",
+    "reference_kind": "gateway_modal",
+    "required_states": [
+      "发送事实不等于平台认可",
+      "逐项记录",
+      "其他要求保持开放"
+    ]
+  },
+  {
+    "id": "O-G04-concurrent",
+    "title": "申请开始并发冲突",
+    "prompt": "Draw one standalone 1490 × 1056 desktop prototype for the screen below. Do not create a collage. Use Chinese interface labels exactly as specified and the supplied common application style. This is fictional DEMO data, not evidence of a real submission or provider result.\n\nDesign a conflict result modal after two employees attempted to start a gateway application for Alex Morgan. One request successfully created PayPal APP-002 and its immutable snapshot at 10/16/2026 14:00 PT with application owner 李敏. The other request did not create any additional application. Show that existing record, platform, owner, and creation time, with a clear explanation that another employee's successful save changed eligibility while this form was open. Preserve the losing employee's context without presenting a second saved application, a second snapshot, or a duplicate active slot. The pending platform selection is not a new official record. State that review results are only advisory; the blocking reason here is the single-active-application rule, not missing AI review. Provide one action to open the effective APP-002 record and a secondary return-to-customer action. Do not offer an immediate retry or a bypass button that could create a duplicate.\n\nKeep the primary action unambiguous and all identifiers readable. Do not add a customer owner, reassignment controls, payment testing, an independent materials page, or automatic external application submission. Preserve the specified distinction between current records and immutable application snapshots.\n\nExact visible Chinese copy:\n标题「已有在办申请，本次未重复创建」；对象「Alex Morgan · C001」；记录「PayPal · APP-002」「申请负责人：李敏」「10/16/2026 14:00 PT」；说明「另一项开始操作已先成功保存。每位客户同时只能有一条在办申请。」；提示「本次未新增申请或资料定稿。」；按钮「返回客户档案」「打开已生效申请」。",
+    "reference_kind": "gateway_conflict_modal",
+    "required_states": [
+      "已有在办已生效",
+      "本次未重复创建",
+      "仅查看已生效记录"
+    ]
+  },
+  {
+    "id": "O-G04-unknown",
+    "title": "申请与定稿保存结果未知",
+    "prompt": "Draw one standalone 1490 × 1056 desktop prototype for the screen below. Do not create a collage. Use Chinese interface labels exactly as specified and the supplied common application style. This is fictional DEMO data, not evidence of a real submission or provider result.\n\nDesign an unknown-result state immediately after Alex's attempt to start PayPal APP-002 and save its snapshot. This is a separate capture of the 10/16/2026 14:00 PT start operation, not a second application after the already active record. Display a pending client request identifier REQ-START-002, intended customer, platform, commercial mailbox, selected application owner 李敏, and the original request time. Do not treat the intended APP-002 identifier as confirmed server success. A network response was unavailable, so the system cannot yet say whether the application and snapshot saved together. Explain that official success requires both records to exist; partial or unknown results must be verified before retrying. Show a status-check action and a safe return action, with repeat-start disabled. Do not show a success toast, a newly occupied active slot, a confirmed failure, or invented progress percentages. Keep the entered scope intact while waiting for reliable lookup.\n\nKeep the primary action unambiguous and all identifiers readable. Do not add a customer owner, reassignment controls, payment testing, an independent materials page, or automatic external application submission. Preserve the specified distinction between current records and immutable application snapshots.\n\nExact visible Chinese copy:\n标题「保存结果待核实」；状态「申请记录：结果未知」「资料定稿：结果未知」；请求「REQ-START-002」；拟创建「PayPal · APP-002（待核实）」；说明「暂未收到明确结果，不代表保存失败。请先核实，避免重复开始。」；按钮「返回客户档案」「核实保存结果」；禁用「重新开始申请」。",
+    "reference_kind": "gateway_unknown_modal",
+    "required_states": [
+      "结果未知不报失败或成功",
+      "先核验再决定",
+      "禁止重复开始"
+    ]
+  },
+  {
+    "id": "O-G05-approved-correction-result",
+    "title": "唯一获批被纠正后的结果",
+    "prompt": "Draw one standalone 1490 × 1056 desktop prototype for the screen below. Do not create a collage. Use Chinese interface labels exactly as specified and the supplied common application style. This is fictional DEMO data, not evidence of a real submission or provider result.\n\nDesign the successful correction result for Casey Parker C005, Meadow Home LLC, meadow-home.example, hello@meadow-home.example. This is the normal standalone APP-003 scenario with no APP-004 and no other active application. Stripe APP-003 was mistakenly marked approved at 10/17/2026 11:00 PT; 李敏 corrected it to under review at 13:20 using email E-300, whose text only confirms document receipt and continued review. Show a compact saved-result strip followed by the updated application detail. The application now is under review and the customer is incomplete because zero valid approvals remain. Preserve the original misinterpretation in the status history and provide the original-email and correction-record links. The application owner remains 李敏, and the starting snapshot remains unchanged. Make it clear that this is a correction of internal recorded status, not a reversal performed on Stripe's remote systems. Do not show Alex or his valid approval in this customer context.\n\nKeep the primary action unambiguous and all identifiers readable. Do not add a customer owner, reassignment controls, payment testing, an independent materials page, or automatic external application submission. Preserve the specified distinction between current records and immutable application snapshots.\n\nExact visible Chinese copy:\n标题「纠正已保存」；客户「Casey Parker · C005」；申请「Stripe · APP-003 · 审核中」；客户状态「未完成」；摘要「有效获批：0」「其他在办申请：0」；记录「操作人：李敏 · 10/17/2026 13:20 PT」；说明「客户状态已按有效获批记录重新计算；申请定稿不变。」；按钮「查看纠正记录」「返回申请」。",
+    "reference_kind": "gateway_detail_result",
+    "required_states": [
+      "Casey唯一获批失效",
+      "客户未完成",
+      "Alex不受影响"
+    ]
+  },
+  {
+    "id": "G04-new-email-after-correction",
+    "title": "人工纠正后的新邮件推进",
+    "prompt": "Draw one standalone 1490 × 1056 desktop prototype for the screen below. Do not create a collage. Use Chinese interface labels exactly as specified and the supplied common application style. This is fictional DEMO data, not evidence of a real submission or provider result.\n\nDesign a focused history state for Alex's PayPal APP-002 showing what happens after a manual correction. The earlier email E-100 was wrongly interpreted as approval at 10/16/2026 17:00 PT; 李敏 corrected the application to under review at 17:10. A genuinely new email E-102 arrived on 10/17/2026 09:20 PT and explicitly requested bank statements for July, August, and September 2026. Show the transition from under review to awaiting documents with the new email's identifier, time, original excerpt, and AI source. Beneath it, show a subdued duplicate-processing entry for old E-100 that was not applied again. The old correction and evidence remain readable, and no rule permanently locks the application against future mail. Customer Alex remains completed because Stripe APP-001 is still independently valid. Keep the update tied to this existing application rather than starting another case or occupying a new active slot.\n\nKeep the primary action unambiguous and all identifiers readable. Do not add a customer owner, reassignment controls, payment testing, an independent materials page, or automatic external application submission. Preserve the specified distinction between current records and immutable application snapshots.\n\nExact visible Chinese copy:\n标题「新邮件已推进申请状态」；状态变化「审核中 → 待补件」；来源「邮件 AI · E-102 · 10/17/2026 09:20 PT」；旧记录「E-100 重复处理 · 未再次应用」；说明「人工纠正保留；新邮件依据仍可推进。」；客户提示「客户仍已完成：Stripe APP-001 有效获批。」；动作「查看新邮件原文」「查看人工纠正记录」。",
+    "reference_kind": "gateway_detail_state",
+    "required_states": [
+      "新邮件证据继续推进",
+      "旧邮件重复被忽略",
+      "Alex仍已完成"
+    ]
+  },
+  {
+    "id": "C09-current-proofs",
+    "title": "当前客户补充证明",
+    "prompt": "Draw one standalone 1490 × 1056 desktop prototype for the screen below. Do not create a collage. Use Chinese interface labels exactly as specified and the supplied common application style. This is fictional DEMO data, not evidence of a real submission or provider result.\n\nDesign a current-customer supplementary-proof drawer opened from Alex Morgan's gateway tab. Its header says current dossier, with Alex C001 and Northline LLC; PayPal APP-002 may appear as the entry context but must not imply these files belong exclusively to that application. Display three file rows: fulfillment-agreement-demo.pdf, inventory-demo.jpg, and other-proof-demo.pdf. Each row has type, filename, last successful operator, operation date, and actions. Use 李敏 for the agreement, 王芳 for the inventory photo, and 陈杰 for the other proof, with explicit DEMO filenames and ordinary completed dates. Keep each attachment independently attributed instead of assigning the entire section to the newest uploader. Offer upload, view, replace, remove, and single-file download through shared file controls. State that replacing current material does not change an existing application snapshot and that storing or viewing files does not send them to the payment platform. Do not restore a standalone materials navigation page.\n\nKeep the primary action unambiguous and all identifiers readable. Do not add a customer owner, reassignment controls, payment testing, an independent materials page, or automatic external application submission. Preserve the specified distinction between current records and immutable application snapshots.\n\nExact visible Chinese copy:\n标题「补充证明 · 当前档案」；类别「履行协议」「库存照片」「其他证明」；列「文件」「类别」「操作人」「操作时间」「操作」；入口「上传文件」；行操作「查看」「更多」；提示「仅管理客户当前资料，不自动发送给平台。已有申请定稿不受后续替换影响。」；日期「10/12/2026」「10/15/2026」「10/16/2026」。",
+    "reference_kind": "current_proofs_drawer",
+    "required_states": [
+      "客户当前资料而非申请专属副本",
+      "多份操作归因",
+      "不自动发送"
+    ]
+  },
+  {
+    "id": "G01-empty",
+    "title": "网关申请筛选无结果",
+    "prompt": "Draw one standalone 1490 × 1056 desktop prototype for the screen below. Do not create a collage. Use Chinese interface labels exactly as specified and the supplied common application style. This is fictional DEMO data, not evidence of a real submission or provider result.\n\nDesign the empty-result variation of the global gateway application workspace, using the same columns and filter structure as G01. The underlying DEMO workspace still contains Alex's approved Stripe APP-001 and active PayPal APP-002. Select a rejected-status filter that matches neither record, and leave the search input empty. Show a clear central filtered-empty message with a reset-filters action, not a message claiming the system has no applications or customers. Preserve the rejected filter visibly so the cause of emptiness is understandable. Keep the top application-start entry contextual: choosing it must still require a customer eligibility check and cannot bypass Alex's active application. Do not place fake empty row placeholders with customer data, and do not show a failure or loading indicator because this screenshot represents a successful query with zero matches. Use a restrained empty-state layout rather than a decorative illustration, with enough table context to compare directly with the populated screen.\n\nKeep the primary action unambiguous and all identifiers readable. Do not add a customer owner, reassignment controls, payment testing, an independent materials page, or automatic external application submission. Preserve the specified distinction between current records and immutable application snapshots.\n\nExact visible Chinese copy:\n标题「网关申请」；筛选「申请状态：已拒绝」；空状态「没有符合当前筛选条件的申请」；辅助说明「清除筛选后可查看已有申请。」；按钮「清除筛选」；页脚「当前结果 0 条」；顶部入口「开始申请」。",
+    "reference_kind": "gateway_workspace_empty",
+    "required_states": [
+      "筛选空不是系统无申请",
+      "保留当前筛选",
+      "不隐藏Alex已存在申请事实"
+    ]
+  },
+  {
+    "id": "G02-read-failure",
+    "title": "申请详情部分读取失败",
+    "prompt": "Draw one standalone 1490 × 1056 desktop prototype for the screen below. Do not create a collage. Use Chinese interface labels exactly as specified and the supplied common application style. This is fictional DEMO data, not evidence of a real submission or provider result.\n\nDesign a partial-read failure state for Alex's PayPal APP-002 detail page. The application identity, owner 李敏, start date 10/16/2026, waiting-for-documents status, commercial mailbox, and valid Stripe-based customer completion have loaded successfully and remain visible. Only the immutable snapshot summary section failed to load. Inside that section show a restrained inline error with a retry control; do not replace the whole page with an error screen, show stale data from another customer, or label the snapshot nonexistent. Explain that the record may exist and that its contents are temporarily unavailable. Do not invent zero saved fields or zero files. Keep the original-email and customer-dossier links usable as visual actions outside the failed region. Avoid a second attempt to start the application or regenerate a snapshot, because this is a reading problem rather than proof of creation failure. The snapshot tab can remain navigable with its own retry behavior, not an unverified success badge.\n\nKeep the primary action unambiguous and all identifiers readable. Do not add a customer owner, reassignment controls, payment testing, an independent materials page, or automatic external application submission. Preserve the specified distinction between current records and immutable application snapshots.\n\nExact visible Chinese copy:\n标题「PayPal · APP-002」；客户「Alex Morgan · C001」；状态「待补件」「客户已完成」；失败区标题「申请定稿」；错误「暂时无法读取定稿内容」；说明「读取失败不代表没有定稿，请稍后重试。」；按钮「重新读取」；保留「查看原邮件」「打开客户档案」。",
+    "reference_kind": "gateway_detail_partial_error",
+    "required_states": [
+      "身份和状态已读",
+      "仅定稿摘要失败",
+      "不把失败当无资料"
+    ]
+  }
+]
+

@@ -1,0 +1,127 @@
+{
+  "version": 1,
+  "generated_on": "10/17/2026",
+  "status": "prompt_ready_not_generated",
+  "scope": "仅原21网关场景审阅中确认的3项必要状态；不新增业务路由、权限或能力。",
+  "sources": [
+    {
+      "path": "evidence/review-gateway-prompts.md",
+      "section": "4. 有限 essential queue",
+      "evidence": "E1/E2/E3"
+    },
+    {
+      "path": "prompts/gateway-scenes.json",
+      "sha256": "7A9B287AA15F0B9865342BBCDD5632DD2998DB2018C33B1CBBC3E4A609EA5E9D"
+    },
+    {
+      "path": "plans/gateway-demo-data.md",
+      "sha256": "CE0BEE02AD73B2C946DE505EC2A6BAA24874E5C2D7568AE4426FBFF684871EF1"
+    }
+  ],
+  "count": 3,
+  "items": [
+    {
+      "id": "G04-first-valid-approval",
+      "parent": "G04",
+      "title": "首个有效获批后的客户完成联动",
+      "status": "awaiting_generation",
+      "prompt_file": "prompts/gateway-state-scenes.json",
+      "english_word_count": 211,
+      "evidence_id": "E1",
+      "existing_scene_relation": {
+        "ids": [
+          "G04",
+          "O-G05-approved-correction-result"
+        ],
+        "gap": "现有场景展示先前有效批准或误判纠正，没有首个有效获批让未完成变已完成的明确联动。"
+      },
+      "branch": "Casey正常APP-003分支，13:20纠正后15:00收到E-301明确批准；无APP-004。",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/C09-applications-active-v2.png"
+      ],
+      "required_content": [
+        "Casey C005 / Meadow Home LLC / Stripe APP-003；正常分支无 APP-004",
+        "10/17/2026 13:20 PT 人工纠正后 15:00 PT 新明确获批邮件 E-301",
+        "审核中→已获批 与 未完成→已完成分别展示",
+        "邮件 AI 来源与申请负责人李敏分开",
+        "有效获批1、在办0；原误判、纠正记录、开始定稿均保留",
+        "不使用 Alex 已有 Stripe 批准冒充首次完成；不声称远程提交或测试付款"
+      ],
+      "existing_image": null
+    },
+    {
+      "id": "G04-ended-mail-guard",
+      "parent": "G04",
+      "title": "申请结束后迟到邮件不重开记录",
+      "status": "awaiting_generation",
+      "prompt_file": "prompts/gateway-state-scenes.json",
+      "english_word_count": 212,
+      "evidence_id": "E2",
+      "existing_scene_relation": {
+        "ids": [
+          "O-G06",
+          "G04-new-email-after-correction"
+        ],
+        "gap": "结束前确认和在办申请的新邮件推进均未显示结束保存后不复活。"
+      },
+      "branch": "Alex独立结束分支，16:00成功终止APP-002，16:20重放E-102不应用。",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/C09-applications-active-v2.png"
+      ],
+      "required_content": [
+        "Alex / APP-002 独立结束后分支；Stripe APP-001 10/12/2026 获批仍有效",
+        "10/17/2026 16:00 PT 终止已保存，16:20 旧 E-102 重放未应用",
+        "原邮件时间09:20与处理时间16:20区分",
+        "当前已终止、在办0、未新建替代申请",
+        "只读证据和定稿保留；无自动复活、无平台撤回成功承诺"
+      ],
+      "existing_image": null
+    },
+    {
+      "id": "O-G11-revoke-confirm",
+      "parent": "O-G11",
+      "title": "撤销单项人工处理决定确认",
+      "status": "awaiting_generation",
+      "prompt_file": "prompts/gateway-state-scenes.json",
+      "english_word_count": 207,
+      "evidence_id": "E3",
+      "existing_scene_relation": {
+        "ids": [
+          "O-G11"
+        ],
+        "gap": "已有查看最近人工决定入口，不等于撤销单项决定的影响确认已绘制。"
+      },
+      "branch": "Alex独立早期分支，10:00误标完成，10:10撤销确认；未发生10:30 OUT-201。",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/C09-applications-active-v2.png",
+        "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/O-A04-unsaved-ui-v2.png"
+      ],
+      "required_content": [
+        "Alex APP-002 / REQ-01；独立10:10分支早于 OUT-201",
+        "选定10:00错误完成决定；当前已完成→撤销后待处理",
+        "邮件要求仍为07/2026–09/2026；不撤销正确月份修正",
+        "理由、只读操作人李敏和具体时间；取消/确认",
+        "未实际发送的证据说明；不承诺撤回真实邮件",
+        "原邮件/其他要求/申请状态/客户状态/定稿不变；并发复用 O-A05"
+      ],
+      "existing_image": null
+    }
+  ],
+  "guardrails": [
+    "唯一在办约束不放松；结束后的邮件不会自动新建或复活申请。",
+    "申请负责人和字段/文件操作人不同；客户无固定负责人。",
+    "首获批使用Casey正常分支，不把Alex仍有Stripe批准的客户改未完成。",
+    "撤销处理标记不撤回邮件，不改原文或定稿；O-A04/O-A05继续复用。",
+    "每项为静态图目标，生成后仍需视觉复核；无真实系统执行证据。"
+  ],
+  "baseline": {
+    "new_files_absent_before_write": true,
+    "modified_existing_files": [],
+    "backup": "无需覆盖备份；目标为新增文件，原来源文件保留原样。"
+  },
+  "rollback": "仅移除本次新增 prompts/gateway-state-scenes.json 与 plans/gateway-state-queue.json；不触碰现有图或索引。"
+}
+

@@ -1,0 +1,38 @@
+{
+  "state": "paused_tool_outage_not_user_goal_pause",
+  "as_of": "2026-10-17T23:34:25Z",
+  "valid": {
+    "M01": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M01-v2.png",
+    "M02": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M02-v2.png",
+    "M03": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M03-v3.png",
+    "M05": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M05-v4.png",
+    "M06": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M06-v2.png"
+  },
+  "counts": {
+    "static_pass": 5,
+    "needs_copy_fix": 1,
+    "pending_generation": 14
+  },
+  "failures": [
+    {
+      "target": "M07-v2",
+      "attempt": 1,
+      "duration_seconds": 35.8
+    },
+    {
+      "target": "M07-v2",
+      "attempt": 2,
+      "duration_seconds": 23.6
+    },
+    {
+      "target": "M08-v1",
+      "attempt": 1,
+      "duration_seconds": 38.1
+    }
+  ],
+  "error": "image generation failed: connection failed: error sending request",
+  "hanging_calls": 0,
+  "next": "Wait for parent recovery notification; retry saved M07 minimal correction then M08/M04 and overlays/states. No fallback.",
+  "source_prompts": "prompts/*-v1-mail-render.txt and M07-v2-mail-actual-prompt.txt",
+  "owned_ledger": "evidence/mail-screen-ledger.jsonl"
+}

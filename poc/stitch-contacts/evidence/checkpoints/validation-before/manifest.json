@@ -1,0 +1,17 @@
+[
+  {
+    "file": "src/data/mockData.ts",
+    "sha256": "BF2CA9C3335D4B9356570606CFB3B173E722CB5BD640D3C5898A162FAB0AFE7A",
+    "bytes": 6006
+  },
+  {
+    "file": "src/lib/contacts.ts",
+    "sha256": "A15A5B9BD68542E4BE1834EB345F572F36D94F9D29400BDC1B335E17BB607F1E",
+    "bytes": 5264
+  },
+  {
+    "file": "src/lib/contacts.test.ts",
+    "sha256": "BC82EB9F669CBA693CDDECDF1DBFE118AFFCD466AE07D8E3B5D95CD2A4BC14DD",
+    "bytes": 5121
+  }
+]

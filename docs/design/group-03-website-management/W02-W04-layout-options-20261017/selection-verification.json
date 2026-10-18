@@ -1,0 +1,109 @@
+{
+  "verified_at_utc": "2026-10-17T19:35:39.9769140Z",
+  "status": "PASS_DOCUMENTATION_SELECTION_ONLY",
+  "selected": {
+    "W02": {
+      "choice": 3,
+      "key": "bulk-workbook",
+      "file": "W02-option-03.png"
+    },
+    "W04": {
+      "choice": 1,
+      "key": "manifest-summary",
+      "file": "W04-option-01.png"
+    }
+  },
+  "implementation_authorized": false,
+  "images_unchanged": 14,
+  "prior_design_files_unchanged": 63,
+  "backup_baseline": "F:\\projects\\website-gen\\.tmp\\website-layout-selection-20261017-122911\\baseline.json",
+  "changed_existing_documents": [
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "before": "5bec45bbb410d6dc64c8fd293f16634c5d3e0d47f35cbf7e97a8ddeaf2f72a40",
+      "after": "d15145aced9d8167205292c972c38d71f401bfacbd424b311d4f2c109da54460",
+      "backup": "F:\\projects\\website-gen\\.tmp\\website-layout-selection-20261017-122911\\1-README.md"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\README.md",
+      "before": "5d29ddc71ff1d4e1b04be479e37d89e8cbfba195d7c5ec2232b52fb3a5ee34f3",
+      "after": "80551a8922c7d668b6662862438c0349dfd364e269ea96ba2b0dca3fdc0046ec",
+      "backup": "F:\\projects\\website-gen\\.tmp\\website-layout-selection-20261017-122911\\2-README.md"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\manifest.json",
+      "before": "5b83affaf3125018b22403233dbd50babc177085426d9bd91b850672e3baba09",
+      "after": "67427b10e4b06ae094c426847821279e8e20616cb1d2236856751e5f273a2564",
+      "backup": "F:\\projects\\website-gen\\.tmp\\website-layout-selection-20261017-122911\\3-manifest.json"
+    }
+  ],
+  "selection_document_sha256": "889d53a0dadfde3ba5e708c62a5b144cb81a447144946eaff8afc025f8c88f1a",
+  "image_hashes": [
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-customer-business-info-v1.png",
+      "sha256": "65efae238acc56073d9eba8a4bd63a3b4d50a36fbeb732207b65a9f87255644d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W03-site-configuration-v1.png",
+      "sha256": "ce0fcc7052fc017fd3733cc0ec6d7a9139c7e772722446dbaeec46379fa4ecde"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W04-confirm-start-v1.png",
+      "sha256": "a7b43b82630338c4cba7b74ea450fb84f14c96b503d885bbb0f2db75d400849b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-evidence\\W04-before-copy-fix.png",
+      "sha256": "6594abb3367326eaf28308e3b09ef3d2bab58485ec4ca2e108810c102314c8cd"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-customer-tabs-before-wording-fix.png",
+      "sha256": "630af1223fa0551e71f8ef2448699af5308ba6b217795d78858438f349f953cf"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-dossier-split-before-wording-fix.png",
+      "sha256": "0f5606768d5aa7863f4cf9e14fdb0e91a17668096d9730c10c4a1416ecc11535"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-option-01.png",
+      "sha256": "6ab7cb1bbd491f7b96bb51c9074f7a270ecc3b7afac07f3aefde69bfb2a3960e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-option-02.png",
+      "sha256": "1ee5c8019461b12a004ab7bf13f4cc03ede87bdc249c513906fba547d6ee19b7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-option-03.png",
+      "sha256": "32c7f005ff6d688fca8a2bb2cddf1daaa15e11395d83e826841bf1005252670b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-comparison-columns-before-checkbox-fix.png",
+      "sha256": "459173d4c7f70ba7be664a0044d63bbae952e5f0d71eb22e0bd450ecdee2acb8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-manifest-summary-before-dedup.png",
+      "sha256": "af2b950bddc66a6e878bd1461c3e6b15fbbb9df5b71bf334a604fcd62de9e409"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-option-01.png",
+      "sha256": "ec9934bbaf5f3bf1b58a70d3b97a78f9beb01f850a83935888488df3dcfcc447"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-option-02.png",
+      "sha256": "428111f557dead9f13ae3d9c5e1981c895b88883bdf1550e5412e17d69370286"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-option-03.png",
+      "sha256": "ad09f7ec14483881f531cd6b3793020765a6f3930b38480fed49bda328498fe7"
+    }
+  ],
+  "markdown_link_count": 45,
+  "peer_review": "Read-only reviewer confirmed W02 choice 3 bulk-workbook and W04 choice 1 manifest-summary mapping; full-batch count and validation must not depend on viewport.",
+  "not_verified": [
+    "Large-list scrolling",
+    "Actual provider batch limit",
+    "Responsive layout",
+    "Interactive submission"
+  ],
+  "deployment": "None",
+  "rollback": "Restore only the three backed-up documents after checking current diffs; preserve all images and unrelated work."
+}

@@ -1,0 +1,5 @@
+Edit this UI image surgically. Preserve absolutely every other element: same canvas dimensions, all colors, typography, spacing, full sidebar, navigation, header, 3-step progress, all client data and IDs, table layout, expanded Jamie panel, company address, phone, numerical parameters, warning, checkbox and footer buttons. No redesign, no new controls, no changed field values.
+ONLY change one small gray helper sentence directly UNDER the two blue links "修改经营资料 | 修改站点配置", in the TOP RIGHT of the expanded "Jamie Chen · 启动前核对" panel, approximately x1140..1435 y512 in this 1490x1056 image.
+The CURRENT incorrect sentence there reads "这将返回相应步骤，无法修改共享的企业资料。".
+REPLACE that one sentence with the exact correct Chinese sentence "返回对应步骤，保留其他客户的配置。".
+The product has no shared enterprise form, so remove the misleading shared-enterprise wording. Keep this corrected sentence the same small slate-blue style and alignment as the original. Keep the two blue action links above completely unchanged. All other pixels and text should remain as close as possible to input.

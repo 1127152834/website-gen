@@ -26,17 +26,27 @@ export const EMAIL = `support@${DOMAIN}`;
 export const RESOURCES = join(import.meta.dirname, "../../resources");
 export const THEME_VERSION = /Version:\s*([\d.]+)/.exec(readFileSync(join(RESOURCES, "theme/obel/style.css"), "utf8"))![1];
 
-export function setup() {
+export function setup(options: { cachedMailbox?: { accountId?: number; address?: string; domain?: string; password: string } } = {}) {
   const db = openDb(":memory:");
   migrate(db);
   db.prepare("INSERT INTO hostinger_accounts (id, label, token_ciphertext, token_hint, status, created_at) VALUES (1, '主账号', ?, 'abcd', 'ok', 0)").run(seal(key, "tok"));
+  if (options.cachedMailbox?.accountId === 2)
+    db.prepare("INSERT INTO hostinger_accounts (id, label, token_ciphertext, token_hint, status, created_at) VALUES (2, '其他账号', ?, 'efgh', 'ok', 0)").run(seal(key, "other-token"));
   db.prepare("INSERT INTO hosting_orders VALUES (1, 1010129013, 'hostinger_unlimited_v6', 'active', '2026-10-03')").run();
   db.prepare("INSERT INTO domains VALUES (1, 7, ?, 'domain', 'active', '2027-10-01', '2026-10-01')").run(DOMAIN);
+  if (options.cachedMailbox) {
+    const accountId = options.cachedMailbox.accountId ?? 1;
+    const address = options.cachedMailbox.address ?? EMAIL;
+    const domain = options.cachedMailbox.domain ?? DOMAIN;
+    db.prepare(`INSERT INTO mailboxes(account_id,order_id,remote_id,address,domain,status,credential_ciphertext)
+      VALUES (?, 'OR1', ?, ?, ?, 'active', ?)`)
+      .run(accountId, `cached-${accountId}`, address, domain, seal(key, JSON.stringify({ address, password: options.cachedMailbox.password })));
+  }
   const form: BatchForm = {
     entity: { kind: "company", name: "Nordic Paws LLC", address: "1 Main St, Austin, TX 78701", supportEmail: "auto", phone: "+1 512 555 0100", processingDays: [1, 3], transitDays: [5, 10] },
-    sites: [{ domain: DOMAIN, categories: "dog beds, pet blankets", count: 2, priceMin: null, priceMax: null, brand: "" }],
+    sites: [{ domain: DOMAIN, supportEmail: EMAIL, categories: "dog beds, pet blankets", count: 2, priceMin: null, priceMax: null, brand: "" }],
   };
-  const { siteIds } = createBatch(db, form, 0);
+  const { siteIds } = createBatch(db, form, 0, [{ domain: DOMAIN, accountId: 1, mailboxes: [{ address: EMAIL }], defaultEmail: EMAIL }]);
   return { db, siteId: siteIds[0] };
 }
 
@@ -50,9 +60,9 @@ export function fakeHostinger(opts: { websiteAlreadyThere?: boolean } = {}) {
     // Hostinger 新站默认装的插件；卸载是异步的，下一次列表才消失
     plugins: new Map<string, string>([["hostinger", "active"], ["hostinger-ai-assistant", "active"], ["hostinger-easy-onboarding", "active"], ["hostinger-reach", "active"]]),
     uninstallQueued: [] as string[],
-    // 邮箱：域名有一个邮箱订单，还没有邮箱；DNS 只有 Hostinger 的默认 MX 和 SPF，缺 DKIM 和 DMARC
+    // 邮箱：域名有一个已申请的 active 邮箱；流水线只复核，绝不会代替用户创建邮箱
     mailOrders: [{ id: "OR1", status: "active", domain: { name: DOMAIN } }],
-    mailboxes: [] as { id: string; address: string; status: string }[],
+    mailboxes: [{ id: "AC1", address: EMAIL, status: "active" }] as { id: string; address: string; status: string }[],
     aliases: [] as { address: string }[],
     zone: [
       { name: "@", type: "MX", ttl: 14400, records: [{ content: "5 mx1.hostinger.com.", is_disabled: false }, { content: "10 mx2.hostinger.com.", is_disabled: false }] },
@@ -67,6 +77,8 @@ export function fakeHostinger(opts: { websiteAlreadyThere?: boolean } = {}) {
     st.calls.push(op);
     const params = p as Record<string, any>;
     switch (op) {
+      case "domains_portfolio_list":
+        return [{ domain: DOMAIN, status: "active" }];
       case "hosting_websites_list": {
         const data = [...st.websites].filter((d) => !params.domain || d === params.domain).map((domain) => ({ domain, username: "u1" }));
         return { data, meta: { total: data.length } };

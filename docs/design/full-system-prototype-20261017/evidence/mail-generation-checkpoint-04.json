@@ -1,0 +1,27 @@
+{
+  "checked_at": "2026-10-18T02:23:22.5054209-07:00",
+  "scope": "mail20 static only",
+  "known_active_handles": [],
+  "terminated_handle": "functions cell145",
+  "retry_result": "O-M02 returned in28.5sec before interruption",
+  "generated_unarchived_source": "C:/Users/zhang/.codex/generated_images/01a14ace-7420-7e00-b94d-5339b13da3b6/exec-37e2b3ab-4f3a-44a6-8b14-5d4bc0526e6e.png",
+  "source_sha256": "D8624F5C31A55E743E979B5C1D2933A833E9E1DD763304E9FA33D39E9D8D3600",
+  "counts": {
+    "static_pass": 10,
+    "generated_not_archived": 1,
+    "pending_generation": 9
+  },
+  "pending_ids": [
+    "O-M05",
+    "O-M06",
+    "O-M07",
+    "O-M08",
+    "O-M09",
+    "ES01",
+    "ES02",
+    "ES03",
+    "ES04"
+  ],
+  "backup": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\backups\\mail-handoff-20261018-022322",
+  "handoff": "root takes remaining generation and review writes; this agent makes no further image calls"
+}

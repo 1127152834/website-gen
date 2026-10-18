@@ -1,0 +1,46 @@
+[
+  {
+    "path": "src/App.tsx",
+    "sha256": "84165928642EBF44B53618340D106902C73C8A5878123F16CBE29EE66A99B93C"
+  },
+  {
+    "path": "src/hooks/usePresentation.ts",
+    "sha256": "9882EAE34336E09E3E26CA465A77439D140EF4B21D98018625C79D3E68F6A3EC"
+  },
+  {
+    "path": "src/components/Avatar.tsx",
+    "sha256": "63235E09A2CDB24F6CA5477175BE920E0808304C0DA4D170316397D5A6CE30E1"
+  },
+  {
+    "path": "src/components/ContactDetail.tsx",
+    "sha256": "DA9CF789A9F0C9EF181F86D02968C960DA0ACD02A13DBF7E8610027D0254C160"
+  },
+  {
+    "path": "src/components/ContactEditor.tsx",
+    "sha256": "45AF78EC04613073148FDD9EC4DF18C4A8B3972F6496307BC393CC720B656DE3"
+  },
+  {
+    "path": "src/components/ContactList.tsx",
+    "sha256": "E349F10D297AE9053254DA3CB82558FFEAC5963F41830BCC95B34CCB4BB15833"
+  },
+  {
+    "path": "src/components/DeleteDialog.tsx",
+    "sha256": "EEC690A6713439EF83E16C0DC2DD427508F655B664B1047224B4F0CF5B5046CB"
+  },
+  {
+    "path": "src/components/DetailDialog.tsx",
+    "sha256": "015F2E7DC73C98FEE1375F195D55804789FC258BE21C3BBC5C28227BAF407560"
+  },
+  {
+    "path": "src/components/Favorites.tsx",
+    "sha256": "812774B489DF519694E66C7D26D5207D4FECA6978ACBDF95B67DE56CB734F002"
+  },
+  {
+    "path": "src/components/SearchBar.tsx",
+    "sha256": "4B7CFF3F6C81C75F3B2CF66780F8F019D09D95BDE73D51B4548B89504D6BD3A2"
+  },
+  {
+    "path": "src/components/Sidebar.tsx",
+    "sha256": "1515E04EC1DD7A2936A9D1617F5E7D6AD5CA265BFD954D7ED26C4E7C6E04F02C"
+  }
+]

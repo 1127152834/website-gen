@@ -1,0 +1,22 @@
+[
+  {
+    "file": "evidence/mail-root-generated-independent-review.json",
+    "backup": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\backups\\mail-final-review-20261018-032356\\mail-root-generated-independent-review.json",
+    "sha256": "5AAA70A55EF74082B527D77912487CB1013EFACDC1C8262E77E8822786A79D5A"
+  },
+  {
+    "file": "evidence/mail-root-generated-independent-review.md",
+    "backup": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\backups\\mail-final-review-20261018-032356\\mail-root-generated-independent-review.md",
+    "sha256": "EFEC94270C7BE0F3AB98B934E7821B202231DF2DAC33AC9C4BD1AD598EA9739B"
+  },
+  {
+    "file": "evidence/mail-review-results.json",
+    "backup": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\backups\\mail-final-review-20261018-032356\\mail-review-results.json",
+    "sha256": "14F23A62C4F1B7A7859549AF7FB4AC5265C3F39FB1C3249EBA577010B46423A5"
+  },
+  {
+    "file": "evidence/mail-module-regression.md",
+    "backup": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\backups\\mail-final-review-20261018-032356\\mail-module-regression.md",
+    "sha256": "068CAD0A67013479CB25D85F73F5EDF968B9D0FE51225101D1EEBDBF19D25450"
+  }
+]

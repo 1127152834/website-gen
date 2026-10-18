@@ -1,0 +1,71 @@
+{
+  "notes": [
+    "Narrow view dates follow specified design: Stripe approval10/12, PayPal start10/16, not a latest-status timestamp.",
+    "Forced password form shows no bypass; session expired distinct from temporarily unverified identity; no business data exposed.",
+    "Existing originals retained; no application code or live service validation."
+  ],
+  "date": "10/18/2026 PT",
+  "passed": 7,
+  "interaction_verified": false,
+  "method": "Direct view_image of all7 current images; compared3 targeted fixes to prior originals; read current prompts",
+  "issues": 0,
+  "items": [
+    {
+      "id": "C09-idle",
+      "image": "screens/C09-idle-v4.png",
+      "sha256": "c65571154c8e93870d98c9b24c90d682320fc9d6842d097dcc0e8208ec2f28a7",
+      "status": "independent_static_review_pass",
+      "reviewer": "root",
+      "notes": "普通导航/标签恢复深蓝灰蓝，页头时间：PT；无在办、客户已完成、Stripe APP-001及王芳/日期/1-1-1未变。"
+    },
+    {
+      "id": "O-G04",
+      "image": "screens/O-G04-v4.png",
+      "sha256": "9512d3c610a53b5005530b682358773857b38e853fe45ffc14b59bbd56eef9c6",
+      "status": "independent_static_review_pass",
+      "reviewer": "root",
+      "notes": "附件列头文件/操作日期/操作人齐；三份文件/日期/归因、3/9、26/9未变；两复选框未勾，保存禁用。"
+    },
+    {
+      "id": "O-G12",
+      "image": "screens/O-G12-v2.png",
+      "sha256": "4be87c9c6a7134bda11c2198e8067b4efdc1d328703e1c7bd07d2614655b4dcb",
+      "status": "independent_static_review_pass",
+      "reviewer": "root",
+      "notes": "删除18/500；说明只记录OUT-201回复发送，不声称三个月流水齐备；APP-002待补件及客户完成未变。"
+    },
+    {
+      "id": "A03-forced",
+      "image": "screens/A03-forced-v1.png",
+      "sha256": "e3f4a202fba26f5b996d4f246ff9067f84b91b1de3e3007943d1a3f80a2c0809",
+      "status": "independent_static_review_pass",
+      "reviewer": "root",
+      "notes": "强制模式明确；三密码字段遮蔽与可见性入口；须修改成功才可入系统；仅退出登录/保存新密码；不编造密码长度或会话撤销成功。"
+    },
+    {
+      "id": "A01-session-expired",
+      "image": "screens/A01-session-expired-v1.png",
+      "sha256": "6845ba1d6e8b070bc0e2df757bb1c385eacb33dce84b4e31e558987cb14c3f7a",
+      "status": "independent_static_review_pass",
+      "reviewer": "root",
+      "notes": "确定失效；没有客户内容或半透明泄露；仅重新登录，提示未提交且可能重填，无自动恢复/重放承诺。"
+    },
+    {
+      "id": "A01-identity-recheck-failed",
+      "image": "screens/A01-identity-recheck-failed-v1.png",
+      "sha256": "786e6b80eeec3a66a79899e083096fd98afc47050ab6935a08fef83f0cd1c333",
+      "status": "independent_static_review_pass",
+      "reviewer": "root",
+      "notes": "暂未确认与已失效分开；主重试、次返回登录；受保护操作暂停，数据隐藏；无无限加载/真实身份或成功标记。"
+    },
+    {
+      "id": "A01-narrow-navigation",
+      "image": "screens/A01-narrow-navigation-v2.png",
+      "sha256": "08da379aa6d3df78c1b851f5e15069b6b0b47aa598bdb2d7a4cef251727b5ac2",
+      "status": "independent_static_review_pass",
+      "reviewer": "root",
+      "notes": "单窄视口、折叠菜单与返回；APP-002和申请负责人李敏归于申请，Stripe APP-001历史明确，商业邮箱完整，无客户级负责人。"
+    }
+  ],
+  "reviewer": "root"
+}

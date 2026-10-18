@@ -22,6 +22,13 @@ export interface AbandonDeps {
   stopDomain(domain: string): void | Promise<void>;
   emit?(event: { siteId: string | null; kind: "step" | "warn" | "error"; payload: Record<string, unknown> }): void;
   now?: () => number;
+  triageLifecycleHooks?: AbandonLifecycleHooks;
+}
+
+export interface AbandonLifecycleHooks {
+  invalidateScope(input: { mailboxIds: number[]; reason: "abandon" }, now: number): { abortSourceIds: string[] };
+  invalidateSource(sourceId: string, reason: "explicit_delete", now: number): void;
+  abortSources?(sourceIds: string[]): void;
 }
 
 export interface AbandonStatus {
@@ -58,6 +65,7 @@ export function queueAbandon(
   db: DatabaseSync,
   input: { domain: string; confirmation: string; siteId?: number | null; accountId?: number | null },
   now = Date.now(),
+  lifecycle?: Pick<AbandonLifecycleHooks, "invalidateScope" | "abortSources">,
 ): { jobId: number } {
   const domain = domainName(input.domain);
   if (!domain || !domain.includes(".")) throw new Error("请输入有效域名");
@@ -81,6 +89,7 @@ export function queueAbandon(
     WHERE r.domain = ? COLLATE NOCASE ORDER BY r.job_id DESC LIMIT 1`).get(domain) as { job_id: number } | undefined;
   if (existing) return { jobId: existing.job_id };
 
+  let abortSourceIds: string[] = [];
   db.exec("BEGIN");
   try {
     const jobId = enqueue(db, ABANDON_JOB, siteId, now);
@@ -91,7 +100,12 @@ export function queueAbandon(
     db.prepare(`INSERT INTO abandoned_domains (domain, abandoned_at, abandon_job_id) VALUES (?, ?, ?)
       ON CONFLICT(domain) DO UPDATE SET abandoned_at = excluded.abandoned_at, abandon_job_id = excluded.abandon_job_id`)
       .run(domain, now, jobId);
+    if (lifecycle) {
+      const mailboxIds = (db.prepare("SELECT id FROM mailboxes WHERE domain=? COLLATE NOCASE ORDER BY id").all(domain) as { id: number }[]).map((row) => row.id);
+      abortSourceIds = lifecycle.invalidateScope({ mailboxIds, reason: "abandon" }, now).abortSourceIds;
+    }
     db.exec("COMMIT");
+    try { lifecycle?.abortSources?.(abortSourceIds); } catch { /* 已撤 fence；abort 是提交后最佳努力。 */ }
     return { jobId };
   } catch (error) {
     db.exec("ROLLBACK");
@@ -200,12 +214,20 @@ function uniqueSubscription(items: unknown[], predicate: (item: unknown) => bool
 async function localMail(deps: AbandonDeps, domain: string): Promise<string> {
   await deps.stopDomain(domain);
   const count = (deps.db.prepare("SELECT count(*) AS n FROM mailboxes WHERE domain = ? COLLATE NOCASE").get(domain) as { n: number }).n;
+  const mailboxIds = (deps.db.prepare("SELECT id FROM mailboxes WHERE domain=? COLLATE NOCASE ORDER BY id").all(domain) as { id: number }[]).map((row) => row.id);
+  const sourceIds = mailboxIds.length ? (deps.db.prepare(`SELECT id FROM mail_triage_sources WHERE mailbox_id IN (${mailboxIds.map(() => "?").join(",")}) ORDER BY id`).all(...mailboxIds) as { id: string }[]).map((row) => row.id) : [];
+  let abortSourceIds = sourceIds;
   deps.db.exec("BEGIN");
   try {
+    if (deps.triageLifecycleHooks) {
+      abortSourceIds = deps.triageLifecycleHooks.invalidateScope({ mailboxIds, reason: "abandon" }, deps.now?.() ?? Date.now()).abortSourceIds;
+      for (const sourceId of sourceIds) deps.triageLifecycleHooks.invalidateSource(sourceId, "explicit_delete", deps.now?.() ?? Date.now());
+    }
     deps.db.prepare("UPDATE mailboxes SET monitoring = 0, credential_ciphertext = NULL WHERE domain = ? COLLATE NOCASE").run(domain);
     deps.db.prepare("DELETE FROM mailboxes WHERE domain = ? COLLATE NOCASE").run(domain);
     deps.db.prepare("UPDATE sites SET mailbox_ciphertext = NULL WHERE domain = ? COLLATE NOCASE").run(domain);
     deps.db.exec("COMMIT");
+    try { deps.triageLifecycleHooks?.abortSources?.(abortSourceIds); } catch { /* fence 已提交 */ }
   } catch (error) {
     deps.db.exec("ROLLBACK");
     throw error;

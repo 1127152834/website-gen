@@ -1,0 +1,80 @@
+[
+  {
+    "id": "U-01-C14-breadcrumb",
+    "before": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\C14-creation-results-v2.png",
+    "after": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\C14-creation-results-v3.png",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14861-1d46-7200-a48c-12d1d407e41e\\exec-dcf7e21c-6b7f-41af-853d-7a6d94e45711.png",
+    "prompt": "Precise local text-only edit of the supplied UI screenshot. Change only the breadcrumb segment at the top left from “批量建档” to “上传驾照建档”, so the breadcrumb reads exactly “客户 / 上传驾照建档 / 建档结果”. Preserve every other pixel, text, number, status, color, table value, button, spacing, border and layout. Do not change the page title, batch number, alert, tabs, table, navigation or footer. No redesign.",
+    "refs": [
+      "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\C14-creation-results-v2.png"
+    ],
+    "issues": ["U-01"],
+    "sha256": "7939202CBD54605B1602F2484D388506E8C3F793ED23870B1CFCAF8041EDCAE3",
+    "review": "passed: before/after viewed at original detail; breadcrumb now reads 客户 / 上传驾照建档 / 建档结果; no other visible content or layout change found; copied output hash matches generated source"
+  },
+  {
+    "id": "U-02-C13-duplicate-warning",
+    "before": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\C13-recognition-review-v3.png",
+    "after": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\C13-recognition-review-v4.png",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14861-1d46-7200-a48c-12d1d407e41e\\exec-d9f6db86-390c-4ec0-813f-949c55c345a9.png",
+    "prompt": "Precise local color-only edit of the supplied UI screenshot. In the left file list, on the row “03-alex.jpg / Alex Morgan”, change only the status badge “重复待处理” from red error styling to the same amber warning styling used by the existing “待核对” badges: pale amber background with amber/orange text. Keep the badge wording exactly “重复待处理”. Keep the blue “处理重复” link unchanged. Keep the red “识别失败” badge on 04-blur.jpg unchanged. Preserve every other pixel, value, date, image, form field, button, border, spacing and layout. No redesign and no other color changes.",
+    "refs": [
+      "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\C13-recognition-review-v3.png"
+    ],
+    "issues": ["U-02"],
+    "sha256": "03512C4BC9787C8DAA11BCEC04CF88E059A8D1D377F6018E266AE48E630C6EAD",
+    "review": "passed: before/after viewed at original detail; 03-alex duplicate badge is amber while 04-blur recognition failure remains red; no other visible change found; copied output hash matches generated source"
+  },
+  {
+    "id": "U-02-O-C02-duplicate-warning",
+    "before": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\O-C02-duplicate-v1.png",
+    "after": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\O-C02-duplicate-v2.png",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14861-1d46-7200-a48c-12d1d407e41e\\exec-b9b56a64-67c1-4adc-b06e-fbc2c3250a62.png",
+    "prompt": "Precise local color-only edit of the supplied UI screenshot. Recolor exactly two duplicate-candidate badges from red error styling to amber warning styling: (1) the right drawer header badge “疑似重复”; (2) the dimmed background file-list row 03-alex.jpg badge “重复待处理”. Use a pale amber background and amber/orange text matching the existing warning badges such as “待核对”. Keep both badge wordings unchanged. Keep the blue “处理重复” link unchanged. Keep the red “识别失败” state on 04-blur.jpg unchanged. Preserve all drawer decisions, selected radio, Alex values, DEMO license, overlay opacity, dates, buttons, text, spacing and layout. No redesign and no other color changes.",
+    "refs": [
+      "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\O-C02-duplicate-v1.png"
+    ],
+    "issues": ["U-02"],
+    "sha256": "0588D8B445E47F54C2397B97EFB9F024630D71F191CC7B2A9BD993537722AB7B",
+    "review": "passed: before/after viewed at original detail; both duplicate-candidate badges are amber and the confirmed recognition failure stays red; drawer values and decisions are visibly preserved; copied output hash matches generated source"
+  },
+  {
+    "id": "U-02-O-C03-duplicate-warning",
+    "before": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\O-C03-differences-v1.png",
+    "after": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\O-C03-differences-v2.png",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14861-1d46-7200-a48c-12d1d407e41e\\exec-0bfafaba-64fa-487c-95a6-c4ffeefcdaf6.png",
+    "prompt": "Precise local color-only edit of the supplied UI screenshot. In the dimmed background file list, on the row “03-alex.jpg / Alex Morgan”, change only the status badge “重复待处理” from red error styling to amber warning styling with a pale amber background and amber/orange text matching the existing “待核对” warning badges. Keep the badge wording unchanged and keep the blue “处理重复” link unchanged. Keep the red “识别失败” badge on 04-blur.jpg unchanged. Preserve the entire white right-side differences drawer pixel-for-pixel in content and styling, including all current values, recognition candidates, selected radio choices, notes and buttons. Preserve the Alex DEMO source image values, overlay opacity, dates, spacing and layout. No redesign and no other color changes.",
+    "refs": [
+      "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\O-C03-differences-v1.png"
+    ],
+    "issues": ["U-02"],
+    "sha256": "87226AE0FE967E543DD060395ECB591A43B76F87C22C71E43B1FC9C235086384",
+    "review": "passed: before/after viewed at original detail; only the background duplicate badge changes to amber; the red blur failure and complete difference-selection drawer remain visibly unchanged; copied output hash matches generated source"
+  },
+  {
+    "id": "U-02-C13-manual-duplicate-warning",
+    "before": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\C13-manual-transcription-v1.png",
+    "after": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\C13-manual-transcription-v2.png",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14861-1d46-7200-a48c-12d1d407e41e\\exec-c027ca46-c302-4ec5-8bda-9ec990c0aafe.png",
+    "prompt": "Precise local color-only edit of the supplied UI screenshot. In the left file list, on the row “03-alex.jpg / Alex Morgan”, change only the status badge “重复待处理” from red error styling to amber warning styling with a pale amber background and amber/orange text matching the existing “待核对” warning badge. Keep the badge wording exactly “重复待处理” and keep the blue “处理重复” link unchanged. Keep the selected 04-blur.jpg badge “识别失败 · 人工转录” red because it is a confirmed recognition failure. Preserve the blurred DEMO source, all manual transcription values, dates, state dropdown, operator labels, buttons, spacing, borders and layout. No redesign and no other color changes.",
+    "refs": [
+      "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\C13-manual-transcription-v1.png"
+    ],
+    "issues": ["U-02"],
+    "sha256": "8ED27D2F12152EFE9323E41DCC66C6D2A074F2A905519658350E293CB1C686C1",
+    "review": "passed: before/after viewed at original detail; duplicate badge is amber and selected recognition-failure/manual-transcription badge remains red; data, controls and layout are visibly preserved; copied output hash matches generated source"
+  },
+  {
+    "id": "U-03-C12-upload-state-counts",
+    "before": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\C12-upload-states-v1.png",
+    "after": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\C12-upload-states-v2.png",
+    "source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14861-1d46-7200-a48c-12d1d407e41e\\exec-d00afd48-370c-4e9f-9945-3baad9d2b8d3.png",
+    "prompt": "Precise local text edit of the supplied UI screenshot. Change only the upload summary line below the upload area. Replace the single summary item “失败 2” with two separate items “上传失败 1” and “格式不支持 1”. The full summary must read exactly: “已选择 5 · 已上传 1 · 上传中 1 · 上传失败 1 · 格式不支持 1 · 等待 1”. Keep all other numbers unchanged. Style “上传失败 1” in red and “格式不支持 1” in amber/orange; preserve the existing green, blue and gray colors of the other counts. Do not change any table row, filename, row status, progress value, action, disabled button, date, operator, spacing outside what is strictly needed for the longer summary, or overall layout. No redesign.",
+    "refs": [
+      "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\C12-upload-states-v1.png"
+    ],
+    "issues": ["U-03"],
+    "sha256": "20F1CD8827537943F84B50F6E7C6FAF5C60F72CC89A1AA28B53EAE8D5590B951",
+    "review": "passed: before/after viewed at original detail; summary conserves five files and splits the two failures into one upload failure and one unsupported format; table rows and other counts remain visibly unchanged; copied output hash matches generated source"
+  }
+]

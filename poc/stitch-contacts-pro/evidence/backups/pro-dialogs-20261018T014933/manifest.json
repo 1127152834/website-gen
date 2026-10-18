@@ -1,0 +1,37 @@
+[
+  {
+    "path": "src/components/ContactDrawer.tsx",
+    "existed": false,
+    "sha256": null
+  },
+  {
+    "path": "src/components/ContactEditor.tsx",
+    "existed": false,
+    "sha256": null
+  },
+  {
+    "path": "src/components/CommandPalette.tsx",
+    "existed": false,
+    "sha256": null
+  },
+  {
+    "path": "src/components/DeleteConfirm.tsx",
+    "existed": false,
+    "sha256": null
+  },
+  {
+    "path": "src/hooks/useContactDetail.ts",
+    "existed": false,
+    "sha256": null
+  },
+  {
+    "path": "src/hooks/useCommandPalette.ts",
+    "existed": false,
+    "sha256": null
+  },
+  {
+    "path": "src/data/dialogCopy.ts",
+    "existed": false,
+    "sha256": null
+  }
+]

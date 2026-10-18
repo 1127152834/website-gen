@@ -1,0 +1,40 @@
+{
+  "valid": {
+    "M01": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M01-v2.png",
+    "M02": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M02-v2.png",
+    "M03": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M03-v3.png",
+    "M05": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M05-v4.png",
+    "M06": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M06-v2.png"
+  },
+  "pending_fix": "M07-v2 after two connection failures; original and prompt saved",
+  "remaining": [
+    "M07",
+    "M08",
+    "M04",
+    "O-M01",
+    "O-M02",
+    "O-M04",
+    "O-M05",
+    "O-M06",
+    "O-M07",
+    "O-M08",
+    "O-M09",
+    "ES01",
+    "ES02",
+    "ES03",
+    "ES04"
+  ],
+  "scope": "20 static mail screens only; no live tests",
+  "failures": [
+    {
+      "attempt": 1,
+      "seconds": 35.8,
+      "error": "connection failed: error sending request"
+    },
+    {
+      "attempt": 2,
+      "seconds": 23.6,
+      "error": "connection failed: error sending request"
+    }
+  ]
+}

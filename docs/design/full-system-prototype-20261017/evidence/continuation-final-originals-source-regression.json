@@ -1,0 +1,3142 @@
+{
+  "original_image_items": [
+    {
+      "id": "C01",
+      "current_sha256": "3CE62A5609DCC158225BF5A926E8C3F0A38F1D10D6167B23CA1E11ABB6FE602A",
+      "file": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C01-list-preview-v4.png",
+      "unchanged": true,
+      "baseline_sha256": "3ce62a5609dcc158225bf5a926e8c3f0a38f1d10d6167b23ca1e11abb6fe602a"
+    },
+    {
+      "id": "C02",
+      "current_sha256": "C609E37D3A2C61B2AAE69A002B67A193D8AAEF633D68AB36155DFFBB75EFDE46",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\C02-v4.png",
+      "unchanged": true,
+      "baseline_sha256": "c609e37d3a2c61b2aae69a002b67a193d8aaef633d68ab36155dffbb75efde46"
+    },
+    {
+      "id": "C03",
+      "current_sha256": "461FD963D169852C4558EAD342FE7EEAB55853FEE885E25B743F187FAD0A9999",
+      "file": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C03-personal-v3.png",
+      "unchanged": true,
+      "baseline_sha256": "461fd963d169852c4558ead342fe7eeab55853fee885e25b743f187fad0a9999"
+    },
+    {
+      "id": "C04",
+      "current_sha256": "CBDE693FCA6E014F2097019C4CBE48212EA4EA4A0FCCD355AA04BE176B41DD3C",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C04-company-ui-v3.png",
+      "unchanged": true,
+      "baseline_sha256": "cbde693fca6e014f2097019c4cbe48212ea4ea4a0fccd355aa04be176b41dd3c"
+    },
+    {
+      "id": "C05",
+      "current_sha256": "1E5656822E6CF3CD26636A13511EDD86E7076E313CCB3A4597037B47CB78071D",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C05-bank-ui-v3.png",
+      "unchanged": true,
+      "baseline_sha256": "1e5656822e6cf3cd26636a13511edd86e7076e313ccb3a4597037b47cb78071d"
+    },
+    {
+      "id": "C10-bank",
+      "current_sha256": "B3115E20012CE31E912198DCBC7EE926A8D988DE68845B2198175B373438EEEE",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C10-bank-ui-v3.png",
+      "unchanged": true,
+      "baseline_sha256": "b3115e20012ce31e912198dcbc7ee926a8d988de68845b2198175b373438eeee"
+    },
+    {
+      "id": "O-C04-personal",
+      "current_sha256": "5FFDE99DF45F793404BC00B21BE68EC62F665095065BB8E9E2F6A6AF33BE9FAB",
+      "file": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C04-personal-edit-v3.png",
+      "unchanged": true,
+      "baseline_sha256": "5ffde99df45f793404bc00b21be68ec62f665095065bb8e9e2f6a6af33be9fab"
+    },
+    {
+      "id": "O-C04-company",
+      "current_sha256": "C88A4019D3499340C2D6A43928D043894EC09999FACE9F381A08645AD97F9667",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\support\\O-C04-company-edit-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "c88a4019d3499340c2d6a43928d043894ec09999face9f381a08645ad97f9667"
+    },
+    {
+      "id": "O-C04-bank",
+      "current_sha256": "6E6AC2A8467C89DBF6BF9A043F83274358C12529ECC324C8DB2198E61112D784",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\support\\O-C04-bank-edit-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "6e6ac2a8467c89dbf6bf9a043f83274358c12529ecc324c8db2198e61112d784"
+    },
+    {
+      "id": "O-C05",
+      "current_sha256": "3EA9715FABA58CA5F4CAD147B688F9F1792C6A01D8E995C6466E9E6C05AE0F82",
+      "file": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C05-company-status-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "3ea9715faba58ca5f4cad147b688f9f1792c6a01d8e995c6466e9e6c05ae0f82"
+    },
+    {
+      "id": "O-C07",
+      "current_sha256": "6FFD1C858CEF8B2101EF79D5C40762757CCD8D5B5DF130955C8B6BA6B29D62BA",
+      "file": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C07-upload-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "6ffd1c858cef8b2101ef79d5c40762757ccd8d5b5df130955c8b6ba6b29d62ba"
+    },
+    {
+      "id": "O-C08",
+      "current_sha256": "BD7AD2BC7A71578873D0DDCADC3D4D9FAB9713988C77CECAC550274DBB226360",
+      "file": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C08-preview-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "bd7ad2bc7a71578873d0ddcadc3d4d9fab9713988c77cecac550274dbb226360"
+    },
+    {
+      "id": "O-C09",
+      "current_sha256": "19EACC7399C0540A2756D87D21F40312F215D3D9F309E4F9B7B32E5F76BF52A6",
+      "file": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C09-replace-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "19eacc7399c0540a2756d87d21f40312f215d3d9f309e4f9b7b32e5f76bf52a6"
+    },
+    {
+      "id": "O-C10",
+      "current_sha256": "8469D5B03BE4C99421B2C0350014697C911D4B1462882E32778013FD2EFC8D03",
+      "file": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C10-remove-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "8469d5b03be4c99421b2c0350014697c911d4b1462882e32778013fd2efc8d03"
+    },
+    {
+      "id": "C12",
+      "current_sha256": "828E965458F590916F694A82E0351BF7FCAAE777E171ABAA60AD246173E2955C",
+      "file": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\C12-batch-upload-v4.png",
+      "unchanged": true,
+      "baseline_sha256": "828e965458f590916f694a82e0351bf7fcaae777e171abaa60ad246173e2955c"
+    },
+    {
+      "id": "C13",
+      "current_sha256": "03512C4BC9787C8DAA11BCEC04CF88E059A8D1D377F6018E266AE48E630C6EAD",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\C13-recognition-review-v4.png",
+      "unchanged": true,
+      "baseline_sha256": "03512c4bc9787c8daa11bcec04cf88e059a8d1d377f6018e266ae48e630c6ead"
+    },
+    {
+      "id": "C14",
+      "current_sha256": "7939202CBD54605B1602F2484D388506E8C3F793ED23870B1CFCAF8041EDCAE3",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\C14-creation-results-v3.png",
+      "unchanged": true,
+      "baseline_sha256": "7939202cbd54605b1602f2484d388506e8c3f793ed23870b1cfcaf8041edcae3"
+    },
+    {
+      "id": "O-C02",
+      "current_sha256": "0588D8B445E47F54C2397B97EFB9F024630D71F191CC7B2A9BD993537722AB7B",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\O-C02-duplicate-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "0588d8b445e47f54c2397b97efb9f024630d71f191cc7b2a9bd993537722ab7b"
+    },
+    {
+      "id": "O-C03",
+      "current_sha256": "87226AE0FE967E543DD060395ECB591A43B76F87C22C71E43B1FC9C235086384",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\O-C03-differences-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "87226ae0fe967e543dd060395ecb591a43b76f87c22c71e43b1fc9c235086384"
+    },
+    {
+      "id": "C12-upload-states",
+      "current_sha256": "20F1CD8827537943F84B50F6E7C6FAF5C60F72CC89A1AA28B53EAE8D5590B951",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\C12-upload-states-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "20f1cd8827537943f84b50f6e7c6faf5c60f72cc89a1aa28b53eae8d5590b951"
+    },
+    {
+      "id": "C13-manual-transcription",
+      "current_sha256": "8ED27D2F12152EFE9323E41DCC66C6D2A074F2A905519658350E293CB1C686C1",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\C13-manual-transcription-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "8ed27d2f12152efe9323e41dcc66c6d2a074f2a905519658350e293cb1c686c1"
+    },
+    {
+      "id": "C14-unknown-result",
+      "current_sha256": "90322C656C78A081D532113BF6156358D774B0358605A8DBE45FA0300F155A72",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\C14-unknown-result-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "90322c656c78a081d532113bf6156358d774b0358605a8dbe45fa0300f155a72"
+    },
+    {
+      "id": "C07",
+      "current_sha256": "D77C945427002CC16F39CBC25FA9330A8F4D26A2E725123A5CB6A0B1770CC662",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\C07-website-mail-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "d77c945427002cc16f39cbc25fa9330a8f4d26a2e725123a5cb6a0b1770cc662"
+    },
+    {
+      "id": "O-C11",
+      "current_sha256": "3E7B2C945FD5B19F2765CBD026295B96D81C75859D56B905C228C02D8E9B59F6",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\O-C11-link-site-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "3e7b2c945fd5b19f2765cbd026295b96d81c75859d56b905c228c02d8e9b59f6"
+    },
+    {
+      "id": "O-C12",
+      "current_sha256": "F2AEEEC12C2BD91741268E81ED88EABF99B2DCD4270C4A490E991FF827F56193",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\O-C12-link-mail-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "f2aeeec12c2bd91741268e81ed88eabf99b2dcd4270c4a490e991ff827f56193"
+    },
+    {
+      "id": "O-C13",
+      "current_sha256": "5B31BE99D308AE35AF0619B8DCDE85F128F36FEE1158B3BD7FA586C062843101",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\O-C13-unlink-confirm-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "5b31be99d308ae35af0619b8dcde85f128f36fee1158b3bd7fa586c062843101"
+    },
+    {
+      "id": "O-C14",
+      "current_sha256": "E8688047B9C46354CE0EC49DE4B3473A7C9009D5ADC861A45461D6883F86F4E1",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\O-C14-public-info-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "e8688047b9c46354ce0ec49de4b3473a7c9009d5adc861a45461d6883f86f4e1"
+    },
+    {
+      "id": "C08",
+      "current_sha256": "623B77F127B0568C2C454D4771EE65E73C884FCBEA18E4BF75762FC40400D1A3",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\C08-review-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "623b77f127b0568c2c454d4771ee65e73c884fcbea18e4bf75762fc40400d1a3"
+    },
+    {
+      "id": "O-G01",
+      "current_sha256": "C31F479182A431BED498C97A7DEBF01D141168015F259C2DD1A2AEFAAA5226F8",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\O-G01-review-scope-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "c31f479182a431bed498c97a7debf01d141168015f259c2dd1a2aefaaa5226f8"
+    },
+    {
+      "id": "O-G02",
+      "current_sha256": "6D2CB3A282728D40AC4ED0CC78C75D218EF10D5DBF0EB07E1B2EDD5139078DB3",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\O-G02-review-running-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "6d2cb3a282728d40ac4ed0cc78c75d218ef10d5dbf0eb07e1b2edd5139078db3"
+    },
+    {
+      "id": "O-G03",
+      "current_sha256": "C16A17676F912FD74912AF1208EB23721A6C838A0C41008DAD7D4D88DABEE71C",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\O-G03-finding-detail-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "c16a17676f912fd74912af1208eb23721a6c838a0c41008dad7d4d88dabee71c"
+    },
+    {
+      "id": "C09-active",
+      "current_sha256": "60238DF015109CC0ADB85B77F6F9D963B0C43689B043D57ACF6EDF4901F2831F",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\C09-active-v4.png",
+      "unchanged": true,
+      "baseline_sha256": "60238df015109cc0adb85b77f6f9d963b0c43689b043d57acf6edf4901f2831f"
+    },
+    {
+      "id": "C09-idle",
+      "current_sha256": "C39F020D9218743E87AEFFAD5C69A12B49DB0EA58A7ABB50728E3CDB40351FB3",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\C09-idle-v3.png",
+      "unchanged": true,
+      "baseline_sha256": "c39f020d9218743e87aeffad5c69a12b49db0ea58a7abb50728e3cdb40351fb3"
+    },
+    {
+      "id": "O-G04",
+      "current_sha256": "74450AC09DD6D2C51087856091BCC32A04354FE14598577FB25F61B2FDAE0089",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-G04-v3.png",
+      "unchanged": true,
+      "baseline_sha256": "74450ac09dd6d2c51087856091bcc32a04354fe14598577fb25f61b2fdae0089"
+    },
+    {
+      "id": "O-C07-upload-states",
+      "current_sha256": "6CCFEA0AC7912DE73FFD7240287EBBC4BC5CA38AD12DDDB850BD16E6F7219219",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\support\\O-C07-upload-states-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "6ccfea0ac7912de73ffd7240287ebbc4bc5ca38ad12dddb850bd16e6f7219219"
+    },
+    {
+      "id": "O-C08-preview-unavailable",
+      "current_sha256": "D2CCF24DA343691B210C4FD6D2C564E69613F4D80EA953CE30C11435C4ABF7A2",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C08-preview-unavailable-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "d2ccf24da343691b210c4fd6d2c564e69613f4d80ea953ce30c11435c4abf7a2"
+    },
+    {
+      "id": "O-C08-preview-unsupported",
+      "current_sha256": "494D2821A73471D0459EA0DF782EFB6F042C2A18DD70C07663CB927343B909A3",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C08-preview-unsupported-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "494d2821a73471d0459ea0df782efb6f042c2a18dd70c07663cb927343b909a3"
+    },
+    {
+      "id": "O-C09-replace-failure",
+      "current_sha256": "4EBDC1E774FC392E50CA1088FB155C5629B5A6A82B29064E9701733BB786ACAA",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C09-replace-failure-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "4ebdc1e774fc392e50ca1088fb155c5629b5a6a82b29064e9701733bb786acaa"
+    },
+    {
+      "id": "O-C10-remove-failure",
+      "current_sha256": "C4036A387F7C0331822F8F1F8779B6A8388ACCE2F3B1207B1A11549426197113",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C10-remove-failure-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "c4036a387f7c0331822f8f1f8779b6a8388acce2f3b1207b1a11549426197113"
+    },
+    {
+      "id": "O-C04-save-failure",
+      "current_sha256": "17C6FD7B3DEE0C99317D928E549173A9BADC767DA70A6138F1554E10DFF917FD",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C04-save-failure-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "17c6fd7b3dee0c99317d928e549173a9badc767da70a6138f1554e10dff917fd"
+    },
+    {
+      "id": "O-C15",
+      "current_sha256": "EC83FCEAF39688E16EA5A2A14DA93A21A957BD1D4677996363E3D77F309A1C62",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\support\\O-C15-delete-confirm-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "ec83fceaf39688e16ea5a2a14da93a21a957bd1d4677996363e3d77f309a1c62"
+    },
+    {
+      "id": "O-C16",
+      "current_sha256": "93D49A72E487FC48AC324CDD5E8D88C94C273043FF28679DB61809976DB0D911",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C16-delete-execution-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "93d49a72e487fc48ac324cdd5e8d88c94c273043ff28679db61809976db0d911"
+    },
+    {
+      "id": "C10-personal-page1",
+      "current_sha256": "DAF8977A72192B8ED7D12DF24277B5E74B2E548259C221E309BFCC426199BAE8",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C10-personal-page1-ui-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "daf8977a72192b8ed7d12df24277b5e74b2e548259c221e309bfcc426199bae8"
+    },
+    {
+      "id": "C10-personal-page2",
+      "current_sha256": "1A5C984AB085DAA0D9A170718F42AC8BD2C9E0E3D19BBD37EEE00FC354271A44",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C10-personal-page2-ui-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "1a5c984ab085daa0d9a170718f42ac8bd2c9e0e3d19bbd37eee00fc354271a44"
+    },
+    {
+      "id": "C10-company",
+      "current_sha256": "7A99BFCEB49AB37006FA9EF52ED9782AAAE4D82B818A17CE853D9BBA7193497C",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C10-company-ui-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "7a99bfceb49ab37006fa9ef52ed9782aaae4d82b818a17ce853d9bba7193497c"
+    },
+    {
+      "id": "C10-actor-detail",
+      "current_sha256": "F0BD3A554CEA687B168CAAD24EEBF4D3754BCBC1456EC211CD7565FDE9771E40",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C10-actor-detail-ui-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "f0bd3a554cea687b168caad24eebf4d3754bcbc1456ec211cd7565fde9771e40"
+    },
+    {
+      "id": "C01-empty",
+      "current_sha256": "2AAA3BA312518E961E4841DC62939B1806FEE89E00F41B0DAEBA06190FB651F1",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\C01-empty-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "2aaa3ba312518e961e4841dc62939b1806fee89e00f41b0daeba06190fb651f1"
+    },
+    {
+      "id": "C01-search-empty",
+      "current_sha256": "3FB4C56D8283D3FDD6493D8DC3F27E49E23A56F1D4EEF13FBD871C3FFDAEB11C",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C01-search-empty-ui-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "3fb4c56d8283d3fdd6493d8dc3f27e49e23a56f1d4eef13fbd871c3ffdaeb11c"
+    },
+    {
+      "id": "C01-loading",
+      "current_sha256": "F637287CA810DA4DB61B59FC77B3A756BE5D039AD03238AD94A1DB1C4F6B3C4C",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C01-loading-ui-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "f637287ca810da4db61b59fc77b3a756be5d039ad03238ad94a1db1c4f6b3c4c"
+    },
+    {
+      "id": "C01-read-failure",
+      "current_sha256": "373BC127AC434854A2293540217765F345FACF97D69AAE64F3459F2C7D3E6143",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\C01-read-failure-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "373bc127ac434854a2293540217765f345facf97d69aae64f3459f2c7d3e6143"
+    },
+    {
+      "id": "C02-not-found",
+      "current_sha256": "58329AC11AC4442C08C50957FBAF14C25F52E81D4A5223DB385B8048007AF44E",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\C02-not-found-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "58329ac11ac4442c08c50957fbaf14c25f52e81d4a5223db385b8048007af44e"
+    },
+    {
+      "id": "C02-forbidden",
+      "current_sha256": "A9519237542731B9121DF18F17AD64A5EB1304268D1152093F3D986172BB662F",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\C02-forbidden-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "a9519237542731b9121df18f17ad64a5eb1304268d1152093f3d986172bb662f"
+    },
+    {
+      "id": "O-A04",
+      "current_sha256": "18737F1AB0A2095C9FA4F814DB6CD0C1FC03F07635A761ED648CE4503EEF05B4",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\O-A04-unsaved-ui-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "18737f1ab0a2095c9fa4f814db6cd0c1fc03f07635a761ed648ce4503eef05b4"
+    },
+    {
+      "id": "O-A05",
+      "current_sha256": "67816F7E4231172B8244038D576468343AA653007A0B604D678BBB44AE531397",
+      "file": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\O-A05-conflict-ui-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "67816f7e4231172b8244038d576468343aa653007a0b604d678bbb44ae531397"
+    },
+    {
+      "id": "G01",
+      "current_sha256": "99B9E390168A008137F6E7AA062E2BBCBC314EFFC8661CD493008FEA06636082",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\G01-v3.png",
+      "unchanged": true,
+      "baseline_sha256": "99b9e390168a008137f6e7aa062e2bbcbc314effc8661cd493008fea06636082"
+    },
+    {
+      "id": "G02",
+      "current_sha256": "8FE8B1021C2189EC394AF6202D57E38884ECBBEB30D46393E91629941063F6FF",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\G02-v3.png",
+      "unchanged": true,
+      "baseline_sha256": "8fe8b1021c2189ec394af6202d57e38884ecbbeb30d46393e91629941063f6ff"
+    },
+    {
+      "id": "G03",
+      "current_sha256": "B8836D4BF4A7E252F3C78F97FC08E40D8467A041BA870264F5A1C4AE7A676091",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\G03-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "b8836d4bf4a7e252f3c78f97fc08e40d8467a041ba870264f5a1c4ae7a676091"
+    },
+    {
+      "id": "G04",
+      "current_sha256": "5D3E766FA4D36189FC70F8510E0AE123F65B9F579324E0B87866CAE766621FE0",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\G04-v3.png",
+      "unchanged": true,
+      "baseline_sha256": "5d3e766fa4d36189fc70f8510e0ae123f65b9f579324e0b87866cae766621fe0"
+    },
+    {
+      "id": "G02-snapshot",
+      "current_sha256": "2F3474513E093693D979788103C47A7777CA30B22E74FABC4D34610FA824208B",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\G02-snapshot-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "2f3474513e093693d979788103c47a7777ca30b22e74fabc4d34610fa824208b"
+    },
+    {
+      "id": "O-G-snapshot-preview",
+      "current_sha256": "DDC9E65ED8C85FD1B4A3BDE08A7819AE08F942CC603BE56FBC45CBFFB6962F9E",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-G-snapshot-preview-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "ddc9e65ed8c85fd1b4a3bde08a7819ae08f942cc603be56fbc45cbffb6962f9e"
+    },
+    {
+      "id": "O-G05",
+      "current_sha256": "5ADC9612FEC367EFFFF5A077AE0641EDBBDE7CB3D4B30D8464B755B9C779B88F",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-G05-v3.png",
+      "unchanged": true,
+      "baseline_sha256": "5adc9612fec367effff5a077ae0641edbbde7cb3d4b30d8464b755b9c779b88f"
+    },
+    {
+      "id": "O-G06",
+      "current_sha256": "A728CD053226F0018F384C324A73D03EE8F8E13F696AF8F8ABFAE1F2CE22ECE1",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-G06-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "a728cd053226f0018f384c324a73d03ee8f8e13f696af8f8abfae1f2ce22ece1"
+    },
+    {
+      "id": "O-G07",
+      "current_sha256": "3C986767507F1B1AC2295B3A2C48D7761533297C6EEBE36538DAD9FEBD0144B1",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-G07-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "3c986767507f1b1ac2295b3a2c48d7761533297c6eebe36538dad9febd0144b1"
+    },
+    {
+      "id": "O-G08",
+      "current_sha256": "39EF58F127B545EF2557154A1603E84FABD15DB943B2EE8E54C52708A28AEC43",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-G08-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "39ef58f127b545ef2557154a1603e84fabd15db943b2ee8e54c52708a28aec43"
+    },
+    {
+      "id": "O-G09",
+      "current_sha256": "1AC859F47CC6875599CE3C9DD0D6E8A9EF6CAE142FD6A9AD5780678F6DCEC619",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-G09-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "1ac859f47cc6875599ce3c9dd0d6e8a9ef6cae142fd6a9ad5780678f6dcec619"
+    },
+    {
+      "id": "O-G10",
+      "current_sha256": "E12CFD672A7D0A00C18F8C6823A5FD64AB40A71481CA03C7632A26309EA7EFE0",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-G10-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "e12cfd672a7d0a00c18f8c6823a5fd64ab40a71481ca03c7632a26309ea7efe0"
+    },
+    {
+      "id": "O-G11",
+      "current_sha256": "EF978D5FE8E9FC892D65027BF419D25DECC47302BDCA889521967ED9BB2BB1E9",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-G11-v3.png",
+      "unchanged": true,
+      "baseline_sha256": "ef978d5fe8e9fc892d65027bf419d25decc47302bdca889521967ed9bb2bb1e9"
+    },
+    {
+      "id": "O-G12",
+      "current_sha256": "2146266572FEC24DC01226BEC56B4DCB352CA12DBCFB10AF5A47B707613C60B6",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-G12-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "2146266572fec24dc01226bec56b4dcb352ca12dbcfb10af5a47b707613c60b6"
+    },
+    {
+      "id": "A02",
+      "current_sha256": "3286ECFBD651E667976A522001B590E9051EDACE395E00797426C998DA815A30",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\A02-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "3286ecfbd651e667976a522001b590e9051edace395e00797426c998da815a30"
+    },
+    {
+      "id": "A04",
+      "current_sha256": "FEC05402DDE951A4B1AFD4A6258762AE5590B593ACEA87E3DEFAC8BBC9088A2F",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\A04-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "fec05402dde951a4b1afd4a6258762ae5590b593acea87e3defac8bbc9088a2f"
+    },
+    {
+      "id": "A05",
+      "current_sha256": "326ED5368461047CC2DE0EA57C712CB885DBAF3FBBEC011786E290C57B72A8C5",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\A05-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "326ed5368461047cc2de0ea57c712cb885dbaf3fbbec011786e290c57b72a8c5"
+    },
+    {
+      "id": "A06",
+      "current_sha256": "8D32163BA41D59CAB7F22017A9020137884006DD7F876C039EB620239E7BF3A6",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\A06-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "8d32163ba41d59cab7f22017a9020137884006dd7f876c039eb620239e7bf3a6"
+    },
+    {
+      "id": "A07",
+      "current_sha256": "3C14C47C1F3483B73DBF330338211AA8693C0A9CC28856395ABFE0773B842E08",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\A07-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "3c14c47c1f3483b73dbf330338211aa8693c0a9cc28856395abfe0773b842e08"
+    },
+    {
+      "id": "A08",
+      "current_sha256": "ED971B7910CE79E61AA8EDC7BFD02F901C46E5D37A6168A31ED97241C7F325DB",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\A08-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "ed971b7910ce79e61aa8edc7bfd02f901c46e5d37a6168a31ed97241c7f325db"
+    },
+    {
+      "id": "A09",
+      "current_sha256": "E4F043C1390F345DBCB877BE4270FD9E4CD6696F1FBCA6DD2502D51C9B2E3E0D",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\A09-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "e4f043c1390f345dbcb877be4270fd9e4cd6696f1fbca6dd2502d51c9b2e3e0d"
+    },
+    {
+      "id": "O-A02",
+      "current_sha256": "6F39C47C686C2DEE6E33C14595F03EA36C3197B292AF4E80907DC744A5BAC174",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-A02-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "6f39c47c686c2dee6e33c14595f03ea36c3197b292af4e80907dc744a5bac174"
+    },
+    {
+      "id": "O-A03",
+      "current_sha256": "74024547C015FAEF4FCF70BBA083058AEA7C79A01C1983CC849FA40DECFFD46B",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-A03-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "74024547c015faef4fcf70bba083058aea7c79a01c1983cc849fa40decffd46b"
+    },
+    {
+      "id": "A01",
+      "current_sha256": "828E965458F590916F694A82E0351BF7FCAAE777E171ABAA60AD246173E2955C",
+      "file": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\C12-batch-upload-v4.png",
+      "unchanged": true,
+      "baseline_sha256": "828e965458f590916f694a82e0351bf7fcaae777e171abaa60ad246173e2955c"
+    },
+    {
+      "id": "M01",
+      "current_sha256": "5BB5A5BD6037E1222299A50CFF25F80F84ED01B49B43DFEBE28B3F6680F0C4F2",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\M01-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "5bb5a5bd6037e1222299a50cff25f80f84ed01b49b43dfebe28b3f6680f0c4f2"
+    },
+    {
+      "id": "M02",
+      "current_sha256": "24BFC2AAD4B08B9A46C4FDC6A3BAF902D1A8B320565BE8F3D021CA72E4F8328A",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\M02-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "24bfc2aad4b08b9a46c4fdc6a3baf902d1a8b320565be8f3d021ca72e4f8328a"
+    },
+    {
+      "id": "M03",
+      "current_sha256": "55D3F3D174AFFAFC88E7B5C9D40D51571029C2716AF22637FD74CB97EF10598F",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\M03-v3.png",
+      "unchanged": true,
+      "baseline_sha256": "55d3f3d174affafc88e7b5c9d40d51571029c2716af22637fd74cb97ef10598f"
+    },
+    {
+      "id": "M05",
+      "current_sha256": "5B3810DC710E32D925B2A1CF462823B765A4A5C4A2DAC79A366A75DE1D9DE712",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\M05-v4.png",
+      "unchanged": true,
+      "baseline_sha256": "5b3810dc710e32d925b2a1cf462823b765a4a5c4a2dac79a366a75de1d9de712"
+    },
+    {
+      "id": "M06",
+      "current_sha256": "592609A3E3F0C8DE6304D62437A4BCFDC24AECBAFB09B29215B9682480A0B440",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\M06-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "592609a3e3f0c8de6304d62437a4bcfdc24aecbafb09b29215b9682480a0b440"
+    },
+    {
+      "id": "M07",
+      "current_sha256": "449427A3578206CEDBCA0FDCF6FC0EA8C5DE6BE3088BE6C29E6AA9DE6DE22966",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\M07-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "449427a3578206cedbca0fdcf6fc0ea8c5de6be3088be6c29e6aa9de6de22966"
+    },
+    {
+      "id": "R01",
+      "current_sha256": "483BCD1194C257A7298536E470196DEF9B1AAE4CFBDF59C972D99EA0A201C55B",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\R01-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "483bcd1194c257a7298536e470196def9b1aae4cfbdf59c972d99ea0a201c55b"
+    },
+    {
+      "id": "R02",
+      "current_sha256": "5D7DC1F02AA1857C26706361EDBA7762FCFE947E4A73061EECFC9D22B3FE9DF8",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\R02-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "5d7dc1f02aa1857c26706361edba7762fcfe947e4a73061eecfc9d22b3fe9df8"
+    },
+    {
+      "id": "R03",
+      "current_sha256": "1412ED2D5870BE03194B824DE48A65653371F86A467C207AA0AFF3712EFCF65A",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\R03-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "1412ed2d5870be03194b824de48a65653371f86a467c207aa0aff3712efcf65a"
+    },
+    {
+      "id": "R04",
+      "current_sha256": "14B5B1A0CABF1D28B774FFEE68651C92501D980144D24D0384F90E4702424B26",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\R04-v3.png",
+      "unchanged": true,
+      "baseline_sha256": "14b5b1a0cabf1d28b774ffee68651c92501d980144d24d0384f90e4702424b26"
+    },
+    {
+      "id": "O-R01",
+      "current_sha256": "1D361D4C628336A35050E4E19983A092B4E76206BC2ECD17799B25991E8A8133",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-R01-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "1d361d4c628336a35050e4e19983a092b4e76206bc2ecd17799b25991e8a8133"
+    },
+    {
+      "id": "O-R02",
+      "current_sha256": "74D140680C47F9516A96EABBFDA6411A92C1F2F349C0FFAEECD81D82F0D0738E",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-R02-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "74d140680c47f9516a96eabbfda6411a92c1f2f349c0ffaeecd81d82f0d0738e"
+    },
+    {
+      "id": "T01",
+      "current_sha256": "6BC5D7F5C6D4C13EE7A2418285B5B6A44065232C7DB1F429ABFDF915F1550136",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\T01-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "6bc5d7f5c6d4c13ee7a2418285b5b6a44065232c7db1f429abfdf915f1550136"
+    },
+    {
+      "id": "T02",
+      "current_sha256": "08C684627F47B55B266AA50E2CE06F9DEEE38CBA93FD5A09DF550E3177052C7E",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\T02-v3.png",
+      "unchanged": true,
+      "baseline_sha256": "08c684627f47b55b266aa50e2ce06f9deee38cba93fd5a09df550e3177052c7e"
+    },
+    {
+      "id": "S01",
+      "current_sha256": "A0F2922332676A5D0E69DF2EE965F67136D2E775A57564893A91F388A1F56D89",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\S01-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "a0f2922332676a5d0e69df2ee965f67136d2e775a57564893a91f388a1f56d89"
+    },
+    {
+      "id": "S02",
+      "current_sha256": "DBE305E31F1E8B5985E05F5EA71E16CEDBF22FD42D55529CE277537737213483",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\S02-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "dbe305e31f1e8b5985e05f5ea71e16cedbf22fd42d55529ce277537737213483"
+    },
+    {
+      "id": "S03",
+      "current_sha256": "01E58E685C9265C69826C3B1DC0C8C500F58BFB8A97664A0141EADDD061728D0",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\S03-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "01e58e685c9265c69826c3b1dc0c8c500f58bfb8a97664a0141eaddd061728d0"
+    },
+    {
+      "id": "S04",
+      "current_sha256": "C6771DCA314B6D949C2795B487FE0F17B315216EF3FA52E0BFBE3F8ADD61E534",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\S04-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "c6771dca314b6d949c2795b487fe0f17b315216ef3fa52e0bfbe3f8add61e534"
+    },
+    {
+      "id": "S05",
+      "current_sha256": "7A241ED90BFF5538C3F60EACE39F33BA50DB675602CE083F37E56063B586A9B7",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\S05-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "7a241ed90bff5538c3f60eace39f33ba50db675602ce083f37e56063b586a9b7"
+    },
+    {
+      "id": "S06",
+      "current_sha256": "DD3EBF2D17766F84E2727B036716C07EF3F47F8FD3F4B59AEFD2742941EA0A8A",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\S06-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "dd3ebf2d17766f84e2727b036716c07ef3f47f8fd3f4b59aefd2742941ea0a8a"
+    },
+    {
+      "id": "S08",
+      "current_sha256": "23A02C6786BA2C77C998A71F030357B96D4ACBA6974CC10DA4EB8A227305E898",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\S08-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "23a02c6786ba2c77c998a71f030357b96d4acba6974cc10da4eb8a227305e898"
+    },
+    {
+      "id": "S09",
+      "current_sha256": "7958F2D8C5590923B1B329DE370386BD59E157CA8211639CE5ACDBBCC90905BF",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\S09-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "7958f2d8c5590923b1b329de370386bd59e157ca8211639ce5acdbbcc90905bf"
+    },
+    {
+      "id": "S10",
+      "current_sha256": "9D34520559D57B8EA23F43AA118C404CB5A098D560EBBA9A5D414389CF4C6197",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\S10-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "9d34520559d57b8ea23f43aa118c404cb5a098d560ebba9a5d414389cf4c6197"
+    },
+    {
+      "id": "O-S02",
+      "current_sha256": "D81A2304973871AF457722CAEC4F41FE9D0D19D672EA004CB939150768D77B17",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-S02-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "d81a2304973871af457722caec4f41fe9d0d19d672ea004cb939150768d77b17"
+    },
+    {
+      "id": "O-S03",
+      "current_sha256": "F4F60165009C75B70C860954F6B2058CAEB607EFDF3C24F0837AE54199E22D0A",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-S03-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "f4f60165009c75b70c860954f6b2058caeb607efdf3c24f0837ae54199e22d0a"
+    },
+    {
+      "id": "O-S04",
+      "current_sha256": "BD5B9746F993BCB421C58B0A99C03CAB93E9A71CC2D2CC24C3DDA19CE08BF1B7",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-S04-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "bd5b9746f993bcb421c58b0a99c03cab93e9a71cc2d2cc24c3dda19ce08bf1b7"
+    },
+    {
+      "id": "O-S05",
+      "current_sha256": "14EB13C4BD5672A348CD30CE9234687DA30120A882FB1EA2B8E42532A5710D37",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-S05-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "14eb13c4bd5672a348cd30ce9234687da30120a882fb1ea2b8e42532a5710d37"
+    },
+    {
+      "id": "O-S06",
+      "current_sha256": "872FDA317F148DB70C82D30174CEA039F0F73B900C9E01FB3718E5031CB293CB",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-S06-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "872fda317f148db70c82d30174cea039f0f73b900c9e01fb3718e5031cb293cb"
+    },
+    {
+      "id": "O-S07",
+      "current_sha256": "48344FE3C2FB3722115EF120E29EC999DC8B82C8D7C13CC905913753A4FD9A97",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-S07-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "48344fe3c2fb3722115ef120e29ec999dc8b82c8d7c13cc905913753a4fd9a97"
+    },
+    {
+      "id": "O-S08",
+      "current_sha256": "FC9BFDFC9211271E5FD3978429A5186A9E05C8C47EEF7E36E7E146362989C2DE",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-S08-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "fc9bfdfc9211271e5fd3978429a5186a9e05c8c47eef7e36e7e146362989c2de"
+    },
+    {
+      "id": "O-S09",
+      "current_sha256": "06BFFC2BB281BBD4DC42115414417A97E7A291A404C3E79DB96B12A447A2E283",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-S09-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "06bffc2bb281bbd4dc42115414417a97e7a291a404c3e79db96b12a447a2e283"
+    },
+    {
+      "id": "O-S10",
+      "current_sha256": "4DCE8CBE5B6EED52C525E30AD8515BD1D6E721AE330BF2F9CB7D6AB9E215059A",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-S10-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "4dce8cbe5b6eed52c525e30ad8515bd1d6e721ae330bf2f9cb7d6ab9e215059a"
+    },
+    {
+      "id": "A03",
+      "current_sha256": "A7DD803B74DE4D3ABFC7E152DA7A120E011ED147878C55AD56DB93A6F0325D34",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\A03-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "a7dd803b74de4d3abfc7e152da7a120e011ed147878c55ad56db93a6f0325d34"
+    },
+    {
+      "id": "W01",
+      "current_sha256": "11E856A51088253DA094D44D6B27E95B62ADDB6153ADC2E00CBCDBDCC624EF7D",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W01-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "11e856a51088253da094d44d6b27e95b62addb6153adc2e00cbcdbdcc624ef7d"
+    },
+    {
+      "id": "W02",
+      "current_sha256": "32C7F005FF6D688FCA8A2BB2CDDF1DAAA15E11395D83E826841BF1005252670B",
+      "file": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-option-03.png",
+      "unchanged": true,
+      "baseline_sha256": "32c7f005ff6d688fca8a2bb2cddf1daaa15e11395d83e826841bf1005252670b"
+    },
+    {
+      "id": "W03",
+      "current_sha256": "CE0FCC7052FC017FD3733CC0EC6D7A9139C7E772722446DBAEEC46379FA4ECDE",
+      "file": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W03-site-configuration-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "ce0fcc7052fc017fd3733cc0ec6d7a9139c7e772722446dbaeec46379fa4ecde"
+    },
+    {
+      "id": "W04",
+      "current_sha256": "EC9934BBAF5F3BF1B58A70D3B97A78F9BEB01F850A83935888488DF3DCFCC447",
+      "file": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-option-01.png",
+      "unchanged": true,
+      "baseline_sha256": "ec9934bbaf5f3bf1b58a70d3b97a78f9beb01f850a83935888488df3dcfcc447"
+    },
+    {
+      "id": "W05",
+      "current_sha256": "6B95E18A79A39FBF38F0FC3F2B9AB100D2DAA931ED59F895AA955466B3B82385",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W05-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "6b95e18a79a39fbf38f0fc3f2b9ab100d2daa931ed59f895aa955466b3b82385"
+    },
+    {
+      "id": "W06",
+      "current_sha256": "1441EAE4CAC8020285EE50EAF92083132DEC55DC82469A93CE3A04CE164F996B",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W06-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "1441eae4cac8020285ee50eaf92083132dec55dc82469a93ce3a04ce164f996b"
+    },
+    {
+      "id": "W07",
+      "current_sha256": "FF79ECC9F65F276D7D372A4BDCF7070E5282F33ABEF3B3F5944E27E09E77C511",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W07-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "ff79ecc9f65f276d7d372a4bdcf7070e5282f33abef3b3f5944e27e09e77c511"
+    },
+    {
+      "id": "W08",
+      "current_sha256": "B5FB4BE961094A199B9651D81DA7FDC24CAFE257FCC67AC2E39BBFC4EDD5D030",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W08-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "b5fb4be961094a199b9651d81da7fdc24cafe257fcc67ac2e39bbfc4edd5d030"
+    },
+    {
+      "id": "W09",
+      "current_sha256": "C104872677F2B313724B3DFE44447D8863BD57C54E3B23DFD574B0A03773C6F5",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W09-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "c104872677f2b313724b3dfe44447d8863bd57c54e3b23dfd574b0a03773c6f5"
+    },
+    {
+      "id": "W10",
+      "current_sha256": "C14F0C47D891D9DF83161A2D26416F9838D54584D29549032E0ACCE5C69C8A02",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W10-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "c14f0c47d891d9df83161a2d26416f9838d54584d29549032e0acce5c69c8a02"
+    },
+    {
+      "id": "W11",
+      "current_sha256": "A013DA9F3A2C32FCD084BF6C90DF76AF1CF416FBB14B83F3B76464FF17007428",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W11-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "a013da9f3a2c32fcd084bf6c90df76af1cf416fbb14b83f3b76464ff17007428"
+    },
+    {
+      "id": "W12",
+      "current_sha256": "DF17C887E411BAE3E66FCFB54B98E89E7916895729035BADF3B4A7E109E5AAAF",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W12-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "df17c887e411bae3e66fcfb54b98e89e7916895729035badf3b4a7e109e5aaaf"
+    },
+    {
+      "id": "O-W01",
+      "current_sha256": "AA7BC2F11695B8385F2A5F62FDA124D9523C2C154BFF0C9D760C46C326749ACE",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W01-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "aa7bc2f11695b8385f2a5f62fda124d9523c2c154bff0c9d760c46c326749ace"
+    },
+    {
+      "id": "O-W02",
+      "current_sha256": "60285E7015E91CD209D04922166365D3B955AA3C1267F9418E354B34682BC71C",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W02-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "60285e7015e91cd209d04922166365d3b955aa3c1267f9418e354b34682bc71c"
+    },
+    {
+      "id": "O-W03",
+      "current_sha256": "B36DDE284CE47AFB6A18358A87ED857C2319816C9E42EC9D034B5AFC28B9E6EC",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W03-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "b36dde284ce47afb6a18358a87ed857c2319816c9e42ec9d034b5afc28b9e6ec"
+    },
+    {
+      "id": "O-W04",
+      "current_sha256": "30E983706446BEA4512F8831E42350F6CA6AB7CF3B2560F71E235FE1EBB0D7A1",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W04-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "30e983706446bea4512f8831e42350f6ca6ab7cf3b2560f71e235fe1ebb0d7a1"
+    },
+    {
+      "id": "O-W05",
+      "current_sha256": "CE3F72BB51AA8719FF55DF6571C884C5C337B956A5D8B63A39E5B04AFF2064D5",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W05-v3.png",
+      "unchanged": true,
+      "baseline_sha256": "ce3f72bb51aa8719ff55df6571c884c5c337b956a5d8b63a39e5b04aff2064d5"
+    },
+    {
+      "id": "O-W06",
+      "current_sha256": "53E2A35BE63B55BAF327FD47992C2FF4F8F86D9CBD9A322F697D43F218B0FD47",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W06-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "53e2a35be63b55baf327fd47992c2ff4f8f86d9cbd9a322f697d43f218b0fd47"
+    },
+    {
+      "id": "O-W07",
+      "current_sha256": "46DD1F041A04232BAEB90E65B3B1B9701DB1D72531D59A744736CF426339879D",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W07-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "46dd1f041a04232baeb90e65b3b1b9701db1d72531d59a744736cf426339879d"
+    },
+    {
+      "id": "O-W08",
+      "current_sha256": "5CF1AEE73A29E61DCCD4D9F81749C4F058FF15DBB1A6237D1FB39F3AE41EB5CA",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W08-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "5cf1aee73a29e61dccd4d9f81749c4f058ff15dbb1a6237d1fb39f3ae41eb5ca"
+    },
+    {
+      "id": "O-W09",
+      "current_sha256": "19B02D8C93E10ED35282C06788C37594C3145357A736863FE1E8505209E03560",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W09-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "19b02d8c93e10ed35282c06788c37594c3145357a736863fe1e8505209e03560"
+    },
+    {
+      "id": "O-W10",
+      "current_sha256": "F84C533545444852E9BEE984F65118C6C0CE76650260F5B8538257C16CCAC042",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W10-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "f84c533545444852e9bee984f65118c6c0ce76650260f5b8538257c16ccac042"
+    },
+    {
+      "id": "O-W11",
+      "current_sha256": "E6B54EE8074781ACFFBBE366820E39B4359735960F584B04F712CC599A94BDFB",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W11-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "e6b54ee8074781acffbbe366820e39b4359735960f584b04f712cc599a94bdfb"
+    },
+    {
+      "id": "O-W12",
+      "current_sha256": "66107444B153F092F9F81B419809A3B237AEC1718C92CFA74A73B507D8F9744A",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W12-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "66107444b153f092f9f81b419809a3b237aec1718c92cfa74a73b507d8f9744a"
+    },
+    {
+      "id": "O-W13",
+      "current_sha256": "42EC7372EE42CF7CBA57B3670A4B0A9C34A1CA4770319D60850CA22F6670409D",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W13-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "42ec7372ee42cf7cba57b3670a4b0a9c34a1ca4770319d60850ca22f6670409d"
+    },
+    {
+      "id": "O-W14",
+      "current_sha256": "E50D7107F77BA288C76A5298553322BE7DA79E99966A3066E2342F9FB32AC250",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W14-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "e50d7107f77ba288c76a5298553322be7da79e99966a3066e2342f9fb32ac250"
+    },
+    {
+      "id": "W02-LONG",
+      "current_sha256": "D346144523D41233B9CF6434472AA22A6460D228D548E052745CD8A66932DA8B",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W02-LONG-v3.png",
+      "unchanged": true,
+      "baseline_sha256": "d346144523d41233b9cf6434472aa22a6460d228d548e052745cd8a66932da8b"
+    },
+    {
+      "id": "W04-LONG",
+      "current_sha256": "65B2EC4E9835B0938FF65C90D6589ABD4A3F20760B03AA9A985D6A0BDD06D952",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W04-LONG-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "65b2ec4e9835b0938ff65c90d6589abd4a3f20760b03aa9a985d6a0bdd06d952"
+    },
+    {
+      "id": "W03-RESOURCE-ERROR",
+      "current_sha256": "38A3AD1C40DC2C6238C76C9DFB21E8BB5049A797D398F8559B9FFF34D155F436",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W03-RESOURCE-ERROR-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "38a3ad1c40dc2c6238c76c9dfb21e8bb5049a797d398f8559b9fff34d155f436"
+    },
+    {
+      "id": "W03-NO-RESOURCE",
+      "current_sha256": "4FA59973F3CF9D38E066B5F37035ABEA004304AD91316F69730856896147BE2D",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W03-NO-RESOURCE-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "4fa59973f3cf9d38e066b5f37035abea004304ad91316f69730856896147be2d"
+    },
+    {
+      "id": "W04-SUBMISSION-UNKNOWN",
+      "current_sha256": "6B4F815DDDA06BF4A4A0770B850D425E4D98E408C07CC61F39E5AD0D37E835FC",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W04-SUBMISSION-UNKNOWN-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "6b4f815ddda06bf4a4a0770b850d425e4d98e408c07cc61f39e5ad0d37e835fc"
+    },
+    {
+      "id": "O-W05-READ-ERROR",
+      "current_sha256": "7C93C7D40E6497DB2EEE3D63FCBA9A179AD489AA651D35DAB6A055D19B25E725",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W05-READ-ERROR-v3.png",
+      "unchanged": true,
+      "baseline_sha256": "7c93c7d40e6497db2eee3d63fcba9a179ad489aa651d35dab6a055d19b25e725"
+    },
+    {
+      "id": "O-W09-LATER-CONFLICT",
+      "current_sha256": "AB18317CE9A67B13C15F199303557453DAE67FFC95D211DA290BB102B19B9E91",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W09-LATER-CONFLICT-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "ab18317ce9a67b13c15f199303557453dae67ffc95d211da290bb102b19b9e91"
+    },
+    {
+      "id": "O-W11-MIXED-RESULT",
+      "current_sha256": "B2D126F663D86A611156CB08430830BE9FAB61B589F3CF35406332BA7D04B23C",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W11-MIXED-RESULT-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "b2d126f663d86a611156cb08430830be9fab61b589f3cf35406332ba7d04b23c"
+    },
+    {
+      "id": "O-W14-SEND-UNKNOWN",
+      "current_sha256": "064CC43D5A3D7BD0389832971A2506C9BA77406F7A7A45BB159E10DE4152EC4F",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W14-SEND-UNKNOWN-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "064cc43d5a3d7bd0389832971a2506c9ba77406f7a7a45bb159e10de4152ec4f"
+    },
+    {
+      "id": "ES05",
+      "current_sha256": "35D366E3A4426767F6AA4D0CC9BB312D1C34C1F65DFAD7CA60D59E4978D386FA",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\ES05-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "35d366e3a4426767f6aa4d0cc9bb312d1c34c1f65dfad7ca60d59e4978d386fa"
+    },
+    {
+      "id": "ES06",
+      "current_sha256": "ECBB6B2878D57E42F45A5CB735CD39CA6C98114E569C5498F178593D2ADD522F",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\ES06-v2.png",
+      "unchanged": true,
+      "baseline_sha256": "ecbb6b2878d57e42f45a5cb735cd39ca6c98114e569c5498f178593d2add522f"
+    },
+    {
+      "id": "ES07",
+      "current_sha256": "58AFE431C7022A7CF9D06ACB59A15E7C4A02237E32D98523A0FB498282E813C2",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\ES07-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "58afe431c7022a7cf9d06acb59a15e7c4a02237e32d98523a0fb498282e813c2"
+    },
+    {
+      "id": "ES08",
+      "current_sha256": "1C2389FC67F928642A79F024ED5D9E7939F92A171945A4BB24D84CD42827DF97",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\ES08-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "1c2389fc67f928642a79f024ed5d9e7939f92a171945a4bb24d84cd42827df97"
+    },
+    {
+      "id": "ES10",
+      "current_sha256": "0592FB509B3011AC7716BFDDA0E8CC051B1E0D1C8D5E8B8DA72118B72E81068B",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\ES10-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "0592fb509b3011ac7716bfdda0e8cc051b1e0d1c8d5e8b8da72118b72e81068b"
+    },
+    {
+      "id": "W02-CUSTOMER-PICKER",
+      "current_sha256": "0DC60F0AF37703A57B5D8CB05CABEEFE4DD772BB078C1C40DB4F3A5633AE0B4B",
+      "file": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W02-CUSTOMER-PICKER-v1.png",
+      "unchanged": true,
+      "baseline_sha256": "0dc60f0af37703a57b5d8cb05cabeefe4dd772bb078c1c40db4f3a5633ae0b4b"
+    }
+  ],
+  "scope": "Read-only comparison only, no source changes or deployment by this prototype turn; static verification not interaction/live proof",
+  "original_images_baseline": "evidence/continuation-originals-regression.json",
+  "source_baseline": "evidence/baseline.json",
+  "source_items": [
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\abandon.test.ts",
+      "current_sha256": "CF4A16B28900BF599D50365AC6CD4A53C9E3B5462F6DE7615EEFBCE3C1465100",
+      "unchanged": true,
+      "baseline_sha256": "cf4a16b28900bf599d50365ac6cd4a53c9e3b5462f6de7615eefbce3c1465100"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\abandon.ts",
+      "current_sha256": "06D3684611577F9DEA5654D7FB5029397795374D1C15DC92FF0CA0F51D4DC679",
+      "unchanged": true,
+      "baseline_sha256": "06d3684611577f9dea5654d7fb5029397795374d1c15dc92ff0ca0f51d4dc679"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\accounts.test.ts",
+      "current_sha256": "FB1597BBF49861CE4B3F201F6DD1CF02999E77D5077883869E0A57125676F67A",
+      "unchanged": true,
+      "baseline_sha256": "fb1597bbf49861ce4b3f201f6dd1cf02999e77d5077883869e0a57125676f67a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\accounts.ts",
+      "current_sha256": "AF95526BF7ADDC45B3F5AF40E92C2E58B27EF364A628D5FCB475BCA9AB730F29",
+      "unchanged": true,
+      "baseline_sha256": "af95526bf7addc45b3f5af40e92c2e58b27ef364a628d5fcb475bca9ab730f29"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\agent-session.ts",
+      "current_sha256": "4A5A01109A973328E6039768216126C505C392F86E2F6ED15AF551B7EE5FF0AC",
+      "unchanged": true,
+      "baseline_sha256": "4a5a01109a973328e6039768216126c505c392f86e2f6ed15af551b7ee5ff0ac"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\agent.ts",
+      "current_sha256": "2C09EA47F170E8DC97559878BB6C4F4E52936B4544443B634099F2A9998B1C4D",
+      "unchanged": true,
+      "baseline_sha256": "2c09ea47f170e8dc97559878bb6c4f4e52936b4544443b634099f2a9998b1c4d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\assistant-schema.test.ts",
+      "current_sha256": "07E2635A8A162752197CC3FC82E6AACAADDD04FE6E27A8B15BEF4ED6D55D904B",
+      "unchanged": true,
+      "baseline_sha256": "07e2635a8a162752197cc3fc82e6aacaaddd04fe6e27a8b15bef4ed6d55d904b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\assistant-tools.test.ts",
+      "current_sha256": "D40FB1085DD0F0E5E834304F822279DD72DE2ED3EBB4C3D1F2E4BCC7F80CA737",
+      "unchanged": true,
+      "baseline_sha256": "d40fb1085dd0f0e5e834304f822279dd72de2ed3ebb4c3d1f2e4bcc7f80ca737"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\assistant-tools.ts",
+      "current_sha256": "FF12562381AB28539E230CD89B8DF341D85FDB7DAEEEBC9D4E7026DA97CADFFC",
+      "unchanged": true,
+      "baseline_sha256": "ff12562381ab28539e230cd89b8df341d85fdb7daeeebc9d4e7026da97cadffc"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\assistant.test.ts",
+      "current_sha256": "8AE70736854C4F694B0D33B5C25250BEF9F999955F6BC6F9B35B6A2553F9CB90",
+      "unchanged": true,
+      "baseline_sha256": "8ae70736854c4f694b0d33b5c25250bef9f999955f6bc6f9b35b6a2553f9cb90"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\assistant.ts",
+      "current_sha256": "3924FBAA7461E773BA237B6A059D78F48D7F73CFA87F2F3631FF749C15852DB2",
+      "unchanged": true,
+      "baseline_sha256": "3924fbaa7461e773ba237b6a059d78f48d7f73cfa87f2f3631ff749c15852db2"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\batches.test.ts",
+      "current_sha256": "A89FD9FD629276B4C381CA84F4931760D900782482FCDA7093A12D79F588DB1E",
+      "unchanged": true,
+      "baseline_sha256": "a89fd9fd629276b4c381ca84f4931760d900782482fcda7093a12d79f588db1e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\batches.ts",
+      "current_sha256": "AE2A14316C7E5DF632DA545B6A0EEA8EB475AE1141D6638A08664B35D42F0BC8",
+      "unchanged": true,
+      "baseline_sha256": "ae2a14316c7e5df632da545b6a0eea8eb475ae1141d6638a08664b35d42f0bc8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\branding.test.ts",
+      "current_sha256": "610886B143ADC7FD808B982B8F401F8290EBFAB3321A958296417B7080DB8F3F",
+      "unchanged": true,
+      "baseline_sha256": "610886b143adc7fd808b982b8f401f8290ebfab3321a958296417b7080db8f3f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\branding.ts",
+      "current_sha256": "466EAFFE621E755435AAC932F68AEE3CE55D9677A8A81CBC4EBBB32F56DFC46F",
+      "unchanged": true,
+      "baseline_sha256": "466eaffe621e755435aac932f68aee3ce55d9677a8a81cbc4ebbb32f56dfc46f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\changes.test.ts",
+      "current_sha256": "5707C850D4E1F3CABC9043521A9F6A0ADF06FFBB1D863D8D69D27DA1E2D02215",
+      "unchanged": true,
+      "baseline_sha256": "5707c850d4e1f3cabc9043521a9f6a0adf06ffbb1d863d8d69d27da1e2d02215"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\changes.ts",
+      "current_sha256": "F536F89C7484774609BF2CD6C59CAB6CC39F683397688F376D619B554E17EC2A",
+      "unchanged": true,
+      "baseline_sha256": "f536f89c7484774609bf2cd6c59cab6cc39f683397688f376d619b554e17ec2a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\check-models-script.test.ts",
+      "current_sha256": "7BE0A28100C175AE053F68C50C1D658BF29A61356A2838021A87A5BE1414974E",
+      "unchanged": true,
+      "baseline_sha256": "7be0a28100c175ae053f68c50c1d658bf29a61356a2838021a87a5be1414974e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\cj.ts",
+      "current_sha256": "42DA55A06E17E0C25896CC6A438A42404479D5C7B7BC8D9FBABA6EAEAC5CF283",
+      "unchanged": true,
+      "baseline_sha256": "42da55a06e17e0c25896cc6a438a42404479d5c7b7bc8d9fbaba6eaeac5cf283"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\companion.ts",
+      "current_sha256": "D9D22ECB11619FC2BC0CE20CA6B01B790EE911B6D2398AD7621C32BD7BFD0ABA",
+      "unchanged": true,
+      "baseline_sha256": "d9d22ecb11619fc2bc0ce20ca6b01b790ee911b6d2398ad7621c32bd7bfd0aba"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\content.test.ts",
+      "current_sha256": "1201EE68BD0F049C25C8FD9CFD15009A43C12C0377F35CFA8C4D264A4A9B218C",
+      "unchanged": true,
+      "baseline_sha256": "1201ee68bd0f049c25c8fd9cfd15009a43c12c0377f35cfa8c4d264a4a9b218c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\content.ts",
+      "current_sha256": "88E152CBDF3DA642EC3AFE38EDCD35B9F507986A274D1A52E886AF094B4EB4F3",
+      "unchanged": true,
+      "baseline_sha256": "88e152cbdf3da642ec3afe38edcd35b9f507986a274d1a52e886af094b4eb4f3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\db.test.ts",
+      "current_sha256": "D9775161B52B6A485E33FCE8A14A7A6FA1B3274B8C9A97FFCF9E1D15A54F1FD4",
+      "unchanged": true,
+      "baseline_sha256": "d9775161b52b6a485e33fce8a14a7a6fa1b3274b8c9a97ffcf9e1d15a54f1fd4"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\db.ts",
+      "current_sha256": "81C79F40341DF4B766737DBC809CE2BB5CEC4B7435699776E77CD487CF21316B",
+      "unchanged": true,
+      "baseline_sha256": "81c79f40341df4b766737dbc809ce2bb5cec4b7435699776e77cd487cf21316b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\entity-templates.test.ts",
+      "current_sha256": "20167CD5D29CE4DA7EB6F618A3A016885590DE81D246FC4FBFF62A49BB01C8AE",
+      "unchanged": true,
+      "baseline_sha256": "20167cd5d29ce4da7eb6f618a3a016885590de81d246fc4fbff62a49bb01c8ae"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\entity-templates.ts",
+      "current_sha256": "04FCDF433CD61D842DBAB93428A0FE8736032523AA1C08ECBF47DC326FD7451A",
+      "unchanged": true,
+      "baseline_sha256": "04fcdf433cd61d842dbab93428a0fe8736032523aa1c08ecbf47dc326fd7451a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist-retry.test.ts",
+      "current_sha256": "2A08C71E119529FE8D9816829BAE128E8AC14163F72A2377F1102191D88D5936",
+      "unchanged": true,
+      "baseline_sha256": "2a08c71e119529fe8d9816829bae128e8ac14163f72a2377f1102191d88d5936"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist-settings.test.ts",
+      "current_sha256": "C3CB173CB8D1A223B337812D91AFDB68ED66BF41EBD438037DC9C473429A0012",
+      "unchanged": true,
+      "baseline_sha256": "c3cb173cb8d1a223b337812d91afdb68ed66bf41ebd438037dc9c473429a0012"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist-settings.ts",
+      "current_sha256": "184894AB0373E036E4CFB727EC57EE1499B81E48ECCBE79EF8393A916CE1EFBC",
+      "unchanged": true,
+      "baseline_sha256": "184894ab0373e036e4cfb727ec57ee1499b81e48eccbe79ef8393a916ce1efbc"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist-structure.test.ts",
+      "current_sha256": "37EA189D71317ED1AC2C6DDC0679311C1C19B2BB2E229FABA92F75E616DF6D98",
+      "unchanged": true,
+      "baseline_sha256": "37ea189d71317ed1ac2c6ddc0679311c1c19b2bb2e229faba92f75e616df6d98"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist-structure.ts",
+      "current_sha256": "F77DCD37476FAAF81EC271B960693733A80DD61ABF44CECAD5E87534453D591A",
+      "unchanged": true,
+      "baseline_sha256": "f77dcd37476faaf81ec271b960693733a80dd61abf44cecad5e87534453d591a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist-tools.test.ts",
+      "current_sha256": "18CE307010E150E7ADB8ECA9D14B9E104DEF39B07A8518F6FD3A4B7A1D0A369E",
+      "unchanged": true,
+      "baseline_sha256": "18ce307010e150e7adb8eca9d14b9e104def39b07a8518f6fd3a4b7a1d0a369e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist-tools.ts",
+      "current_sha256": "5C1BF33FA51D5B0A9BA907446FC3C97C66CDA4B1C6083E97D269D7E3BC51D5AF",
+      "unchanged": true,
+      "baseline_sha256": "5c1bf33fa51d5b0a9ba907446fc3c97c66cda4b1c6083e97d269d7e3bc51d5af"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist.test.ts",
+      "current_sha256": "46DA991109228663863DCDDBD4ADE4C42EECA2548FEE74C2A80C0CC5842AF214",
+      "unchanged": true,
+      "baseline_sha256": "46da991109228663863dcddbd4ade4c42eeca2548fee74c2a80c0cc5842af214"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist.ts",
+      "current_sha256": "29BF28619D0412D2E90D0E8683458D64B402426DE9B5E8CA3F17D38FF0C3E15D",
+      "unchanged": true,
+      "baseline_sha256": "29bf28619d0412d2e90d0e8683458d64b402426de9b5e8ca3f17d38ff0c3e15d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\home-design.test.ts",
+      "current_sha256": "1491B65F2B68719BE6D8253BEC08FC87D4BE9E9167621835C76B1FE0E47BC927",
+      "unchanged": true,
+      "baseline_sha256": "1491b65f2b68719be6d8253bec08fc87d4be9e9167621835c76b1fe0e47bc927"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\home-design.ts",
+      "current_sha256": "AB0FF758015F0C3C3EDB2051D13704157D7F353FDBC41CE81FA370E01F6B367A",
+      "unchanged": true,
+      "baseline_sha256": "ab0ff758015f0c3c3edb2051d13704157d7f353fdbc41ce81fa370e01f6b367a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\hostinger.test.ts",
+      "current_sha256": "76023246D46DDE96736900087D919FA09A9B095C85C220E73C818D1BC528D207",
+      "unchanged": true,
+      "baseline_sha256": "76023246d46dde96736900087d919fa09a9b095c85c220e73c818d1bc528d207"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\hostinger.ts",
+      "current_sha256": "1F6525559EE4BAC3165F59362E0E374F7F56BF25094A1B40D44A433149E17AEA",
+      "unchanged": true,
+      "baseline_sha256": "1f6525559ee4bac3165f59362e0e374f7f56bf25094a1b40d44a433149e17aea"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\index.ts",
+      "current_sha256": "14A176E372D50062C44222BF0ACDF8EF89F5AA6715C82FB93148A2ADC3820288",
+      "unchanged": true,
+      "baseline_sha256": "14a176e372d50062c44222bf0acdf8ef89f5aa6715c82fb93148a2adc3820288"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\jobs.test.ts",
+      "current_sha256": "E4B774D5DB9E7264A570995563AC42ACDE84C56F9A21C09C9FC8E953E8A10098",
+      "unchanged": true,
+      "baseline_sha256": "e4b774d5db9e7264a570995563ac42acde84c56f9a21c09c9fc8e953e8a10098"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\jobs.ts",
+      "current_sha256": "C67A62AED219FA400A895EE7DC5FD4B11542CEBCBBFAD9227BF65FEB2403CFA3",
+      "unchanged": true,
+      "baseline_sha256": "c67a62aed219fa400a895ee7dc5fd4b11542cebcbbfad9227bf65feb2403cfa3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\launch.ts",
+      "current_sha256": "08FE851D206B8E56E8A1EF48CA8E8404BAE618666405AC1B9AAC5B84B9FBFA30",
+      "unchanged": true,
+      "baseline_sha256": "08fe851d206b8e56e8a1ef48ca8e8404bae618666405ac1b9aac5b84b9fbfa30"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-case-projector.test.ts",
+      "current_sha256": "9BE14A8544ACDE41CD2A6BA9CB7FDA734A277B81A79A56F588204CFB7CAF76D9",
+      "unchanged": true,
+      "baseline_sha256": "9be14a8544acde41cd2a6ba9cb7fda734a277b81a79a56f588204cfb7caf76d9"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-case-projector.ts",
+      "current_sha256": "9D0CA66AF2E1EB79112F858FAF172B50C76B4C1EB0F5FAB67447E613EECAE0E7",
+      "unchanged": true,
+      "baseline_sha256": "9d0ca66af2e1eb79112f858faf172b50c76b4c1eb0f5fab67447e613eecae0e7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-migration.test.ts",
+      "current_sha256": "8DAAFB1EC74C78081C5B5F7735168D34CD853DE1A80D4F0C18CB25D089BF8469",
+      "unchanged": true,
+      "baseline_sha256": "8daafb1ec74c78081c5b5f7735168d34cd853de1a80d4f0c18cb25d089bf8469"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-translation-workspace.test.ts",
+      "current_sha256": "94AEF06E949BCCF413834D72B5471F9AE293B215C948B33A5F8DB2F4C8C0372B",
+      "unchanged": true,
+      "baseline_sha256": "94aef06e949bccf413834d72b5471f9ae293b215c948b33a5f8db2f4c8c0372b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-translation.test.ts",
+      "current_sha256": "5453CFF4B711755CE320A4EC8CE6869371827D66BDF7F4B545C8AC1FD4F09845",
+      "unchanged": true,
+      "baseline_sha256": "5453cff4b711755ce320a4ec8ce6869371827d66bdf7f4b545c8ac1fd4f09845"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-translation.ts",
+      "current_sha256": "818025EDEC0133992375BB4ED774ECAC9C8C235E91010AAC1EB7F4270C2C3080",
+      "unchanged": true,
+      "baseline_sha256": "818025edec0133992375bb4ed774ecac9c8c235e91010aac1eb7f4270c2c3080"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-acceptance.test.ts",
+      "current_sha256": "15501889F8F51FB1818A034286A549D1C6EDEE04D675E060A776F22F4DEF5738",
+      "unchanged": true,
+      "baseline_sha256": "15501889f8f51fb1818a034286a549d1c6edee04d675e060a776f22f4def5738"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-actions.test.ts",
+      "current_sha256": "D02A16306D08046AE614C973F919E9AA69086142B86A71E6B3517A9B59A77458",
+      "unchanged": true,
+      "baseline_sha256": "d02a16306d08046ae614c973f919e9aa69086142b86a71e6b3517a9b59a77458"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-actions.ts",
+      "current_sha256": "7A9CEE449146EACF97202540A537655663C413581BB9E8FA76A67B6D19C665CC",
+      "unchanged": true,
+      "baseline_sha256": "7a9cee449146eacf97202540a537655663c413581bb9e8fa76a67b6d19c665cc"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-analyzer.test.ts",
+      "current_sha256": "A1CEC7FC4B3D3EC575AFDC70866B21A883EC9F092658D2C5E5CC50442D63BB4C",
+      "unchanged": true,
+      "baseline_sha256": "a1cec7fc4b3d3ec575afdc70866b21a883ec9f092658d2c5e5cc50442d63bb4c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-analyzer.ts",
+      "current_sha256": "89B31E74A2A86DAEA2D4C5F29842E69D029707EA762E7C2201CF84C958481926",
+      "unchanged": true,
+      "baseline_sha256": "89b31e74a2a86daea2d4c5f29842e69d029707ea762e7c2201cf84c958481926"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-board.test.ts",
+      "current_sha256": "72ABFDF5C306F1509481462C56EF6B68022D6A512DC2A6BFD5D5CD7857EF503B",
+      "unchanged": true,
+      "baseline_sha256": "72abfdf5c306f1509481462c56ef6b68022d6a512dc2a6bfd5d5cd7857ef503b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-context.test.ts",
+      "current_sha256": "FADA450D8BBA6CB3CC1EA81D44D9AF935D8115FA9AF96D76758EDD7FBFE22EEF",
+      "unchanged": true,
+      "baseline_sha256": "fada450d8bba6cb3cc1ea81d44d9af935d8115fa9af96d76758edd7fbfe22eef"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-context.ts",
+      "current_sha256": "12C17CBC5C910D3DA8FF017DDB4A56484EEDF5D6D5C05762F933D0EF8F8FBDA7",
+      "unchanged": true,
+      "baseline_sha256": "12c17cbc5c910d3da8ff017ddb4a56484eedf5d6d5c05762f933d0ef8f8fbda7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-evaluation.test.ts",
+      "current_sha256": "C9DA51F71C3E3671DA87FBFA1C9D850E8159C5DD186505E7B6304531BDE643D5",
+      "unchanged": true,
+      "baseline_sha256": "c9da51f71c3e3671da87fbfa1c9d850e8159c5dd186505e7b6304531bde643d5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-evaluation.ts",
+      "current_sha256": "5EB63602196D8DBC1332787215E35F8E5A7B3B18DF3227F4066A17C164C8DE59",
+      "unchanged": true,
+      "baseline_sha256": "5eb63602196d8dbc1332787215e35f8e5a7b3b18df3227f4066a17c164c8de59"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-lifecycle.test.ts",
+      "current_sha256": "DEE76860CD7EAEEA2B64CA9840A2FB8E08A50EFE42713E9BD01004CFAF60F2B1",
+      "unchanged": true,
+      "baseline_sha256": "dee76860cd7eaeea2b64ca9840a2fb8e08a50efe42713e9bd01004cfaf60f2b1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-lifecycle.ts",
+      "current_sha256": "D982907148A354D57151E788A3265FFD0E524E52FBAD8EAC4B5BCF9EBA16AAC5",
+      "unchanged": true,
+      "baseline_sha256": "d982907148a354d57151e788a3265ffd0e524e52fbad8eac4b5bcf9eba16aac5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-migration.test.ts",
+      "current_sha256": "6C65D9D0C1AEE75683BA9E701E3EAB154882BD30D275C0B44D383E1347DE723E",
+      "unchanged": true,
+      "baseline_sha256": "6c65d9d0c1aee75683ba9e701e3eab154882bd30d275c0b44d383e1347de723e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-model.test.ts",
+      "current_sha256": "61CEF94BAACD02AF61439BA1204E92145763E893312E145656CCD826DB12A36B",
+      "unchanged": true,
+      "baseline_sha256": "61cef94baacd02af61439ba1204e92145763e893312e145656ccd826db12a36b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-model.ts",
+      "current_sha256": "C333ED92F595854BD1DCBC5D61CEC41F0CD6694A60D6CCE254618B085553C4C4",
+      "unchanged": true,
+      "baseline_sha256": "c333ed92f595854bd1dcbc5d61cec41f0cd6694a60d6cce254618b085553c4c4"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-queue.test.ts",
+      "current_sha256": "48E9F6BFD166C720459284862545CFEDEE9F8C02FA30B3F52CE5E0C22F9ED934",
+      "unchanged": true,
+      "baseline_sha256": "48e9f6bfd166c720459284862545cfedee9f8c02fa30b3f52ce5e0c22f9ed934"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-queue.ts",
+      "current_sha256": "357822FF13C0335BCEDBD550600806FDD2B6832DF21B3520266AA53857958C2F",
+      "unchanged": true,
+      "baseline_sha256": "357822ff13c0335bcedbd550600806fdd2b6832df21b3520266aa53857958c2f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-scheduler.ts",
+      "current_sha256": "C8B974B0ED7E36A6EBDDE9F8A11D67B9702F391F947B71A1F33F18901A46FE45",
+      "unchanged": true,
+      "baseline_sha256": "c8b974b0ed7e36a6ebdde9f8a11d67b9702f391f947b71a1f33f18901a46fe45"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-schema.ts",
+      "current_sha256": "15A282FDCB3CDF6FA68B1BC94D9C7AADD970534395C63C7D75E1488A69C05E52",
+      "unchanged": true,
+      "baseline_sha256": "15a282fdcb3cdf6fa68b1bc94d9c7aadd970534395c63c7d75e1488a69c05e52"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-send.test.ts",
+      "current_sha256": "FC2535285D17EA88B4C0BA5C14E968C50C7608701CB3D89AFBB755AB3A1BD503",
+      "unchanged": true,
+      "baseline_sha256": "fc2535285d17ea88b4c0ba5c14e968c50c7608701cb3d89afbb755ab3a1bd503"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-send.ts",
+      "current_sha256": "E3E283ADDE973B6B3050BEB33CC22088C04FAEBC6F1E5A6351EE96FEEC64FFB8",
+      "unchanged": true,
+      "baseline_sha256": "e3e283adde973b6b3050beb33cc22088c04faebc6f1e5a6351ee96feec64ffb8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-service.ts",
+      "current_sha256": "B8D289E96344F2C4C99F14D79B8143215B7259A001143255F0D8ADFACFA00B5C",
+      "unchanged": true,
+      "baseline_sha256": "b8d289e96344f2c4c99f14d79b8143215b7259a001143255f0d8adfacfa00b5c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-source.test.ts",
+      "current_sha256": "938303C24A5EEBAEC6F5383A5B221506F61F12DEA62DCEAA59866B56B83FEAA9",
+      "unchanged": true,
+      "baseline_sha256": "938303c24a5eebaec6f5383a5b221506f61f12dea62dceaa59866b56b83feaa9"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-source.ts",
+      "current_sha256": "2A46983048A0868E5698817D41CAF39499E6E5E72A4F081DCB4DAC433CD7B3A8",
+      "unchanged": true,
+      "baseline_sha256": "2a46983048a0868e5698817d41caf39499e6e5e72a4f081dcb4dac433cd7b3a8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-worker.test.ts",
+      "current_sha256": "63EFE4E7BC13ABC9B418DC758B302B03EC42B60537C945F5BB6A5CA5A5FDA7B4",
+      "unchanged": true,
+      "baseline_sha256": "63efe4e7bc13abc9b418dc758b302b03ec42b60537c945f5bb6a5ca5a5fda7b4"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-worker.ts",
+      "current_sha256": "87587AC21CA2FCCB7226EB0190045AEC9DA569881A7007A8A318F2EA6962A811",
+      "unchanged": true,
+      "baseline_sha256": "87587ac21ca2fccb7226eb0190045aec9da569881a7007a8a318f2ea6962a811"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-workspace.test.ts",
+      "current_sha256": "E4E0F688192FAF64290405976B3A2905FAA73C8FFB57561AF0C8E7A25129E874",
+      "unchanged": true,
+      "baseline_sha256": "e4e0f688192faf64290405976b3a2905faa73c8ffb57561af0c8e7a25129e874"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-workspace.test.ts",
+      "current_sha256": "FDB40ADA837F252DBF6CA4E5139D46F7DCA0BCD6DF23E808D285157C333F42C0",
+      "unchanged": true,
+      "baseline_sha256": "fdb40ada837f252dbf6ca4e5139d46f7dca0bcd6df23e808d285157c333f42c0"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail.test.ts",
+      "current_sha256": "48905D44B400A68B36D133D918CAC2077B409F7C91D0ECC1557BBE1C804D5E56",
+      "unchanged": true,
+      "baseline_sha256": "48905d44b400a68b36d133d918cac2077b409f7c91d0ecc1557bbe1c804d5e56"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail.ts",
+      "current_sha256": "CB011DBBB097AB577FDC287F0F14D5A685060AE31762A587ADCC6974D20E9B7F",
+      "unchanged": true,
+      "baseline_sha256": "cb011dbbb097ab577fdc287f0f14d5a685060ae31762a587adcc6974d20e9b7f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-adapter.test.ts",
+      "current_sha256": "D4E41F2F8BCC9595B69976E6393A54DA90F9B73A3797ED59A1B9473293D92A9B",
+      "unchanged": true,
+      "baseline_sha256": "d4e41f2f8bcc9595b69976e6393a54da90f9b73a3797ed59a1b9473293d92a9b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-adapter.ts",
+      "current_sha256": "C76EFD74C42B690907215D77C34A1EB0CBB9FF672EDAD69A9018B3BCD33AC20A",
+      "unchanged": true,
+      "baseline_sha256": "c76efd74c42b690907215d77c34a1eb0cbb9ff672edad69a9018b3bcd33ac20a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-default-password.test.ts",
+      "current_sha256": "56914B3555443DD83F0976192E431CCB852BD984681131181C55C6B02848CB14",
+      "unchanged": true,
+      "baseline_sha256": "56914b3555443dd83f0976192e431ccb852bd984681131181c55c6b02848cb14"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-monitor.ts",
+      "current_sha256": "EC969780337964E84454701397814E7CE00F9ECEAEF785D69CC0EE3C7F86A3BA",
+      "unchanged": true,
+      "baseline_sha256": "ec969780337964e84454701397814e7ce00f9eceaef785d69cc0ee3c7f86a3ba"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-parser.ts",
+      "current_sha256": "97949803275503708A4CBA46BB74D7C51141CF36DA59BF5C44F3B8D1649CCBB2",
+      "unchanged": true,
+      "baseline_sha256": "97949803275503708a4cba46bb74d7c51141cf36da59bf5c44f3b8d1649ccbb2"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-service.test.ts",
+      "current_sha256": "669BAA8D1257D68D2D2D3EB0E838CEFD8C102AE4FD4C8A385A05770FF6DD0BB0",
+      "unchanged": true,
+      "baseline_sha256": "669baa8d1257d68d2d2d3eb0e838cefd8c102ae4fd4c8a385a05770ff6dd0bb0"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-service.ts",
+      "current_sha256": "5B2B09E3EA876079F262633473F42956846BF8FC5B502091EF8CC3FDB1FCB70E",
+      "unchanged": true,
+      "baseline_sha256": "5b2b09e3ea876079f262633473f42956846bf8fc5b502091ef8cc3fdb1fcb70e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-transport.ts",
+      "current_sha256": "A7F5C824DACA6041CBE41C879278775EB24376C8FEC4322104DC82766B003BDB",
+      "unchanged": true,
+      "baseline_sha256": "a7f5c824daca6041cbe41c879278775eb24376c8fec4322104dc82766b003bdb"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\migrations.ts",
+      "current_sha256": "30E950C296383A37C90808925A90FDF52E286A4302447CF6D693DC7422C7B9EC",
+      "unchanged": true,
+      "baseline_sha256": "30e950c296383a37c90808925a90fdf52e286a4302447cf6d693dc7422c7b9ec"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\model-retry.test.ts",
+      "current_sha256": "E9625AD56D76C6299356586804EDE77BF707ED9586E9E6183ECFCCA3B1DA9647",
+      "unchanged": true,
+      "baseline_sha256": "e9625ad56d76c6299356586804ede77bf707ed9586e9e6183ecfcca3b1da9647"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\model-retry.ts",
+      "current_sha256": "5C5945913DE2D6D9619606748AE83C944D8BA4C628F68188AB422053B7D9AB6D",
+      "unchanged": true,
+      "baseline_sha256": "5c5945913de2d6d9619606748ae83c944d8ba4c628f68188ab422053b7d9ab6d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\models.test.ts",
+      "current_sha256": "D2B8A79C50AB7A061533A67B75EB96ACA538E9B2DBF909DED62E2D34820A169A",
+      "unchanged": true,
+      "baseline_sha256": "d2b8a79c50ab7a061533a67b75eb96aca538e9b2dbf909ded62e2d34820a169a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\models.ts",
+      "current_sha256": "7396C92CF593E5A64A4E877DCF07B9B0C7AD9934D3B4DFC209776DA709822DBC",
+      "unchanged": true,
+      "baseline_sha256": "7396c92cf593e5a64a4e877dcf07b9b0c7ad9934d3b4dfc209776da709822dbc"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\net-guard.test.ts",
+      "current_sha256": "6EA9DE7A44EC55D8D015C5266767B07F5E62E58285569E932BFC1393D18C1A35",
+      "unchanged": true,
+      "baseline_sha256": "6ea9de7a44ec55d8d015c5266767b07f5e62e58285569e932bfc1393d18c1a35"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\net-guard.ts",
+      "current_sha256": "367B3B826F6A9F5BE60ED50BC6BDBF51A938643A7F2948DF05B501B015B22D01",
+      "unchanged": true,
+      "baseline_sha256": "367b3b826f6a9f5be60ed50bc6bdbf51a938643a7f2948df05b501b015b22d01"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\overview.test.ts",
+      "current_sha256": "E3E5AF3D167C3DF19655091E5EB2929589A62637CE60BE1CDEE1BC38B414EFC3",
+      "unchanged": true,
+      "baseline_sha256": "e3e5af3d167c3df19655091e5eb2929589a62637ce60be1cdee1bc38b414efc3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\overview.ts",
+      "current_sha256": "C9973476453B33931099747B0DBA339CAE6BA0A619A4E0E0F10A1C4EBEE9D128",
+      "unchanged": true,
+      "baseline_sha256": "c9973476453b33931099747b0dba339cae6ba0a619a4e0e0f10a1c4ebee9d128"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\phase3.integration.test.ts",
+      "current_sha256": "F5854CC25C9EED7C426C7C7C8C706825C5B83BEE1ACF99FBC5153E7AFB83646F",
+      "unchanged": true,
+      "baseline_sha256": "f5854cc25c9eed7c426c7c7c8c706825c5b83bee1acf99fbc5153e7afb83646f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\pipeline.test.ts",
+      "current_sha256": "9B71BB4043394E4AEDCF0FC4E50AD0CF1ED3AB95BD80091291E043D1D0538534",
+      "unchanged": true,
+      "baseline_sha256": "9b71bb4043394e4aedcf0fc4e50ad0cf1ed3ab95bd80091291e043d1d0538534"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\pipeline.ts",
+      "current_sha256": "29BF539FD0DC6FB14FC71E87975C12BD16AE75DBA47FDBC7111388AD8311A86B",
+      "unchanged": true,
+      "baseline_sha256": "29bf539fd0dc6fb14fc71e87975c12bd16ae75dba47fdbc7111388ad8311a86b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\product-content.test.ts",
+      "current_sha256": "82D7CF799E312C413108282B57E431AFF3A352D0AED0F9790CCD962266F9D81C",
+      "unchanged": true,
+      "baseline_sha256": "82d7cf799e312c413108282b57e431aff3a352d0aed0f9790ccd962266f9d81c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\product-content.ts",
+      "current_sha256": "E1A6D604ED3CD086776928DE73564C12CC204DAB7C37E14BC3E27D53BC41EA47",
+      "unchanged": true,
+      "baseline_sha256": "e1a6d604ed3cd086776928de73564c12cc204dab7c37e14bc3e27d53bc41ea47"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\provider-workspace.test.ts",
+      "current_sha256": "0D93EA5FC7A67DEA90DEF2E0117C5C4CDA945C96FE43F9A95661B0A9C3EF9234",
+      "unchanged": true,
+      "baseline_sha256": "0d93ea5fc7a67dea90def2e0117c5c4cda945c96fe43f9a95661b0a9c3ef9234"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\qa-browser.test.ts",
+      "current_sha256": "ED55F51EE837F91CC5C9996F9D2E41B79602C93D74B17EDC080F0C7E5A4F69E2",
+      "unchanged": true,
+      "baseline_sha256": "ed55f51ee837f91cc5c9996f9d2e41b79602c93d74b17edc080f0c7e5a4f69e2"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\qa-browser.ts",
+      "current_sha256": "DF3D4E024CA23C21FD4E6A3FD9F03EBC008CC81FF4600C0F2838712E13FC8EF3",
+      "unchanged": true,
+      "baseline_sha256": "df3d4e024ca23c21fd4e6a3fd9f03ebc008cc81ff4600c0f2838712e13fc8ef3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\qa-runs.test.ts",
+      "current_sha256": "9D068AE8631FF79A7283FDDB379B586C8ABE96DD6035A1066A88279AA3CE14B9",
+      "unchanged": true,
+      "baseline_sha256": "9d068ae8631ff79a7283fddb379b586c8abe96dd6035a1066a88279aa3ce14b9"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\qa-runs.ts",
+      "current_sha256": "B771F824C00853CF236CF872612D8F5F14ADF8277D48C3D4704FA7692C9438B6",
+      "unchanged": true,
+      "baseline_sha256": "b771f824c00853cf236cf872612d8f5f14adf8277d48c3d4704fa7692c9438b6"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\qa-view.test.ts",
+      "current_sha256": "A3B99D17CA04475DBD6E695F8D6B7A222979FE7D77970CFFF079AAE429CB7E3A",
+      "unchanged": true,
+      "baseline_sha256": "a3b99d17ca04475dbd6e695f8d6b7a222979fe7d77970cfff079aae429cb7e3a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\qa-view.ts",
+      "current_sha256": "1493DA1DC7C072D6C9F840620B76F542DBE88714E3F4A442695725240B2EE3A3",
+      "unchanged": true,
+      "baseline_sha256": "1493da1dc7c072d6c9f840620b76f542dbe88714e3f4a442695725240b2ee3a3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\rate-limit.test.ts",
+      "current_sha256": "54C71EACEBDD7DCE09393D65ADBB11DF8FF0C2E047E6405166C5F70A52EECDF1",
+      "unchanged": true,
+      "baseline_sha256": "54c71eacebdd7dce09393d65adbb11df8ff0c2e047e6405166c5f70a52eecdf1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\rate-limit.ts",
+      "current_sha256": "B86C30170813DF540EF181432DA94BBC89FC332C4B67A68BC8EC91BF27E43B85",
+      "unchanged": true,
+      "baseline_sha256": "b86c30170813df540ef181432da94bbc89fc332c4b67a68bc8ec91bf27e43b85"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\resources-phase3.test.ts",
+      "current_sha256": "002007414A88CE590F89509F5A831A603BCC9D500A4EEAAA3F0463420A049245",
+      "unchanged": true,
+      "baseline_sha256": "002007414a88ce590f89509f5a831a603bcc9d500a4eeaaa3f0463420a049245"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\review-autofix.test.ts",
+      "current_sha256": "52CD36EA4DC24088401C880C4FCA299B81EF83D683137F741D95536E46623B8F",
+      "unchanged": true,
+      "baseline_sha256": "52cd36ea4dc24088401c880c4fca299b81ef83d683137f741d95536e46623b8f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\review-history.test.ts",
+      "current_sha256": "7E48A3B57D97545740E8BC5EC042D0D5A808BD6D3384D9DC6A0CA9AD8E5D3502",
+      "unchanged": true,
+      "baseline_sha256": "7e48a3b57d97545740e8bc5ec042d0d5a808bd6d3384d9dc6a0ca9ad8e5d3502"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\review-loop-planning.test.ts",
+      "current_sha256": "5B01C5DA8851864B241B8171C67A39EAB2FC005E37652888AC7DC4E507077E92",
+      "unchanged": true,
+      "baseline_sha256": "5b01c5da8851864b241b8171c67a39eab2fc005e37652888ac7dc4e507077e92"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\review-presentation.ts",
+      "current_sha256": "B18077D24F683E18670A49D962360F91C5F6B87EB36B4CCDB32DB5AB229A4A4B",
+      "unchanged": true,
+      "baseline_sha256": "b18077d24f683e18670a49d962360f91c5f6b87eb36b4ccdb32db5ab229a4a4b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\review-source-mapping.test.ts",
+      "current_sha256": "6A18FE72659AED609A142DDFA83E68012E40CB65A6D5A323CA37B60BD0D44491",
+      "unchanged": true,
+      "baseline_sha256": "6a18fe72659aed609a142ddfa83e68012e40cb65a6d5a323ca37b60bd0d44491"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\review.test.ts",
+      "current_sha256": "517228D2CB7419F5527A864AB1F6D0551E10839AEAA7E379E7FC4E566D87F08F",
+      "unchanged": true,
+      "baseline_sha256": "517228d2cb7419f5527a864ab1f6d0551e10839aeaa7e379e7fc4e566d87f08f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\review.ts",
+      "current_sha256": "979FF6F47057D71B86372599E9EA4B470DADE6ACCCE6829E5168E434F75538A3",
+      "unchanged": true,
+      "baseline_sha256": "979ff6f47057d71b86372599e9ea4b470dade6accce6829e5168e434f75538a3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\rpc.test.ts",
+      "current_sha256": "02B615F711EB0F9560CDD1F5A2DE80B38241451F7285E0BFA755744B969E4BDA",
+      "unchanged": true,
+      "baseline_sha256": "02b615f711eb0f9560cdd1f5a2de80b38241451f7285e0bfa755744b969e4bda"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\rpc.ts",
+      "current_sha256": "2E6A17E67C1BD92BC858ED97F3189585E7D5CFA685AA1DC9D9A5379F27FB967F",
+      "unchanged": true,
+      "baseline_sha256": "2e6a17e67c1bd92bc858ed97f3189585e7d5cfa685aa1dc9d9a5379f27fb967f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\run-pool.test.ts",
+      "current_sha256": "C93DC4537618D19CA86049ACBBBF39DAE8CCB3EE50CC29D49BA4EC060690D7BC",
+      "unchanged": true,
+      "baseline_sha256": "c93dc4537618d19ca86049acbbbf39dae8ccb3ee50cc29d49ba4ec060690d7bc"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\run-pool.ts",
+      "current_sha256": "B0889C78610D452EA34E38C26F143EDF7C38C4B020513445E38649400F8EF1D2",
+      "unchanged": true,
+      "baseline_sha256": "b0889c78610d452ea34e38c26f143edf7c38c4b020513445e38649400f8ef1d2"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\secrets.test.ts",
+      "current_sha256": "8E0B215F4C4B0B8C86861D1E144A7BAC2431AAA1DBC157BBE73299B5753660DF",
+      "unchanged": true,
+      "baseline_sha256": "8e0b215f4c4b0b8c86861d1e144a7bac2431aaa1dbc157bbe73299b5753660df"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\secrets.ts",
+      "current_sha256": "153EBD46405CFCF4B0D0238E74DC775FD2743C9DDF1954787E2F6CF2DA14398B",
+      "unchanged": true,
+      "baseline_sha256": "153ebd46405cfcf4b0d0238e74dc775fd2743c9ddf1954787e2f6cf2da14398b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-fetch.test.ts",
+      "current_sha256": "54F9CD68B498C70A8EAC0138B006A3D73612E8FED07797420B0BFE5483E1BBBD",
+      "unchanged": true,
+      "baseline_sha256": "54f9cd68b498c70a8eac0138b006a3d73612e8fed07797420b0bfe5483e1bbbd"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-fetch.ts",
+      "current_sha256": "8A662CDD589BF75813CB0C8955E0CFBCDEB12189F86D9AC07D2CA09DC9480DF0",
+      "unchanged": true,
+      "baseline_sha256": "8a662cdd589bf75813cb0c8955e0cfbcdeb12189f86d9ac07d2ca09dc9480df0"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-mailbox-pipeline.test.ts",
+      "current_sha256": "C34D4BF8A27F8E61FBA1866A94DF0D157353BFE41A43201683358D3EEBB725F4",
+      "unchanged": true,
+      "baseline_sha256": "c34d4bf8a27f8e61fba1866a94df0d157353bfe41a43201683358d3eebb725f4"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-mailbox-workspace.test.ts",
+      "current_sha256": "D63057DC18C107F92771A5F78D0B8B9161766BD44ACBB1B7E51B6C443F7B3356",
+      "unchanged": true,
+      "baseline_sha256": "d63057dc18c107f92771a5f78d0b8b9161766bd44acbb1b7e51b6c443f7b3356"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-mailbox.test.ts",
+      "current_sha256": "1A66976DE4ABB23F765EAB2E2FE84C91FFBCC2B21C8C50B197223DDEB4D2FEA4",
+      "unchanged": true,
+      "baseline_sha256": "1a66976de4abb23f765eab2e2fe84c91ffbcc2b21c8c50b197223ddeb4d2fea4"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-mailbox.ts",
+      "current_sha256": "03A9740A3B57897F10B698CF8E73859B28519C7D43F051B7DE8C02994A0EE5C7",
+      "unchanged": true,
+      "baseline_sha256": "03a9740a3b57897f10b698cf8e73859b28519c7d43f051b7de8c02994a0ee5c7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-tools-phase3.test.ts",
+      "current_sha256": "3DF098DB80BB3509FC405DB84A87EAC1FCDDAD7A1B6B9CB9E245F4415239B4FA",
+      "unchanged": true,
+      "baseline_sha256": "3df098db80bb3509fc405db84a87eac1fcddad7a1b6b9cb9e245f4415239b4fa"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-tools.ts",
+      "current_sha256": "2DD557C490FB774849426226D3F3ECC1CDBD7B3652DEF77AD0B3515471F04B23",
+      "unchanged": true,
+      "baseline_sha256": "2dd557c490fb774849426226d3f3ecc1cdbd7b3652def77ad0b3515471f04b23"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\smtp.test.ts",
+      "current_sha256": "DF6B15C7419CBF28C28CF503CB51213CF90A13635094C1A2EFDD58C902B86B4E",
+      "unchanged": true,
+      "baseline_sha256": "df6b15c7419cbf28c28cf503cb51213cf90a13635094c1a2efdd58c902b86b4e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\smtp.ts",
+      "current_sha256": "5F514CD8A5E29BFE77108BF4C1B77DF53C8656058CF70FC3AAB3599BCBC08A1B",
+      "unchanged": true,
+      "baseline_sha256": "5f514cd8a5e29bfe77108bf4c1b77df53c8656058cf70fc3aab3599bcbc08a1b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\store-selection.test.ts",
+      "current_sha256": "B76DAF2EBB362E7D5366BC4372074240E1F8AA4F4ED836D95F99CB8DDE1F8658",
+      "unchanged": true,
+      "baseline_sha256": "b76daf2ebb362e7d5366bc4372074240e1f8aa4f4ed836d95f99cb8dde1f8658"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\store.ts",
+      "current_sha256": "A739203B3680209BB576369EF4BBC39F01A347561A5A8EC88F2ADFD295278DB3",
+      "unchanged": true,
+      "baseline_sha256": "a739203b3680209bb576369ef4bbc39f01a347561a5a8ec88f2adfd295278db3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\style.test.ts",
+      "current_sha256": "3E3A064AE64B2AB7A8A35E9A9F8CE2546A4A20D1F28BE5B89702B099D97BF371",
+      "unchanged": true,
+      "baseline_sha256": "3e3a064ae64b2ab7a8a35e9a9f8ce2546a4a20d1f28be5b89702b099d97bf371"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\style.ts",
+      "current_sha256": "336DE7CA990D7481A81B47D4FACF3752E16F253AF2963FC8535597E0DAD6F485",
+      "unchanged": true,
+      "baseline_sha256": "336de7ca990d7481a81b47d4facf3752e16f253af2963fc8535597e0dad6f485"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\testing.ts",
+      "current_sha256": "79FC68C7C84A6D691BB148B2185F812C6D57B85CDD20E0609896B18ED95744BD",
+      "unchanged": true,
+      "baseline_sha256": "79fc68c7c84a6d691bb148b2185f812c6d57b85cdd20e0609896b18ed95744bd"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\translation-model-migration.test.ts",
+      "current_sha256": "5C66515EA350939BC9CA8A56ECD3A1C2888B5F8FAC15E3409F2D550609B87721",
+      "unchanged": true,
+      "baseline_sha256": "5c66515ea350939bc9ca8a56ecd3a1c2888b5f8fac15e3409f2d550609b87721"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\vision.test.ts",
+      "current_sha256": "F5F7B518D6BEDB059D4CE05693458ED889BE507D78DC7F4DBCB2EE5495AE872A",
+      "unchanged": true,
+      "baseline_sha256": "f5f7b518d6bedb059d4ce05693458ed889be507d78dc7f4dbcb2ee5495ae872a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\vision.ts",
+      "current_sha256": "A18640C8679CFD9EA57FB06663B4D8933D69BD38B2997E92C01728107EADEB4A",
+      "unchanged": true,
+      "baseline_sha256": "a18640c8679cfd9ea57fb06663b4d8933d69bd38b2997e92c01728107eadeb4a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\workspace-rpc-policy.ts",
+      "current_sha256": "D63FAEABE47A2A6F01FFE47705F9B306DF60792E9A76EE2E592278813B3E6EEC",
+      "unchanged": true,
+      "baseline_sha256": "d63faeabe47a2a6f01ffe47705f9b306df60792e9a76ee2e592278813b3e6eec"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\workspaces.test.ts",
+      "current_sha256": "A5CE3D424043540C1B0DF88C6D2A15BC7777E8EB45B95055A858523C99B046FA",
+      "unchanged": true,
+      "baseline_sha256": "a5ce3d424043540c1b0df88c6d2a15bc7777e8eb45b95055a858523c99b046fa"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\workspaces.ts",
+      "current_sha256": "F2F18B559E0DA17F7915DF6A6761993F3339A2173E29B4C9BFB85393416FDD9E",
+      "unchanged": true,
+      "baseline_sha256": "f2f18b559e0da17f7915df6a6761993f3339a2173e29b4c9bfb85393416fdd9e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\index.html",
+      "current_sha256": "E72A85461C2D5091F40E47F9BC2D57938106EEEFA64D30D3B38DB113F2DF4936",
+      "unchanged": true,
+      "baseline_sha256": "e72a85461c2d5091f40e47f9bc2d57938106eeefa64d30d3b38db113f2df4936"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\REWRITE_REPORT.md",
+      "current_sha256": "B7FCB7C4A7EA44BC1DDA1689A6B12CBD09746BFE53483AEE8EB8AF4A9CF0EB58",
+      "unchanged": true,
+      "baseline_sha256": "b7fcb7c4a7ea44bc1dda1689a6b12cbd09746bfe53483aee8eb8af4a9cf0eb58"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\THIRD_PARTY_NOTICES",
+      "current_sha256": "D28C723C33A18DFED6AF67B1A0AC368724F79BCB80750D3E080DBCF8DEDB9E4B",
+      "unchanged": true,
+      "baseline_sha256": "d28c723c33a18dfed6af67b1a0ac368724f79bcb80750d3e080dbcf8dedb9e4b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\App.tsx",
+      "current_sha256": "E04538D74C5CB449FDA9F19879B5621F04A7D948046EA9E5865D77E99F6014E1",
+      "unchanged": true,
+      "baseline_sha256": "e04538d74c5cb449fda9f19879b5621f04a7d948046ea9e5865d77e99f6014e1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\env.d.ts",
+      "current_sha256": "65996936FBB042915F7B74A200FCDDE7E410F32A669B1AB9597CFAA4B0FADDB5",
+      "unchanged": true,
+      "baseline_sha256": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\index.css",
+      "current_sha256": "795896A877121A9D943E32D453334A15DDE45AC5E280C597E0A9F4437DDC3C2C",
+      "unchanged": true,
+      "baseline_sha256": "795896a877121a9d943e32d453334a15dde45ac5e280c597e0a9f4437ddc3c2c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\main.tsx",
+      "current_sha256": "C6713F68E9761117B8E6EC9BE2992AF70F395B01B4D058D8BAAC0B6108ECC763",
+      "unchanged": true,
+      "baseline_sha256": "c6713f68e9761117b8e6ec9be2992af70f395b01b4d058d8baac0b6108ecc763"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routeTree.gen.ts",
+      "current_sha256": "DE71C8D686F554F9155C9308094FC05C2D3501E16298C3D6A3758DAED85B34F5",
+      "unchanged": true,
+      "baseline_sha256": "de71c8d686f554f9155c9308094fc05c2d3501e16298c3d6a3758daed85b34f5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\abandon-site.tsx",
+      "current_sha256": "E3E9926D33FC879E7AA231AE5AF1BE69D9365C6DDD77B45E1D5F39112870CF29",
+      "unchanged": true,
+      "baseline_sha256": "e3e9926d33fc879e7aa231ae5af1be69d9365c6ddd77b45e1d5f39112870cf29"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\assistant-state.test.ts",
+      "current_sha256": "C894BA287A263499BEB29358EA00A893E7C690B9D86D3F1989FD7A1F5ECC6F3D",
+      "unchanged": true,
+      "baseline_sha256": "c894ba287a263499beb29358ea00a893e7c690b9d86d3f1989fd7a1f5ecc6f3d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\assistant-state.ts",
+      "current_sha256": "F959142271DF76105CC976344C34114EF2C9C68B3163B2E1C409416B8C1F9EE2",
+      "unchanged": true,
+      "baseline_sha256": "f959142271df76105cc976344c34114ef2c9c68b3163b2e1c409416b8c1f9ee2"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\assistant-ui.test.ts",
+      "current_sha256": "655A18EB044E88646A75FFD4B9CF5A6AB87FC44987477A7C7DDBF82A22240EFC",
+      "unchanged": true,
+      "baseline_sha256": "655a18eb044e88646a75ffd4b9cf5a6ab87fc44987477a7c7ddbf82a22240efc"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\chat-markdown.test.ts",
+      "current_sha256": "F195F0D196A5D53637DA08D73817A003299299F939486EE5D0DA0D78AA8B9DAB",
+      "unchanged": true,
+      "baseline_sha256": "f195f0d196a5d53637da08d73817a003299299f939486ee5d0da0d78aa8b9dab"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\chat-markdown.ts",
+      "current_sha256": "C83A20247FDDE3D4D74DDE7C34456E9BEACE90200EA049127E2227D7C0B66936",
+      "unchanged": true,
+      "baseline_sha256": "c83a20247fdde3d4d74dde7c34456e9beace90200ea049127e2227d7c0b66936"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\chat-message-utils.ts",
+      "current_sha256": "B61829C1EDBEF9366E85776650EF762AD6B9907EB979565181A0EEE4E52AF1C1",
+      "unchanged": true,
+      "baseline_sha256": "b61829c1edbef9366e85776650ef762ad6b9907eb979565181a0eee4e52af1c1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\chat-messages.test.ts",
+      "current_sha256": "5C074CF5446BEED6C150AD40F2733C4FC989FFBFEE63CAC86539C5D63D4F46F7",
+      "unchanged": true,
+      "baseline_sha256": "5c074cf5446beed6c150ad40f2733c4fc989ffbfee63cac86539c5d63d4f46f7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\chat-messages.tsx",
+      "current_sha256": "9E2181E50E3276C0BDEC977E56B77ED0C24696FD73253317C6C24147777D6C54",
+      "unchanged": true,
+      "baseline_sha256": "9e2181e50e3276c0bdec977e56b77ed0c24696fd73253317c6c24147777d6c54"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\confirm-dialog.tsx",
+      "current_sha256": "A6198D517DAEF53D1A2331C4A8C22330AF75AB2178BCF478786517767652CE28",
+      "unchanged": true,
+      "baseline_sha256": "a6198d517daef53d1a2331c4a8c22330af75ab2178bcf478786517767652ce28"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\confirmation-params.test.ts",
+      "current_sha256": "64A76EDDC2C31C388B4E6B66052FBD2C59D702933DEE63AD91B681C9370DDAF2",
+      "unchanged": true,
+      "baseline_sha256": "64a76eddc2c31c388b4e6b66052fbd2c59d702933dee63ad91b681c9370ddaf2"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\confirmation-params.ts",
+      "current_sha256": "F8AD794E8D495B54876F3700A3F9696B02BCD0B88166337D8D15B418513B4106",
+      "unchanged": true,
+      "baseline_sha256": "f8ad794e8d495b54876f3700a3f9696b02bcd0b88166337d8d15b418513b4106"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\data-table.tsx",
+      "current_sha256": "F0DF4E5CCAF976C233F128F11FC2F7EF63478C3687652E3DB8CAA3B45F2223C2",
+      "unchanged": true,
+      "baseline_sha256": "f0df4e5ccaf976c233f128f11fc2f7ef63478c3687652e3db8caa3b45f2223c2"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\feedback.tsx",
+      "current_sha256": "E78DF710D02EA58CB17FA8C26865F3496CBCE2E29DAE431DD08A59DD9FD700CB",
+      "unchanged": true,
+      "baseline_sha256": "e78df710d02ea58cb17fa8c26865f3496cbce2e29dae431dd08a59dd9fd700cb"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\global-assistant.tsx",
+      "current_sha256": "9C22DEB07992B0F367795C0CAA961D1374320C87678F572D377A65AD4D5A37F4",
+      "unchanged": true,
+      "baseline_sha256": "9c22deb07992b0f367795c0caa961d1374320c87678f572d377a65ad4d5a37f4"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\navigation-progress.tsx",
+      "current_sha256": "DE8D9BB45D5EDA7143E17E348D05D2E305E2CB4E693A129CB7726549784F4BD8",
+      "unchanged": true,
+      "baseline_sha256": "de8d9bb45d5eda7143e17e348d05d2e305e2cb4e693a129cb7726549784f4bd8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\page-state.tsx",
+      "current_sha256": "78FF02355ABD8D66A0C3A9C50DA1A9CAF071F08E45F9890B7C9D968B377C2193",
+      "unchanged": true,
+      "baseline_sha256": "78ff02355abd8d66a0c3a9c50da1a9caf071f08e45f9890b7c9d968b377c2193"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\password-input.tsx",
+      "current_sha256": "E852285D58C903689ED711DD5ABFE78398EB2778646D3424C79F5DE4508DB015",
+      "unchanged": true,
+      "baseline_sha256": "e852285d58c903689ed711dd5abfe78398eb2778646d3424c79f5de4508db015"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\profile-dropdown.tsx",
+      "current_sha256": "C26A2689BF4E90A59493EE2F6B5BA841FC40065311AE48459D0EDE4649A13819",
+      "unchanged": true,
+      "baseline_sha256": "c26a2689bf4e90a59493ee2f6b5ba841fc40065311ae48459d0ede4649a13819"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\search.tsx",
+      "current_sha256": "A01B016AE0157408C7473CF426EBAFC1518047F5D4BBA5324D3FB3CBC5D549C8",
+      "unchanged": true,
+      "baseline_sha256": "a01b016ae0157408c7473cf426ebafc1518047f5d4bba5324d3fb3cbc5d549c8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\skip-to-main.tsx",
+      "current_sha256": "66198520829BE692579CED45550AF4414EB07D4CD8D21E39481E564F23015433",
+      "unchanged": true,
+      "baseline_sha256": "66198520829be692579ced45550af4414eb07d4cd8d21e39481e564f23015433"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\theme-switch.tsx",
+      "current_sha256": "C016BC3BBCBEBF63C418B67BCC7F31B648FF0BD823E753C28E63B949F6C7B0CE",
+      "unchanged": true,
+      "baseline_sha256": "c016bc3bbcbebf63c418b67bcc7f31b648ff0bd823e753c28e63b949f6c7b0ce"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\layout\\app-sidebar.tsx",
+      "current_sha256": "EC4E1ECD87C56626C8E0FB4C9FC396B42525F111AEEB83E0698FA18AFD492A8B",
+      "unchanged": true,
+      "baseline_sha256": "ec4e1ecd87c56626c8e0fb4c9fc396b42525f111aeeb83e0698fa18afd492a8b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\layout\\authenticated-layout.tsx",
+      "current_sha256": "281D466CCBBA21823EC169A51D46F25B2F77FEB4AABAC380F90C073970DB562E",
+      "unchanged": true,
+      "baseline_sha256": "281d466ccbba21823ec169a51d46f25b2f77feb4aabac380f90c073970db562e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\layout\\header.tsx",
+      "current_sha256": "3BFEFB16F2BE166177059E519DFA3F0D9FF71E777AE32731D03A7E9AB69C3EA9",
+      "unchanged": true,
+      "baseline_sha256": "3bfefb16f2be166177059e519dfa3f0d9ff71e777ae32731d03a7e9ab69c3ea9"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\layout\\main.tsx",
+      "current_sha256": "EAB34309E0BB3CCAF13F0D08C7B9A1B19670FDF22E84D691319482E5C9F5E758",
+      "unchanged": true,
+      "baseline_sha256": "eab34309e0bb3ccaf13f0d08c7b9a1b19670fdf22e84d691319482e5c9f5e758"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\layout\\nav-group.tsx",
+      "current_sha256": "483926EC9E7A72ABA27010E30BE2088A78CADA1236E80995C5EEDD73B3BA4A05",
+      "unchanged": true,
+      "baseline_sha256": "483926ec9e7a72aba27010e30be2088a78cada1236e80995c5eedd73b3ba4a05"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\layout\\navigation.ts",
+      "current_sha256": "84A0AF920D231AF060B938A42201B9C42BD9ACF98AC5160982E4E08632957E75",
+      "unchanged": true,
+      "baseline_sha256": "84a0af920d231af060b938a42201b9c42bd9acf98ac5160982e4e08632957e75"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\alert-dialog.tsx",
+      "current_sha256": "D57A96557B5DC52D245D8F5F53250055AC1B6CA39EC28715EC9E3EB29A223472",
+      "unchanged": true,
+      "baseline_sha256": "d57a96557b5dc52d245d8f5f53250055ac1b6ca39ec28715ec9e3eb29a223472"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\avatar.tsx",
+      "current_sha256": "62B046FF186A753A4318CCF7A3233D767904851E51A9C18E6808002BF735E0FD",
+      "unchanged": true,
+      "baseline_sha256": "62b046ff186a753a4318ccf7a3233d767904851e51a9c18e6808002bf735e0fd"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\badge.tsx",
+      "current_sha256": "59953420D01D23D172B4E32583426DB153FF09226E2D460D53526B9F25282801",
+      "unchanged": true,
+      "baseline_sha256": "59953420d01d23d172b4e32583426db153ff09226e2d460d53526b9f25282801"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\button.tsx",
+      "current_sha256": "C73281ACB492E6A20A300222523CFBE3714ECDB85FDC368468544017B7D265C3",
+      "unchanged": true,
+      "baseline_sha256": "c73281acb492e6a20a300222523cfbe3714ecdb85fdc368468544017b7d265c3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\card.tsx",
+      "current_sha256": "72728C3734479C247347759FC11BB01C3ACAC38F8E87DA6AEB03D69C39E0F9CC",
+      "unchanged": true,
+      "baseline_sha256": "72728c3734479c247347759fc11bb01c3acac38f8e87da6aeb03d69c39e0f9cc"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\command.tsx",
+      "current_sha256": "E12267DAAD87AB06482C5F707ADC58A7386EF1ECA18B7030BEAA27D7E3D9AA87",
+      "unchanged": true,
+      "baseline_sha256": "e12267daad87ab06482c5f707adc58a7386ef1eca18b7030beaa27d7e3d9aa87"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\dialog.tsx",
+      "current_sha256": "9AFB71E44EF4862AD811419E936EF7F6739B21BE83DBDC17758C08E07362A40D",
+      "unchanged": true,
+      "baseline_sha256": "9afb71e44ef4862ad811419e936ef7f6739b21be83dbdc17758c08e07362a40d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\dropdown-menu.tsx",
+      "current_sha256": "BE17F9FAEA89BF81D806053441CBB7CD53AA6B14454CA66164C372A803F88EA4",
+      "unchanged": true,
+      "baseline_sha256": "be17f9faea89bf81d806053441cbb7cd53aa6b14454ca66164c372a803f88ea4"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\input.tsx",
+      "current_sha256": "4F7D443722B4AEACB1179B863B98F773F7950514CEB1D897B66C967521F08072",
+      "unchanged": true,
+      "baseline_sha256": "4f7d443722b4aeacb1179b863b98f773f7950514ceb1d897b66c967521f08072"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\label.tsx",
+      "current_sha256": "3E9699BAF80185C5C598D7E197D448541D03A6E5BD92B8D4B591774E738AF5EC",
+      "unchanged": true,
+      "baseline_sha256": "3e9699baf80185c5c598d7e197d448541d03a6e5bd92b8d4b591774e738af5ec"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\scroll-area.tsx",
+      "current_sha256": "45CC34DF8C0F09595716CDC66A19EF31F9B168057912AF75F7CA64F0C9431D04",
+      "unchanged": true,
+      "baseline_sha256": "45cc34df8c0f09595716cdc66a19ef31f9b168057912af75f7ca64f0c9431d04"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\select.tsx",
+      "current_sha256": "5ED4038FEB430B44F7DA060D44F21062932ADE549FF809BDAF85844657D4F1D8",
+      "unchanged": true,
+      "baseline_sha256": "5ed4038feb430b44f7da060d44f21062932ade549ff809bdaf85844657d4f1d8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\separator.tsx",
+      "current_sha256": "8C8CB3818AA31CC8A38A047BB7FBBF815CD3B54E6997D389C2B01D8DCB3858A1",
+      "unchanged": true,
+      "baseline_sha256": "8c8cb3818aa31cc8a38a047bb7fbbf815cd3b54e6997d389c2b01d8dcb3858a1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\sheet.tsx",
+      "current_sha256": "B29DE8F2A9537A5C1B5D23858EC9B0E0E539A4C4DE5B9DD1BA9EAF9EB32F373E",
+      "unchanged": true,
+      "baseline_sha256": "b29de8f2a9537a5c1b5d23858ec9b0e0e539a4c4de5b9dd1ba9eaf9eb32f373e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\sidebar.tsx",
+      "current_sha256": "97997A6498F81DE852E1C5636BF15212F0EEAC6CA5B3E36FC75D4AF89ABC6470",
+      "unchanged": true,
+      "baseline_sha256": "97997a6498f81de852e1c5636bf15212f0eeac6ca5b3e36fc75d4af89abc6470"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\skeleton.tsx",
+      "current_sha256": "7617060C9EA8A25DAFADF224A8567C91DAEBD4A43149D0E72143BBA807FAB457",
+      "unchanged": true,
+      "baseline_sha256": "7617060c9ea8a25dafadf224a8567c91daebd4a43149d0e72143bba807fab457"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\table.tsx",
+      "current_sha256": "8EBADFA3965FC72792D160579FF6BEB0B80D9DD0D3ACD56DB7A34168E956B531",
+      "unchanged": true,
+      "baseline_sha256": "8ebadfa3965fc72792d160579ff6beb0b80d9dd0d3acd56db7a34168e956b531"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\tooltip.tsx",
+      "current_sha256": "F29BEDD31A31C1AC3AB8D3052F591C3B11F1C77AD03B4B2D6748E0EF67304DC5",
+      "unchanged": true,
+      "baseline_sha256": "f29bedd31a31c1ac3ab8d3052f591c3b11f1c77ad03b4b2d6748e0ef67304dc5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\context\\theme-provider.tsx",
+      "current_sha256": "4DBC650B42B9CDC04B65DA127ED2A7D888572242D602C873997F428D75E6B4B6",
+      "unchanged": true,
+      "baseline_sha256": "4dbc650b42b9cdc04b65da127ed2a7d888572242d602c873997f428d75e6b4b6"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\forms-validation.test.ts",
+      "current_sha256": "6D88B95C21966958703F1BE2615CCA1477747366BAD1A09D06A1D818CEC53F43",
+      "unchanged": true,
+      "baseline_sha256": "6d88b95c21966958703f1be2615cca1477747366bad1a09d06a1d818cec53f43"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\accounts\\accounts.tsx",
+      "current_sha256": "6D3A4238F0967858338A45EEF0575E14B436D9FA4B0043EC21FBB1345935A06C",
+      "unchanged": true,
+      "baseline_sha256": "6d3a4238f0967858338a45eef0575e14b436d9fa4b0043ec21fbb1345935a06c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\accounts\\validation.ts",
+      "current_sha256": "A861FB8D25F2976D64DA532855B5729A46C66F881485F195C8E58BCA7CD65F6B",
+      "unchanged": true,
+      "baseline_sha256": "a861fb8d25f2976d64da532855b5729a46c66f881485f195c8e58bca7cd65f6b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\auth\\change-password.tsx",
+      "current_sha256": "A917446CDBFEACD8D532BE7BB54E495DB4F378846923C3CBEB151379891992E3",
+      "unchanged": true,
+      "baseline_sha256": "a917446cdbfeacd8d532be7bb54e495db4f378846923c3cbeb151379891992e3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\auth\\login.tsx",
+      "current_sha256": "723529F6A540E9B95B980752A07965243B93952653ACC219472490B1F63CE676",
+      "unchanged": true,
+      "baseline_sha256": "723529f6a540e9b95b980752a07965243b93952653acc219472490b1f63ce676"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\auth\\validation.ts",
+      "current_sha256": "9329117A2AA7405CB70A6F59AD00E84553E693BB358EA59C0BAA74EB2B7849AC",
+      "unchanged": true,
+      "baseline_sha256": "9329117a2aa7405cb70a6f59ad00e84553e693bb358ea59c0baa74eb2b7849ac"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\batches\\index.tsx",
+      "current_sha256": "94808C4970772D0E517AE20E56C2CF513482B817A7AAD94F20E7A167349F56D8",
+      "unchanged": true,
+      "baseline_sha256": "94808c4970772d0e517ae20e56c2cf513482b817a7aad94f20e7a167349f56d8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\errors\\index.tsx",
+      "current_sha256": "3820B83B7233EB90170881D001563AD670D99A89426F42A5E78CCF516E89BA92",
+      "unchanged": true,
+      "baseline_sha256": "3820b83b7233eb90170881d001563ad670d99a89426f42a5e78ccf516e89ba92"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\compose-dialog.tsx",
+      "current_sha256": "9657E6139BF0B989AFAC6E392D0C11441E454AA441505A2A3CB4B3B826D220B8",
+      "unchanged": true,
+      "baseline_sha256": "9657e6139bf0b989afac6e392d0c11441e454aa441505a2a3cb4b3b826d220b8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\contact-mapping-pane.tsx",
+      "current_sha256": "E499FA2257E3412C2F9525A9CDFFAF1EDA0414268CFC9D2CAAF61C2D8C02542E",
+      "unchanged": true,
+      "baseline_sha256": "e499fa2257e3412c2f9525a9cdffaf1eda0414268cfc9d2caaf61c2d8c02542e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\credential-dialog.tsx",
+      "current_sha256": "C4ADAE7B1F7065866D2DECCAF1CB0D15B442A0ED375B29948B64BFBEAB4EEE99",
+      "unchanged": true,
+      "baseline_sha256": "c4adae7b1f7065866d2deccaf1cb0d15b442a0ed375b29948b64bfbeab4eee99"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-board-page.tsx",
+      "current_sha256": "5E8C2A6E201405733999F3C5651F3875992987550FD842D81020959995A97148",
+      "unchanged": true,
+      "baseline_sha256": "5e8c2a6e201405733999f3c5651f3875992987550fd842d81020959995a97148"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-board.test.ts",
+      "current_sha256": "E5D4D5087CC5DF07B17D840F8AEBBC0E2533EBDD990BA556658F8A4CA843F747",
+      "unchanged": true,
+      "baseline_sha256": "e5d4d5087cc5df07b17d840f8aebbc0e2533ebdd990ba556658f8a4ca843f747"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-body.test.ts",
+      "current_sha256": "0B6E73AEA93B952E456DC19F0571CE1193AB7DB0CF8788050672B4B739994550",
+      "unchanged": true,
+      "baseline_sha256": "0b6e73aea93b952e456dc19f0571ce1193ab7db0cf8788050672b4b739994550"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-body.ts",
+      "current_sha256": "FE755B09C0C98206973D71EEF609FB0702F341F56547BA6B8376706CCBEFFBE5",
+      "unchanged": true,
+      "baseline_sha256": "fe755b09c0c98206973d71eef609fb0702f341f56547ba6b8376706ccbeffbe5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-case-card.tsx",
+      "current_sha256": "B8A6E51B28B781C0B13CD1C2ECF88C831780871124E6E00936A01048091AB395",
+      "unchanged": true,
+      "baseline_sha256": "b8a6e51b28b781c0b13cd1c2ecf88c831780871124e6e00936a01048091ab395"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-case-correction-dialog.tsx",
+      "current_sha256": "3F3F3D359D70B74D45DE354B8183D8F72DDB45BFFBDDC069E3E51DE92055FEA1",
+      "unchanged": true,
+      "baseline_sha256": "3f3f3d359d70b74d45de354b8183d8f72ddb45bffbddc069e3e51de92055fea1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-case-drawer.tsx",
+      "current_sha256": "1337BE9F58F320503918A9E957BF1D5AA663AB18AE9A6DBC6ADCF0CE0BF4A215",
+      "unchanged": true,
+      "baseline_sha256": "1337be9f58f320503918a9e957bf1d5aa663ab18ae9a6dbc6adcf0ce0bf4a215"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-compose-controller.ts",
+      "current_sha256": "CE3048D19834241E632C40D6E182568330EE408F2AEA2B5BCD9A366FCE232392",
+      "unchanged": true,
+      "baseline_sha256": "ce3048d19834241e632c40d6e182568330ee408f2aea2b5bcd9a366fce232392"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-form.test.ts",
+      "current_sha256": "6D4C530CD2455344392E31EE537EEBB43A2D63ED95230879C8A87CD25F7B1332",
+      "unchanged": true,
+      "baseline_sha256": "6d4c530cd2455344392e31ee537eebb43a2d63ed95230879c8a87cd25f7b1332"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-form.ts",
+      "current_sha256": "C4F60DCDD5A0944F1D13846CF4A6E6BC0572AD8D551449C9C49FCDCD544038C1",
+      "unchanged": true,
+      "baseline_sha256": "c4f60dcdd5a0944f1d13846cf4a6e6bc0572ad8d551449c9c49fcdcd544038c1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-interaction.test.ts",
+      "current_sha256": "8DA85404E0C6528FB88F38B93031A39AAECB95D4F34FBFBE922C8A2EE7339C64",
+      "unchanged": true,
+      "baseline_sha256": "8da85404e0c6528fb88f38b93031a39aaecb95d4f34fbfbe922c8a2ee7339c64"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-layout.test.ts",
+      "current_sha256": "05C6F708053CD62404BF13CD4FAD21FA4733331DD687C0F16FAA8D0F720BD934",
+      "unchanged": true,
+      "baseline_sha256": "05c6f708053cd62404bf13cd4fad21fa4733331dd687c0f16faa8d0f720bd934"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-layout.tsx",
+      "current_sha256": "2D9932C5330BCC607A61D51D7DFE31DDCB8F71A8D39B2ABA5542E2C30AF77F6A",
+      "unchanged": true,
+      "baseline_sha256": "2d9932c5330bcc607a61d51d7dfe31ddcb8f71a8d39b2aba5542e2c30af77f6a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-management-page.tsx",
+      "current_sha256": "78EAF3BC3AAAD880C7B2B5CF2D7B64BC3455CC4AABD0AA27F7FE2E06B9028B97",
+      "unchanged": true,
+      "baseline_sha256": "78eaf3bc3aaad880c7b2b5cf2d7b64bc3455cc4aabd0aa27f7fe2e06b9028b97"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-open-state.test.ts",
+      "current_sha256": "CB842360D94209C4E5F1E5557A8659AC95638B86B2629E9673BDA90EC1125EAF",
+      "unchanged": true,
+      "baseline_sha256": "cb842360d94209c4e5f1e5557a8659ac95638b86b2629e9673bda90ec1125eaf"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-open-state.ts",
+      "current_sha256": "B2CCDEA0D7A4B325CC3A0F70BDBA03DF5B412F127BCF93B1D7EC85A5C2C19F5C",
+      "unchanged": true,
+      "baseline_sha256": "b2ccdea0d7a4b325cc3a0f70bdba03df5b412f127bcf93b1d7ec85a5c2c19f5c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-page.tsx",
+      "current_sha256": "496E3D7C2A5B29A75C5309143A9751AE0A4A0E0F4436895DAD14B3CB95D1498A",
+      "unchanged": true,
+      "baseline_sha256": "496e3d7c2a5b29a75c5309143a9751ae0a4a0e0f4436895dad14b3cb95d1498a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-review-page.tsx",
+      "current_sha256": "AE29216538BC7EC25908F3CD4B19D2D84B340EA36F2C4F66E7ECDADDD122E79F",
+      "unchanged": true,
+      "baseline_sha256": "ae29216538bc7ec25908f3cd4b19d2d84b340ea36f2c4f66e7ecdaddd122e79f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-source-search.ts",
+      "current_sha256": "D0BC022F0F10CEB0ACCB30A1D2BD101D88E23391D50748E89B9FA0DF1ECC09A9",
+      "unchanged": true,
+      "baseline_sha256": "d0bc022f0f10ceb0accb30a1d2bd101d88e23391d50748e89b9fa0df1ecc09a9"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-task-outcome-dialog.tsx",
+      "current_sha256": "F1642E8278B3F7187DD70D991F29E1AFCA699410B39048A42D6E7FAB1D1BC265",
+      "unchanged": true,
+      "baseline_sha256": "f1642e8278b3f7187dd70d991f29e1afca699410b39048a42d6e7fab1d1bc265"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-triage-client.ts",
+      "current_sha256": "A99368382029618F26DEBDA04ACEA0DA84DBBD9D6DBFBC9E5CAB3CB225EB4918",
+      "unchanged": true,
+      "baseline_sha256": "a99368382029618f26debda04acea0da84dbbd9d6dbfbc9e5cab3cb225eb4918"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-triage-pages.test.ts",
+      "current_sha256": "4DC022060AB3D9CDF25A0E11966074E477DA1663362DA2ECA9F3E90F35B85528",
+      "unchanged": true,
+      "baseline_sha256": "4dc022060ab3d9cdf25a0e11966074e477da1663362da2eca9f3e90f35b85528"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-triage-settings-page.tsx",
+      "current_sha256": "E2D21E7468D76FC2B141B3A3EC83EF5F2CDEBA10A0C71F8A34B26921341B280A",
+      "unchanged": true,
+      "baseline_sha256": "e2d21e7468d76fc2b141b3a3ec83ef5f2cdeba10a0c71f8a34b26921341b280a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mailbox-pane.tsx",
+      "current_sha256": "A6470BB8433145989388E72015EEB7142D84DA6A6E1B3446A1887EF28C325C91",
+      "unchanged": true,
+      "baseline_sha256": "a6470bb8433145989388e72015eeb7142d84da6a6e1b3446a1887ef28c325c91"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\message-list-pane.tsx",
+      "current_sha256": "0CC08B76C43F13919374A29149F11C6B42C1945C16C95D56C6FFF9689CC05F59",
+      "unchanged": true,
+      "baseline_sha256": "0cc08b76c43f13919374a29149f11c6b42c1945c16c95d56c6fff9689cc05f59"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\message-reader-pane.tsx",
+      "current_sha256": "6C2F289D07CA1D674A61F07B89F75E4B9472F9BBC95C55B7475247E9EDA51DC6",
+      "unchanged": true,
+      "baseline_sha256": "6c2f289d07ca1d674a61f07b89f75e4b9472f9bbc95c55b7475247e9eda51dc6"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\new-batch\\batch-form.test.ts",
+      "current_sha256": "A43AD0BAE5364C6F15F1103131D9E2542089A1176FF21EB04FFF8D4F6FF9B153",
+      "unchanged": true,
+      "baseline_sha256": "a43ad0bae5364c6f15f1103131d9e2542089a1176ff21eb04fff8d4f6ff9b153"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\new-batch\\batch-form.ts",
+      "current_sha256": "8D37839FA54B5376CA877EE15A6697FD2D48CEE611153CEAB477D34C04AD8EC5",
+      "unchanged": true,
+      "baseline_sha256": "8d37839fa54b5376ca877ee15a6697fd2d48cee611153ceab477d34c04ad8ec5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\new-batch\\index.tsx",
+      "current_sha256": "CA239BD290B1BDB1DB9FFD53603B227452A3BA45F5DC414BCC7A479280A9602F",
+      "unchanged": true,
+      "baseline_sha256": "ca239bd290b1bdb1db9ffd53603b227452a3ba45f5dc414bcc7a479280a9602f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\new-batch\\new-batch-page.test.ts",
+      "current_sha256": "FA9DEB7938CBAA38C71336A769FA1D30755BDAF59D6E45CAB1B3884AF7964BD9",
+      "unchanged": true,
+      "baseline_sha256": "fa9deb7938cbaa38c71336a769fa1d30755bdaf59d6e45cab1b3884af7964bd9"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\overview\\index.tsx",
+      "current_sha256": "5AB04A0673B62E48762DDE1F96A07E7703F7B7FE58901D44127DD358E94B6157",
+      "unchanged": true,
+      "baseline_sha256": "5ab04a0673b62e48762dde1f96a07e7703f7b7fe58901d44127dd358e94b6157"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\settings\\settings-types.ts",
+      "current_sha256": "BBB3610B8A1926FAC7AF8E2D697F962E0FC6F1E890AA3B504420128A6ABF3002",
+      "unchanged": true,
+      "baseline_sha256": "bbb3610b8a1926fac7af8e2d697f962e0fc6f1e890aa3b504420128a6abf3002"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\settings\\settings.tsx",
+      "current_sha256": "089E1E58669C29E0D459FA84A114D20AEBDADF3D985EA84FA5CE2215EE7BF58D",
+      "unchanged": true,
+      "baseline_sha256": "089e1e58669c29e0d459fa84a114d20aebdadf3d985ea84fa5ce2215ee7bf58d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\settings\\translation-role.test.ts",
+      "current_sha256": "A079EB1FF46564EBACFE9961FDDB9F65B2FAD3E4150AD8DA5DB2B7CF07AB9559",
+      "unchanged": true,
+      "baseline_sha256": "a079eb1ff46564ebacfe9961fddb9f65b2fad3e4150ad8da5db2b7cf07ab9559"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\settings\\validation.ts",
+      "current_sha256": "7503EFB02FA903B686400C8BCD49100D1001E9B93658C906833DEF7068F12833",
+      "unchanged": true,
+      "baseline_sha256": "7503efb02fa903b686400c8bcd49100d1001e9b93658c906833def7068f12833"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\sites\\index.tsx",
+      "current_sha256": "C08686CDA6E210C2C27FD68DA49F4D626837CF6CC05F702D0AE2D5B64B3306FB",
+      "unchanged": true,
+      "baseline_sha256": "c08686cda6e210c2c27fd68da49f4d626837cf6cc05f702d0ae2d5b64b3306fb"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\sites\\components\\qa-report-model.test.ts",
+      "current_sha256": "E81B9689BDF2E6C3A784E0CC9CD1DF255D9A90EA6B01275861DB7AECD961C223",
+      "unchanged": true,
+      "baseline_sha256": "e81b9689bdf2e6c3a784e0cc9cd1df255d9a90ea6b01275861db7aecd961c223"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\sites\\components\\qa-report-model.ts",
+      "current_sha256": "00B440363C6CAC11F6AA86629F8215F4FE670F40D03D296D60BCB47C2FE8CECF",
+      "unchanged": true,
+      "baseline_sha256": "00b440363c6cac11f6aa86629f8215f4fe670f40d03d296d60bcb47c2fe8cecf"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\sites\\components\\qa-report.tsx",
+      "current_sha256": "8C45FFECB2767EB88DEC871FA3F5F87742238DEFF274C5363706D7B35972CE4A",
+      "unchanged": true,
+      "baseline_sha256": "8c45ffecb2767eb88dec871fa3f5f87742238deff274c5363706d7b35972ce4a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\sites\\components\\site-operations.tsx",
+      "current_sha256": "52AE880CA6BC5AB857D6F14F04F25C0EC2C4D3AC370621CEE8ED44C6A62A106B",
+      "unchanged": true,
+      "baseline_sha256": "52ae880ca6bc5ab857d6f14f04f25c0ec2c4d3ac370621cee8ed44c6a62a106b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\tables\\grist-iframe-contract.test.ts",
+      "current_sha256": "B32F784156EC132D969DE98029320ECA6C0FD3290249D99E9B7CC9A900131D51",
+      "unchanged": true,
+      "baseline_sha256": "b32f784156ec132d969de98029320eca6c0fd3290249d99e9b7cc9a900131d51"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\tables\\grist-iframe.test.ts",
+      "current_sha256": "CF97A1704F6CD22FCF5906370F1893613B8FB9A873901DB7FDFE52AA1843922F",
+      "unchanged": true,
+      "baseline_sha256": "cf97a1704f6cd22fcf5906370f1893613b8fb9a873901db7fdfe52aa1843922f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\tables\\grist-iframe.ts",
+      "current_sha256": "BF0A99E87781A4B52A85BDAE252623B850357ED8EA3850845EB624E0FB0BA03F",
+      "unchanged": true,
+      "baseline_sha256": "bf0a99e87781a4b52a85bdae252623b850357ed8ea3850845eb624e0fb0ba03f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\tables\\grist-settings-helpers.test.ts",
+      "current_sha256": "108FDE08883DD2DCC634FF2ED3E0BA950F7EF285FCDBDAFB5D490B2E6CF22DD3",
+      "unchanged": true,
+      "baseline_sha256": "108fde08883dd2dcc634ff2ed3e0ba950f7ef285fcdbdafb5d490b2e6cf22dd3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\tables\\grist-settings-helpers.ts",
+      "current_sha256": "C1A00202842AA31D42B212FE36BB7400753971C20E3B26E516247F46CB0769E3",
+      "unchanged": true,
+      "baseline_sha256": "c1a00202842aa31d42b212fe36bb7400753971c20e3b26e516247f46cb0769e3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\tables\\grist-settings.tsx",
+      "current_sha256": "49AA8C6332ED827F895745407AF21300258C58E500CE879CD2657B33DE01968D",
+      "unchanged": true,
+      "baseline_sha256": "49aa8c6332ed827f895745407af21300258c58e500ce879cd2657b33de01968d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\tables\\tables.tsx",
+      "current_sha256": "677701A40A00E047CE3F1B41668A4F8CC98CE0F578D2E83E01F768EE3017D495",
+      "unchanged": true,
+      "baseline_sha256": "677701a40a00e047ce3f1b41668a4f8cc98ce0f578d2e83e01f768ee3017d495"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\users\\users.tsx",
+      "current_sha256": "BAC9A5E7D74A15EC044D82B2166F75F10A0D37BD7CF0F6E09C2EF275DD24C2C6",
+      "unchanged": true,
+      "baseline_sha256": "bac9a5e7d74a15ec044d82b2166f75f10a0d37bd7cf0f6e09c2ef275dd24c2c6"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\users\\validation.ts",
+      "current_sha256": "3DA407F009C783A1AB14A0886A3EEA46ED5FBE0DBE74470AEC40C7417A44A5D1",
+      "unchanged": true,
+      "baseline_sha256": "3da407f009c783a1ab14a0886a3eea46ed5fbe0dbe74470aec40c7417a44a5d1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\hooks\\use-mobile.tsx",
+      "current_sha256": "CEF2003DB553EF127BA219E8F4303A733CC76B85F83F17B1622131C0ECFD3B3C",
+      "unchanged": true,
+      "baseline_sha256": "cef2003db553ef127ba219e8f4303a733cc76b85f83f17b1622131c0ecfd3b3c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\hooks\\use-session.ts",
+      "current_sha256": "12068387147C80EBD23211A1C7A49E818892456A1E8398DB5BD89C82758292C1",
+      "unchanged": true,
+      "baseline_sha256": "12068387147c80ebd23211a1c7a49e818892456a1e8398db5bd89c82758292c1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\auth.test.ts",
+      "current_sha256": "CEF9E88FFA2263D0666C7C7FA425463552EC7E6CCF218D79D270555845475FBC",
+      "unchanged": true,
+      "baseline_sha256": "cef9e88ffa2263d0666c7c7fa425463552ec7e6ccf218d79d270555845475fbc"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\auth.ts",
+      "current_sha256": "7A19C08E5BC037DF5251754BC37E41692A9D55EA7B00C644056036FB6C37E6B5",
+      "unchanged": true,
+      "baseline_sha256": "7a19c08e5bc037df5251754bc37e41692a9d55ea7b00c644056036fb6c37e6b5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\backend.ts",
+      "current_sha256": "5AC3794F5B4E1F41DB0A702E178FC8DD1AD31ECD4C84064865DFE88BAED69C84",
+      "unchanged": true,
+      "baseline_sha256": "5ac3794f5b4e1f41db0a702e178fc8dd1ad31ecd4c84064865dfe88baed69c84"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\query-client.test.ts",
+      "current_sha256": "10025E9DEA1657B508A88685092B73A4801FF66080660CB489DE8479918538AA",
+      "unchanged": true,
+      "baseline_sha256": "10025e9dea1657b508a88685092b73a4801ff66080660cb489de8479918538aa"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\query-client.ts",
+      "current_sha256": "9AB23FBF8B1F3CD75C38FB216AFB895559B6BF3B23228ADE356F120E1BD1F439",
+      "unchanged": true,
+      "baseline_sha256": "9ab23fbf8b1f3cd75c38fb216afb895559b6bf3b23228ade356f120e1bd1f439"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\route-guards.ts",
+      "current_sha256": "568FC474FCECB7296DA090A2884967A897995C968880901112D611C72AC92B15",
+      "unchanged": true,
+      "baseline_sha256": "568fc474fcecb7296da090a2884967a897995c968880901112d611c72ac92b15"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\route-params.ts",
+      "current_sha256": "C9F8D806F3DA42210A9AD34313EB0F563C99B18616A4429DCBC68757F8C5F32F",
+      "unchanged": true,
+      "baseline_sha256": "c9f8d806f3da42210a9ad34313eb0f563c99b18616a4429dcbc68757f8c5f32f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\router-runtime.test.ts",
+      "current_sha256": "164CCD30DA68839F3417E3B3B9446C45234B2E8C3613989498AF6D0E30A22264",
+      "unchanged": true,
+      "baseline_sha256": "164ccd30da68839f3417e3b3b9446c45234b2e8c3613989498af6d0e30a22264"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\router.ts",
+      "current_sha256": "CE3797BFD88F17EDA654329B90CA91839ED6A39F47937314D6A235F5AD3C0DDA",
+      "unchanged": true,
+      "baseline_sha256": "ce3797bfd88f17eda654329b90ca91839ed6a39f47937314d6a235f5ad3c0dda"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\routes.test.ts",
+      "current_sha256": "AB3109FEB8A18BC3E3EB54E8B6AFD31BB455C2026F4108B4CD4463A39F44C992",
+      "unchanged": true,
+      "baseline_sha256": "ab3109feb8a18bc3e3eb54e8b6afd31bb455c2026f4108b4cd4463a39f44c992"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\session.test.ts",
+      "current_sha256": "138007CE097F27FF59241CF77CA6C79B3FE09C2D17B2A2AF000BA7353E2C2D17",
+      "unchanged": true,
+      "baseline_sha256": "138007ce097f27ff59241cf77ca6c79b3fe09c2d17b2a2af000ba7353e2c2d17"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\session.ts",
+      "current_sha256": "4ACA303C50D9E3F7ED6520420A8A70C6621D8AF1EAF9F02E095007272E4482CD",
+      "unchanged": true,
+      "baseline_sha256": "4aca303c50d9e3f7ed6520420a8a70c6621d8af1eaf9f02e095007272e4482cd"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\site-csv.test.ts",
+      "current_sha256": "62D6B3DFCF618D060E8D28EA941A38DDEC6F11A29A71607F1F9351C444D391E3",
+      "unchanged": true,
+      "baseline_sha256": "62d6b3dfcf618d060e8d28ea941a38ddec6f11a29a71607f1f9351c444d391e3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\site-csv.ts",
+      "current_sha256": "ED1E57AF83966F058FAF7BCCDAB7D1BF62E0963632A9C3D45351B806BEE4B83F",
+      "unchanged": true,
+      "baseline_sha256": "ed1e57af83966f058faf7bccdab7d1bf62e0963632a9c3d45351b806bee4b83f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\utils.ts",
+      "current_sha256": "14300D758170C270C75B057F38FEDB3793A5920EA872F0477E29FB131185E8A7",
+      "unchanged": true,
+      "baseline_sha256": "14300d758170c270c75b057f38fedb3793a5920ea872f0477e29fb131185e8a7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\__root.tsx",
+      "current_sha256": "0900F9C6666580A626CBE24F9D46D374755E057258713AD8316366975882438C",
+      "unchanged": true,
+      "baseline_sha256": "0900f9c6666580a626cbe24f9d46d374755e057258713ad8316366975882438c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.accounts.tsx",
+      "current_sha256": "48665D6147F96F1807E31C3CC56CB7F2EB438A65D411EDDDBA9406304911C98F",
+      "unchanged": true,
+      "baseline_sha256": "48665d6147f96f1807e31c3cc56cb7f2eb438a65d411edddba9406304911c98f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.batches.$batchId.tsx",
+      "current_sha256": "695EF27167DDF88B266CE2A295502526BDC42C825635A28BD194D569C593850E",
+      "unchanged": true,
+      "baseline_sha256": "695ef27167ddf88b266ce2a295502526bdc42c825635a28bd194d569c593850e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.batches.index.tsx",
+      "current_sha256": "8C7CD1E201616B079DF5BC655D6E1270859A7BE82CDC0247422EB192CFC67125",
+      "unchanged": true,
+      "baseline_sha256": "8c7cd1e201616b079df5bc655d6e1270859a7be82cdc0247422eb192cfc67125"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.batches.tsx",
+      "current_sha256": "B77F9FBB30C0618F483427ED69CC679B2FF85D848921C06A2F625E83B813480E",
+      "unchanged": true,
+      "baseline_sha256": "b77f9fbb30c0618f483427ed69cc679b2ff85d848921c06a2f625e83b813480e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.index.tsx",
+      "current_sha256": "25DEAFD9CD8C691E2DAA6A5571B2669BB6626486960FEF4EFC411B1DFC4CAC09",
+      "unchanged": true,
+      "baseline_sha256": "25deafd9cd8c691e2daa6a5571b2669bb6626486960fef4efc411b1dfc4cac09"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.$mailboxId.$folder.$uid.tsx",
+      "current_sha256": "2CE3794FE99B4C5B1E0258BD4ADE653FE1B92D2F1925E8F1606F32AB7008B14F",
+      "unchanged": true,
+      "baseline_sha256": "2ce3794fe99b4c5b1e0258bd4ade653fe1b92d2f1925e8f1606f32ab7008b14f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.$mailboxId.$folder.index.tsx",
+      "current_sha256": "1A15435314F100FBF41274D8D9A9896B50965C53CB529482896CFB6132621A4A",
+      "unchanged": true,
+      "baseline_sha256": "1a15435314f100fbf41274d8d9a9896b50965c53cb529482896cfb6132621a4a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.$mailboxId.$folder.tsx",
+      "current_sha256": "C2D181983934567CB62505C5AAAA34C9EDF83752AA47E6641B19A3A4CCC2D4C1",
+      "unchanged": true,
+      "baseline_sha256": "c2d181983934567cb62505c5aaaa34c9edf83752aa47e6641b19a3a4ccc2d4c1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.$mailboxId.index.tsx",
+      "current_sha256": "F5947071C475BDDABF721D6310E55C7A68219A4F3E0E82C7C0079B2F5F847920",
+      "unchanged": true,
+      "baseline_sha256": "f5947071c475bddabf721d6310e55c7a68219a4f3e0e82c7c0079b2f5f847920"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.$mailboxId.tsx",
+      "current_sha256": "1C5F2CDE2ECE261C687B3A1299D2E9C3B38287EE64235AABC363281E07A97115",
+      "unchanged": true,
+      "baseline_sha256": "1c5f2cde2ece261c687b3a1299d2e9c3b38287ee64235aabc363281e07a97115"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.cases.$caseId.tsx",
+      "current_sha256": "B87ABBEB8911E8CCEF29279F2B865C217D6E90B40B59B8607F6ECD319A8E5B54",
+      "unchanged": true,
+      "baseline_sha256": "b87abbeb8911e8ccef29279f2b865c217d6e90b40b59b8607f6ecd319a8e5b54"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.inbox.tsx",
+      "current_sha256": "A12C1902D4E616577D0FDA459B3AAA38F3311110688F613A92FDAC524CC825AE",
+      "unchanged": true,
+      "baseline_sha256": "a12c1902d4e616577d0fda459b3aaa38f3311110688f613a92fdac524cc825ae"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.index.tsx",
+      "current_sha256": "8C9DAC5EC149986CB8CF2C186990DCC51E4ED0FC12415C7F4BFE9BBE5076F904",
+      "unchanged": true,
+      "baseline_sha256": "8c9dac5ec149986cb8cf2c186990dcc51e4ed0fc12415c7f4bfe9bbe5076f904"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.manage.tsx",
+      "current_sha256": "2F8DC142575D19D44AA255C3CE99736BEF436BEBE3F8FFBFD16DE5E86ADD6404",
+      "unchanged": true,
+      "baseline_sha256": "2f8dc142575d19d44aa255c3ce99736bef436bebe3f8ffbfd16de5e86add6404"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.notifications.tsx",
+      "current_sha256": "98568E81B9E5DEB7AA3254B64309EE4D7D2C8880720C37E15698EA26C1FE8FD0",
+      "unchanged": true,
+      "baseline_sha256": "98568e81b9e5deb7aa3254b64309ee4d7d2c8880720c37e15698ea26c1fe8fd0"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.reminders.tsx",
+      "current_sha256": "561BE81D591FE5DFF092939B5B44487D26466476EB19BE58DCB7265F46BA4AFB",
+      "unchanged": true,
+      "baseline_sha256": "561be81d591fe5dff092939b5b44487d26466476eb19be58dcb7265f46ba4afb"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.review.tsx",
+      "current_sha256": "0DA17F304A6F1A01132B8BFB3EC0C261F497669B609E0C4A5DC9B96430FCE54C",
+      "unchanged": true,
+      "baseline_sha256": "0da17f304a6f1a01132b8bfb3ec0c261f497669b609e0c4a5dc9b96430fce54c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.settings.tsx",
+      "current_sha256": "6D8DA38D6D62F1F5D6170A1830E2646764DA2905193844FEC4DA6C5D85C6D2E9",
+      "unchanged": true,
+      "baseline_sha256": "6d8da38d6d62f1f5d6170a1830e2646764da2905193844fec4da6c5d85c6d2e9"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.tsx",
+      "current_sha256": "81E31D72E1603626404EAEC2E9509ABEEF45872E9EE76B5FBF72B6A7F962422D",
+      "unchanged": true,
+      "baseline_sha256": "81e31d72e1603626404eaec2e9509abeef45872e9ee76b5fbf72b6a7f962422d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.new.tsx",
+      "current_sha256": "14725690B624767A77159E4EF0CC6ABAABD0C5A24A26C4793CFC936017010272",
+      "unchanged": true,
+      "baseline_sha256": "14725690b624767a77159e4ef0cc6abaabd0c5a24a26c4793cfc936017010272"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.settings.tsx",
+      "current_sha256": "1EB23C184088E09A397A7A3CA6476729D6ED4CCCA7F1F785FC4707E23E6DC645",
+      "unchanged": true,
+      "baseline_sha256": "1eb23c184088e09a397a7a3ca6476729d6ed4ccca7f1f785fc4707e23e6dc645"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.sites.$siteId.$tab.tsx",
+      "current_sha256": "A9331CEB2169962C7DEE98C450E96EF15CF9D0E3F3A26EF606D7B78D768BD040",
+      "unchanged": true,
+      "baseline_sha256": "a9331ceb2169962c7dee98c450e96ef15cf9d0e3f3a26ef606d7b78d768bd040"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.sites.$siteId.index.tsx",
+      "current_sha256": "61A0EB9153A4D5CFCDCA9A2FA6CDE9D737B74B702D8CB6D04309667215A61634",
+      "unchanged": true,
+      "baseline_sha256": "61a0eb9153a4d5cfcdca9a2fa6cde9d737b74b702d8cb6d04309667215a61634"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.sites.$siteId.tsx",
+      "current_sha256": "2B8692C0CA2746513095E8176CB4555706C2422689EA35B87AACA8AB2CC92D58",
+      "unchanged": true,
+      "baseline_sha256": "2b8692c0ca2746513095e8176cb4555706c2422689ea35b87aaca8ab2cc92d58"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.sites.index.tsx",
+      "current_sha256": "A77E2E5048A5A03717A508488942FC86D0DDCCDEF6B04DFC137CCD8518DB9EEB",
+      "unchanged": true,
+      "baseline_sha256": "a77e2e5048a5a03717a508488942fc86d0ddccdef6b04dfc137ccd8518db9eeb"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.sites.tsx",
+      "current_sha256": "A9B1306E28DEB408C8B2CD5B7BC1015A3E768CBF01D1455EFCC6E2B154A059FD",
+      "unchanged": true,
+      "baseline_sha256": "a9b1306e28deb408c8b2cd5b7bc1015a3e768cbf01d1455efcc6e2b154a059fd"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.tables.tsx",
+      "current_sha256": "C68623A3A69DD5FBEB27E68E1BB2F610ECCCBB6FEB42C3C40CA9EAAA0C0C1A20",
+      "unchanged": true,
+      "baseline_sha256": "c68623a3a69dd5fbeb27e68e1bb2f610ecccbb6feb42c3c40ca9eaaa0c0c1a20"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.tsx",
+      "current_sha256": "AAFE801CB70A8ED0A1C1CF778F13B7A9088CBA5D7119A4AE842226384CAB566C",
+      "unchanged": true,
+      "baseline_sha256": "aafe801cb70a8ed0a1c1cf778f13b7a9088cba5d7119a4ae842226384cab566c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.users.tsx",
+      "current_sha256": "D0DB74361CE0494EA4E7AF10ED44793EF1FA1DA957E054C9561B5951D8F1C282",
+      "unchanged": true,
+      "baseline_sha256": "d0db74361ce0494ea4e7af10ed44793ef1fa1da957e054c9561b5951d8f1c282"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\change-password.tsx",
+      "current_sha256": "3F3CCE141F854A887F34C5534F4C3B395D59827779FC5E3713F0F3568273F287",
+      "unchanged": true,
+      "baseline_sha256": "3f3cce141f854a887f34c5534f4c3b395d59827779fc5e3713f0f3568273f287"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\errors.403.tsx",
+      "current_sha256": "D43FC4A95629FBA641A2C21D59F458E722AF4DC8C2E615A99CABBF4C345046C9",
+      "unchanged": true,
+      "baseline_sha256": "d43fc4a95629fba641a2c21d59f458e722af4dc8c2e615a99cabbf4c345046c9"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\errors.404.tsx",
+      "current_sha256": "71B243968C0746E7623BBFA490762897E23FE86516E10C5708433D36BD69546F",
+      "unchanged": true,
+      "baseline_sha256": "71b243968c0746e7623bbfa490762897e23fe86516e10c5708433d36bd69546f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\errors.500.tsx",
+      "current_sha256": "F31FDB3C3D8BD6BBD55532BF69EC08D9F8327302ED49A4A95296032A297A615A",
+      "unchanged": true,
+      "baseline_sha256": "f31fdb3c3d8bd6bbd55532bf69ec08d9f8327302ed49a4a95296032a297a615a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\login.tsx",
+      "current_sha256": "B51198178A9F8F32E69E2A37926C1D7A547A660553D2A863A1D935AE46AE9CCC",
+      "unchanged": true,
+      "baseline_sha256": "b51198178a9f8f32e69e2a37926c1d7a547a660553d2a863a1d935ae46ae9ccc"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\styles\\app.css",
+      "current_sha256": "BE9AADCE5233110209A547D9180A7512C7EA6BFDC0CBCF85B4112D914E6BF1C8",
+      "unchanged": true,
+      "baseline_sha256": "be9aadce5233110209a547d9180a7512c7ea6bfdc0cbcf85b4112d914e6bf1c8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\styles\\theme.css",
+      "current_sha256": "FAEE559C9A21B2084BF7BAE193E70F0AB18B18A393A06FEC1408669652C266A1",
+      "unchanged": true,
+      "baseline_sha256": "faee559c9a21b2084bf7bae193e70f0ab18b18a393a06fec1408669652c266a1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\admin-db.ts",
+      "current_sha256": "BDFF43C346121DD68B973913A4202F7AD436B8562E6D96208AAE3EF1F386165E",
+      "unchanged": true,
+      "baseline_sha256": "bdff43c346121dd68b973913a4202f7ad436b8562e6d96208aae3ef1f386165e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\assistant-access.test.ts",
+      "current_sha256": "3BEEF20BE05139084280A9F2B03F0B3A28D620BA6BDDDD3B132092AC721C56F7",
+      "unchanged": true,
+      "baseline_sha256": "3beef20be05139084280a9f2b03f0b3a28d620ba6bdddd3b132092ac721c56f7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\assistant-access.ts",
+      "current_sha256": "EC343F165E7C8429B5E116EBCC404FA2B89F9B6E211EB6F67324574FF79D72AF",
+      "unchanged": true,
+      "baseline_sha256": "ec343f165e7c8429b5e116ebcc404fa2b89f9b6e211eb6f67324574ff79d72af"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\auth.test.ts",
+      "current_sha256": "92BFA58E550FED7781E0DDAD9CF88B3B3EF7215C6481EC548057D240D3C65AC7",
+      "unchanged": true,
+      "baseline_sha256": "92bfa58e550fed7781e0ddad9cf88b3b3ef7215c6481ec548057d240d3c65ac7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\auth.ts",
+      "current_sha256": "DC4EC1FDC94A5B964955C1C2E864C615E0C4F6D8A7DF19F39B4E97C207D09E51",
+      "unchanged": true,
+      "baseline_sha256": "dc4ec1fdc94a5b964955c1c2e864c615e0c4f6d8a7df19f39b4e97c207d09e51"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-attachment-http.test.ts",
+      "current_sha256": "C319754EC9B20AB991B8257781AB85630C0ECD0AD4B5CA252262670FD0CC7F83",
+      "unchanged": true,
+      "baseline_sha256": "c319754ec9b20ab991b8257781ab85630c0ecd0ad4b5ca252262670fd0cc7f83"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-attachment-origin.test.ts",
+      "current_sha256": "22D2C83D5ACF6FCC2FC4FAE5224D86AD6ECE5EA60504535A6ADF653D00AADFD4",
+      "unchanged": true,
+      "baseline_sha256": "22d2c83d5acf6fcc2fc4fae5224d86ad6ece5ea60504535a6adf653d00aadfd4"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-attachment-regression.test.ts",
+      "current_sha256": "3E1CD4755960832D4D9FEB10582967794ADC370B6F737692C88AC3E122AD8279",
+      "unchanged": true,
+      "baseline_sha256": "3e1cd4755960832d4d9feb10582967794adc370b6f737692c88ac3e122ad8279"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-attachment-signing.test.ts",
+      "current_sha256": "DA4E275F5F66EC3FFC83673FE8FF23EC2C78D8199E440DDD957C79A28AD5E150",
+      "unchanged": true,
+      "baseline_sha256": "da4e275f5f66ec3ffc83673fe8ff23ec2c78d8199e440ddd957c79a28ad5e150"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-attachment-signing.ts",
+      "current_sha256": "DB42B3B1314F84ACA30BE630FBDDEA2B56BBC443CEAF19CE8222DB90BABC4827",
+      "unchanged": true,
+      "baseline_sha256": "db42b3b1314f84aca30be630fbddea2b56bbc443ceaf19ce8222db90babc4827"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-attachment.test.ts",
+      "current_sha256": "B3DB038E30752AA496638C14E0CEDD32F203B22C0F60F4DB381C9C3B76BCB793",
+      "unchanged": true,
+      "baseline_sha256": "b3db038e30752aa496638c14e0cedd32f203b22c0f60f4db381c9c3b76bcb793"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-attachment.ts",
+      "current_sha256": "4BC41436A948E50D30C090A1F334AD43D89D54A258812FCE2FBAD1710A68F0AE",
+      "unchanged": true,
+      "baseline_sha256": "4bc41436a948e50d30c090a1f334ad43d89d54a258812fce2fbad1710a68f0ae"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-http.test.ts",
+      "current_sha256": "C12D3DD61A29F56F0120DBB47FA38F052EDBD2671251539032C2CF92475721A7",
+      "unchanged": true,
+      "baseline_sha256": "c12d3dd61a29f56f0120dbb47fa38f052edbd2671251539032c2cf92475721a7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-mcp.test.ts",
+      "current_sha256": "3815E3FB92A0021B8FA931FF9B8553DFCFE8826AF87C174EBCD369A3A7997A9D",
+      "unchanged": true,
+      "baseline_sha256": "3815e3fb92a0021b8fa931ff9b8553dfcfe8826af87c174ebcd369a3a7997a9d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-mcp.ts",
+      "current_sha256": "1D274DCDB00D880B33C85E88FBFE2B4C01C162032726DF391402308AD5F159ED",
+      "unchanged": true,
+      "baseline_sha256": "1d274dcdb00d880b33c85e88fbfe2b4c01c162032726df391402308ad5f159ed"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-tokens.test.ts",
+      "current_sha256": "370AD7A7CBBA33B1EBC0771219BA87094F850E73B20A73E4C97EB02906659ABE",
+      "unchanged": true,
+      "baseline_sha256": "370ad7a7cbba33b1ebc0771219ba87094f850e73b20a73e4c97eb02906659abe"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-tokens.ts",
+      "current_sha256": "7B9AFB9A87B6993172840BCC62CD29B3E2EC9FFB44F49BE56CD512428D2DA266",
+      "unchanged": true,
+      "baseline_sha256": "7b9afb9a87b6993172840bcc62cd29b3e2ec9ffb44f49be56cd512428d2da266"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\http.test.ts",
+      "current_sha256": "5CF82E43ADB5976E9DCB5E63B90EC58F69405BB64EEF255A0F86613479303B5C",
+      "unchanged": true,
+      "baseline_sha256": "5cf82e43adb5976e9dcb5e63b90ec58f69405bb64eef255a0f86613479303b5c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\http.ts",
+      "current_sha256": "4452139B6824D062FA14AB5D5EAADAF98990EAA138E9A9BDC008D3462C04BF93",
+      "unchanged": true,
+      "baseline_sha256": "4452139b6824d062fa14ab5d5eaadaf98990eaa138e9a9bdc008d3462c04bf93"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\import-desktop.test.ts",
+      "current_sha256": "AC1FE61D62E32BC380685C84A69E144DE6D18042E44C0505716260ADA3901D0C",
+      "unchanged": true,
+      "baseline_sha256": "ac1fe61d62e32bc380685c84a69e144de6d18042e44c0505716260ada3901d0c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\index.ts",
+      "current_sha256": "1FF1B873A44DBBDF4A20E93FA4E9681FC5BCF6EFBCBC46E62B4C0DCA891E9BA3",
+      "unchanged": true,
+      "baseline_sha256": "1ff1b873a44dbbdf4a20e93fa4e9681fc5bcf6efbcbc46e62b4c0dca891e9ba3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\keys.ts",
+      "current_sha256": "7B878A7620445A178DE58ACE449CF31DF1486E9581310A7A8CFB31F683A9FEEF",
+      "unchanged": true,
+      "baseline_sha256": "7b878a7620445a178de58ace449cf31df1486e9581310a7a8cfb31f683a9feef"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\lock.ts",
+      "current_sha256": "30C8497DAA0388F16E87489AEE6729A925E521246EB8C5CA34074F83769DD8C8",
+      "unchanged": true,
+      "baseline_sha256": "30c8497daa0388f16e87489aee6729a925e521246eb8c5ca34074f83769dd8c8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\auth.ts",
+      "current_sha256": "21369CC422F1219B18DD62DCE24EB74BD668F529AFE0FBBC092C4911121C3169",
+      "unchanged": true,
+      "baseline_sha256": "21369cc422f1219b18dd62dce24eb74bd668f529afe0fbbc092c4911121c3169"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\forms.test.ts",
+      "current_sha256": "C7C5AD23100D185DCEA5BC4F88CC4CABACABF5D456440A2C95F511BBC4380CCD",
+      "unchanged": true,
+      "baseline_sha256": "c7c5ad23100d185dcea5bc4f88cc4cabacabf5d456440a2c95f511bbc4380ccd"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\forms.ts",
+      "current_sha256": "A6BAD1ABD4C1E665055BAF4E38B003DA5F9130562D6FC859E615396C96813FAF",
+      "unchanged": true,
+      "baseline_sha256": "a6bad1abd4c1e665055baf4e38b003da5f9130562d6fc859e615396c96813faf"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\mail-triage-types.ts",
+      "current_sha256": "74635A29AEE3C03376E2122D758125DBA3A5194B1E6106028F928AE308B9E273",
+      "unchanged": true,
+      "baseline_sha256": "74635a29aee3c03376e2122d758125dba3a5194b1e6106028f928ae308b9e273"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\mail-types.ts",
+      "current_sha256": "ABE3DB39C29D832BE0591F8C2917F9C69CE57F2B44E3C406B0CED525FC113B30",
+      "unchanged": true,
+      "baseline_sha256": "abe3db39c29d832be0591f8c2917f9c69ce57f2b44e3c406b0ced525fc113b30"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\protocol.ts",
+      "current_sha256": "129DAF7E50974CB4EEB5F5FAB4640ACA01335D1517B79AA9688BF9F08CC67BFC",
+      "unchanged": true,
+      "baseline_sha256": "129daf7e50974cb4eeb5f5fab4640aca01335d1517b79aa9688bf9f08cc67bfc"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\rules.ts",
+      "current_sha256": "72D286755DA73DC685714113CA4F425EA8AD44833743A4170084C181FC9D14A6",
+      "unchanged": true,
+      "baseline_sha256": "72d286755da73dc685714113ca4f425ea8ad44833743a4170084c181fc9d14a6"
+    }
+  ],
+  "original_images_changed_or_missing": 0,
+  "source_changed_or_missing": 0,
+  "checked_at": "2026-10-18T03:24:11.3435370-07:00",
+  "original_images_checked": 152,
+  "source_checked": 344
+}

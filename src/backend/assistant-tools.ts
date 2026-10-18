@@ -34,8 +34,14 @@ const entity = object({
   processingDays: Type.Array(Type.Integer(), { minItems: 2, maxItems: 2 }),
   transitDays: Type.Array(Type.Integer(), { minItems: 2, maxItems: 2 }),
 });
+const batchEntity = object({
+  kind: Type.Union([Type.Literal("company"), Type.Literal("individual")]),
+  name: Type.String(), address: Type.String(), phone: Type.String(),
+  processingDays: Type.Array(Type.Integer(), { minItems: 2, maxItems: 2 }),
+  transitDays: Type.Array(Type.Integer(), { minItems: 2, maxItems: 2 }),
+});
 const site = object({
-  domain: Type.String(), categories: Type.String(), count: Type.Integer({ minimum: 1, maximum: 200 }),
+  domain: Type.String(), supportEmail: Type.Optional(Type.String()), categories: Type.String(), count: Type.Integer({ minimum: 1, maximum: 200 }),
   priceMin: Type.Union([Type.Number(), Type.Null()]), priceMax: Type.Union([Type.Number(), Type.Null()]), brand: Type.String(),
 });
 
@@ -68,15 +74,16 @@ export const ASSISTANT_RPC_TOOLS: AssistantRpcToolSpec[] = [
   rpc("models.delete", "model_provider_delete", "删除一个模型厂商配置。", object({ providerId }), "confirm"),
   rpc("models.fetch", "model_provider_fetch_models", "从已配置厂商刷新可用模型列表。", object({ providerId }), "read"),
   rpc("models.setRole", "model_role_set", "修改一个系统用途所使用的模型和思考强度。", object({
-    role: Type.Union([Type.Literal("agent"), Type.Literal("vision"), Type.Literal("bulk"), Type.Literal("review")]),
+    role: Type.Union([Type.Literal("agent"), Type.Literal("vision"), Type.Literal("bulk"), Type.Literal("review"), Type.Literal("translation")]),
     providerId, modelId: Type.String({ minLength: 1 }), thinking: Type.String(),
   }), "write"),
   rpc("models.test", "model_test", "向已配置模型发送极短测试请求；可能产生少量模型调用费用。", object({ providerId, modelId: Type.String({ minLength: 1 }) }), "confirm"),
 
   rpc("domains.free", "domains_free", "查看可用于新建站点的空闲域名。", empty, "read"),
+  rpc("domains.mailboxes", "domain_mailboxes", "实时读取一个站点域名已申请且可用的邮箱；不会创建或修改邮箱。", object({ domain: Type.String({ minLength: 1 }) }), "read"),
   rpc("batches.list", "batches_list", "列出建站批次。", empty, "read"),
   rpc("batches.sites", "batch_sites", "查看一个批次内尚未放弃的站点。", object({ batchId: positiveInt("批次编号") }), "read"),
-  rpc("batches.create", "batch_create", "创建建站批次并启动资源占用和自动建站任务。", object({ entity, sites: Type.Array(site, { minItems: 1 }) }), "confirm"),
+  rpc("batches.create", "batch_create", "创建建站批次并启动资源占用和自动建站任务；客服邮箱按站点从已存在的邮箱中自动选择。", object({ entity: batchEntity, sites: Type.Array(site, { minItems: 1 }) }), "confirm"),
   rpc("sites.steps", "site_steps", "查看一个站点的流水线步骤。", object({ siteId }), "read"),
   rpc("sites.events", "site_events", "查看一个站点的运行事件。", object({ siteId }), "read"),
   rpc("sites.qa", "site_qa_report", "查看一个站点的 QA 报告和本地截图数据。", object({ siteId }), "read"),
@@ -148,6 +155,7 @@ export const ASSISTANT_EXCLUDED_METHODS: Readonly<Record<string, string>> = {
   "chat.reset": "站点对话内部控制接口。",
   "mail.defaultPassword.set": "参数包含默认邮箱密码，只能在设置页面输入。",
   "mail.password": "返回邮箱明文密码，绝不暴露给模型。",
+  "mail.translate": "邮箱主题和正文会发送给模型，翻译只能由用户在邮箱阅读器中明确触发。",
   "mail.credential.save": "参数包含邮箱密码，只能在邮箱页面输入。",
   "smtp.enable": "参数可包含邮箱密码，只能在站点页面输入凭据。",
   "grist.settings.save": "参数可包含 Grist API Key，只能在设置页面输入。",
@@ -160,6 +168,35 @@ export const ASSISTANT_EXCLUDED_METHODS: Readonly<Record<string, string>> = {
   "assistant.abort": "全局助手内部停止接口。",
   "assistant.reset": "全局助手内部新对话接口。",
   "assistant.confirm": "全局助手高风险确认回传接口，不能由模型自行确认。",
+  "mail.triage.settings": "邮件预审设置只由专用界面读取，不自动成为助手能力。",
+  "mail.triage.status": "邮件预审状态只由专用界面读取，不自动成为助手能力。",
+  "mail.triage.result": "邮件预审证据含邮箱业务数据，不暴露给通用助手。",
+  "mail.cases.list": "申请事项投影不自动成为通用助手能力。",
+  "mail.cases.detail": "申请事项详情不自动成为通用助手能力。",
+  "mail.cases.sourceMessage": "申请来源正文仅供专用安全阅读器读取，不暴露给通用助手。",
+  "mail.triage.reviewQueue": "待核对队列不自动成为通用助手能力。",
+  "mail.triage.messageAnnotations": "普通邮箱轻量预审标注仅供专用邮件界面读取，不暴露给通用助手。",
+  "mail.triage.sourcePreview": "待核对来源正文仅供专用安全阅读器读取，不暴露给通用助手。",
+  "mail.triage.evaluationStatus": "模型评估资格只由专用界面读取，不自动成为助手能力。",
+  "mail.triage.saveEvaluationReport": "真实人工评估报告只能由专用确认流程保存。",
+  "mail.triage.approveNotificationRouting": "自动通知分流必须由用户在专用界面明确批准。",
+  "mail.triage.auditOutcome": "通知抽查结论只能由用户在专用界面确认。",
+  "mail.triage.configure": "正文外发授权必须由专用确认流程完成。",
+  "mail.triage.backfillPreview": "历史邮件补审范围只能由用户在专用界面预览。",
+  "mail.triage.enqueue": "历史邮件外发必须由专用确认流程触发。",
+  "mail.triage.retry": "预审重试可能再次外发正文，禁止助手隐式触发。",
+  "mail.triage.cancel": "预审取消是人工控制操作，禁止助手隐式触发。",
+  "mail.triage.contacts.list": "联系人辅助映射不自动成为通用助手能力。",
+  "mail.triage.contacts.save": "联系人辅助映射只能由用户确认保存。",
+  "mail.triage.contacts.remove": "联系人辅助映射只能由用户确认删除。",
+  "mail.triage.correct": "人工纠正只能由用户在专用界面确认执行。",
+  "mail.cases.link": "申请关联只能由用户在专用界面确认执行。",
+  "mail.cases.split": "申请拆分只能由用户在专用界面确认执行。",
+  "mail.cases.confirm": "申请身份确认只能由用户在专用界面确认执行。",
+  "mail.cases.independentFact": "独立平台事实必须由用户明确核验，禁止助手代填。",
+  "mail.cases.appeal": "复审提交只能由用户明确确认，禁止助手代为声明。",
+  "mail.triage.undo": "人工决定撤销只能由用户在专用界面确认执行。",
+  "mail.tasks.recordOutcome": "逐项义务结果只能由用户在专用界面明确选择并确认。",
 };
 
 const sensitiveKey = /(?:password|passphrase|token|api[_-]?key|secret|ciphertext|credential|authorization)/i;

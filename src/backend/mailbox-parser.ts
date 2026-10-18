@@ -1,9 +1,11 @@
 import { simpleParser, type AddressObject, type EmailAddress } from "mailparser";
 import type { MailAttachment } from "../shared/mail-types.ts";
+import { MAIL_TRIAGE_LIMITS } from "../shared/mail-triage-types.ts";
 
 export interface ParsedSafeMessage {
   messageId: string | null;
   from: string;
+  fromAddresses: string[];
   to: string[];
   cc: string[];
   subject: string;
@@ -13,6 +15,8 @@ export interface ParsedSafeMessage {
   inReplyTo: string | null;
   references: string[];
   attachments: MailAttachment[];
+  bodyComplete: boolean;
+  bodyIssue: string | null;
 }
 
 const addressValues = (values: EmailAddress[]): string[] => values.flatMap((item) => [
@@ -38,10 +42,14 @@ export async function parseMailText(source: Buffer): Promise<ParsedSafeMessage> 
     skipTextLinks: true,
     maxHtmlLengthToParse: 2 * 1024 * 1024,
   });
-  const text = (mail.text ?? "").replace(/\r\n/g, "\n").trim();
+  const text = (mail.text ?? "").replace(/\r\n?/g, "\n");
+  const bodyIssue = !text.trim() ? "missing_body"
+    : !text.replace(/(?:https?:\/\/|www\.)[^\s<>]+/gi, "").replace(/[\s<>()[\]{}.,;:!?'"，。；：！？]/g, "") ? "links_only"
+    : Array.from(text).length > MAIL_TRIAGE_LIMITS.bodyCharacters ? "body_too_long" : null;
   return {
     messageId: mail.messageId ?? null,
     from: mail.from?.text ?? "",
+    fromAddresses: addresses(mail.from),
     to: addresses(mail.to),
     cc: addresses(mail.cc),
     subject: mail.subject ?? "",
@@ -56,5 +64,7 @@ export async function parseMailText(source: Buffer): Promise<ParsedSafeMessage> 
       type: attachment.contentType || "application/octet-stream",
       size: attachment.size,
     })),
+    bodyComplete: bodyIssue === null,
+    bodyIssue,
   };
 }

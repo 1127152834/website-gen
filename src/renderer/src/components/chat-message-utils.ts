@@ -3,6 +3,7 @@ const TOOL_TEXT: Record<string, string> = {
   get_site: "查看站点概况", get_copy: "读取文案", get_policy: "读取政策页", list_products: "查看商品列表", get_product: "读取商品", list_changes: "查看变更记录",
   update_copy: "修改文案", update_policy: "修改政策页", update_announcement: "修改公告栏", update_style: "切换风格", update_product: "修改商品", revert_change: "回滚变更", schedule_revert: "设置定时恢复",
   system_overview: "查看运营总览", entity_templates_list: "列出经营主体模板", entity_template_save: "保存经营主体模板", entity_template_remove: "删除经营主体模板",
+  domain_mailboxes: "读取站点邮箱",
   sites_all: "查看全部站点", site_get: "查看站点详情", sites_history: "查看放弃站点历史", system_info: "查看系统版本",
   hostinger_accounts_list: "列出 Hostinger 账号", hostinger_account_domains: "查看 Hostinger 账号域名", hostinger_account_sync: "同步 Hostinger 账号", hostinger_account_remove: "移除 Hostinger 账号",
   model_presets: "查看模型厂商预设", model_providers: "查看模型厂商", model_roles: "查看模型用途", model_provider_delete: "删除模型厂商", model_provider_fetch_models: "刷新可用模型", model_role_set: "设置用途模型", model_test: "测试模型",

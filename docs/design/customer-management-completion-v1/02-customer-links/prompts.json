@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "tool": "built-in image_gen",
+  "promptKind": "review summaries; not verbatim tool-call transcripts",
+  "generatedAt": "2026-10-17",
+  "commonReferences": [
+    "docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+    "docs/design/group-01-customer-dossier/C02-overview-v2.png",
+    "docs/design/group-01-customer-dossier/C03-personal-v3.png"
+  ],
+  "commonStylePrompt": "Chinese desktop operations UI, approximately 1488x1056; preserve the customer dossier shell, eight tabs and separate customer/current-application status; near-black ink-navy headings, dark body text, muted gray-blue helper text, pale gray-blue borders, deep-navy primary controls, bright blue only for links; no gradient and do not use the bright-blue C10 palette.",
+  "assets": [
+    {
+      "file": "C07-website-mail-v1.png",
+      "prompt": "Customer dossier Website & Mailbox tab: linked Northline Store/SITE-1042, business mailbox, public-information source rows, website values not checked, no sync claim. A linked customer has a disabled Existing site control and can use Change association. Confirmed company address 260 Demo Blvd, Austin, TX 78702.",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-c0784fa9-11fe-47f9-a6a3-c8b3640428cd.png",
+      "revisions": ["Corrected company address and disabled second-site creation for an already linked customer."]
+    },
+    {
+      "file": "C08-review-v1.png",
+      "prompt": "Customer dossier Material Review tab: current dossier, PayPal target, mixed checked/finding/stale/execution-failed/not-checked rows; AI review is advisory, no score, no approval guarantee, no blocking gate.",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-5d40fdda-99dc-43dd-a23e-995b0ae043d5.png",
+      "revisions": ["A first edit timed out and was terminated; one retry replaced the malformed line above Alex Morgan with Return to customer list."]
+    },
+    {
+      "file": "C09-applications-active-v1.png",
+      "prompt": "Gateway Applications active branch: customer completed, PayPal pending supplementation as the only active application, owner Li Min, source evidence and read-only application snapshot, approved Stripe and history, no start-second button. Supplemental evidence is provisional current-customer material and not sent.",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-ae904cf9-ad36-4293-bfe5-281782761b24.png",
+      "revisions": ["Clarified that later applications do not overwrite a valid approval, while correction of a mistaken approval recalculates customer status."]
+    },
+    {
+      "file": "C09-applications-idle-v1.png",
+      "prompt": "Gateway Applications no-active branch: customer remains completed from Stripe, current application says none active, Start new application creates only an internal record and immutable snapshot; audit is optional advisory; keep approval and application history.",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-569f8c2b-7600-4902-8929-1d2246b67af8.png"
+    },
+    {
+      "file": "O-C11-link-site-v1.png",
+      "prompt": "Change existing site drawer over the dossier: current site Northline Store/SITE-1042; select unoccupied LoneStar Market/SITE-2086; occupied Paperfield disabled; read-failed candidate disabled; association change does not rebuild, publish, modify or delete site resources.",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-b770802e-c44e-4067-88cf-20ce4fe43cc3.png",
+      "revisions": ["Removed the contradictory attempt to associate the site already linked to this customer."]
+    },
+    {
+      "file": "O-C12-link-mail-v1.png",
+      "prompt": "Change business mailbox drawer: current hello@northline.example; select unoccupied sales@northline.example; occupied mailbox disabled; credential-not-checked remains distinct from connected; changing association does not delete the old mailbox resource.",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-e3c29020-5a06-42f8-985f-267426e1ece9.png",
+      "revisions": ["Removed the contradictory attempt to associate the mailbox already linked to this customer."]
+    },
+    {
+      "file": "O-C13-unlink-confirm-v1.png",
+      "prompt": "Unlink website confirmation: association only, remote website/domain/resources remain; active PayPal impact must be acknowledged; existing application snapshot and original mail evidence remain and are not reassigned.",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-a6807406-73d4-41b2-acb5-1128bdce1738.png",
+      "revisions": ["Disabled the background second-site action as Existing site."]
+    },
+    {
+      "file": "O-C14-public-info-v1.png",
+      "prompt": "Website public-information comparison drawer: current dossier versus read website values; equal, difference, not checked and read failure remain separate; brand is a reference item and may differ from legal name; no one-click sync. Company address uses 260 Demo Blvd, Austin, TX 78702.",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-9a383452-eef2-46f7-9d04-a880ad5d13d6.png",
+      "revisions": ["Aligned company address and changed the unrelated inventory-read error to the phone-not-read message."]
+    },
+    {
+      "file": "O-G01-review-scope-v1.png",
+      "prompt": "Incremental-review scope drawer: changed bank file and EIN field; impacted consistency checks are locked and cannot be removed; optional checks can be added; unknown platform rules are not invented; audit may be skipped.",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-9b4ece56-9154-4539-ac5e-850e5bb78fcf.png",
+      "revisions": ["Corrected the malformed Return to customer list line in the dimmed background."]
+    },
+    {
+      "file": "O-G02-review-running-v1.png",
+      "prompt": "Review-running panel with item-level completed, finding, running, execution-failed and cancelled states; partial failure preserves completed results; closing the panel does not cancel the task; no percentage or false full-batch success.",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-012c40b4-8605-4883-9b25-7dd30073e7ba.png",
+      "revisions": ["Corrected the malformed Return to customer list line in the dimmed background."]
+    },
+    {
+      "file": "O-G03-finding-detail-v1.png",
+      "prompt": "Review finding detail for a DEMO EIN-name formatting difference with current value, evidence excerpt, source file/page, affected items, unreviewed rules and invalidation on source change; advisory only and not an approval guarantee.",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-1d7ac05b-2722-4f53-95a4-517be7b61687.png"
+    },
+    {
+      "file": "O-G04-start-application-v1.png",
+      "prompt": "Start gateway application modal over the no-active branch: PayPal, explicit application owner Li Min, business mailbox, optional ID, unreviewed advisory acknowledged, immutable snapshot of 26 fields and 9 current attachments, internal record only, concurrency recheck prevents a second active application.",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-667200e4-0629-4966-9556-c75be7122343.png",
+      "revisions": ["Regenerated over the correct C09 no-active background and removed the retired manual-create entry and an unuploaded license-back example."]
+    }
+  ]
+}

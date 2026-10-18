@@ -8,3 +8,18 @@ poc/out/
 out/
 dist/
 release/
+
+# Local credentials, parallel worktrees and tool evidence
+.env.*
+!.env.example
+.cindy-worktrees/
+.stitch/
+.worktrees/
+.omx/
+.superpowers/
+.tmp/
+.phase3-backup/
+.coldbrew-backup/
+.reference/
+deploy/.local-baseline/
+deploy/.local-verification/

@@ -1,0 +1,10 @@
+Scene ID: ES08
+Title: 邮件 AI paused_audit 安全停机
+Reference kind: base_id:S09; independent_authorized_history_snapshot
+Common style: prompts/common-style.txt
+
+Create one static 1490x1056 desktop scene for ES08, “邮件 AI paused_audit 安全停机”, an essential state of S09. Use prompts/common-style.txt and the S09 surface as design references; do not assume a future PNG exists. Show one readable focal state, not a collage. This is an authorized phase-one static target, not proof of implementation.
+
+Show S09 in “paused_audit” after a human stopped an authorized mail-AI run. This is not the default-off setup form and must not be combined with an unsubmitted configuration. Display “预审已暂停” and the reason “抽查发现一项明确待办未被提取”, referencing the safe local APP-002 source mail and the missed phrase “one current inventory photo” without inventing any additional request. Show a short audit trail with 操作人陈佳 and 10/17/2026 10:05 PT. Provide “查看抽查记录” and “提交重新批准”; do not auto-resume, auto-switch providers or models, silently reprocess mail, or promise improved accuracy. The reapproval conditions must require human review of affected items, confirmation of mailbox scope, and renewed explicit authorization. This independent historical state does not change the system-wide rule that Mail AI remains default off until explicitly authorized.
+
+Use fictional data dated 10/17/2026 PT and MM/DD/YYYY. Keep Alex Morgan · C001, Northline LLC, northline.example, and hello@northline.example consistent where relevant. Only gateway applications use 申请负责人; otherwise use 操作人. Mail stays safe local plain text with no remote content or link access. Do not add unsupported automation or engineering notes to the UI.

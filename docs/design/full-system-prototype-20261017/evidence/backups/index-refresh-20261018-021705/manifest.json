@@ -1,0 +1,32 @@
+[
+  {
+    "path": "coverage.json",
+    "sha256": "1866e565448ea0d3a0a9f05f04c3d0f5e81607b7e8d4bc5fb915d357484c2b00",
+    "size": 99247
+  },
+  {
+    "path": "coverage.md",
+    "sha256": "8b844e21626b7eb5df679a40eee32849c75b7733b008bf7265e048823bb031a3",
+    "size": 23475
+  },
+  {
+    "path": "README.md",
+    "sha256": "88c7a0a5030429bbeb2c23c74278befdeb046cfe4114855c8fc72bce02361e99",
+    "size": 6250
+  },
+  {
+    "path": "galleries/customer.md",
+    "sha256": "1086d37d82d3f3527ac0b3234708ab8f99561661d1a47e08f1b8b46cfa4e8061",
+    "size": 13685
+  },
+  {
+    "path": "galleries/remaining.md",
+    "sha256": "671c9b662757d193fceea838fe012ed8ed99615b80fe0dd8d0b14b073b6e0ab7",
+    "size": 5514
+  },
+  {
+    "path": "galleries/website.md",
+    "sha256": "74f47c0b622430031741df1f0072a94cbc0201cee61f417152327fefb8e3b7be",
+    "size": 9245
+  }
+]

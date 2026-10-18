@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-17",
+  "output_directory": "F:/projects/website-gen/docs/design/customer-management-completion-v1/03-support",
+  "artifact_count": 8,
+  "files": [
+    {
+      "id": "O-C15-delete-confirm-v1",
+      "file": "O-C15-delete-confirm-v1.png",
+      "width": 1487,
+      "height": 1058,
+      "bytes": 1540792,
+      "sha256": "5EE907C9E840CC9D2BA004DBE48E3E06E699426D47A4699A25035023D20314C8",
+      "generated_source": "C:/Users/zhang/.codex/generated_images/01a14639-3e25-7b52-98e0-65a248b5d37c/exec-16617cee-ee16-4455-a055-f3b4a99ef187.png",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/C02-overview-v2.png"
+      ],
+      "generator": "built-in image_gen",
+      "visual_review": "passed",
+      "status": "static prototype pending user confirmation"
+    },
+    {
+      "id": "O-C16-delete-execution-v1",
+      "file": "O-C16-delete-execution-v1.png",
+      "width": 1487,
+      "height": 1058,
+      "bytes": 1473728,
+      "sha256": "93D49A72E487FC48AC324CDD5E8D88C94C273043FF28679DB61809976DB0D911",
+      "generated_source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-462b86fa-14c6-434b-b5f7-d17fdfd991be.png",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/C02-overview-v2.png"
+      ],
+      "generator": "built-in image_gen",
+      "visual_review": "passed after root cross-review repair: unavailable preview controls removed; deleted dossier backdrop cleared",
+      "status": "static prototype pending user confirmation",
+      "previous_generated_source": "C:/Users/zhang/.codex/generated_images/01a14639-3e25-7b52-98e0-65a248b5d37c/exec-7ac2457e-ff79-4ebd-bb2a-23c373c11c00.png",
+      "repair_prompt": "Edit only the dimmed BACKDROP of this Chinese UI prototype. The central white deletion execution-result dialog MUST be retained exactly, same position, dimensions, every existing label/data/button/color. The customer dossier and attachments in its first result row have been deleted, so the currently visible dossier in background must no longer remain readable or appear accessible. Preserve the left navigation rail and top global bar, but replace everything in the BACKDROP CONTENT area to the right of sidebar and under top bar with an empty neutral light gray-blue surface underneath the same dark gray scrim. Remove the background customer identity/header, tabs, address/details/cards/customer status and old customer breadcrumb; change top breadcrumb only to 客户. Do not add new list, rows, cards, counts or other UI. The modal with Alex Morgan/C001 is an operation-result reference, remains unchanged, including partial result, deleted data rows, failed website, unknown domain, retained mailbox/original email and 3 bottom actions. Keep result dialog fully legible. No other edits.",
+      "before_repair": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\before-fix-root\\O-C16-delete-execution-v1.png"
+    },
+    {
+      "id": "O-C07-upload-states-v1",
+      "file": "O-C07-upload-states-v1.png",
+      "width": 1489,
+      "height": 1056,
+      "bytes": 1448264,
+      "sha256": "F1BBC98D6FF848E627D206BCC4CE66A42E0350D6C1B1DB069FBB057E397A1A60",
+      "generated_source": "C:/Users/zhang/.codex/generated_images/01a14639-3e25-7b52-98e0-65a248b5d37c/exec-b8b46db7-c480-4deb-b332-e391f2af03ab.png",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C07-upload-v2.png"
+      ],
+      "generator": "built-in image_gen",
+      "visual_review": "passed",
+      "status": "static prototype pending user confirmation"
+    },
+    {
+      "id": "O-C08-preview-unavailable-v1",
+      "file": "O-C08-preview-unavailable-v1.png",
+      "width": 1491,
+      "height": 1055,
+      "bytes": 1569412,
+      "sha256": "D2CCF24DA343691B210C4FD6D2C564E69613F4D80EA953CE30C11435C4ABF7A2",
+      "generated_source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-73c7911d-50b6-4285-856f-148657a6fdd1.png",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C08-preview-v2.png"
+      ],
+      "generator": "built-in image_gen",
+      "visual_review": "passed after root cross-review repair: unavailable preview controls removed; deleted dossier backdrop cleared",
+      "status": "static prototype pending user confirmation",
+      "previous_generated_source": "C:/Users/zhang/.codex/generated_images/01a14639-3e25-7b52-98e0-65a248b5d37c/exec-b3b20732-3fbc-4408-9faa-95f96ad27d71.png",
+      "repair_prompt": "Make an extremely narrow edit to this existing Chinese UI prototype; preserve exact full canvas, navy/white palette, layout, fonts, all labels and data. PDF preview has failed to load, so pagination and zoom cannot be used. In the pale blue file toolbar below the metadata, REMOVE ONLY all paging controls (left/right arrows, 1 / 1) and zoom controls (-,100%,+), including separators. Leave clean pale-blue empty space between unchanged left filename and right 下载 button. Keep filename and 下载 fixed. Preserve the 无法读取文件预览 message, 重试预览 and 下载文件 actions, metadata, sidebar, gray backdrop, footer and all else. No other edits.",
+      "before_repair": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\before-fix-root\\O-C08-preview-unavailable-v1.png"
+    },
+    {
+      "id": "O-C08-preview-unsupported-v1",
+      "file": "O-C08-preview-unsupported-v1.png",
+      "width": 1490,
+      "height": 1055,
+      "bytes": 1547000,
+      "sha256": "494D2821A73471D0459EA0DF782EFB6F042C2A18DD70C07663CB927343B909A3",
+      "generated_source": "C:\\Users\\zhang\\.codex\\generated_images\\01a14607-58e5-7831-b3b1-33bf0fc130de\\exec-d9189c59-ce59-4c1b-9821-388bccda030b.png",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C08-preview-v2.png"
+      ],
+      "generator": "built-in image_gen",
+      "visual_review": "passed after root cross-review repair: unavailable preview controls removed; deleted dossier backdrop cleared",
+      "status": "static prototype pending user confirmation",
+      "previous_generated_source": "C:/Users/zhang/.codex/generated_images/01a14639-3e25-7b52-98e0-65a248b5d37c/exec-0afe1f8f-a0ba-41c2-a2df-aaf5db2c2b8b.png",
+      "repair_prompt": "Make an extremely narrow edit to this existing approved-style Chinese UI prototype, preserve exact full canvas, navy/white palette, layout, fonts, all labels and data. The XLSX file is explicitly NOT supported for online preview. In the pale blue file toolbar below the metadata, REMOVE ONLY the paging controls (left/right arrows, 1 / 1) and all zoom controls (-,100%,+), including their separator lines. Leave clean empty pale-blue toolbar space between the unchanged left filename and right 下载 button. Do not move the filename or 下载 button. Keep the large unsupported-format empty panel, 下载文件 button, all metadata, sidebar and background and footer unchanged. No other edits.",
+      "before_repair": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\before-fix-root\\O-C08-preview-unsupported-v1.png"
+    },
+    {
+      "id": "O-C09-replace-failure-v1",
+      "file": "O-C09-replace-failure-v1.png",
+      "width": 1489,
+      "height": 1056,
+      "bytes": 1473908,
+      "sha256": "4EBDC1E774FC392E50CA1088FB155C5629B5A6A82B29064E9701733BB786ACAA",
+      "generated_source": "C:/Users/zhang/.codex/generated_images/01a14639-3e25-7b52-98e0-65a248b5d37c/exec-151c9930-bac6-4fee-821c-3505d42c82ed.png",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C09-replace-v2.png"
+      ],
+      "generator": "built-in image_gen",
+      "visual_review": "passed",
+      "status": "static prototype pending user confirmation"
+    },
+    {
+      "id": "O-C10-remove-failure-v1",
+      "file": "O-C10-remove-failure-v1.png",
+      "width": 1487,
+      "height": 1058,
+      "bytes": 1491165,
+      "sha256": "C4036A387F7C0331822F8F1F8779B6A8388ACCE2F3B1207B1A11549426197113",
+      "generated_source": "C:/Users/zhang/.codex/generated_images/01a14639-3e25-7b52-98e0-65a248b5d37c/exec-e739e318-c596-42d7-9044-b38cd531ef7e.png",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C10-remove-v2.png"
+      ],
+      "generator": "built-in image_gen",
+      "visual_review": "passed",
+      "status": "static prototype pending user confirmation"
+    },
+    {
+      "id": "O-C04-save-failure-v1",
+      "file": "O-C04-save-failure-v1.png",
+      "width": 1490,
+      "height": 1056,
+      "bytes": 1551562,
+      "sha256": "17C6FD7B3DEE0C99317D928E549173A9BADC767DA70A6138F1554E10DFF917FD",
+      "generated_source": "C:/Users/zhang/.codex/generated_images/01a14639-3e25-7b52-98e0-65a248b5d37c/exec-f4d3826a-63cd-4f19-9b04-f896405dc310.png",
+      "reference_paths": [
+        "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+        "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C04-personal-edit-v3.png"
+      ],
+      "generator": "built-in image_gen",
+      "visual_review": "passed",
+      "status": "static prototype pending user confirmation"
+    }
+  ],
+  "verification": {
+    "png_count": 8,
+    "all_opened_with_view_image": true,
+    "application_code_changed": false,
+    "existing_files_modified": false
+  }
+}

@@ -1,0 +1,1717 @@
+{
+  "checked_at": "2026-10-18T01:18:10.8179509-07:00",
+  "scope": "Existing confirmed Phase 1 static prototype inventory",
+  "counts": {
+    "undrawn": 28,
+    "drawn": 152,
+    "planned_records": 191,
+    "aliases_excluded": 11,
+    "distinct_surfaces": 180,
+    "drawn_needing_revision": 4
+  },
+  "missing": [
+    {
+      "id": "O-G04-concurrent",
+      "title": "申请开始并发冲突",
+      "kind": "state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "O-G04-unknown",
+      "title": "申请与定稿保存结果未知",
+      "kind": "state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "O-G05-approved-correction-result",
+      "title": "唯一获批被纠正后的结果",
+      "kind": "state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "G04-new-email-after-correction",
+      "title": "人工纠正后的新邮件推进",
+      "kind": "state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "A03-forced",
+      "title": "首次登录强制修改密码",
+      "kind": "page",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "A01-session-expired",
+      "title": "会话已失效",
+      "kind": "state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "A01-narrow-navigation",
+      "title": "窄屏单栏客户详情与导航",
+      "kind": "state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "C09-current-proofs",
+      "title": "当前客户补充证明管理",
+      "kind": "drawer",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "G01-empty",
+      "title": "网关申请筛选无结果",
+      "kind": "state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "G02-read-failure",
+      "title": "申请详情部分读取失败",
+      "kind": "state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "M04",
+      "title": "撰写／回复／转发",
+      "kind": "dialog",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "M08",
+      "title": "历史邮件补审",
+      "kind": "operation-page",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "O-M01",
+      "title": "邮箱凭据弹窗",
+      "kind": "dialog",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "O-M02",
+      "title": "密码显示／重置确认",
+      "kind": "confirm-dialog",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "O-M04",
+      "title": "邮件移到废纸篓确认",
+      "kind": "confirm-dialog",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "O-M05",
+      "title": "删除邮箱确认",
+      "kind": "confirm-dialog",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "O-M06",
+      "title": "邮件翻译展开区",
+      "kind": "embedded-panel",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "O-M07",
+      "title": "监听／同步详情面板",
+      "kind": "drawer",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "O-M08",
+      "title": "发信前确认弹窗",
+      "kind": "confirm-dialog",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "O-M09",
+      "title": "补审预览／入队确认",
+      "kind": "confirm-dialog",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "ES01",
+      "title": "切换邮箱／文件夹时清空旧内容并加载",
+      "kind": "essential-state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "ES02",
+      "title": "发信结果未知，禁止重复发送",
+      "kind": "essential-state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "ES03",
+      "title": "AI 来源证据冲突，转人工确认",
+      "kind": "essential-state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "ES04",
+      "title": "邮箱存在客户／申请关联，禁止删除",
+      "kind": "essential-state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "G04-first-valid-approval",
+      "title": "首个有效获批后的客户完成联动",
+      "kind": "essential-state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "G04-ended-mail-guard",
+      "title": "申请结束后迟到邮件不重开记录",
+      "kind": "essential-state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "O-G11-revoke-confirm",
+      "title": "撤销单项人工处理决定确认",
+      "kind": "essential-state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "A01-identity-recheck-failed",
+      "title": "身份复核暂时失败",
+      "kind": "essential-state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    }
+  ],
+  "drawn_needing_revision": [
+    {
+      "id": "M07",
+      "title": "申请事项看板",
+      "image": "M07-v1.png",
+      "change": "来源原文与摘要表述、标题及局部布局细节"
+    },
+    {
+      "id": "C09-idle",
+      "title": "尚未开始申请的网关面板",
+      "image": "C09-idle-v3.png",
+      "change": "恢复深蓝／灰蓝配色，补充 PT 时间标识"
+    },
+    {
+      "id": "O-G04",
+      "title": "开始网关申请弹窗",
+      "image": "O-G04-v3.png",
+      "change": "附件列头补充：文件／操作日期／操作人"
+    },
+    {
+      "id": "O-G12",
+      "title": "记录人工处理",
+      "image": "O-G12-v1.png",
+      "change": "删除错误字数计数；已发回复不等于三个月材料已发齐"
+    }
+  ],
+  "drawn_awaiting_independent_review": [
+    "C02",
+    "C09-active",
+    "O-G-snapshot-preview",
+    "O-G06",
+    "O-G07",
+    "O-G08"
+  ],
+  "all_surfaces": [
+    {
+      "id": "C01",
+      "title": "客户列表与速览",
+      "kind": "page",
+      "image": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C01-list-preview-v4.png",
+      "sha256": "3ce62a5609dcc158225bf5a926e8c3f0a38f1d10d6167b23ca1e11abb6fe602a",
+      "drawn": true
+    },
+    {
+      "id": "C02",
+      "title": "档案概览",
+      "kind": "page",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\C02-v4.png",
+      "sha256": "c609e37d3a2c61b2aae69a002b67a193d8aaef633d68ab36155dffbb75efde46",
+      "drawn": true
+    },
+    {
+      "id": "C03",
+      "title": "个人资料",
+      "kind": "tab",
+      "image": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C03-personal-v3.png",
+      "sha256": "461fd963d169852c4558ead342fe7eeab55853fee885e25b743f187fad0a9999",
+      "drawn": true
+    },
+    {
+      "id": "C04",
+      "title": "企业资料",
+      "kind": "tab",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C04-company-ui-v3.png",
+      "sha256": "cbde693fca6e014f2097019c4cbe48212ea4ea4a0fccd355aa04be176b41dd3c",
+      "drawn": true
+    },
+    {
+      "id": "C05",
+      "title": "银行资料",
+      "kind": "tab",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C05-bank-ui-v3.png",
+      "sha256": "1e5656822e6cf3cd26636a13511edd86e7076e313ccb3a4597037b47cb78071d",
+      "drawn": true
+    },
+    {
+      "id": "C10-bank",
+      "title": "银行资料操作归属",
+      "kind": "tab",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C10-bank-ui-v3.png",
+      "sha256": "b3115e20012ce31e912198dcbc7ee926a8d988de68845b2198175b373438eeee",
+      "drawn": true
+    },
+    {
+      "id": "O-C04-personal",
+      "title": "编辑个人资料",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C04-personal-edit-v3.png",
+      "sha256": "5ffde99df45f793404bc00b21be68ec62f665095065bb8e9e2f6a6af33be9fab",
+      "drawn": true
+    },
+    {
+      "id": "O-C04-company",
+      "title": "编辑企业资料",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\support\\O-C04-company-edit-v2.png",
+      "sha256": "c88a4019d3499340c2d6a43928d043894ec09999face9f381a08645ad97f9667",
+      "drawn": true
+    },
+    {
+      "id": "O-C04-bank",
+      "title": "编辑银行资料",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\support\\O-C04-bank-edit-v2.png",
+      "sha256": "6e6ac2a8467c89dbf6bf9a043f83274358c12529ecc324c8db2198e61112d784",
+      "drawn": true
+    },
+    {
+      "id": "O-C05",
+      "title": "企业办理状态",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C05-company-status-v2.png",
+      "sha256": "3ea9715faba58ca5f4cad147b688f9f1792c6a01d8e995c6466e9e6c05ae0f82",
+      "drawn": true
+    },
+    {
+      "id": "O-C07",
+      "title": "上传文件",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C07-upload-v2.png",
+      "sha256": "6ffd1c858cef8b2101ef79d5c40762757ccd8d5b5df130955c8b6ba6b29d62ba",
+      "drawn": true
+    },
+    {
+      "id": "O-C08",
+      "title": "当前文件预览",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C08-preview-v2.png",
+      "sha256": "bd7ad2bc7a71578873d0ddcadc3d4d9fab9713988c77cecac550274dbb226360",
+      "drawn": true
+    },
+    {
+      "id": "O-C09",
+      "title": "替换文件",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C09-replace-v2.png",
+      "sha256": "19eacc7399c0540a2756d87d21f40312f215d3d9f309e4f9b7b32e5f76bf52a6",
+      "drawn": true
+    },
+    {
+      "id": "O-C10",
+      "title": "移除文件",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C10-remove-v2.png",
+      "sha256": "8469d5b03be4c99421b2c0350014697c911d4b1462882e32778013fd2efc8d03",
+      "drawn": true
+    },
+    {
+      "id": "C12",
+      "title": "上传驾照建档",
+      "kind": "page",
+      "image": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\C12-batch-upload-v4.png",
+      "sha256": "828e965458f590916f694a82e0351bf7fcaae777e171abaa60ad246173e2955c",
+      "drawn": true
+    },
+    {
+      "id": "C13",
+      "title": "人工核对识别结果",
+      "kind": "page",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\C13-recognition-review-v4.png",
+      "sha256": "03512c4bc9787c8daa11bcec04cf88e059a8d1d377f6018e266ae48e630c6ead",
+      "drawn": true
+    },
+    {
+      "id": "C14",
+      "title": "建档结果",
+      "kind": "page",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\C14-creation-results-v3.png",
+      "sha256": "7939202cbd54605b1602f2484d388506e8c3f793ed23870b1cfcaf8041edcae3",
+      "drawn": true
+    },
+    {
+      "id": "O-C02",
+      "title": "O-C02 重复线索处理",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\O-C02-duplicate-v2.png",
+      "sha256": "0588d8b445e47f54c2397b97efb9f024630d71f191cc7b2a9bd993537722ab7b",
+      "drawn": true
+    },
+    {
+      "id": "O-C03",
+      "title": "O-C03 字段差异确认",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\O-C03-differences-v2.png",
+      "sha256": "87226ae0fe967e543dd060395ecb591a43b76f87c22c71e43b1fc9c235086384",
+      "drawn": true
+    },
+    {
+      "id": "C12-upload-states",
+      "title": "C12 上传混合状态",
+      "kind": "state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\C12-upload-states-v2.png",
+      "sha256": "20f1cd8827537943f84b50f6e7c6faf5c60f72cc89a1aa28b53eae8d5590b951",
+      "drawn": true
+    },
+    {
+      "id": "C13-manual-transcription",
+      "title": "C13 识别失败后的人工转录",
+      "kind": "state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\C13-manual-transcription-v2.png",
+      "sha256": "8ed27d2f12152efe9323e41dcc66c6d2a074f2a905519658350e293cb1c686c1",
+      "drawn": true
+    },
+    {
+      "id": "C14-unknown-result",
+      "title": "C14 提交结果未知",
+      "kind": "state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\C14-unknown-result-v1.png",
+      "sha256": "90322c656c78a081d532113bf6156358d774b0358605a8dbe45fa0300f155a72",
+      "drawn": true
+    },
+    {
+      "id": "C07",
+      "title": "C07 网站与邮箱",
+      "kind": "tab",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\C07-website-mail-v1.png",
+      "sha256": "d77c945427002cc16f39cbc25fa9330a8f4d26a2e725123a5cb6a0b1770cc662",
+      "drawn": true
+    },
+    {
+      "id": "O-C11",
+      "title": "O-C11 关联或更换已有网站",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\O-C11-link-site-v2.png",
+      "sha256": "3e7b2c945fd5b19f2765cbd026295b96d81c75859d56b905c228c02d8e9b59f6",
+      "drawn": true
+    },
+    {
+      "id": "O-C12",
+      "title": "O-C12 关联或更换商业邮箱",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\O-C12-link-mail-v2.png",
+      "sha256": "f2aeeec12c2bd91741268e81ed88eabf99b2dcd4270c4a490e991ff827f56193",
+      "drawn": true
+    },
+    {
+      "id": "O-C13",
+      "title": "O-C13 解除关联确认",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\O-C13-unlink-confirm-v2.png",
+      "sha256": "5b31be99d308ae35af0619b8dcde85f128f36fee1158b3bd7fa586c062843101",
+      "drawn": true
+    },
+    {
+      "id": "O-C14",
+      "title": "O-C14 网站公开信息对照",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\O-C14-public-info-v2.png",
+      "sha256": "e8688047b9c46354ce0ec49de4b3473a7c9009d5adc861a45461d6883f86f4e1",
+      "drawn": true
+    },
+    {
+      "id": "C08",
+      "title": "C08 材料审核",
+      "kind": "tab",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\C08-review-v2.png",
+      "sha256": "623b77f127b0568c2c454d4771ee65e73c884fcbea18e4bf75762fc40400d1a3",
+      "drawn": true
+    },
+    {
+      "id": "O-G01",
+      "title": "O-G01 确认检查范围",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\O-G01-review-scope-v1.png",
+      "sha256": "c31f479182a431bed498c97a7debf01d141168015f259c2dd1a2aefaaa5226f8",
+      "drawn": true
+    },
+    {
+      "id": "O-G02",
+      "title": "O-G02 审核运行状态",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\O-G02-review-running-v1.png",
+      "sha256": "6d2cb3a282728d40ac4ed0cc78c75d218ef10d5dbf0eb07e1b2edd5139078db3",
+      "drawn": true
+    },
+    {
+      "id": "O-G03",
+      "title": "O-G03 审核发现详情",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\O-G03-finding-detail-v1.png",
+      "sha256": "c16a17676f912fd74912af1208eb23721a6c838a0c41008dad7d4d88dabee71c",
+      "drawn": true
+    },
+    {
+      "id": "C09-active",
+      "title": "C09 网关申请：有在办申请",
+      "kind": "tab",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\C09-active-v4.png",
+      "sha256": "60238df015109cc0adb85b77f6f9d963b0c43689b043d57acf6edf4901f2831f",
+      "drawn": true
+    },
+    {
+      "id": "C09-idle",
+      "title": "C09 网关申请：无在办申请",
+      "kind": "tab",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\C09-idle-v3.png",
+      "sha256": "c39f020d9218743e87aeffad5c69a12b49db0ea58a7abb50728e3cdb40351fb3",
+      "drawn": true
+    },
+    {
+      "id": "O-G04",
+      "title": "O-G04 开始网关申请",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-G04-v3.png",
+      "sha256": "74450ac09dd6d2c51087856091bcc32a04354fe14598577fb25f61b2fdae0089",
+      "drawn": true
+    },
+    {
+      "id": "O-C07-upload-states",
+      "title": "O-C07 附件上传混合状态",
+      "kind": "state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\support\\O-C07-upload-states-v1.png",
+      "sha256": "6ccfea0ac7912de73ffd7240287ebbc4bc5ca38ad12dddb850bd16e6f7219219",
+      "drawn": true
+    },
+    {
+      "id": "O-C08-preview-unavailable",
+      "title": "O-C08 预览读取失败",
+      "kind": "state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C08-preview-unavailable-v1.png",
+      "sha256": "d2ccf24da343691b210c4fd6d2c564e69613f4d80ea953ce30c11435c4abf7a2",
+      "drawn": true
+    },
+    {
+      "id": "O-C08-preview-unsupported",
+      "title": "O-C08 格式不支持预览",
+      "kind": "state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C08-preview-unsupported-v1.png",
+      "sha256": "494d2821a73471d0459ea0df782efb6f042c2a18dd70c07663cb927343b909a3",
+      "drawn": true
+    },
+    {
+      "id": "O-C09-replace-failure",
+      "title": "O-C09 替换失败",
+      "kind": "state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C09-replace-failure-v1.png",
+      "sha256": "4ebdc1e774fc392e50ca1088fb155c5629b5a6a82b29064e9701733bb786acaa",
+      "drawn": true
+    },
+    {
+      "id": "O-C10-remove-failure",
+      "title": "O-C10 移除失败",
+      "kind": "state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C10-remove-failure-v1.png",
+      "sha256": "c4036a387f7c0331822f8f1f8779b6a8388acce2f3b1207b1a11549426197113",
+      "drawn": true
+    },
+    {
+      "id": "O-C04-save-failure",
+      "title": "O-C04 编辑保存失败",
+      "kind": "state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C04-save-failure-v1.png",
+      "sha256": "17c6fd7b3dee0c99317d928e549173a9badc767da70a6138f1554e10dff917fd",
+      "drawn": true
+    },
+    {
+      "id": "O-C15",
+      "title": "O-C15 删除客户影响确认",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\support\\O-C15-delete-confirm-v1.png",
+      "sha256": "ec83fceaf39688e16ea5a2a14da93a21a957bd1d4677996363e3d77f309a1c62",
+      "drawn": true
+    },
+    {
+      "id": "O-C16",
+      "title": "O-C16 删除执行结果",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C16-delete-execution-v1.png",
+      "sha256": "93d49a72e487fc48ac324cdd5e8d88c94c273043ff28679db61809976db0d911",
+      "drawn": true
+    },
+    {
+      "id": "C10-personal-page1",
+      "title": "C10 个人资料操作归属：第 1 页",
+      "kind": "tab",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C10-personal-page1-ui-v2.png",
+      "sha256": "daf8977a72192b8ed7d12df24277b5e74b2e548259c221e309bfcc426199bae8",
+      "drawn": true
+    },
+    {
+      "id": "C10-personal-page2",
+      "title": "C10 个人资料操作归属：第 2 页",
+      "kind": "tab",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C10-personal-page2-ui-v2.png",
+      "sha256": "1a5c984ab085daa0d9a170718f42ac8bd2c9e0e3d19bbd37eee00fc354271a44",
+      "drawn": true
+    },
+    {
+      "id": "C10-company",
+      "title": "C10 企业资料操作归属",
+      "kind": "tab",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C10-company-ui-v2.png",
+      "sha256": "7a99bfceb49ab37006fa9ef52ed9782aaae4d82b818a17ce853d9bba7193497c",
+      "drawn": true
+    },
+    {
+      "id": "C10-actor-detail",
+      "title": "C10 字段操作归属详情",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C10-actor-detail-ui-v2.png",
+      "sha256": "f0bd3a554cea687b168caad24eebf4d3754bcbc1456ec211cd7565fde9771e40",
+      "drawn": true
+    },
+    {
+      "id": "C01-empty",
+      "title": "C01 尚无客户",
+      "kind": "state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\C01-empty-v1.png",
+      "sha256": "2aaa3ba312518e961e4841dc62939b1806fee89e00f41b0daeba06190fb651f1",
+      "drawn": true
+    },
+    {
+      "id": "C01-search-empty",
+      "title": "C01 搜索无结果",
+      "kind": "state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C01-search-empty-ui-v2.png",
+      "sha256": "3fb4c56d8283d3fdd6493d8dc3f27e49e23a56f1d4eef13fbd871c3ffdaeb11c",
+      "drawn": true
+    },
+    {
+      "id": "C01-loading",
+      "title": "C01 列表加载中",
+      "kind": "state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C01-loading-ui-v2.png",
+      "sha256": "f637287ca810da4db61b59fc77b3a756be5d039ad03238ad94a1db1c4f6b3c4c",
+      "drawn": true
+    },
+    {
+      "id": "C01-read-failure",
+      "title": "C01 客户速览读取失败",
+      "kind": "state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\C01-read-failure-v1.png",
+      "sha256": "373bc127ac434854a2293540217765f345facf97d69aae64f3459f2c7d3e6143",
+      "drawn": true
+    },
+    {
+      "id": "C02-not-found",
+      "title": "C02 档案不存在",
+      "kind": "state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\C02-not-found-v1.png",
+      "sha256": "58329ac11ac4442c08c50957fbaf14c25f52e81d4a5223db385b8048007af44e",
+      "drawn": true
+    },
+    {
+      "id": "C02-forbidden",
+      "title": "C02 无权访问档案",
+      "kind": "state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\C02-forbidden-v1.png",
+      "sha256": "a9519237542731b9121df18f17ad64a5eb1304268d1152093f3d986172bb662f",
+      "drawn": true
+    },
+    {
+      "id": "O-A04",
+      "title": "O-A04 未保存离开确认",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\O-A04-unsaved-ui-v2.png",
+      "sha256": "18737f1ab0a2095c9fa4f814db6cd0c1fc03f07635a761ed648ce4503eef05b4",
+      "drawn": true
+    },
+    {
+      "id": "O-A05",
+      "title": "O-A05 并发修改冲突",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\O-A05-conflict-ui-v2.png",
+      "sha256": "67816f7e4231172b8244038d576468343aa653007a0b604d678bbb44ae531397",
+      "drawn": true
+    },
+    {
+      "id": "G01",
+      "title": "网关申请工作台",
+      "kind": "page",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\G01-v3.png",
+      "sha256": "99b9e390168a008137f6e7aa062e2bbcbc314effc8661cd493008fea06636082",
+      "drawn": true
+    },
+    {
+      "id": "G02",
+      "title": "单次申请详情概览",
+      "kind": "page",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\G02-v3.png",
+      "sha256": "8fe8b1021c2189ec394af6202d57e38884ecbbeb30d46393e91629941063f6ff",
+      "drawn": true
+    },
+    {
+      "id": "G03",
+      "title": "申请邮件与明确要求",
+      "kind": "tab",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\G03-v2.png",
+      "sha256": "b8836d4bf4a7e252f3c78f97fc08e40d8467a041ba870264f5a1c4ae7a676091",
+      "drawn": true
+    },
+    {
+      "id": "G04",
+      "title": "申请状态与纠正记录",
+      "kind": "tab",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\G04-v3.png",
+      "sha256": "5d3e766fa4d36189fc70f8510e0ae123f65b9f579324e0b87866cae766621fe0",
+      "drawn": true
+    },
+    {
+      "id": "G02-snapshot",
+      "title": "申请时点定稿",
+      "kind": "tab",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\G02-snapshot-v2.png",
+      "sha256": "2f3474513e093693d979788103c47a7777ca30b22e74fabc4d34610fa824208b",
+      "drawn": true
+    },
+    {
+      "id": "O-G-snapshot-preview",
+      "title": "申请定稿附件预览",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-G-snapshot-preview-v2.png",
+      "sha256": "ddc9e65ed8c85fd1b4a3bde08a7819ae08f942cc603be56fbc45cbffb6962f9e",
+      "drawn": true
+    },
+    {
+      "id": "O-G05",
+      "title": "人工更新或纠正申请状态",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-G05-v3.png",
+      "sha256": "5adc9612fec367effff5a077ae0641edbbde7cb3d4b30d8464b755b9c779b88f",
+      "drawn": true
+    },
+    {
+      "id": "O-G06",
+      "title": "结束本次申请确认",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-G06-v2.png",
+      "sha256": "a728cd053226f0018f384c324a73d03ee8f8e13f696af8f8abfae1f2ce22ece1",
+      "drawn": true
+    },
+    {
+      "id": "O-G07",
+      "title": "邮件与申请关联确认",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-G07-v2.png",
+      "sha256": "3c986767507f1b1ac2295b3a2c48d7761533297c6eebe36538dad9febd0144b1",
+      "drawn": true
+    },
+    {
+      "id": "O-G08",
+      "title": "明确要求与处理记录",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-G08-v2.png",
+      "sha256": "39ef58f127b545ef2557154a1603e84fabd15db943b2ee8e54c52708a28aec43",
+      "drawn": true
+    },
+    {
+      "id": "O-G09",
+      "title": "纠错后的在办冲突",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-G09-v2.png",
+      "sha256": "1ac859f47cc6875599ce3c9dd0d6e8a9ef6cae142fd6a9ad5780678f6dcec619",
+      "drawn": true
+    },
+    {
+      "id": "O-G10",
+      "title": "事项身份确认与误归组拆分",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-G10-v2.png",
+      "sha256": "e12cfd672a7d0a00c18f8c6823a5fd64ab40a71481ca03c7632a26309ea7efe0",
+      "drawn": true
+    },
+    {
+      "id": "O-G11",
+      "title": "分类或待办纠正与撤销",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-G11-v3.png",
+      "sha256": "ef978d5fe8e9fc892d65027bf419d25decc47302bdca889521967ed9bb2bb1e9",
+      "drawn": true
+    },
+    {
+      "id": "O-G12",
+      "title": "待办结果记录",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-G12-v1.png",
+      "sha256": "2146266572fec24dc01226bec56b4dcb352ca12dbcfb10af5a47b707613c60b6",
+      "drawn": true
+    },
+    {
+      "id": "O-G04-concurrent",
+      "title": "申请开始并发冲突",
+      "kind": "state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "O-G04-unknown",
+      "title": "申请与定稿保存结果未知",
+      "kind": "state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "O-G05-approved-correction-result",
+      "title": "唯一获批被纠正后的结果",
+      "kind": "state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "G04-new-email-after-correction",
+      "title": "人工纠正后的新邮件推进",
+      "kind": "state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "A02",
+      "title": "内部用户登录",
+      "kind": "page",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\A02-v1.png",
+      "sha256": "3286ecfbd651e667976a522001b590e9051edace395e00797426c998da815a30",
+      "drawn": true
+    },
+    {
+      "id": "A03-forced",
+      "title": "首次登录强制修改密码",
+      "kind": "page",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "A04",
+      "title": "个人菜单",
+      "kind": "popover",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\A04-v1.png",
+      "sha256": "fec05402dde951a4b1afd4a6258762ae5590b593acea87e3defac8bbc9088a2f",
+      "drawn": true
+    },
+    {
+      "id": "A05",
+      "title": "全局无权限",
+      "kind": "page",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\A05-v1.png",
+      "sha256": "326ed5368461047cc2de0ea57c712cb885dbaf3fbbec011786e290c57b72a8c5",
+      "drawn": true
+    },
+    {
+      "id": "A06",
+      "title": "全局页面不存在",
+      "kind": "page",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\A06-v1.png",
+      "sha256": "8d32163ba41d59cab7f22017a9020137884006dd7f876c039eb620239e7bf3a6",
+      "drawn": true
+    },
+    {
+      "id": "A07",
+      "title": "全局服务异常",
+      "kind": "page",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\A07-v1.png",
+      "sha256": "3c14c47c1f3483b73dbf330338211aa8693c0a9cc28856395abfe0773b842e08",
+      "drawn": true
+    },
+    {
+      "id": "A08",
+      "title": "全局搜索",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\A08-v1.png",
+      "sha256": "ed971b7910ce79e61aa8edc7bfd02f901c46e5d37a6168a31ed97241c7f325db",
+      "drawn": true
+    },
+    {
+      "id": "A09",
+      "title": "全局AI助手",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\A09-v1.png",
+      "sha256": "e4f043c1390f345dbcb877be4270fd9e4cd6696f1fbca6dd2502d51c9b2e3e0d",
+      "drawn": true
+    },
+    {
+      "id": "O-A02",
+      "title": "助手工具确认卡",
+      "kind": "component",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-A02-v1.png",
+      "sha256": "6f39c47c686c2dee6e33c14595f03ea36c3197b292af4e80907dc744a5bac174",
+      "drawn": true
+    },
+    {
+      "id": "O-A03",
+      "title": "助手新对话确认",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-A03-v1.png",
+      "sha256": "74024547c015faef4fcf70bba083058aea7c79a01c1983cc849fa40decffd46b",
+      "drawn": true
+    },
+    {
+      "id": "A01-session-expired",
+      "title": "会话已失效",
+      "kind": "state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "A01-narrow-navigation",
+      "title": "窄屏单栏客户详情与导航",
+      "kind": "state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "C09-current-proofs",
+      "title": "当前客户补充证明管理",
+      "kind": "drawer",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "G01-empty",
+      "title": "网关申请筛选无结果",
+      "kind": "state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "G02-read-failure",
+      "title": "申请详情部分读取失败",
+      "kind": "state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "A01",
+      "title": "通用应用壳",
+      "kind": "shared_shell",
+      "image": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\C12-batch-upload-v4.png",
+      "sha256": "828e965458f590916f694a82e0351bf7fcaae777e171abaa60ad246173e2955c",
+      "drawn": true
+    },
+    {
+      "id": "M01",
+      "title": "邮箱管理主页面",
+      "kind": "page",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\M01-v2.png",
+      "sha256": "5bb5a5bd6037e1222299a50cff25f80f84ed01b49b43dfebe28b3f6680f0c4f2",
+      "drawn": true
+    },
+    {
+      "id": "M02",
+      "title": "文件夹／邮件列表",
+      "kind": "subview",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\M02-v2.png",
+      "sha256": "24bfc2aad4b08b9a46c4fdc6a3baf902d1a8b320565be8f3d021ca72e4f8328a",
+      "drawn": true
+    },
+    {
+      "id": "M03",
+      "title": "邮件阅读",
+      "kind": "subview",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\M03-v3.png",
+      "sha256": "55d3f3d174affafc88e7b5c9d40d51571029c2716af22637fd74cb97ef10598f",
+      "drawn": true
+    },
+    {
+      "id": "M04",
+      "title": "撰写／回复／转发",
+      "kind": "dialog",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "M05",
+      "title": "邮件预审与关联结果",
+      "kind": "embedded-panel",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\M05-v4.png",
+      "sha256": "5b3810dc710e32d925b2a1cf462823b765a4a5c4a2dac79a366a75de1d9de712",
+      "drawn": true
+    },
+    {
+      "id": "M06",
+      "title": "待人工确认",
+      "kind": "subview",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\M06-v2.png",
+      "sha256": "592609a3e3f0c8de6304d62437a4bcfdc24aecbafb09b29215b9682480a0b440",
+      "drawn": true
+    },
+    {
+      "id": "M07",
+      "title": "邮件申请事项工作视图",
+      "kind": "page",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\M07-v1.png",
+      "sha256": "449427a3578206cedbca0fdcf6fc0ea8c5de6be3088be6c29e6aa9de6de22966",
+      "drawn": true
+    },
+    {
+      "id": "M08",
+      "title": "历史邮件补审",
+      "kind": "operation-page",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "O-M01",
+      "title": "邮箱凭据弹窗",
+      "kind": "dialog",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "O-M02",
+      "title": "密码显示／重置确认",
+      "kind": "confirm-dialog",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "O-M04",
+      "title": "邮件移到废纸篓确认",
+      "kind": "confirm-dialog",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "O-M05",
+      "title": "删除邮箱确认",
+      "kind": "confirm-dialog",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "O-M06",
+      "title": "邮件翻译展开区",
+      "kind": "embedded-panel",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "O-M07",
+      "title": "监听／同步详情面板",
+      "kind": "drawer",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "O-M08",
+      "title": "发信前确认弹窗",
+      "kind": "confirm-dialog",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "O-M09",
+      "title": "补审预览／入队确认",
+      "kind": "confirm-dialog",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "R01",
+      "title": "账号与域名主页面",
+      "kind": "page",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\R01-v2.png",
+      "sha256": "483bcd1194c257a7298536e470196def9b1aae4cfbdf59c972d99ea0a201c55b",
+      "drawn": true
+    },
+    {
+      "id": "R02",
+      "title": "选中账号的域名区域",
+      "kind": "subview",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\R02-v2.png",
+      "sha256": "5d7dc1f02aa1857c26706361edba7762fcfe947e4a73061eecfc9d22b3fe9df8",
+      "drawn": true
+    },
+    {
+      "id": "R03",
+      "title": "域名详情",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\R03-v2.png",
+      "sha256": "1412ed2d5870be03194b824de48a65653371f86a467c207aa0aff3712efcf65a",
+      "drawn": true
+    },
+    {
+      "id": "R04",
+      "title": "放弃站点／域名资源",
+      "kind": "execution-panel",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\R04-v3.png",
+      "sha256": "14b5b1a0cabf1d28b774ffee68651c92501d980144d24d0384f90e4702424b26",
+      "drawn": true
+    },
+    {
+      "id": "O-R01",
+      "title": "添加 Hostinger 账号弹窗",
+      "kind": "dialog",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-R01-v1.png",
+      "sha256": "1d361d4c628336a35050e4e19983a092b4e76206bc2ecd17799b25991e8a8133",
+      "drawn": true
+    },
+    {
+      "id": "O-R02",
+      "title": "删除账号确认",
+      "kind": "confirm-dialog",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-R02-v1.png",
+      "sha256": "74d140680c47f9516a96eabbfda6411a92c1f2f349c0ffaeecd81d82f0d0738e",
+      "drawn": true
+    },
+    {
+      "id": "T01",
+      "title": "Grist 内嵌外壳",
+      "kind": "page",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\T01-v2.png",
+      "sha256": "6bc5d7f5c6d4c13ee7a2418285b5b6a44065232c7db1f429abfdf915f1550136",
+      "drawn": true
+    },
+    {
+      "id": "T02",
+      "title": "Grist 原生文档与表格",
+      "kind": "external-embed",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\T02-v3.png",
+      "sha256": "08c684627f47b55b266aa50e2ce06f9deee38cba93fd5a09df550e3177052c7e",
+      "drawn": true
+    },
+    {
+      "id": "S01",
+      "title": "设置／模型厂商",
+      "kind": "settings-section",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\S01-v1.png",
+      "sha256": "a0f2922332676a5d0e69df2ee965f67136d2e775a57564893a91f388a1f56d89",
+      "drawn": true
+    },
+    {
+      "id": "S02",
+      "title": "厂商编辑及模型列表",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\S02-v1.png",
+      "sha256": "dbe305e31f1e8b5985e05f5ea71e16cedbf22fd42d55529ce277537737213483",
+      "drawn": true
+    },
+    {
+      "id": "S03",
+      "title": "设置／用途分配",
+      "kind": "settings-section",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\S03-v1.png",
+      "sha256": "01e58e685c9265c69826c3b1dc0c8c500f58bfb8a97664a0141eaddd061728d0",
+      "drawn": true
+    },
+    {
+      "id": "S04",
+      "title": "设置／商品资料 CJ",
+      "kind": "settings-section",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\S04-v2.png",
+      "sha256": "c6771dca314b6d949c2795b487fe0f17b315216ef3fa52e0bfbe3f8add61e534",
+      "drawn": true
+    },
+    {
+      "id": "S05",
+      "title": "设置／邮箱",
+      "kind": "settings-section",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\S05-v1.png",
+      "sha256": "7a241ed90bff5538c3f60eace39f33ba50db675602ce083f37e56063b586a9b7",
+      "drawn": true
+    },
+    {
+      "id": "S06",
+      "title": "设置／Grist",
+      "kind": "settings-section",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\S06-v1.png",
+      "sha256": "dd3ebf2d17766f84e2727b036716c07ef3f47f8fd3f4b59aefd2742941ea0a8a",
+      "drawn": true
+    },
+    {
+      "id": "S08",
+      "title": "内部用户管理",
+      "kind": "page",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\S08-v1.png",
+      "sha256": "23a02c6786ba2c77c998a71f030357b96d4acba6974cc10da4eb8a227305e898",
+      "drawn": true
+    },
+    {
+      "id": "S09",
+      "title": "设置／邮件 AI 预审",
+      "kind": "page",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\S09-v1.png",
+      "sha256": "7958f2d8c5590923b1b329de370386bd59e157ca8211639ce5acdbbcc90905bf",
+      "drawn": true
+    },
+    {
+      "id": "S10",
+      "title": "设置／邮件关联规则",
+      "kind": "settings-section",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\S10-v1.png",
+      "sha256": "9d34520559d57b8ea23f43aa118c404cb5a098d560ebba9a5d414389cf4c6197",
+      "drawn": true
+    },
+    {
+      "id": "O-S02",
+      "title": "删除厂商确认",
+      "kind": "confirm-dialog",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-S02-v1.png",
+      "sha256": "d81a2304973871af457722caec4f41fe9d0d19d672ea004cb939150768d77b17",
+      "drawn": true
+    },
+    {
+      "id": "O-S03",
+      "title": "CJ 凭据弹窗",
+      "kind": "dialog",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-S03-v2.png",
+      "sha256": "f4f60165009c75b70c860954f6b2058caeb607efdf3c24f0837ae54199e22d0a",
+      "drawn": true
+    },
+    {
+      "id": "O-S04",
+      "title": "邮箱默认密码清除确认",
+      "kind": "confirm-dialog",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-S04-v1.png",
+      "sha256": "bd5b9746f993bcb421c58b0a99c03cab93e9a71cc2d2cc24c3dda19ce08bf1b7",
+      "drawn": true
+    },
+    {
+      "id": "O-S05",
+      "title": "Grist 凭据／集成操作确认",
+      "kind": "confirm-dialog",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-S05-v1.png",
+      "sha256": "14eb13c4bd5672a348cd30ce9234687da30120a882fb1ea2b8e42532a5710d37",
+      "drawn": true
+    },
+    {
+      "id": "O-S06",
+      "title": "创建内部用户弹窗",
+      "kind": "dialog",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-S06-v1.png",
+      "sha256": "872fda317f148db70c82d30174cea039f0f73b900c9e01fb3718e5031cb293cb",
+      "drawn": true
+    },
+    {
+      "id": "O-S07",
+      "title": "重置用户密码弹窗",
+      "kind": "dialog",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-S07-v1.png",
+      "sha256": "48344fe3c2fb3722115ef120e29ec999dc8b82c8d7c13cc905913753a4fd9a97",
+      "drawn": true
+    },
+    {
+      "id": "O-S08",
+      "title": "启用／停用用户确认",
+      "kind": "confirm-dialog",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-S08-v1.png",
+      "sha256": "fc9bfdfc9211271e5fd3978429a5186a9e05c8c47eef7e36e7e146362989c2de",
+      "drawn": true
+    },
+    {
+      "id": "O-S09",
+      "title": "邮件 AI 授权／配置变更确认",
+      "kind": "confirm-dialog",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-S09-v1.png",
+      "sha256": "06bffc2bb281bbd4dc42115414417a97e7a291a404c3e79db96b12a447a2e283",
+      "drawn": true
+    },
+    {
+      "id": "O-S10",
+      "title": "关联规则新增／编辑／移除抽屉",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-S10-v1.png",
+      "sha256": "4dce8cbe5b6eed52c525e30ad8515bd1d6e721ae330bf2f9cb7d6ab9e215059a",
+      "drawn": true
+    },
+    {
+      "id": "A03",
+      "title": "修改密码页",
+      "kind": "page",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\A03-v1.png",
+      "sha256": "a7dd803b74de4d3abfc7e152da7a120e011ed147878c55ad56db93a6f0325d34",
+      "drawn": true
+    },
+    {
+      "id": "W01",
+      "title": "建站总览",
+      "kind": "page",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W01-v1.png",
+      "sha256": "11e856a51088253da094d44d6b27e95b62addb6153adc2e00cbcdbdcc624ef7d",
+      "drawn": true
+    },
+    {
+      "id": "W02",
+      "title": "新建网站：客户与经营资料",
+      "kind": "wizard_step",
+      "image": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-option-03.png",
+      "sha256": "32c7f005ff6d688fca8a2bb2cddf1daaa15e11395d83e826841bf1005252670b",
+      "drawn": true
+    },
+    {
+      "id": "W03",
+      "title": "新建网站：站点配置",
+      "kind": "wizard_step",
+      "image": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W03-site-configuration-v1.png",
+      "sha256": "ce0fcc7052fc017fd3733cc0ec6d7a9139c7e772722446dbaeec46379fa4ecde",
+      "drawn": true
+    },
+    {
+      "id": "W04",
+      "title": "新建网站：确认启动",
+      "kind": "wizard_step",
+      "image": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-option-01.png",
+      "sha256": "ec9934bbaf5f3bf1b58a70d3b97a78f9beb01f850a83935888488df3dcfcc447",
+      "drawn": true
+    },
+    {
+      "id": "W05",
+      "title": "批次列表",
+      "kind": "page",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W05-v1.png",
+      "sha256": "6b95e18a79a39fbf38f0fc3f2b9ab100d2daa931ed59f895aa955466b3b82385",
+      "drawn": true
+    },
+    {
+      "id": "W06",
+      "title": "批次详情",
+      "kind": "page",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W06-v1.png",
+      "sha256": "1441eae4cac8020285ee50eaf92083132dec55dc82469a93ce3a04ce164f996b",
+      "drawn": true
+    },
+    {
+      "id": "W07",
+      "title": "站点列表",
+      "kind": "page",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W07-v1.png",
+      "sha256": "ff79ecc9f65f276d7d372a4bdcf7070e5282f33abef3b3f5944e27e09e77c511",
+      "drawn": true
+    },
+    {
+      "id": "W08",
+      "title": "站点详情：概况",
+      "kind": "detail_tab",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W08-v1.png",
+      "sha256": "b5fb4be961094a199b9651d81da7fdc24cafe257fcc67ac2e39bbfc4edd5d030",
+      "drawn": true
+    },
+    {
+      "id": "W09",
+      "title": "站点详情：AI对话",
+      "kind": "detail_tab",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W09-v2.png",
+      "sha256": "c104872677f2b313724b3dfe44447d8863bd57c54e3b23dfd574b0a03773c6f5",
+      "drawn": true
+    },
+    {
+      "id": "W10",
+      "title": "站点详情：邮箱与交易发信",
+      "kind": "detail_tab",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W10-v2.png",
+      "sha256": "c14f0c47d891d9df83161a2d26416f9838d54584d29549032e0acce5c69c8a02",
+      "drawn": true
+    },
+    {
+      "id": "W11",
+      "title": "站点详情：变更记录",
+      "kind": "detail_tab",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W11-v2.png",
+      "sha256": "a013da9f3a2c32fcd084bf6c90df76af1cf416fbb14b83f3b76464ff17007428",
+      "drawn": true
+    },
+    {
+      "id": "W12",
+      "title": "站点详情：网站复核",
+      "kind": "detail_tab",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W12-v1.png",
+      "sha256": "df17c887e411bae3e66fcfb54b98e89e7916895729035badf3b4a7e109e5aaaf",
+      "drawn": true
+    },
+    {
+      "id": "O-W01",
+      "title": "CSV站点配置导入结果",
+      "kind": "panel",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W01-v1.png",
+      "sha256": "aa7bc2f11695b8385f2a5f62fda124d9523c2c154bff0c9d760c46c326749ace",
+      "drawn": true
+    },
+    {
+      "id": "O-W02",
+      "title": "移出本次建站项确认",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W02-v1.png",
+      "sha256": "60285e7015e91cd209d04922166365d3b955aa3c1267f9418e354b34682bc71c",
+      "drawn": true
+    },
+    {
+      "id": "O-W03",
+      "title": "启动前条件提示",
+      "kind": "modal_or_panel",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W03-v1.png",
+      "sha256": "b36dde284ce47afb6a18358a87ed857c2319816c9e42ec9d034b5afc28b9e6ec",
+      "drawn": true
+    },
+    {
+      "id": "O-W04",
+      "title": "重试建站确认与反馈",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W04-v1.png",
+      "sha256": "30e983706446bea4512f8831e42350f6ca6ab7cf3b2560f71e235fe1ebb0d7a1",
+      "drawn": true
+    },
+    {
+      "id": "O-W05",
+      "title": "上线前网站复核提示",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W05-v3.png",
+      "sha256": "ce3f72bb51aa8719ff55df6571c884c5c337b956a5d8b63a39e5b04aff2064d5",
+      "drawn": true
+    },
+    {
+      "id": "O-W06",
+      "title": "运行步骤与日志详情",
+      "kind": "panel",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W06-v1.png",
+      "sha256": "53e2a35be63b55baf327fd47992c2ff4f8f86d9cbd9a322f697d43f218b0fd47",
+      "drawn": true
+    },
+    {
+      "id": "O-W07",
+      "title": "站点新对话确认",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W07-v1.png",
+      "sha256": "46dd1f041a04232baeb90e65b3b1b9701db1d72531d59a744736cf426339879d",
+      "drawn": true
+    },
+    {
+      "id": "O-W08",
+      "title": "网站变更详情",
+      "kind": "drawer",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W08-v1.png",
+      "sha256": "5cf1aee73a29e61dccd4d9f81749c4f058ff15dbb1a6237d1fb39f3ae41eb5ca",
+      "drawn": true
+    },
+    {
+      "id": "O-W09",
+      "title": "整体恢复确认",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W09-v1.png",
+      "sha256": "19b02d8c93e10ed35282c06788c37594c3145357a736863fe1e8505209e03560",
+      "drawn": true
+    },
+    {
+      "id": "O-W10",
+      "title": "取消定时恢复确认",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W10-v2.png",
+      "sha256": "f84c533545444852e9bee984f65118c6c0ce76650260f5b8538257c16ccac042",
+      "drawn": true
+    },
+    {
+      "id": "O-W11",
+      "title": "网站修复与复核运行面板",
+      "kind": "panel",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W11-v1.png",
+      "sha256": "e6b54ee8074781acffbbe366820e39b4359735960f584b04f712cc599a94bdfb",
+      "drawn": true
+    },
+    {
+      "id": "O-W12",
+      "title": "网站复核证据放大",
+      "kind": "overlay",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W12-v1.png",
+      "sha256": "66107444b153f092f9f81b419809a3b237aec1718c92cfa74a73b507d8f9744a",
+      "drawn": true
+    },
+    {
+      "id": "O-W13",
+      "title": "邮箱修复与SMTP启用确认",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W13-v2.png",
+      "sha256": "42ec7372ee42cf7cba57b3670a4b0a9c34a1ca4770319d60850ca22f6670409d",
+      "drawn": true
+    },
+    {
+      "id": "O-W14",
+      "title": "交易测试邮件发送",
+      "kind": "modal",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W14-v1.png",
+      "sha256": "e50d7107f77ba288c76a5298553322be7da79e99966a3066e2342f9fb32ac250",
+      "drawn": true
+    },
+    {
+      "id": "W02-LONG",
+      "title": "第一页：多客户工作表与完整选中范围",
+      "kind": "essential-state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W02-LONG-v3.png",
+      "sha256": "d346144523d41233b9cf6434472aa22a6460d228d548e052745cd8a66932da8b",
+      "drawn": true
+    },
+    {
+      "id": "W04-LONG",
+      "title": "第三页：长清单与固定全局启动范围",
+      "kind": "essential-state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W04-LONG-v1.png",
+      "sha256": "65b2ec4e9835b0938ff65c90d6589abd4a3f20760b03aa9a985d6a0bdd06d952",
+      "drawn": true
+    },
+    {
+      "id": "W03-RESOURCE-ERROR",
+      "title": "资源读取失败",
+      "kind": "essential-state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W03-RESOURCE-ERROR-v1.png",
+      "sha256": "38a3ad1c40dc2c6238c76c9dfb21e8bb5049a797d398f8559b9fff34d155f436",
+      "drawn": true
+    },
+    {
+      "id": "W03-NO-RESOURCE",
+      "title": "读取成功但无可用资源",
+      "kind": "essential-state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W03-NO-RESOURCE-v2.png",
+      "sha256": "4fa59973f3cf9d38e066b5f37035abea004304ad91316f69730856896147be2d",
+      "drawn": true
+    },
+    {
+      "id": "W04-SUBMISSION-UNKNOWN",
+      "title": "建站提交结果未知",
+      "kind": "essential-state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W04-SUBMISSION-UNKNOWN-v2.png",
+      "sha256": "6b4f815ddda06bf4a4a0770b850d425e4d98e408c07cc61f39e5ad0d37e835fc",
+      "drawn": true
+    },
+    {
+      "id": "O-W05-READ-ERROR",
+      "title": "上线前QA读取失败",
+      "kind": "essential-state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W05-READ-ERROR-v3.png",
+      "sha256": "7c93c7d40e6497db2eee3d63fcba9a179ad489aa651d35dab6a055d19b25e725",
+      "drawn": true
+    },
+    {
+      "id": "O-W09-LATER-CONFLICT",
+      "title": "恢复被后续修改阻止",
+      "kind": "essential-state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W09-LATER-CONFLICT-v1.png",
+      "sha256": "ab18317ce9a67b13c15f199303557453dae67ffc95d211da290bb102b19b9e91",
+      "drawn": true
+    },
+    {
+      "id": "O-W11-MIXED-RESULT",
+      "title": "修复部分成功及人工项保留",
+      "kind": "essential-state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W11-MIXED-RESULT-v1.png",
+      "sha256": "b2d126f663d86a611156cb08430830be9fab61b589f3cf35406332ba7d04b23c",
+      "drawn": true
+    },
+    {
+      "id": "O-W14-SEND-UNKNOWN",
+      "title": "交易测试邮件发送结果未知",
+      "kind": "essential-state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\O-W14-SEND-UNKNOWN-v2.png",
+      "sha256": "064cc43d5a3d7bd0389832971a2506c9ba77406f7a7a45bb159e10de4152ec4f",
+      "drawn": true
+    },
+    {
+      "id": "ES01",
+      "title": "切换邮箱／文件夹时清空旧内容并加载",
+      "kind": "essential-state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "ES02",
+      "title": "发信结果未知，禁止重复发送",
+      "kind": "essential-state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "ES03",
+      "title": "AI 来源证据冲突，转人工确认",
+      "kind": "essential-state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "ES04",
+      "title": "邮箱存在客户／申请关联，禁止删除",
+      "kind": "essential-state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "ES05",
+      "title": "R01 独立关键状态（ES05）",
+      "kind": "essential-state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\ES05-v1.png",
+      "sha256": "35d366e3a4426767f6aa4d0cc9bb312d1c34c1f65dfad7ca60d59e4978d386fa",
+      "drawn": true
+    },
+    {
+      "id": "ES06",
+      "title": "R04 独立关键状态（ES06）",
+      "kind": "essential-state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\ES06-v2.png",
+      "sha256": "ecbb6b2878d57e42f45a5cb735cd39ca6c98114e569c5498f178593d2add522f",
+      "drawn": true
+    },
+    {
+      "id": "ES07",
+      "title": "T01 独立关键状态（ES07）",
+      "kind": "essential-state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\ES07-v1.png",
+      "sha256": "58afe431c7022a7cf9d06acb59a15e7c4a02237e32d98523a0fb498282e813c2",
+      "drawn": true
+    },
+    {
+      "id": "ES08",
+      "title": "S09 独立关键状态（ES08）",
+      "kind": "essential-state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\ES08-v1.png",
+      "sha256": "1c2389fc67f928642a79f024ed5d9e7939f92a171945a4bb24d84cd42827df97",
+      "drawn": true
+    },
+    {
+      "id": "ES10",
+      "title": "O-A05 独立关键状态（ES10）",
+      "kind": "essential-state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\ES10-v1.png",
+      "sha256": "0592fb509b3011ac7716bfdda0e8cc051b1e0d1c8d5e8b8da72118b72e81068b",
+      "drawn": true
+    },
+    {
+      "id": "G04-first-valid-approval",
+      "title": "首个有效获批后的客户完成联动",
+      "kind": "essential-state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "G04-ended-mail-guard",
+      "title": "申请结束后迟到邮件不重开记录",
+      "kind": "essential-state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "O-G11-revoke-confirm",
+      "title": "撤销单项人工处理决定确认",
+      "kind": "essential-state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "A01-identity-recheck-failed",
+      "title": "身份复核暂时失败",
+      "kind": "essential-state",
+      "image": null,
+      "sha256": null,
+      "drawn": false
+    },
+    {
+      "id": "W02-CUSTOMER-PICKER",
+      "title": "选择客户抽屉（加入建站工作表前）",
+      "kind": "essential-state",
+      "image": "F:\\projects\\website-gen\\docs\\design\\full-system-prototype-20261017\\screens\\W02-CUSTOMER-PICKER-v1.png",
+      "sha256": "0dc60f0af37703a57b5d8cb05cabeefe4dd772bb078c1c40db4f3a5633ae0b4b",
+      "drawn": true
+    }
+  ],
+  "verification": "Filesystem and SHA-256 verification, module review reports; not a new pixel-by-pixel audit or runtime verification",
+  "original_images_modified": false,
+  "application_code_modified": false
+}

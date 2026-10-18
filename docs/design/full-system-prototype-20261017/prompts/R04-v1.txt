@@ -1,0 +1,10 @@
+Scene ID: R04
+Title: 放弃站点／域名资源
+Reference kind: white_overlay_on_dimmed_shared_shell
+Common style: prompts/common-style.txt
+
+Create the primary static ImageGen scene for R04, “放弃站点／域名资源”. Use the supplied root reference and prompts/common-style.txt as the authoritative shell and visual system; do not restate or reinterpret its palette, typography, spacing, or navigation rules. Produce one 1490x1056 desktop screen, not a collage. Use navigation context “账号与域名” when applicable and the exact Chinese heading “放弃站点／域名资源”. Use a crisp white overlay on a weak neutral-gray scrim. Keep the source page recognizable but subordinate; the overlay is the only focal layer.
+
+Approved purpose: 保留高风险资源清理流程，逐步呈现网站、邮箱与续费影响。 Exact scene data: Use blocked preflight “已关联客户，不能直接放弃”. Treat this customer-relation preflight as an authorized phase-one target, not a claim of current implementation; keep engineering status out of visible UI. Required visible content: 目标域名；账号；影响清单；客户关联阻止；输入域名确认；步骤进度；失败明细；回滚边界. Use these Chinese action labels where applicable: 输入确认；开始；继续执行；重试失败步骤；取消未执行部分；返回资源. Show one normal or most important decision state, not every state simultaneously. Every status is written as text, not color alone. Dates use MM/DD/YYYY and times include PT.
+
+All content is fictional static demo data dated 10/17/2026 PT. Where relevant, use only Alex Morgan · C001, Northline LLC, northline.example, and hello@northline.example. Keep “客户已完成”, Stripe APP-001 “已获批”, and PayPal APP-002 “待补件” separate. Only gateway applications may show “申请负责人：李敏”; elsewhere use “操作人”. Never invent a mail requirement unless its exact source quote is visible. Mail is safe local plain text: no remote images, tracking pixels, automatic body-link access, or translation replacing evidence. Secrets use bullets or suffix placeholders. Distinguish configured, unconfigured, untested, loading, failed, and confirmed states. Do not add customer import, domain purchasing, automatic payment applications, entity templates, test payments, managed follow-up, inferred next steps, success scores, or exaggerated AI capability.

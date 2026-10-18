@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "date": "10/18/2026 PT",
+  "mode": "recovery_readonly_check_no_new_imagegen",
+  "owner": "layout_visual_review",
+  "known_in_flight_exec_cells": [],
+  "termination": {
+    "needed": false,
+    "called": false,
+    "reason": "本代理最后一次原生 O-M04 调用已正常完成，之后只有已结束的文件/查看工具调用；未收到任何仍运行的 cell ID，不伪造终止。"
+  },
+  "last_native_call": {
+    "id": "O-M04",
+    "version": "v1",
+    "status": "completed_and_archived",
+    "generated_source": "C:/Users/zhang/.codex/generated_images/01a14b37-b921-7841-9002-444b3e244474/exec-09fa98f1-1f14-4164-b674-86aa0c774359.png",
+    "workspace_image": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-M04-v1.png",
+    "sha256": "CBF49F9EF1C74DA4ADBF26A648F8CD6569A3A95D58E7C715BA64178F66DCFD6F",
+    "copy_sha_reverified": true
+  },
+  "own_returned_unarchived_sources": [],
+  "items": [
+    {
+      "id": "O-M04",
+      "status": "v1_archived_v2_not_started",
+      "next_version": "v2",
+      "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/mail-layout/O-M04-v2.txt",
+      "refs": [
+        "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-M04-v1.png"
+      ],
+      "target_png": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-M04-v2.png",
+      "remaining_issue": "前景还缺当前文件夹：收件箱与来源邮件：E-101，v2提示已保存；未调用生成。"
+    },
+    {
+      "id": "O-M05",
+      "status": "not_started",
+      "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/mail-layout/O-M05-v1.txt",
+      "refs": [
+        "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M01-v2.png"
+      ],
+      "target_png": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-M05-v1.png",
+      "generated_source": null
+    },
+    {
+      "id": "O-M07",
+      "status": "not_started",
+      "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/mail-layout/O-M07-v1.txt",
+      "refs": [
+        "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M01-v2.png"
+      ],
+      "target_png": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-M07-v1.png",
+      "generated_source": null
+    },
+    {
+      "id": "ES04",
+      "status": "not_started_dependency_O-M05_pending",
+      "prompt_path": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/prompts/mail-layout/ES04-v1.txt",
+      "refs": [
+        "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/M01-v2.png",
+        "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/O-M05-v1.png"
+      ],
+      "target_png": "F:/projects/website-gen/docs/design/full-system-prototype-20261017/screens/ES04-v1.png",
+      "generated_source": null
+    }
+  ],
+  "generation_ownership_returned_to": "root",
+  "returned_ids": [
+    "O-M04-v2",
+    "O-M05",
+    "O-M07",
+    "ES04"
+  ],
+  "no_new_generation": true,
+  "no_overwrite": true,
+  "late_output_policy": "如出现晚到图，仅报告路径，不复制或覆盖，交根处理。"
+}

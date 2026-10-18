@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "review_type": "independent_static_visual_business_review",
+  "as_of": "2026-10-18T01:27:50-07:00",
+  "scope": [
+    "C02-v4",
+    "C09-active-v4",
+    "O-G-snapshot-preview-v2",
+    "O-G06-v2",
+    "O-G07-v2",
+    "O-G08-v2"
+  ],
+  "overall_status": "pass",
+  "summary": {
+    "reviewed": 6,
+    "passed": 6,
+    "issues": 0,
+    "redraw_required": 0,
+    "interaction_verified": false
+  },
+  "items": [
+    {
+      "id": "C02-v4",
+      "image": "screens/C02-v4.png",
+      "status": "pass",
+      "sha256": "c609e37d3a2c61b2aae69a002b67a193d8aaef633d68ab36155dffbb75efde46",
+      "dimensions": { "width": 1484, "height": 1060 },
+      "checked_locations": [
+        "top utility header: 时间：PT",
+        "right current gateway card: APP-002 dates/status/owner",
+        "recent application records: APP-001 and APP-002 times",
+        "attachment summary counts"
+      ],
+      "findings": [
+        "APP-002 and APP-001 fixed facts are consistent across the page.",
+        "Customer completion remains independent from the later pending PayPal application.",
+        "Dimensions are unchanged from the v3 baseline; no new crop or resample issue."
+      ],
+      "issues": []
+    },
+    {
+      "id": "C09-active-v4",
+      "image": "screens/C09-active-v4.png",
+      "status": "pass",
+      "sha256": "60238df015109cc0adb85b77f6f9d963b0c43689b043d57acf6edf4901f2831f",
+      "dimensions": { "width": 1489, "height": 1056 },
+      "checked_locations": [
+        "current in-progress application card",
+        "effective approval summary",
+        "historical application row",
+        "current supplemental proof summary"
+      ],
+      "findings": [
+        "The sole current application is PayPal APP-002 with the fixed dates and owner.",
+        "The effective-approval summary and history detail describe the same Stripe result, not a second current application.",
+        "No Zen row or second active application is visible.",
+        "Non-action text uses the subdued navy/gray-blue hierarchy while actions remain recognizable."
+      ],
+      "issues": []
+    },
+    {
+      "id": "O-G-snapshot-preview-v2",
+      "image": "screens/O-G-snapshot-preview-v2.png",
+      "status": "pass_with_minor_dimension_deviation",
+      "sha256": "ddc9e65ed8c85fd1b4a3bde08a7819ae08f942cc603be56fbc45cbffb6962f9e",
+      "dimensions": { "width": 1489, "height": 1056 },
+      "checked_locations": [
+        "drawer identity and snapshot timestamp",
+        "file operation attribution",
+        "read-only preview controls",
+        "immutable snapshot explanation"
+      ],
+      "findings": [
+        "Snapshot time and historical file-operation time are clearly separated.",
+        "The drawer offers only read/download/close behavior and does not imply replacement or deletion.",
+        "One-pixel width deviation has no visible crop and is non-blocking."
+      ],
+      "issues": []
+    },
+    {
+      "id": "O-G06-v2",
+      "image": "screens/O-G06-v2.png",
+      "status": "pass_with_minor_dimension_deviation",
+      "sha256": "a728cd053226f0018f384c324a73d03ee8f8e13f696af8f8abfae1f2ce22ece1",
+      "dimensions": { "width": 1491, "height": 1055 },
+      "checked_locations": [
+        "confirmation title and target",
+        "reason textarea",
+        "internal-only termination explanation",
+        "cancel and confirm actions"
+      ],
+      "findings": [
+        "The incorrect 14/500 counter is absent.",
+        "The dialog does not claim remote withdrawal or successful completion.",
+        "Stripe approval, customer completion, original mail, and snapshot are explicitly retained."
+      ],
+      "issues": []
+    },
+    {
+      "id": "O-G07-v2",
+      "image": "screens/O-G07-v2.png",
+      "status": "pass_with_minor_dimension_deviation",
+      "sha256": "3c986767507f1b1ac2295b3a2c48d7761533297c6eebe36538dad9febd0144b1",
+      "dimensions": { "width": 1490, "height": 1055 },
+      "checked_locations": [
+        "original E-102 evidence",
+        "candidate application table",
+        "human-verification warning",
+        "single-mail association scope"
+      ],
+      "findings": [
+        "No sender is invented for E-102.",
+        "The subject identifier is a clue while platform matching remains a human check.",
+        "The action applies only to this email and neither creates nor bulk-associates applications."
+      ],
+      "issues": []
+    },
+    {
+      "id": "O-G08-v2",
+      "image": "screens/O-G08-v2.png",
+      "status": "pass_with_minor_dimension_deviation",
+      "sha256": "39ef58f127b545ef2557154a1603e84fabd15db943b2ee8e54c52708a28aec43",
+      "dimensions": { "width": 1490, "height": 1055 },
+      "checked_locations": [
+        "requirement summary and due-date metadata",
+        "exact source quote",
+        "July and September file attribution",
+        "empty handling record and disabled save",
+        "mail reply navigation"
+      ],
+      "findings": [
+        "The original quote is not rewritten and no sender or deadline is invented.",
+        "File operator/date attribution matches the approved fixture, including no invented September time.",
+        "Association remains distinct from sending and platform acceptance.",
+        "No unsupported file limit or automatic missing-August task is shown."
+      ],
+      "issues": []
+    }
+  ],
+  "references": [
+    "evidence/customer-gateway-crossflow-audit.md",
+    "evidence/customer-crossflow-recheck.md",
+    "evidence/review-gateway-overlays-01.md",
+    "evidence/review-gateway-overlays-01-recheck.md",
+    "plans/gateway-demo-data.md",
+    "plans/gateway-attachment-fixture-addendum.md"
+  ],
+  "boundaries": [
+    "Static screenshots do not prove interaction, persistence, permissions, concurrency handling, mail actions, or remote platform behavior.",
+    "No images, shared coverage/README, shared ledgers, or application code were modified."
+  ]
+}

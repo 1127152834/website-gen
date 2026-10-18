@@ -1,0 +1,240 @@
+{
+  "group": "02",
+  "name": "建档与驾照识别",
+  "recordedDate": "10/17/2026",
+  "timezone": "America/Los_Angeles",
+  "authorization": "User accepted continuing with the current prototype direction, noting prototypes are only a reference. This authorizes static C13/C14 continuation, not application coding or pixel-exact approval.",
+  "boundary": "Static Product Design / Image Gen prototypes only. No application code, deployment, real OCR, uploads or customer records.",
+  "plannedIds": [
+    "C12",
+    "C13",
+    "C14",
+    "O-C02",
+    "O-C03"
+  ],
+  "notYetDrawn": [
+    "All per-combination picker, calendar and responsive variants are not individually illustrated; see latest coverage map for shared states"
+  ],
+  "batch": "B20261017-01",
+  "itemCount": 5,
+  "submittedCountAtC14": 3,
+  "references": [
+    "F:/projects/website-gen/docs/design/group-01-customer-dossier/C10-attribution-v2.png",
+    "F:/projects/website-gen/docs/design/group-01-customer-dossier/O-C04-personal-edit-v3.png"
+  ],
+  "images": [
+    {
+      "id": "C12",
+      "version": "v1",
+      "title": "批量上传驾照",
+      "status": "visual_style_rejected_by_user_retained_candidate",
+      "file": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C12-batch-upload-v1.png",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14607-58e5-7831-b3b1-33bf0fc130de/exec-c502c9b0-b02d-49c9-af1b-414372a88a6d.png",
+      "sha256": "10ED48B76B7FAD85CA191357E8FEE53D61505C37988B2EF8F20022793681148F",
+      "width": 1488,
+      "height": 1057,
+      "copyVerified": true
+    },
+    {
+      "id": "C13",
+      "version": "v1",
+      "title": "人工核对识别结果",
+      "status": "visual_style_rejected_by_user_retained_candidate",
+      "file": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C13-recognition-review-v1.png",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14607-58e5-7831-b3b1-33bf0fc130de/exec-9717739d-d84d-4de7-957b-7e8c6c397119.png",
+      "sha256": "5DEEE4668C5E354DEF2AF1B38DB5D213F51A3F5BF9D8933F1EC5FED605359158",
+      "width": 1489,
+      "height": 1056,
+      "copyVerified": true
+    },
+    {
+      "id": "C14",
+      "version": "v1",
+      "title": "建档结果",
+      "status": "visual_style_rejected_by_user_retained_candidate",
+      "file": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C14-creation-results-v1.png",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14607-58e5-7831-b3b1-33bf0fc130de/exec-68d65e6e-2493-44b7-ad95-166f84a43217.png",
+      "sha256": "07463028E216766D9B3CCCC43C1FF661C16EC20D50CB1EE9995345502C3DB56E",
+      "width": 1487,
+      "height": 1058,
+      "copyVerified": true
+    },
+    {
+      "id": "C12",
+      "version": "v2",
+      "title": "批量上传驾照：风格校准",
+      "status": "palette_rejected_by_user_retained_candidate",
+      "file": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C12-batch-upload-v2.png",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14607-58e5-7831-b3b1-33bf0fc130de/exec-2c2543d8-acb5-4247-bc30-887d6b180d02.png",
+      "sha256": "687D980E79E521FBF2CDA9EE93012A6666125E71DBABFE7C25F3B337AB563F3F",
+      "width": 1489,
+      "height": 1056,
+      "copyVerified": true
+    },
+    {
+      "id": "C12",
+      "version": "v3",
+      "title": "批量上传驾照：按用户截图校色",
+      "status": "accepted_for_continuation_as_reference_not_pixel_exact_approval",
+      "file": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C12-batch-upload-v3.png",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14607-58e5-7831-b3b1-33bf0fc130de/exec-4bc4b7ff-7014-444a-9f5e-eb3d23542777.png",
+      "sha256": "5C00B5190F23B6EBB8EA86258B7C349DCD2B37E7E38D94F8B75F3FA6DF4CC6BB",
+      "width": 1489,
+      "height": 1056,
+      "copyVerified": true,
+      "currentRuleStatus": "historical_baseline_superseded_by_license_entry_revision"
+    },
+    {
+      "id": "C13",
+      "version": "v2",
+      "title": "人工核对识别结果",
+      "status": "drawn_pending_user_confirmation",
+      "file": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C13-recognition-review-v2.png",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14607-58e5-7831-b3b1-33bf0fc130de/exec-2a4b14ba-eee1-4a9c-a0a7-b3998e4eb2be.png",
+      "sha256": "E1B273E120B493C20CD85E99086D6DC10ECC202F83642A28D0DD781FB4D486E7",
+      "width": 1490,
+      "height": 1056,
+      "copyVerified": true,
+      "currentRuleStatus": "historical_baseline_superseded_by_license_entry_revision"
+    },
+    {
+      "id": "C14",
+      "version": "v2",
+      "title": "建档结果",
+      "status": "drawn_pending_user_confirmation",
+      "file": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C14-creation-results-v2.png",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14607-58e5-7831-b3b1-33bf0fc130de/exec-163a52d8-5dbd-4685-a696-e029625f6353.png",
+      "sha256": "06526A042D7FB7DEEAF4747B4DC207E3FA0EB41936EF6C736C9D85B7E903E610",
+      "width": 1488,
+      "height": 1057,
+      "copyVerified": true
+    },
+    {
+      "id": "C12",
+      "version": "v4",
+      "file": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C12-batch-upload-v4.png",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14607-58e5-7831-b3b1-33bf0fc130de/exec-eb440233-39bf-4b03-a9a5-93a81201ccfa.png",
+      "reference": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C12-batch-upload-v3.png",
+      "sha256": "828E965458F590916F694A82E0351BF7FCAAE777E171ABAA60AD246173E2955C",
+      "width": 1489,
+      "height": 1056,
+      "copyVerified": true,
+      "status": "drawn_pending_user_confirmation",
+      "pixelIdenticalOutsideEdit": false,
+      "comparison": "F:/projects/website-gen/docs/design/license-entry-ui-comparison-20261017.md",
+      "isCurrentDesign": true
+    },
+    {
+      "id": "C13",
+      "version": "v3",
+      "file": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C13-recognition-review-v3.png",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14607-58e5-7831-b3b1-33bf0fc130de/exec-6925afee-ccab-4eb1-ac1c-7c0fc53d9718.png",
+      "reference": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C13-recognition-review-v2.png",
+      "sha256": "0C4720715A4E37E83004610218A9D607687D8190FC4E9A8BEBE2616122AFFCEB",
+      "width": 1489,
+      "height": 1056,
+      "copyVerified": true,
+      "status": "drawn_pending_user_confirmation",
+      "pixelIdenticalOutsideEdit": false,
+      "comparison": "F:/projects/website-gen/docs/design/license-entry-ui-comparison-20261017.md",
+      "isCurrentDesign": true
+    }
+  ],
+  "c13NarrowRepair": {
+    "before": "C:/Users/zhang/.codex/generated_images/01a14607-58e5-7831-b3b1-33bf0fc130de/exec-70139d3d-df56-4a60-8249-2efec87f8bfb.png",
+    "after": "C:/Users/zhang/.codex/generated_images/01a14607-58e5-7831-b3b1-33bf0fc130de/exec-9717739d-d84d-4de7-957b-7e8c6c397119.png",
+    "changes": [
+      "Plain DEMO text preview without portrait or security pattern",
+      "Texas in smaller neutral gray text"
+    ],
+    "comparison": "Visible values, queue, actions, counts and overall layout compared; not pixel-identical preservation."
+  },
+  "evidenceDirectory": "F:/projects/website-gen/.tmp/onboarding-prototypes-20261017-040135",
+  "sourceInventorySha256": "C419018E941858CA9B41259E0E715CFE54B9584E74D5162B3C66DC4BDDFD021B",
+  "effectiveTrackedIds": 130,
+  "latestFeedback": "User requested minimal static edits to C01/C12/C13: remove manual creation; one or many front-license uploads share one entry. C01 v4, C12 v4 and C13 v3 drawn and paired-review completed; awaiting user confirmation. Original images remain untouched.",
+  "currentVisualReferences": [
+    "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+  ],
+  "withdrawnClaim": "Initial visual-style consistency pass withdrawn. Business-state checks remain separate, static-only evidence.",
+  "paletteReferenceSha256": "60FD3EFBD322730A432116DFA8D5B9DDDDE3E165E571B8800968101A7A2E01C5",
+  "latestEvidenceDirectory": "F:/projects/website-gen/.tmp/license-entry-ui-20261017-01",
+  "latestContentReview": "Paired visual review passed for requested changes and preserved data/status/layout/palette. Images are not pixel-identical outside edited regions; C13 width is 1489 vs 1490 original. No real uploads/OCR/creation tested.",
+  "latestGenerationReferences": [
+    "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+    "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C12-batch-upload-v3.png",
+    "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C13-recognition-review-v1.png",
+    "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C14-creation-results-v1.png"
+  ],
+  "withdrawnIds": [
+    "C11",
+    "O-C01"
+  ],
+  "creationPrerequisite": "Successful front-image upload and retained file association are mandatory for new customer creation, including the create-separate branch. No name-only or license-number-only creation.",
+  "currentRule": "F:/projects/website-gen/docs/design/scope-amendment-03-license-required.md",
+  "pendingImageRevisions": [],
+  "withdrawnScreens": [
+    {
+      "id": "C11/O-C01",
+      "version": "v1",
+      "status": "withdrawn_no_license_creation_rejected_by_user_history_only",
+      "file": "F:/projects/website-gen/docs/design/group-02-customer-onboarding/history/C11-O-C01-without-license-rejected-v1.png",
+      "source": "C:/Users/zhang/.codex/generated_images/01a14607-58e5-7831-b3b1-33bf0fc130de/exec-2beab75e-4d94-4202-a830-892679a0f668.png",
+      "sha256": "DD31915C596916D0EB08633D50080513480553D0ECF46A796FB65CFA77FB6828",
+      "copyVerified": true
+    }
+  ],
+  "latestLicenseEntryRevision": {
+    "date": "10/17/2026",
+    "status": "drawn_pending_user_confirmation",
+    "tool": "built-in image_gen",
+    "mode": "three scoped reference-image edits",
+    "images": [
+      "F:/projects/website-gen/docs/design/group-01-customer-dossier/C01-list-preview-v4.png",
+      "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C12-batch-upload-v4.png",
+      "F:/projects/website-gen/docs/design/group-02-customer-onboarding/C13-recognition-review-v3.png"
+    ],
+    "comparison": "F:/projects/website-gen/docs/design/license-entry-ui-comparison-20261017.md",
+    "evidenceDirectory": "F:/projects/website-gen/.tmp/license-entry-ui-20261017-01",
+    "oldImagesPreserved": true,
+    "codeChangedByThisWork": false,
+    "runtimeVerified": false,
+    "remaining": "User confirmation of these static revisions. No additional screens or runtime states implemented."
+  },
+  "latestCustomerCompletionBatch": {
+    "date": "10/17/2026",
+    "status": "drawn_pending_user_confirmation",
+    "scope": "Customer-management static prototype completion only",
+    "gallery": "F:/projects/website-gen/docs/design/customer-management-completion-v1/README.md",
+    "coverage": "F:/projects/website-gen/docs/design/customer-management-completion-v1/coverage-status.md",
+    "manifest": "F:/projects/website-gen/docs/design/customer-management-completion-v1/manifest.json",
+    "newPngCount": 37,
+    "applicationCodeChanged": false,
+    "previousPngOverwritten": false,
+    "missingIndependentCustomerIds": [
+      "C07",
+      "C08",
+      "C09",
+      "O-C02",
+      "O-C03",
+      "O-C11",
+      "O-C12",
+      "O-C13",
+      "O-C14",
+      "O-C15",
+      "O-C16"
+    ],
+    "directCustomerOperations": [
+      "O-G01",
+      "O-G02",
+      "O-G03",
+      "O-G04"
+    ],
+    "excluded": [
+      "C06 retired",
+      "C11/O-C01 retired",
+      "O-C06 old customer-owner purpose retired",
+      "full G/W/M modules not completed"
+    ]
+  }
+}

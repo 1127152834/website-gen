@@ -1,0 +1,57 @@
+[
+  {
+    "id": "G04-first-valid-approval",
+    "parent": "G04",
+    "title": "首个有效获批后的客户完成联动",
+    "prompt": "Draw one standalone 1490 × 1056 static prototype using the supplied application references and common style. This is fictional DEMO evidence, not a live platform result. Design the application history after Casey Parker C005 receives a genuine first approval. Use Meadow Home LLC, meadow-home.example, and hello@meadow-home.example. This continues the normal APP-003 correction branch; APP-004 does not exist here.\n\nThe header shows Stripe APP-003 approved, application owner 李敏, and customer completed. A compact saved-result strip shows the two distinct transitions: application under review to approved, customer incomplete to completed. A readable history includes the mistaken interpretation at 10/17/2026 11:00 PT, the manual correction by 李敏 at 13:20, and new evidence E-301 at 15:00. The new email explicitly approves APP-003; do not reuse document-receipt wording as approval. Keep its short exact original quote visible and immutable. Attribute the latest transition to email AI rather than falsely attributing it to the application owner.\n\nShow one valid approval and zero active applications. Preserve the earlier correction history and the original starting snapshot. Provide evidence and snapshot navigation only, without a second application, remote submission claim, payment testing, or customer ownership. Keep the source quote, recipient, application identifier, and timestamps readable.\n\nExact visible Chinese copy:\n标题「状态与纠正记录」；客户「Casey Parker · C005」；申请「Stripe · APP-003 · 已获批」；「申请负责人：李敏」；「客户：已完成」；结果「审核中 → 已获批」「未完成 → 已完成」；来源「邮件 AI · E-301 · 10/17/2026 15:00 PT」；收件邮箱「hello@meadow-home.example」；原文「Your application APP-003 has been approved.」；摘要「有效获批：1」「在办申请：0」；说明「首次有效获批后，客户状态同步为已完成。申请定稿不变。」；动作「查看原邮件」「查看定稿」。",
+    "reference_paths": [
+      "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+      "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/C09-applications-active-v2.png"
+    ],
+    "required_content": [
+      "Casey C005 / Meadow Home LLC / Stripe APP-003；正常分支无 APP-004",
+      "10/17/2026 13:20 PT 人工纠正后 15:00 PT 新明确获批邮件 E-301",
+      "审核中→已获批 与 未完成→已完成分别展示",
+      "邮件 AI 来源与申请负责人李敏分开",
+      "有效获批1、在办0；原误判、纠正记录、开始定稿均保留",
+      "不使用 Alex 已有 Stripe 批准冒充首次完成；不声称远程提交或测试付款"
+    ]
+  },
+  {
+    "id": "G04-ended-mail-guard",
+    "parent": "G04",
+    "title": "申请结束后迟到邮件不重开记录",
+    "prompt": "Draw one standalone 1490 × 1056 static prototype using the supplied references and common style. Present a later independent branch of Alex Morgan C001, Northline LLC, and hello@northline.example. PayPal APP-002 was awaiting documents but has now been internally terminated. Stripe APP-001 remains a valid approval dated 10/12/2026 14:20 PT, so Alex remains completed.\n\nDesign the saved application history, not another ending confirmation. Show the successful internal termination by 李敏 at 10/17/2026 16:00 PT, with a short reason that the team will not continue this attempt. A subsequent receipt entry at 16:20 records a delayed replay of E-102. Preserve its original received timestamp, 09:20, and its exact request for July through September statements. Label this event as recorded but not applied because the application is ended. The current status must still be terminated; the active slot is released and no replacement application has been created.\n\nSeparate original mail time, processing time, source, and human operator. Retain the old evidence and immutable starting snapshot. Provide read-only history navigation. Explain the distinction between ending an internal record and withdrawing a case at PayPal. Do not silently reopen the application, auto-start another attempt, delete evidence, or suggest the delayed message invalidates Stripe approval.\n\nExact visible Chinese copy:\n标题「状态与纠正记录」；「PayPal · APP-002 · 已终止」；「申请负责人：李敏」；「客户：已完成」；记录「10/17/2026 16:00 PT · 操作人：李敏」；原因「团队决定不再继续本次申请。」；事件「10/17/2026 16:20 PT · 邮件 AI · E-102」；结果「未应用：申请已结束」；原文时间「10/17/2026 09:20 PT」；原文「Please provide bank statements for July, August, and September 2026.」；摘要「在办申请：0」；说明「仅结束系统内记录，不代表平台端撤回成功。原邮件与定稿保留。」；提示「客户仍已完成：Stripe APP-001 有效获批。」；动作「查看原邮件」「查看定稿」。",
+    "reference_paths": [
+      "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+      "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/C09-applications-active-v2.png"
+    ],
+    "required_content": [
+      "Alex / APP-002 独立结束后分支；Stripe APP-001 10/12/2026 14:20 PT 获批仍有效",
+      "10/17/2026 16:00 PT 终止已保存，16:20 旧 E-102 重放未应用",
+      "原邮件时间09:20与处理时间16:20区分",
+      "当前已终止、在办0、未新建替代申请",
+      "只读证据和定稿保留；无自动复活、无平台撤回成功承诺"
+    ]
+  },
+  {
+    "id": "O-G11-revoke-confirm",
+    "parent": "O-G11",
+    "title": "撤销单项人工处理决定确认",
+    "prompt": "Draw one standalone 1490 × 1056 static prototype with a centered confirmation overlay and a recognizable but subordinate gateway requirement detail behind it. Use the supplied references and common style. This fictional independent branch occurs on 10/17/2026 at 10:10 PT, before any OUT-201 reply. Alex Morgan C001 remains completed through Stripe APP-001; PayPal APP-002 remains awaiting documents with application owner 李敏.\n\nConfirm revocation of one incorrect manual handling decision on REQ-01, based on email E-102. At 10:00, 李敏 accidentally marked this requirement completed without sending the requested statements. Show that selected decision, its operator and time, then a clear before-and-after comparison: completed to pending. The exact requirement remains July through September statements; its text and original email are not being edited. Include a filled revocation reason and read-only current operator 李敏 at 10:10.\n\nThe confirmation has not been applied yet. Explain that only the selected processing mark will change; other requirements, application status, customer completion, immutable snapshot, and original mail remain unchanged. State that there is no sent-message evidence in this branch and that undo cannot retract actual email. Keep cancel and confirm actions distinct. Concurrent changes use the existing shared conflict treatment rather than introducing another override. Do not offer bulk undo, delete, reassignment, or external submission.\n\nExact visible Chinese copy:\n标题「撤销这项人工决定？」；对象「PayPal · APP-002 / REQ-01」；要求「提供 07/2026–09/2026 银行对账单」；选定决定「标记为已完成 · 李敏 · 10/17/2026 10:00 PT」；对比「当前：已完成」「撤销后：待处理」；理由「误点完成；尚未发送所需对账单。」；「操作人：李敏 · 10/17/2026 10:10 PT」；证据「发信证据：无」；说明「仅撤销此项处理标记，不撤回邮件，不更改原文、申请状态或定稿。」；按钮「取消」「确认撤销」。",
+    "reference_paths": [
+      "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+      "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/C09-applications-active-v2.png",
+      "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/O-A04-unsaved-ui-v2.png"
+    ],
+    "required_content": [
+      "Alex APP-002 / REQ-01；独立10:10分支早于 OUT-201",
+      "选定10:00错误完成决定；当前已完成→撤销后待处理",
+      "邮件要求仍为07/2026–09/2026；不撤销正确月份修正",
+      "理由、只读操作人李敏和具体时间；取消/确认",
+      "未实际发送的证据说明；不承诺撤回真实邮件",
+      "原邮件/其他要求/申请状态/客户状态/定稿不变；并发复用 O-A05"
+    ]
+  }
+]
+

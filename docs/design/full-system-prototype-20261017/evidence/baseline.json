@@ -1,0 +1,2682 @@
+{
+  "captured_at_utc": "2026-10-17T19:41:14.2900671Z",
+  "user_date": "10/17/2026",
+  "user_timezone": "America/Los_Angeles",
+  "existing_design_files": [
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\application-page-inventory-v1.md",
+      "sha256": "c419018e941858ca9b41259e0e715cfe54b9584e74d5162b3c66dc4bddfd021b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-attribution-ui-audit-2026-10-17.md",
+      "sha256": "c7d2543cf9feef34c0278a828e642da6341f6717c244a26c13d5a566451eac03"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\license-entry-ui-comparison-20261017.md",
+      "sha256": "c47875bdcb88c34b2ab99a37b438fa96924afae53a1b9fb0d631d85ba2ac0ac4"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\prototype-groups-v1.md",
+      "sha256": "bd14b02315eac95af1ffe3126bc5ad31d35d709ac308dc9f41028fe852ee4493"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\scope-amendment-01-no-materials-page.md",
+      "sha256": "b1ceee664df52f901713d6b4a41c92a8748dbf3ca007fcd88c780b26883b2ba9"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\scope-amendment-02-latest-actor.md",
+      "sha256": "4b369af6654fdd82e70b48a37b38450237cb7f8d77892047ed0a3390c8b0c93a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\scope-amendment-03-license-required.md",
+      "sha256": "6e04d2a37af9254b23bb00dba0d377a35389d92be408c2d7424865494076f75e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\scope-amendment-04-one-company-one-site.md",
+      "sha256": "51f678c9be418b95b8c3b271dc7d6b377f38476eef8e0f0f23219db814d15878"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\ui-conventions-v1.md",
+      "sha256": "17586dcf47cf9e35f323be7feec0d3af4882aee487e976b3abd10eba4ea4bb16"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-key-pages-v1\\01-customer-list.png",
+      "sha256": "db0dfb8757270a1caf209ef678d92f8ffd195f0a8406210a27472eea11723466"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-key-pages-v1\\02-customer-dossier.png",
+      "sha256": "47ebd951da7538cb55ce7446da53357932f1a0c3757d675812b4c74c9e789d0d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-key-pages-v1\\03-batch-license-review.png",
+      "sha256": "2673c4a115d9873ac5a79e3d647f407026bdcb61488901dc7b5c3569f4fa38be"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-key-pages-v1\\design-brief.md",
+      "sha256": "bb648f4e2ceb78f9499e92609b311923dd23f488ea5996016c3fa296f8c6ebad"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-key-pages-v1\\manifest.json",
+      "sha256": "52ce5c45a366655df033c24a7680cd7d635dbc30028ccc8a0c43c21489688477"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-key-pages-v1\\README.md",
+      "sha256": "8ab1a32abd613c5464c3b2c2e27ad2000b155f266d84d607d6657ee46255259d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-list-options-v2\\01-register.png",
+      "sha256": "8f65375e3df8fa9c264df56c098d4bd577e254f92c115ee343c0da45bd6f8525"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-list-options-v2\\02-material-matrix.png",
+      "sha256": "c4b66ae416676532a694604e54cf91cf5f1220869ae869cc0eed46b6adafb242"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-list-options-v2\\03-list-preview.png",
+      "sha256": "ea4ee3a22c41cb3cad971901e540389bff8fb6a1cc9389d9ec478ebe1420ab6e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-list-options-v2\\manifest.json",
+      "sha256": "bfe58ab609eff4420fb222a43db83e0386dc1b9923144eb67be7b7d12f2eb67e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-list-options-v2\\README.md",
+      "sha256": "867cccce571c8187397363f01c6900e4092f13f85776424c2542aef0391a93ec"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\catalog.json",
+      "sha256": "c1c9b421700cb7712d627f99d8a429f0082d9a56cbac152222b60327e213b3e7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\coverage-plan.md",
+      "sha256": "7e7cc0b495d90d194bd50c466af4c4e467817a32c818d583bdfee3ff819561e0"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\coverage-status.md",
+      "sha256": "c1a1e6e844969e11653875905104fc9130e46dad26963a53023d4cc77c176a7b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\manifest.json",
+      "sha256": "ef07ebfc600fdf7f6c434298be5a3572920431170e621768e9065776e6b38e3f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\README.md",
+      "sha256": "d0b2b7af44148346dbab35e2a4ca7de001da4cd572b052bd20af0e768e0e6f14"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\verification.md",
+      "sha256": "367e03a5c16d6202121d1c9b06b630bb5383b9468527efb71f410f5687bbb4a3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\C12-upload-states-v1.png",
+      "sha256": "30ac58a5348da95d3b760353f95d9b94f1847501f0b16a68299e2ef6c4b3ca12"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\C13-manual-transcription-v1.png",
+      "sha256": "5f42f0f5d6b449c847665466274db51090e3cab48584f9a85baa792b49305985"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\C14-unknown-result-v1.png",
+      "sha256": "90322c656c78a081d532113bf6156358d774b0358605a8dbe45fa0300f155a72"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\cross-group-review.md",
+      "sha256": "58b3718bd142cd9f23c1a8e50dfe76617deef471d8f25e73547a46408a8ccf2b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\manifest.json",
+      "sha256": "8c84cc38ab49f329c1e9a912e2031bc3b21ca332ea34da501612cf742b747097"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\O-C02-duplicate-v1.png",
+      "sha256": "c3d56241c62b5f49f17970131bc3bf02e8d8a9d609211ef068c1d3c9dd04d36f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\O-C03-differences-v1.png",
+      "sha256": "c220c9c3e9e2345c6837749ad7bbbf52d711e77c85d5c3b9a6327c208957846a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\prompts.json",
+      "sha256": "ef4c6340d2e8194bcdaba0337e5a434fb44d6c78748b28406fa97e11c3f38c19"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\README.md",
+      "sha256": "4e3faed470ef6f8a5bb4ed1a89f2899781faa46858a3c4777a11d92487a8c1af"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\report.md",
+      "sha256": "66053889fa823e3918ba97781e209ce0ee443dab3467fc428a67f21c8b03a12a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\history\\O-C02-duplicate-v1-source-misaligned.png",
+      "sha256": "e699399c5b348370de9b9e98ca31c0c76431afcb60aef65a204ddeda2db40f36"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\history\\O-C03-differences-v1-candidate-source-value-mismatch.png",
+      "sha256": "cff47aaafdb55c06639f1d90d0073097143ac133158b247f08338bfd04bf7d3d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\01-onboarding\\history\\O-C03-differences-v1-source-misaligned.png",
+      "sha256": "63ac48cef82248445268e6be3f6870260344f6b00ab1ca2f214685a69de1a1f6"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\C07-website-mail-v1.png",
+      "sha256": "d77c945427002cc16f39cbc25fa9330a8f4d26a2e725123a5cb6a0b1770cc662"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\C08-review-v1.png",
+      "sha256": "37a8959c4195fa2238c35a67beba040a084f6d529bfcb7544ad975823d15a10d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\C09-applications-active-v1.png",
+      "sha256": "5faf0274ea6201463b0ce47adf138f4086e2152f0221d3274eb18842b2895a87"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\C09-applications-idle-v1.png",
+      "sha256": "1f9616176b7314cbb9b1bd8a0386bd574ac40b9473d950f929015870a0bf50ce"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\manifest.json",
+      "sha256": "8f6525f0ac99d710ee76898cb467df9352f2f46a6186b2a50f3e5f751800736e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\O-C11-link-site-v1.png",
+      "sha256": "01d098694c656d0abeacab4c7dcd6863b108a2c49e7c6e61e4e21640990a8c36"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\O-C12-link-mail-v1.png",
+      "sha256": "6f198277ca70c79629f08ee5bf6b60352a68c7fca18f051c5d74bd4e08404686"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\O-C13-unlink-confirm-v1.png",
+      "sha256": "2665bd34faeef973b300bd97884965b358fd9fd818f67e0a995cb83115b2bca2"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\O-C14-public-info-v1.png",
+      "sha256": "a13d71aa356d44110ee30acbc98080bcf6ce9bc2e5dbbe5a045589375b87790a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\O-G01-review-scope-v1.png",
+      "sha256": "c31f479182a431bed498c97a7debf01d141168015f259c2dd1a2aefaaa5226f8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\O-G02-review-running-v1.png",
+      "sha256": "6d2cb3a282728d40ac4ed0cc78c75d218ef10d5dbf0eb07e1b2edd5139078db3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\O-G03-finding-detail-v1.png",
+      "sha256": "c16a17676f912fd74912af1208eb23721a6c838a0c41008dad7d4d88dabee71c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\O-G04-start-application-v1.png",
+      "sha256": "942e2fa2a67fcfb7b186df4db8ac6d84600039e1ecc3dbf4ff03f00206c13e76"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\prompts.json",
+      "sha256": "0d80f503638cbc94b4891d4cfb3ce182c710b64cb276077ec6b71c06657d6349"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\README.md",
+      "sha256": "59d675a914a80020594c3d2dea1b0cbfe063a4bbba37e083f15ae8c21b5599e6"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\report.md",
+      "sha256": "54e64049fc9bf5e1819a60b6ff7906813b2f2ededb68c95877013189fbabe22e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\before-fix\\C07-website-mail-before-fix.png",
+      "sha256": "63d2d2f4bd9d4237bdd5bba17f8702540c186abd0f5f6ed66203b737dbaa69f9"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\before-fix\\C08-review-before-fix.png",
+      "sha256": "583fcc7251e56bd5fef1ecf44f8852cd0e41f9b41b26257a778f34956d5ddf4f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\before-fix\\C09-applications-active-before-fix.png",
+      "sha256": "dbdfc3ebe0de6d8915c7cc82500eacdcd38a571c5b7d7114be7709b1a90bcf69"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\before-fix\\O-C11-link-site-before-fix.png",
+      "sha256": "55e6de44558e9a7e1e5ce82573f3f32c81bfbcbb7cf8ca52965a3558d5adfa6f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\before-fix\\O-C12-link-mail-before-fix.png",
+      "sha256": "0d85b4e9368e29ab0a08a578cec1bba94f24ad6676b3f05e98ef7ebee9544298"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\before-fix\\O-C14-public-info-before-fix.png",
+      "sha256": "c42b820a9417f69771955fd2e1e72ed7664b028d67ad8ad739dc80b1f1484c00"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\before-fix\\O-G01-review-scope-before-fix.png",
+      "sha256": "dc003d5d78554f66dc77b22c1e166eadd7c2cea08bd7c9dfc7c762934cece108"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\02-customer-links\\before-fix\\O-G02-review-running-before-fix.png",
+      "sha256": "966cd78e9d84785e50a91223e2a11ad72a6129135354f904f84882bb05a5d309"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\manifest.json",
+      "sha256": "ebe796cea188cb947dcbe5b04a6e4d600bfd1201ea98bc3f9166a5e6b0e106c6"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C04-save-failure-v1.png",
+      "sha256": "17c6fd7b3dee0c99317d928e549173a9badc767da70a6138f1554e10dff917fd"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C07-upload-states-v1.png",
+      "sha256": "f1bbc98d6ff848e627d206bcc4ce66a42e0350d6c1b1db069fbb057e397a1a60"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C08-preview-unavailable-v1.png",
+      "sha256": "d2ccf24da343691b210c4fd6d2c564e69613f4d80ea953ce30c11435c4abf7a2"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C08-preview-unsupported-v1.png",
+      "sha256": "494d2821a73471d0459ea0df782efb6f042c2a18dd70c07663cb927343b909a3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C09-replace-failure-v1.png",
+      "sha256": "4ebdc1e774fc392e50ca1088fb155c5629b5a6a82b29064e9701733bb786acaa"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C10-remove-failure-v1.png",
+      "sha256": "c4036a387f7c0331822f8f1f8779b6a8388acce2f3b1207b1a11549426197113"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C15-delete-confirm-v1.png",
+      "sha256": "5ee907c9e840cc9d2ba004dbe48e3e06e699426d47a4699a25035023d20314c8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\O-C16-delete-execution-v1.png",
+      "sha256": "93d49a72e487fc48ac324cdd5e8d88c94c273043ff28679db61809976db0d911"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\prompts.json",
+      "sha256": "a01652277bf437e3e2f32ea3e6bd85f3913004c2204aaba4e8ee8542c5d55ca6"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\README.md",
+      "sha256": "75926a188079815964ff0036bb1c063b8077cbd38ea81554cce3f7812e679434"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\repair-root-prompts.json",
+      "sha256": "b2e20cd840da98de91183526f21769f7dbd33a2f9877080c23fa6ed37db49968"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\repair-root.json",
+      "sha256": "fadd3bd42438f563a836c44370527204bb142dbafba2eee20f83846283663fb5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\report.md",
+      "sha256": "b4dd49a624c160c9170947e98e4bc11be74b4cd82f8dd7957aae18273cc7711c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\before-fix-root\\manifest-before-root-repair.json",
+      "sha256": "6ca7b8d7ebe798afaf2cf4942100c1fdfbcc915132e03c870452ce091c7bba9a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\before-fix-root\\O-C08-preview-unavailable-v1.png",
+      "sha256": "67bcbd299bf12bcb4d132f5f3a821e80ba3da12d731e922c09c2890eea6fbe48"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\before-fix-root\\O-C08-preview-unsupported-v1.png",
+      "sha256": "8a8acb518049fc8f992067af56b09b74ab7307190883a2b4b5532bc781f9381a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\before-fix-root\\O-C16-delete-execution-v1.png",
+      "sha256": "0ef74f980796a8a9ffda6f457bc92429460ebd7a3222afe7783b8d009e66a6fb"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\03-support\\before-fix-root\\report-before-root-repair.md",
+      "sha256": "77c811c7b83e0d36b4baf1adf959cae3e2dc3fd129896e083b2a812cc55c1299"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\C01-empty-v1.png",
+      "sha256": "2aaa3ba312518e961e4841dc62939b1806fee89e00f41b0daeba06190fb651f1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\C01-loading-v1.png",
+      "sha256": "706c36eb6d75ad0480475de52a27fc40dac489c2eaf8320abab2d2298cf3ac25"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\C01-read-failure-v1.png",
+      "sha256": "373bc127ac434854a2293540217765f345facf97d69aae64f3459f2c7d3e6143"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\C01-search-empty-v1.png",
+      "sha256": "6a69e129bf49bbb625ffa21e2f4423148aef2864863460cb48f202337cb3598d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\C02-forbidden-v1.png",
+      "sha256": "a9519237542731b9121df18f17ad64a5eb1304268d1152093f3d986172bb662f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\C02-not-found-v1.png",
+      "sha256": "58329ac11ac4442c08c50957fbaf14c25f52e81d4a5223db385b8048007af44e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\C10-actor-detail-v1.png",
+      "sha256": "5b18a37edc73f6e86cc560f056ec5c73e7e3a631247b9de1a9340f6d628c52a9"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\C10-company-v1.png",
+      "sha256": "cbdb3273c2679ccc718b81f67de424d5a03a9eaaf8322588e40cf38bde386562"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\C10-personal-page1-v1.png",
+      "sha256": "12d7f456db932c84def2dc6cd50a0cb436d59efb54b6733adda7e35015ed452c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\C10-personal-page2-v1.png",
+      "sha256": "492ae0ecdbb1c399a8f119c77815c5c9c0340dce09f1fce42797124b16344bee"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\manifest-extra.json",
+      "sha256": "a1129a332553fb116faa173c7b474e9c40c229124f3fd9d91680a512661c0545"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\manifest-root.json",
+      "sha256": "a211ad1e2ea1533005e19623b4c64d68dcf9f75925c3bfe1442a87d941bc095f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\manifest.json",
+      "sha256": "5182ba562c6db83d695cb0287cdcaea460204812d3f9577cd9c815aaf32f94e7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\O-A04-unsaved-v1.png",
+      "sha256": "c9ecd638a43f9127b7f6a764438a9b5dd27dfd2e92e7e4a71fc6912531d093ab"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\O-A05-conflict-v1.png",
+      "sha256": "2152b3b246162b8128948a767231a35c14671bde0669abb8fd7c5f7f5112b0c8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\prompts-extra.json",
+      "sha256": "15430d73521a755578fd515de88c171b639816973ac0db1890823d62954485a0"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\prompts.json",
+      "sha256": "d99f3ba84c23afcda84ed03bf99a11bc85eb55e070245301a4e9571767fa2121"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\README.md",
+      "sha256": "9ae0bff6fef6a79a003ca41fdbbc0c500d405cc8b9faa3cda79ab678cc77ae6f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\report-extra.md",
+      "sha256": "4afe6cbeae15ed052828736b89aed80fafa7611b86f8ac15994e34481848c29c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\report-root.md",
+      "sha256": "d313f27947eb19c833b81df863b2be07e95acd8aa7b078ce9f6bc1fe047a6399"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\history\\20261017T-final-unsaved-address-manifest-extra.json",
+      "sha256": "112198d16c0e86d706355a09a3e88c1b410d558724ee6429ec29ae3fa58645e4"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\history\\20261017T-final-unsaved-address-O-A04-unsaved-v1.png",
+      "sha256": "fb434f00b1cd7edcee32587aeda0035fbdbf20ef19606ef2267137827b57bc9c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\history\\20261017T-final-unsaved-address-prompts-extra.json",
+      "sha256": "0ee16a5a978ee1d8f1be1b9e75657d7389661bb4a23e887456e0f67af6cbb49e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-management-completion-v1\\04-common\\history\\20261017T-final-unsaved-address-report-extra.md",
+      "sha256": "a08113ab118a08cf5fa1897868d8197e9d69666efc44fe823de5e6536944e567"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\audit-scope.json",
+      "sha256": "9c08c13ee4a57af7b2ef4ad94246ff9c4b2815e0d767114ec6751cc05d0c0c8d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\catalog.json",
+      "sha256": "5be46fc732e714b7aba29301f2934f9dd4a333bedd95f670a1b493b0b56f38f6"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\manifest.json",
+      "sha256": "5e7623129c2e42c25b3a83d4ca2514a6be335a33f409c66c7e7d77b07681d747"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\README.md",
+      "sha256": "ca58b5f1b2163cb0ae5a48cae325096c7fad258075fdfa49b1c05e66a7d89353"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\root-postfix-prompts.json",
+      "sha256": "0d5b5e5b23768b33197a9f3f706e10736b21c78b095c80f07623e8a9d35aac8a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\root-prompts.json",
+      "sha256": "5504eaa9bbdd476725c6c92cdb9259f766fd485aecf3a8d8492f04b193aae570"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\verification.json",
+      "sha256": "4e02a3a09fce7c2d1b1be9598c66df6d37357bc3cdb3aa08786edf4d5824fd20"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\verification.md",
+      "sha256": "86d6ac3850b6bb1410f633f9ba507c6c2a0fe7304c23fc4424ab4708864e683c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\comparisons\\01-core.md",
+      "sha256": "8ae3fa036f9197d573e06f8e15b8d8073ebe57d6417aaebc8113b85d767abce6"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\comparisons\\02-onboarding.md",
+      "sha256": "2a56a087be4a7571f1bc665646a8f5c27621c8bc48b7f13bb05ccc1eef1f2239"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\comparisons\\03-links.md",
+      "sha256": "938f543be2d1aae6848993b78adfb91af7cd310dc2ca1c90599d7812c2b534d0"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\comparisons\\04-support.md",
+      "sha256": "e1466a7924e07fe3ca214900684f7e2fae24a2113d8f3bba0709849308e51c14"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\comparisons\\05-common.md",
+      "sha256": "f832c1881e33307a1f0479d080c6d4bde59d04178a59f38e81301f56bd256ca1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C01-loading-ui-v2.png",
+      "sha256": "f637287ca810da4db61b59fc77b3a756be5d039ad03238ad94a1db1c4f6b3c4c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C01-search-empty-ui-v2.png",
+      "sha256": "3fb4c56d8283d3fdd6493d8dc3f27e49e23a56f1d4eef13fbd871c3ffdaeb11c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C04-company-ui-v3.png",
+      "sha256": "cbde693fca6e014f2097019c4cbe48212ea4ea4a0fccd355aa04be176b41dd3c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C05-bank-ui-v3.png",
+      "sha256": "1e5656822e6cf3cd26636a13511edd86e7076e313ccb3a4597037b47cb78071d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C10-actor-detail-ui-v2.png",
+      "sha256": "f0bd3a554cea687b168caad24eebf4d3754bcbc1456ec211cd7565fde9771e40"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C10-bank-ui-v3.png",
+      "sha256": "b3115e20012ce31e912198dcbc7ee926a8d988de68845b2198175b373438eeee"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C10-company-ui-v2.png",
+      "sha256": "7a99bfceb49ab37006fa9ef52ed9782aaae4d82b818a17ce853d9bba7193497c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C10-personal-page1-ui-v2.png",
+      "sha256": "daf8977a72192b8ed7d12df24277b5e74b2e548259c221e309bfcc426199bae8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\C10-personal-page2-ui-v2.png",
+      "sha256": "1a5c984ab085daa0d9a170718f42ac8bd2c9e0e3d19bbd37eee00fc354271a44"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\O-A04-unsaved-ui-v2.png",
+      "sha256": "18737f1ab0a2095c9fa4f814db6cd0c1fc03f07635a761ed648ce4503eef05b4"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\O-A05-conflict-ui-v2.png",
+      "sha256": "67816f7e4231172b8244038d576468343aa653007a0b604d678bbb44ae531397"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\root-repairs.json",
+      "sha256": "f452615d9934fcbbaddd79ba5a9a6bf3b0285f50a38657830c1ffd0496340122"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\root-report.md",
+      "sha256": "b4d0b60b8275a1fa123b1ba177b7f1a409cb16c00b081f6d01c00f2244d40c45"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\C08-review-v2.png",
+      "sha256": "623b77f127b0568c2c454d4771ee65e73c884fcbea18e4bf75762fc40400d1a3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\C09-applications-active-v2.png",
+      "sha256": "9bcd2c1c6fb697c9e4c59bc6fe85295579395a116f8f06fbf208ff2682537850"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\C09-applications-idle-v2.png",
+      "sha256": "de71174d7c9c80dc6802cf389c9c663aa1124388bdb821ae758ec69d6697bb11"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\O-C11-link-site-v2.png",
+      "sha256": "3e7b2c945fd5b19f2765cbd026295b96d81c75859d56b905c228c02d8e9b59f6"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\O-C12-link-mail-v2.png",
+      "sha256": "f2aeeec12c2bd91741268e81ed88eabf99b2dcd4270c4a490e991ff827f56193"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\O-C13-unlink-confirm-v2.png",
+      "sha256": "5b31be99d308ae35af0619b8dcde85f128f36fee1158b3bd7fa586c062843101"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\O-C14-public-info-v2.png",
+      "sha256": "e8688047b9c46354ce0ec49de4b3473a7c9009d5adc861a45461d6883f86f4e1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\O-G04-start-application-v2.png",
+      "sha256": "1dc713c50293938d6e131f9195811731d1b76575941322a9ef56b47a1fdda473"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\repairs.json",
+      "sha256": "cd2985edca46a4a9bc94bdae03bb035888bde90af9bf1b93b486394b68d798b0"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\links\\report.md",
+      "sha256": "6460f297279664092fdfeb90135b35946d7cef69e3fc4441593f45a796b1ea76"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\C12-upload-states-v2.png",
+      "sha256": "20f1cd8827537943f84b50f6e7c6faf5c60f72cc89a1aa28b53eae8d5590b951"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\C13-manual-transcription-v2.png",
+      "sha256": "8ed27d2f12152efe9323e41dcc66c6d2a074f2a905519658350e293cb1c686c1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\C13-recognition-review-v4.png",
+      "sha256": "03512c4bc9787c8daa11bcec04cf88e059a8d1d377f6018e266ae48e630c6ead"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\C14-creation-results-v3.png",
+      "sha256": "7939202cbd54605b1602f2484d388506e8c3f793ed23870b1cfcaf8041edcae3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\O-C02-duplicate-v2.png",
+      "sha256": "0588d8b445e47f54c2397b97efb9f024630d71f191cc7b2a9bd993537722ab7b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\O-C03-differences-v2.png",
+      "sha256": "87226ae0fe967e543dd060395ecb591a43b76f87c22c71e43b1fc9c235086384"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\repairs.json",
+      "sha256": "cb5d8a83908cf13a040b8b37546493d974d0e3aea95c66df0ce6314a9f229720"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\onboarding\\report.md",
+      "sha256": "f3555a18610b6d54399a4aa5ce4f0edae3160f897b8827f2e8ccd7e310466451"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\support\\O-C04-bank-edit-v2.png",
+      "sha256": "6e6ac2a8467c89dbf6bf9a043f83274358c12529ecc324c8db2198e61112d784"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\support\\O-C04-company-edit-v2.png",
+      "sha256": "c88a4019d3499340c2d6a43928d043894ec09999face9f381a08645ad97f9667"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\support\\O-C07-upload-states-v1.png",
+      "sha256": "6ccfea0ac7912de73ffd7240287ebbc4bc5ca38ad12dddb850bd16e6f7219219"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\support\\O-C15-delete-confirm-v1.png",
+      "sha256": "ec83fceaf39688e16ea5a2a14da93a21a957bd1d4677996363e3d77f309a1c62"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\support\\repairs.json",
+      "sha256": "17a121f773b7b1824c3a8de411f647ae3d580d327ee32d48958113b3c5ebcf18"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\corrected\\support\\report.md",
+      "sha256": "f5a35c9967a14979a27cffaef7306be1c2a600600aef661b81723185270a3f01"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\current\\01-core.md",
+      "sha256": "3247fdf5aeb9fe4c8bc80fe998b6f8fab64cc4fab1135ccf5ac5d1b105dbc885"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\current\\02-onboarding.md",
+      "sha256": "149729c38a883963895c80f1dfc15983e375774681b60447f64e70e9543cd349"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\current\\03-links.md",
+      "sha256": "5cedaa8a711250c6420e518e438d4894dc616f257fa41641736218c09ec0860b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\current\\04-support.md",
+      "sha256": "30fd750709163d5f528a1569dbc21f9d37a49e3e6ed148ed70f72d98acf8b9ee"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\current\\05-common.md",
+      "sha256": "781fe86d5910b9d1441a65527e3b5e41e1cbbc009d4bbe635b40ba6540eb70ae"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\findings\\links-cross-review.md",
+      "sha256": "c5e7b8174869006e7930367ea97ffc9e94f3eeb3846c4bb39b7f16176abd01ed"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\findings\\links-review.md",
+      "sha256": "802f740a8399e7bd168b7b1e7334c394a7260dee00bc696dbf64c6e098a8c364"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\findings\\onboarding-cross-review.md",
+      "sha256": "bfd0c3ea0768309e6dca89f6757d864bf793e163dc23045591908c8e8bd73f67"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\findings\\onboarding.md",
+      "sha256": "43420ecaaf3169c3b5dce38ce7af73e1a6a640436fdd445b24b8a92605490cbb"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\findings\\root-cross-review.md",
+      "sha256": "59cf9f38b761a23cbe9e9381b9b7e49039370ce5761348fd81a2638224d89738"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\findings\\root.md",
+      "sha256": "f41fcbd3ed9d29e70ac558568a32f61ad08412b2eccff4cc57012cdf67471d54"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\findings\\support-cross-review.md",
+      "sha256": "aedc00d60b1cc15be3571b50ab3b3735966e49d6b6e1c4ad9df274adc54d8f0b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\findings\\support.md",
+      "sha256": "2f195ec54a389d954e6e669706b764db836c37e703b063a11b23ff73d33daefa"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\history\\links\\C09-applications-active-v2-pre-crosspage-fix.png",
+      "sha256": "2bfe223c84ee3e79e9da4db0e0d0d8df75c17466f013390f192ebf647ce6be25"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\history\\links\\C09-applications-idle-v2-pre-crosspage-fix.png",
+      "sha256": "60abbe3c0c4bbb087a35995a9a79620af95eb61b2724a0e260b57045a6930351"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\history\\links\\O-G04-start-application-v2-pre-crosspage-fix.png",
+      "sha256": "9205dfd60c557ae960f86323c4a563646441572f89b157705341b7d1eb37c43c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\history\\root\\C04-company-ui-v3-draft1.png",
+      "sha256": "f81ce4995eed8ef70a355a73e2206fe52eca3e6d8ea0e752f17f57b21cbb7bb2"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\history\\root\\C05-bank-ui-v3-draft1.png",
+      "sha256": "f01c9d49898754c8d33488278c27c7da5a37c0f0c47b50fd18b9063bd098a83f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\history\\root\\C10-bank-ui-v3-draft1.png",
+      "sha256": "c483df07b88f9d73680e0b2114112ab30041f0633ce3749c0b2ee5ffac852976"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\customer-ui-consistency-20261017\\history\\root\\O-A05-conflict-ui-v2-draft1.png",
+      "sha256": "93b1a9d6ee2aeb88c38235720add96330b4f883966c9c1c27eb92da2ed99a9b5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\approvals.md",
+      "sha256": "5bb30f39770359e9da6e74e8859f4c21e81313a47aad2c2783a12edc525e2045"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C01-C02-C10-personnel-comparison.md",
+      "sha256": "c9d88dbaae4df05909e2989adc7dbbea365c012df86ada903604d3524ff6d117"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C01-list-preview-v3.png",
+      "sha256": "016e67ff1f516154c1ec59decdef5afb66439899508846c20b07eb205c02b591"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C01-list-preview-v4.png",
+      "sha256": "3ce62a5609dcc158225bf5a926e8c3f0a38f1d10d6167b23ca1e11abb6fe602a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C02-overview-v1.png",
+      "sha256": "f74a875a7235c27728312b4ccf0e13bca3db32a900e6be5118734a6bf701485e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C02-overview-v2.png",
+      "sha256": "104af41887e2bb2f2808873303e1a8b07d2de0aa574a853347950d145eead3f2"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C03-personal-v1.png",
+      "sha256": "bde2f576e15317ccd8b8f243eaa396e88967b27968677b498d1b3d9dfb90ef60"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C03-personal-v2.png",
+      "sha256": "cdd90cac8f1444379297efc2c904bf6f26a08d9123b5bf775fb37a7126356d05"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C03-personal-v3-comparison.md",
+      "sha256": "150b0e97cf30984d4fa0955f1a41d19714ead9f05c531ac4190c61bc119a0069"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C03-personal-v3.png",
+      "sha256": "461fd963d169852c4558ead342fe7eeab55853fee885e25b743f187fad0a9999"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C04-C05-v2-comparison.md",
+      "sha256": "2bd379f002a8bdc43f2e60de12803e56eacd2a2f47c54022b501ee63f190fcee"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C04-C06-page-brief-v1.md",
+      "sha256": "0a806ceb1851c0e62aa628d270b67cc4a9cb087d61b198b7ab05c45c1b2f418b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C04-company-v1.png",
+      "sha256": "3cfd879a3aef4a912d302883aa53c27ebb5e380cd77893ded216496397da2903"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C04-company-v2.png",
+      "sha256": "ba5cef6cacbb6a85bc57f40c2408ba875a253b06b5f7f15783da57ec2b9dac0e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C05-bank-v1.png",
+      "sha256": "13e6c24782d5db6eac7f9a724fedc213f33d096b03bf8877bfe396ec90d89579"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C05-bank-v2.png",
+      "sha256": "df31085abec5e15573c34e9d0cf875200b9642a423da87a6345adbdc6ea65303"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C06-materials-v1.png",
+      "sha256": "09f6567be8835c233234727c35380092bc1cecb3ec21cc373497edca8a6697c6"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C10-activity-v1.png",
+      "sha256": "d0bf25267b144d57233aa4ccfdd14e6c2884280782bb8a52fefe15362a70a74f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C10-attribution-v2.png",
+      "sha256": "e4d0c7c5a2e666efae38fb693895d2b43bb1b91b7fe9229709fdb617a851d384"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\C10-O-C06-activity-owner-brief-v1.md",
+      "sha256": "8e25cff3a2900b9a46ea89278359616f2da5616c01b30c1e0cb13f6d2f4642df"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\manifest.json",
+      "sha256": "44247fd1b20e89505b18428026d7ded1eb128e36869d5d87e68c18c2079d2c85"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C04-bank-edit-v1.png",
+      "sha256": "12d86b6209f61de460bc495bffcf162b840f923718d1e5a62e370942a8bf939a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C04-bank-edit-v2.png",
+      "sha256": "bd5333f297b840642671750d66c69473fde2a9f1be40f50925aa9782e2355870"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C04-company-edit-v1.png",
+      "sha256": "78bb6fdc6a69f941d3d03fa3948666a5576fee41d524a85d46316eea408f9223"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C04-company-edit-v2.png",
+      "sha256": "55528269ebab3a05ab5e6003b9836fdd8f9a8b217a0f8a44361a13d755a5498d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C04-editors-personnel-comparison.md",
+      "sha256": "4040836674272eb5f00e2fe2bb14f1d7112e3f62d59435fa1ca23cb6de3b5789"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C04-personal-edit-v1.png",
+      "sha256": "2b52ec1f37b83f2f16f14e195c9b7092942e1c222aa6f8bc2f111eb0549afeea"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C04-personal-edit-v2.png",
+      "sha256": "3d8611fed6a6782777371f8ab6e9bb0e50745242af06f5a4aabefe10e2142497"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C04-personal-edit-v3.png",
+      "sha256": "5ffde99df45f793404bc00b21be68ec62f665095065bb8e9e2f6a6af33be9fab"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C05-company-status-v1.png",
+      "sha256": "80ec96f7b2e5c204290c27b31f3150a20fb534ecd7f36c65761c30f32c8df1d2"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C05-company-status-v2.png",
+      "sha256": "3ea9715faba58ca5f4cad147b688f9f1792c6a01d8e995c6466e9e6c05ae0f82"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C05-O-C10-v2-comparison.md",
+      "sha256": "10ec2a452d9097c74d5724efef17b4fa4f8dc1f973046b704f035e5c536dc933"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C06-owner-change-v1.png",
+      "sha256": "5af05a8ba691a78d0f9f81ff858ae4a04f6ae48ba791663105d70cdb0f16c1e1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C07-C10-attachment-brief-v1.md",
+      "sha256": "212bff325dfb4a2adad23b9a670965e5250ceffd70b18fd7e6686eeb21c9305b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C07-upload-v1.png",
+      "sha256": "b2ca5b0a2d84e55b9e13e04a11a5a20868ce3b04e8c2120f56e71d54d110ca9a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C07-upload-v2.png",
+      "sha256": "6ffd1c858cef8b2101ef79d5c40762757ccd8d5b5df130955c8b6ba6b29d62ba"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C08-preview-v1.png",
+      "sha256": "109351cace42a7c3734b64872b6dd6ae2ea1413df1b2a9307a010bf9fd8a33be"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C08-preview-v2.png",
+      "sha256": "bd7ad2bc7a71578873d0ddcadc3d4d9fab9713988c77cecac550274dbb226360"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C09-replace-v1.png",
+      "sha256": "09cc44765272d20cd3ca0c0ae8bce04ae05c9f7de91c1d9e7a46babd7c35c19f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C09-replace-v2.png",
+      "sha256": "19eacc7399c0540a2756d87d21f40312f215d3d9f309e4f9b7b32e5f76bf52a6"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C10-remove-v1.png",
+      "sha256": "8ecdea78548f10266f70dc3f0f622c7cf733c188b9eef3ad74a240ac42cfa0df"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\O-C10-remove-v2.png",
+      "sha256": "8469d5b03be4c99421b2c0350014697c911d4b1462882e32778013fd2efc8d03"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-01-customer-dossier\\README.md",
+      "sha256": "d65b382af7794e44ce5ce089f34d3433ac12221758f544d7af7a895ac271dc99"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\C12-batch-upload-v1.png",
+      "sha256": "10ed48b76b7fad85ca191357e8fee53d61505c37988b2ef8f20022793681148f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\C12-batch-upload-v2.png",
+      "sha256": "687d980e79e521fbf2cda9ee93012a6666125e71dbabfe7c25f3b337ab563f3f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\C12-batch-upload-v3.png",
+      "sha256": "5c00b5190f23b6ebb8ea86258b7c349dcd2b37e7e38d94f8b75f3fa6df4cc6bb"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\C12-batch-upload-v4.png",
+      "sha256": "828e965458f590916f694a82e0351bf7fcaae777e171abaa60ad246173e2955c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\C13-C14-v2-review.md",
+      "sha256": "8afd5b7e0443da49bf8ccaca0d1a8d82840c1bea62df3677ccdf766862e07dab"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\C13-recognition-review-v1.png",
+      "sha256": "5deee4668c5e354def2af1b38db5d213f51a3f5bf9d8933f1ec5fed605359158"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\C13-recognition-review-v2.png",
+      "sha256": "e1b273e120b493c20cd85e99086d6dc10ecc202f83642a28d0dd781fb4d486e7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\C13-recognition-review-v3.png",
+      "sha256": "0c4720715a4e37e83004610218a9d607687d8190fc4e9a8bebe2616122affceb"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\C14-creation-results-v1.png",
+      "sha256": "07463028e216766d9b3cccc43c1ff661c16ec20d50cb1ee9995345502c3db56e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\C14-creation-results-v2.png",
+      "sha256": "06526a042d7fb7deeaf4747b4dc207e3fa0eb41936ef6c736c9d85b7e903e610"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\flow-brief-v1.md",
+      "sha256": "1e4efeb1a86fcd30aed556883bfe03a4edf70503866eb0f185a91f1c25941195"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\manifest.json",
+      "sha256": "90dba861fa2c357b34d033af701c4f9b5e3a5028dc4aa910b170094f073b3ab5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\manual-duplicate-diff-brief-v1.md",
+      "sha256": "16ced9b9716adf9a751d5fa83608d2d99e42a658ce0c735263f3011e37caaa23"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\palette-reference-02.md",
+      "sha256": "53065fa89fb089b5f3404656871046fd3e9bdc05177bbbbb57d980f42a6b74e5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\README.md",
+      "sha256": "13c4ee6cdc133934f3d7c4268e0238225cad677ef0c25152820e6c9a04c59a10"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\style-correction-01.md",
+      "sha256": "977854b38475ae4f9008461ae78546d3f42771fff734cb2348ec57289ae9ac7e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\history\\C11-O-C01-without-license-rejected-v1.png",
+      "sha256": "dd31915c596916d0eb08633d50080513480553d0ecf46a796fb65cfa77fb6828"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-02-customer-onboarding\\references\\C01-user-color-reference-20261017.png",
+      "sha256": "60fd3efbd322730a432116dfa8d5b9dddde3e165e571b8800968101a7a2e01c5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\baseline-v2.json",
+      "sha256": "e250ea35b9b989be3e261e07ddb20c3a5b5d6474059d03b3fb675a3a25ed59d4"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\baseline.json",
+      "sha256": "d8951c8f3ad0ca2ecf55b29983e965b2cf178acfab8f8d55acecb1cb01b431f5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\design-brief-v1.md",
+      "sha256": "5c3917b6de87932387e75b9df6663e25f9e1dd7cd0f074a65dfa64c869014fe3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\design-brief-v2.md",
+      "sha256": "d86c108a7bba00cc8c25567f6d9f9ea8103a085ec4d4b9d08c3b63e3d8446b2b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\README.md",
+      "sha256": "d15145aced9d8167205292c972c38d71f401bfacbd424b311d4f2c109da54460"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\source-evidence.md",
+      "sha256": "e9eda4196ac0957ea3ff8d93e0ad154cd43894bcbbfd2fa867f64b1676e793ea"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\verification-v2.json",
+      "sha256": "e434e457d2f4650b0905343a8decfe2f036c9c7c5143f0ba818b393fbc2ef3f3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\verification.json",
+      "sha256": "bc41726332b2f7ab10ebc44493ff186c8715e287595456f5cb1b9efc5c1f9d3e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-customer-business-info-v1.png",
+      "sha256": "65efae238acc56073d9eba8a4bd63a3b4d50a36fbeb732207b65a9f87255644d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-design-notes.md",
+      "sha256": "89fefc93f0067945bca51e9c2dd93471d95a93bd4716227bab9bd75c112e1fe8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W03-design-notes.md",
+      "sha256": "61bb05d56fba5c1ab968846e80ad0214fca7af35e942fd14f7620d0da37de0ce"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W03-site-configuration-v1.png",
+      "sha256": "ce0fcc7052fc017fd3733cc0ec6d7a9139c7e772722446dbaeec46379fa4ecde"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W04-confirm-start-v1.png",
+      "sha256": "a7b43b82630338c4cba7b74ea450fb84f14c96b503d885bbb0f2db75d400849b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-evidence\\baseline.json",
+      "sha256": "c6d43e83de87cfe7feb661a1935a68df477d495bcfcce04753f6a2442ce40fc6"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-evidence\\design-notes-before-final-review.md",
+      "sha256": "a4465c7e1b62f0136a8cf4ce5ed88f00dc99d67862b4c06b0185d82a1b377bd7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-evidence\\generation-recovery.md",
+      "sha256": "560bb84994215dceda9f8fa3093d3388d60e940c8caf74a555daf8fec5bbf8ee"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-evidence\\independent-review-before-W04.md",
+      "sha256": "8cdf0ce98ad0279e42c4db50d6d7d7be33b94381b235a42aa177fdd0ec625a0f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-evidence\\independent-review.md",
+      "sha256": "70664ee5c4fbd6fa801c92c42cef646851caaa02ea31ca13e11d99e10738e77e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-evidence\\verification.json",
+      "sha256": "e180126c577b8b8b648b628c7656dddd4b8fc8bec1d920a10afae6895c1914c8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-evidence\\W02-prompt-v1.txt",
+      "sha256": "523ea9ff8a12e27d7804d3bf4367e8d060a5bdff9c2ec01dafa32791d568adb3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-evidence\\W04-before-copy-fix.png",
+      "sha256": "6594abb3367326eaf28308e3b09ef3d2bab58485ec4ca2e108810c102314c8cd"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-evidence\\W04-copy-fix-prompt.txt",
+      "sha256": "b0240c9a8be94e131f2a123fa84b718cb1b59ffb150741c5fe7cd83d8afd2d31"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-evidence\\W04-prompt-retry-1.txt",
+      "sha256": "1d32e80c7ec6b55284bc83b94d6a4b2893ed3b08bef23d550dab9c592d27140b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-evidence\\W04-prompt-v1.txt",
+      "sha256": "7cf5a3115f420272ce5865a0c69484c16c7746680902830f3a76b47e23540854"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\baseline.json",
+      "sha256": "795c0c7f9aae569bbf245df13b2a9588b3ef6f32c380cad811e8429701c01aa9"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\demo-data.json",
+      "sha256": "2b71446a69f2c7536c8dd678ba78ac12e50b4208e632af08b9229a6f686c694b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\generation-recovery.md",
+      "sha256": "f5e12b441395bb01a6f0ee86db9c0b47df2d312f248769ca45bdf4b9a5df15b3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\manifest.json",
+      "sha256": "67427b10e4b06ae094c426847821279e8e20616cb1d2236856751e5f273a2564"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\README.md",
+      "sha256": "80551a8922c7d668b6662862438c0349dfd364e269ea96ba2b0dca3fdc0046ec"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\review.md",
+      "sha256": "51c8bdaa95e5cd68a500b3a0bdf3e4ea61e312c6b040bc76239a91bf3e9b7009"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\selection-decision.md",
+      "sha256": "889d53a0dadfde3ba5e708c62a5b144cb81a447144946eaff8afc025f8c88f1a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\selection-verification.json",
+      "sha256": "f20a6c9b5f07552253b937c1d8a99c008282fddc20a2e1375d8ade9158973ff6"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\verification.json",
+      "sha256": "6494792a1ce02fd1f6c097ea4cff2bbabf80f38dba7bd4c78ddebcbe05ae5088"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-bulk-workbook-actual-prompt.txt",
+      "sha256": "bed886e8dd891a938614cd53c3a9e3378cc380215492592aabb2b101e4c37521"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-bulk-workbook-final-sent-prompt.txt",
+      "sha256": "b609dfd2c28db7a2c500a276199f32ffcc3924cab4660319b673b9c0edfa3081"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-bulk-workbook-prompt.txt",
+      "sha256": "4ec36bcd7ede78f54da6a7e72de3872fa0fc8745e068e4601dd01f5e9acd4265"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-bulk-workbook-sent-prompt.txt",
+      "sha256": "1425bc240b1e717a44e3498dec461d23be0123e48712a5debd70a780ebfd0a71"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-customer-tabs-actual-prompt.txt",
+      "sha256": "6744e974355299061f82d297d07c6a4278e73d35b2570b253dcc554e91a66192"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-customer-tabs-before-wording-fix.png",
+      "sha256": "630af1223fa0551e71f8ef2448699af5308ba6b217795d78858438f349f953cf"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-customer-tabs-prompt.txt",
+      "sha256": "addb3ac416894b8b49db3e2c0b53d0ed38a7b08983a72b81c517e30f4776c722"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-customer-tabs-sent-prompt.txt",
+      "sha256": "6f136824034fb43f0c7ad8d5836798ed5736f519d3d5648411c472fc68cddf07"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-customer-tabs-wording-fix-prompt.txt",
+      "sha256": "d5b5ac57229a56329e550cc908f0f856c4f316f24201572a841435df25f43373"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-dossier-split-actual-prompt.txt",
+      "sha256": "f8ab0d61b3d8590f5a0ee31b0eee28425971adb0cd87ba506dbb9457d90b2aa7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-dossier-split-before-wording-fix.png",
+      "sha256": "0f5606768d5aa7863f4cf9e14fdb0e91a17668096d9730c10c4a1416ecc11535"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-dossier-split-prompt.txt",
+      "sha256": "03d896cefccbaf79a11aa5815e21aab735cc9823e500c92ae91946b716e6ae96"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-dossier-split-wording-fix-prompt.txt",
+      "sha256": "e90400e796f2d205f3c7f7d67cba98a80307b57aa2b99244755df22a41c69b6e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-option-01.png",
+      "sha256": "6ab7cb1bbd491f7b96bb51c9074f7a270ecc3b7afac07f3aefde69bfb2a3960e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-option-02.png",
+      "sha256": "1ee5c8019461b12a004ab7bf13f4cc03ede87bdc249c513906fba547d6ee19b7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W02-option-03.png",
+      "sha256": "32c7f005ff6d688fca8a2bb2cddf1daaa15e11395d83e826841bf1005252670b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-comparison-columns-actual-prompt.txt",
+      "sha256": "995a75ec2214ef71bf81b210c437d0c7d851b2271c19389a4d2004ad5a26034c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-comparison-columns-before-checkbox-fix.png",
+      "sha256": "459173d4c7f70ba7be664a0044d63bbae952e5f0d71eb22e0bd450ecdee2acb8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-comparison-columns-checkbox-fix-prompt.txt",
+      "sha256": "d76b33b4c4c0fe19aa61451e394ecbe57b64d225b1d38c9cb467e52913237d31"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-comparison-columns-final-sent-prompt.txt",
+      "sha256": "eaec2aea5374890760f928f82b6598460e568b0722aa472bb657389609a4af3f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-comparison-columns-prompt.txt",
+      "sha256": "e6097e87058da9645098fa1883948ab9bdc0922bfb780af96abc31f936fedd93"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-focused-review-actual-prompt.txt",
+      "sha256": "ac82b71075630bae987e3f4d76e024c3c5ec359fea8a72d535b872c979e90534"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-focused-review-final-sent-prompt.txt",
+      "sha256": "6a7b43f65c859f93869c686f3151e1cf20f99909ddf4976a9ea1291efb6d14aa"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-focused-review-prompt.txt",
+      "sha256": "dc025f0435d2dab9128924a1863f55d4a7df708c7f2643bf7c340a5613cc6401"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-manifest-summary-actual-prompt.txt",
+      "sha256": "2a0625a6cc5d3d2da564c997c4db89b690db65a9b1a8de97df220bee896b5d27"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-manifest-summary-before-dedup.png",
+      "sha256": "af2b950bddc66a6e878bd1461c3e6b15fbbb9df5b71bf334a604fcd62de9e409"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-manifest-summary-dedup-prompt.txt",
+      "sha256": "0ac13799714edd2b3ec69f2db2bb5b8e93b4d4011d714faa59d6a197bc98dad3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-manifest-summary-prompt.txt",
+      "sha256": "d7a8b25b6fe77bdd961286342128af8c195ce03771ee77619b40ff8d0a80d7be"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-option-01.png",
+      "sha256": "ec9934bbaf5f3bf1b58a70d3b97a78f9beb01f850a83935888488df3dcfcc447"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-option-02.png",
+      "sha256": "428111f557dead9f13ae3d9c5e1981c895b88883bdf1550e5412e17d69370286"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W02-W04-layout-options-20261017\\W04-option-03.png",
+      "sha256": "ad09f7ec14483881f531cd6b3793020765a6f3930b38480fed49bda328498fe7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W03-evidence\\baseline.json",
+      "sha256": "93cba8db378eb3d85aa48ba9da5ff184f78c52c2fa417a106208b1bdcae2ec0b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W03-evidence\\prompt-v1.txt",
+      "sha256": "7c44ca66a2b06e6e84dc6ca4596bfd82082d76b23cb999e5f8814765ce813b73"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\group-03-website-management\\W03-evidence\\verification.json",
+      "sha256": "f438c42810718569264cdcd9dce6f7c0350f1d29ce0e84d73c556e0f78776f35"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\stitch-phase-01\\BUSINESS.md",
+      "sha256": "8e6afe883079958f8971fcca81e5558648c2317bdf2af36f1c09195c565f9256"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\stitch-phase-01\\connection-status.json",
+      "sha256": "139a4a332e9347f6ce7057fa2130d049105fd89e35023d2079eb8a78eeea3201"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\stitch-phase-01\\DESIGN.md",
+      "sha256": "98fffe14ac403cd7662480b68788b0fb94a05b1061b8ea33e261043409b87260"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\stitch-phase-01\\MASTER-PROMPT.md",
+      "sha256": "32c7311b611bd0acfc0e3d2bde3ad71a2b11f10217e7aeb062bf703b489186c3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\stitch-phase-01\\migration-manifest.json",
+      "sha256": "37d6e6847e33a03f26381443d8b4859ea05ac508650ae20526cbf1de5e128d03"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\stitch-phase-01\\README.md",
+      "sha256": "4762410b7ea72c7dd2ccd2d07d95ab998b3f0794966275b64c091973c1aeffac"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\stitch-phase-01\\source-baseline.json",
+      "sha256": "19001b74b9b3a7c9889760ee7aa7c5806c4b6da81a8e399be6b6855162e057f6"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\stitch-phase-01\\verification.json",
+      "sha256": "d080fc620dc2c56950be70631c9cd519870bd947d3560ea4c65021425516e59a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\stitch-phase-01\\prompts\\core-common.json",
+      "sha256": "c53dae99c557b23c487d3d3adf003e4ed3294bd92277f4b466726b76bd8c0e41"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\stitch-phase-01\\prompts\\links.json",
+      "sha256": "0205f3df086099d3e748045eb263d6bb48b2850f543f94b4627fd1e4418f7037"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\stitch-phase-01\\prompts\\onboarding-support.json",
+      "sha256": "c349f69c0682b3f2da386da2c467028bd64589e4bfba5c92fad0ed943fe2963b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\stitch-phase-01\\remote\\00-projects-auth-result.txt",
+      "sha256": "5a3f8734e66cc32b5a51254a7f87a3f642495cd38be08937d2255f9b0d77c8f7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\stitch-phase-01\\remote\\00-projects-before-request.json",
+      "sha256": "9ffdf4ad677a649d1f2c283187bafd18ed080fe90e5538bfdfef5f1c006a437f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\stitch-phase-01\\remote\\00-projects-before-uncertain.json",
+      "sha256": "042e862d7856b72c2d1d5d8bc5809b5f697cf45e47288c22420d5914da2338d2"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\stitch-phase-01\\remote\\01-native-projects-recheck.json",
+      "sha256": "6e3fdb89e94b01ce206e919fa003fdfcaf092989b6bdc26c98269f80b5589fcf"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\stitch-phase-01\\remote\\02-key-updated-projects-probe-request.json",
+      "sha256": "79011218ce9667e6a1048d500c4d15af4cc660bd49b8ad67da01dc58deed494d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\stitch-phase-01\\remote\\02-key-updated-projects-probe-uncertain.json",
+      "sha256": "0da86380be0b6a67b092d43778f4a75f423caec6d48efd374abf340e8cf33ca1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\stitch-phase-01\\remote\\02-key-updated-recheck-summary.json",
+      "sha256": "53d08f85dd7a2514791bb75ac3fa19d91653392879fea9c06ea9739e320aa5d0"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\stitch-phase-01\\remote\\03-configured-key-direct-check.json",
+      "sha256": "6385b7d3a293f1041db5d87c8b373e10781774d07b58249edee81420b75e3630"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\docs\\design\\stitch-phase-01\\remote\\03-provided-config-native-check.json",
+      "sha256": "964e262b19bf801be2ea3bf3bb38ac17ac303199338230124722c95d2cd7582f"
+    }
+  ],
+  "application_source_files": [
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\abandon.test.ts",
+      "sha256": "cf4a16b28900bf599d50365ac6cd4a53c9e3b5462f6de7615eefbce3c1465100"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\abandon.ts",
+      "sha256": "06d3684611577f9dea5654d7fb5029397795374d1c15dc92ff0ca0f51d4dc679"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\accounts.test.ts",
+      "sha256": "fb1597bbf49861ce4b3f201f6dd1cf02999e77d5077883869e0a57125676f67a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\accounts.ts",
+      "sha256": "af95526bf7addc45b3f5af40e92c2e58b27ef364a628d5fcb475bca9ab730f29"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\agent-session.ts",
+      "sha256": "4a5a01109a973328e6039768216126c505c392f86e2f6ed15af551b7ee5ff0ac"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\agent.ts",
+      "sha256": "2c09ea47f170e8dc97559878bb6c4f4e52936b4544443b634099f2a9998b1c4d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\assistant-schema.test.ts",
+      "sha256": "07e2635a8a162752197cc3fc82e6aacaaddd04fe6e27a8b15bef4ed6d55d904b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\assistant-tools.test.ts",
+      "sha256": "d40fb1085dd0f0e5e834304f822279dd72de2ed3ebb4c3d1f2e4bcc7f80ca737"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\assistant-tools.ts",
+      "sha256": "ff12562381ab28539e230cd89b8df341d85fdb7daeeebc9d4e7026da97cadffc"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\assistant.test.ts",
+      "sha256": "8ae70736854c4f694b0d33b5c25250bef9f999955f6bc6f9b35b6a2553f9cb90"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\assistant.ts",
+      "sha256": "3924fbaa7461e773ba237b6a059d78f48d7f73cfa87f2f3631ff749c15852db2"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\batches.test.ts",
+      "sha256": "a89fd9fd629276b4c381ca84f4931760d900782482fcda7093a12d79f588db1e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\batches.ts",
+      "sha256": "ae2a14316c7e5df632da545b6a0eea8eb475ae1141d6638a08664b35d42f0bc8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\branding.test.ts",
+      "sha256": "610886b143adc7fd808b982b8f401f8290ebfab3321a958296417b7080db8f3f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\branding.ts",
+      "sha256": "466eaffe621e755435aac932f68aee3ce55d9677a8a81cbc4ebbb32f56dfc46f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\changes.test.ts",
+      "sha256": "5707c850d4e1f3cabc9043521a9f6a0adf06ffbb1d863d8d69d27da1e2d02215"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\changes.ts",
+      "sha256": "f536f89c7484774609bf2cd6c59cab6cc39f683397688f376d619b554e17ec2a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\check-models-script.test.ts",
+      "sha256": "7be0a28100c175ae053f68c50c1d658bf29a61356a2838021a87a5be1414974e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\cj.ts",
+      "sha256": "42da55a06e17e0c25896cc6a438a42404479d5c7b7bc8d9fbaba6eaeac5cf283"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\companion.ts",
+      "sha256": "d9d22ecb11619fc2bc0ce20ca6b01b790ee911b6d2398ad7621c32bd7bfd0aba"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\content.test.ts",
+      "sha256": "1201ee68bd0f049c25c8fd9cfd15009a43c12c0377f35cfa8c4d264a4a9b218c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\content.ts",
+      "sha256": "88e152cbdf3da642ec3afe38edcd35b9f507986a274d1a52e886af094b4eb4f3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\db.test.ts",
+      "sha256": "d9775161b52b6a485e33fce8a14a7a6fa1b3274b8c9a97ffcf9e1d15a54f1fd4"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\db.ts",
+      "sha256": "81c79f40341df4b766737dbc809ce2bb5cec4b7435699776e77cd487cf21316b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\entity-templates.test.ts",
+      "sha256": "20167cd5d29ce4da7eb6f618a3a016885590de81d246fc4fbff62a49bb01c8ae"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\entity-templates.ts",
+      "sha256": "04fcdf433cd61d842dbab93428a0fe8736032523aa1c08ecbf47dc326fd7451a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist-retry.test.ts",
+      "sha256": "2a08c71e119529fe8d9816829bae128e8ac14163f72a2377f1102191d88d5936"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist-settings.test.ts",
+      "sha256": "c3cb173cb8d1a223b337812d91afdb68ed66bf41ebd438037dc9c473429a0012"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist-settings.ts",
+      "sha256": "184894ab0373e036e4cfb727ec57ee1499b81e48eccbe79ef8393a916ce1efbc"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist-structure.test.ts",
+      "sha256": "37ea189d71317ed1ac2c6ddc0679311c1c19b2bb2e229faba92f75e616df6d98"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist-structure.ts",
+      "sha256": "f77dcd37476faaf81ec271b960693733a80dd61abf44cecad5e87534453d591a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist-tools.test.ts",
+      "sha256": "18ce307010e150e7adb8eca9d14b9e104def39b07a8518f6fd3a4b7a1d0a369e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist-tools.ts",
+      "sha256": "5c1bf33fa51d5b0a9ba907446fc3c97c66cda4b1c6083e97d269d7e3bc51d5af"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist.test.ts",
+      "sha256": "46da991109228663863dcddbd4ade4c42eeca2548fee74c2a80c0cc5842af214"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\grist.ts",
+      "sha256": "29bf28619d0412d2e90d0e8683458d64b402426de9b5e8ca3f17d38ff0c3e15d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\home-design.test.ts",
+      "sha256": "1491b65f2b68719be6d8253bec08fc87d4be9e9167621835c76b1fe0e47bc927"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\home-design.ts",
+      "sha256": "ab0ff758015f0c3c3edb2051d13704157d7f353fdbc41ce81fa370e01f6b367a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\hostinger.test.ts",
+      "sha256": "76023246d46dde96736900087d919fa09a9b095c85c220e73c818d1bc528d207"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\hostinger.ts",
+      "sha256": "1f6525559ee4bac3165f59362e0e374f7f56bf25094a1b40d44a433149e17aea"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\index.ts",
+      "sha256": "14a176e372d50062c44222bf0acdf8ef89f5aa6715c82fb93148a2adc3820288"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\jobs.test.ts",
+      "sha256": "e4b774d5db9e7264a570995563ac42acde84c56f9a21c09c9fc8e953e8a10098"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\jobs.ts",
+      "sha256": "c67a62aed219fa400a895ee7dc5fd4b11542cebcbbfad9227bf65feb2403cfa3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\launch.ts",
+      "sha256": "08fe851d206b8e56e8a1ef48ca8e8404bae618666405ac1b9aac5b84b9fbfa30"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-case-projector.test.ts",
+      "sha256": "9be14a8544acde41cd2a6ba9cb7fda734a277b81a79a56f588204cfb7caf76d9"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-case-projector.ts",
+      "sha256": "9d0ca66af2e1eb79112f858faf172b50c76b4c1eb0f5fab67447e613eecae0e7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-migration.test.ts",
+      "sha256": "8daafb1ec74c78081c5b5f7735168d34cd853de1a80d4f0c18cb25d089bf8469"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-translation-workspace.test.ts",
+      "sha256": "94aef06e949bccf413834d72b5471f9ae293b215c948b33a5f8db2f4c8c0372b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-translation.test.ts",
+      "sha256": "5453cff4b711755ce320a4ec8ce6869371827d66bdf7f4b545c8ac1fd4f09845"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-translation.ts",
+      "sha256": "818025edec0133992375bb4ed774ecac9c8c235e91010aac1eb7f4270c2c3080"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-acceptance.test.ts",
+      "sha256": "15501889f8f51fb1818a034286a549d1c6edee04d675e060a776f22f4def5738"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-actions.test.ts",
+      "sha256": "d02a16306d08046ae614c973f919e9aa69086142b86a71e6b3517a9b59a77458"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-actions.ts",
+      "sha256": "7a9cee449146eacf97202540a537655663c413581bb9e8fa76a67b6d19c665cc"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-analyzer.test.ts",
+      "sha256": "a1cec7fc4b3d3ec575afdc70866b21a883ec9f092658d2c5e5cc50442d63bb4c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-analyzer.ts",
+      "sha256": "89b31e74a2a86daea2d4c5f29842e69d029707ea762e7c2201cf84c958481926"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-board.test.ts",
+      "sha256": "72abfdf5c306f1509481462c56ef6b68022d6a512dc2a6bfd5d5cd7857ef503b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-context.test.ts",
+      "sha256": "fada450d8bba6cb3cc1ea81d44d9af935d8115fa9af96d76758edd7fbfe22eef"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-context.ts",
+      "sha256": "12c17cbc5c910d3da8ff017ddb4a56484eedf5d6d5c05762f933d0ef8f8fbda7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-evaluation.test.ts",
+      "sha256": "c9da51f71c3e3671da87fbfa1c9d850e8159c5dd186505e7b6304531bde643d5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-evaluation.ts",
+      "sha256": "5eb63602196d8dbc1332787215e35f8e5a7b3b18df3227f4066a17c164c8de59"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-lifecycle.test.ts",
+      "sha256": "dee76860cd7eaeea2b64ca9840a2fb8e08a50efe42713e9bd01004cfaf60f2b1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-lifecycle.ts",
+      "sha256": "d982907148a354d57151e788a3265ffd0e524e52fbad8eac4b5bcf9eba16aac5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-migration.test.ts",
+      "sha256": "6c65d9d0c1aee75683ba9e701e3eab154882bd30d275c0b44d383e1347de723e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-model.test.ts",
+      "sha256": "61cef94baacd02af61439ba1204e92145763e893312e145656ccd826db12a36b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-model.ts",
+      "sha256": "c333ed92f595854bd1dcbc5d61cec41f0cd6694a60d6cce254618b085553c4c4"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-queue.test.ts",
+      "sha256": "48e9f6bfd166c720459284862545cfedee9f8c02fa30b3f52ce5e0c22f9ed934"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-queue.ts",
+      "sha256": "357822ff13c0335bcedbd550600806fdd2b6832df21b3520266aa53857958c2f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-scheduler.ts",
+      "sha256": "c8b974b0ed7e36a6ebdde9f8a11d67b9702f391f947b71a1f33f18901a46fe45"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-schema.ts",
+      "sha256": "15a282fdcb3cdf6fa68b1bc94d9c7aadd970534395c63c7d75e1488a69c05e52"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-send.test.ts",
+      "sha256": "fc2535285d17ea88b4c0ba5c14e968c50c7608701cb3d89afbb755ab3a1bd503"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-send.ts",
+      "sha256": "e3e283adde973b6b3050beb33cc22088c04faebc6f1e5a6351ee96feec64ffb8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-service.ts",
+      "sha256": "b8d289e96344f2c4c99f14d79b8143215b7259a001143255f0d8adfacfa00b5c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-source.test.ts",
+      "sha256": "938303c24a5eebaec6f5383a5b221506f61f12dea62dceaa59866b56b83feaa9"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-source.ts",
+      "sha256": "2a46983048a0868e5698817d41caf39499e6e5e72a4f081dcb4dac433cd7b3a8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-worker.test.ts",
+      "sha256": "63efe4e7bc13abc9b418dc758b302b03ec42b60537c945f5bb6a5ca5a5fda7b4"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-worker.ts",
+      "sha256": "87587ac21ca2fccb7226eb0190045aec9da569881a7007a8a318f2ea6962a811"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-triage-workspace.test.ts",
+      "sha256": "e4e0f688192faf64290405976b3a2905faa73c8ffb57561af0c8e7a25129e874"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail-workspace.test.ts",
+      "sha256": "fdb40ada837f252dbf6ca4e5139d46f7dca0bcd6df23e808d285157c333f42c0"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail.test.ts",
+      "sha256": "48905d44b400a68b36d133d918cac2077b409f7c91d0ecc1557bbe1c804d5e56"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mail.ts",
+      "sha256": "cb011dbbb097ab577fdc287f0f14d5a685060ae31762a587adcc6974d20e9b7f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-adapter.test.ts",
+      "sha256": "d4e41f2f8bcc9595b69976e6393a54da90f9b73a3797ed59a1b9473293d92a9b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-adapter.ts",
+      "sha256": "c76efd74c42b690907215d77c34a1eb0cbb9ff672edad69a9018b3bcd33ac20a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-default-password.test.ts",
+      "sha256": "56914b3555443dd83f0976192e431ccb852bd984681131181c55c6b02848cb14"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-monitor.ts",
+      "sha256": "ec969780337964e84454701397814e7ce00f9eceaef785d69cc0ee3c7f86a3ba"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-parser.ts",
+      "sha256": "97949803275503708a4cba46bb74d7c51141cf36da59bf5c44f3b8d1649ccbb2"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-service.test.ts",
+      "sha256": "669baa8d1257d68d2d2d3eb0e838cefd8c102ae4fd4c8a385a05770ff6dd0bb0"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-service.ts",
+      "sha256": "5b2b09e3ea876079f262633473f42956846bf8fc5b502091ef8cc3fdb1fcb70e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\mailbox-transport.ts",
+      "sha256": "a7f5c824daca6041cbe41c879278775eb24376c8fec4322104dc82766b003bdb"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\migrations.ts",
+      "sha256": "30e950c296383a37c90808925a90fdf52e286a4302447cf6d693dc7422c7b9ec"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\model-retry.test.ts",
+      "sha256": "e9625ad56d76c6299356586804ede77bf707ed9586e9e6183ecfcca3b1da9647"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\model-retry.ts",
+      "sha256": "5c5945913de2d6d9619606748ae83c944d8ba4c628f68188ab422053b7d9ab6d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\models.test.ts",
+      "sha256": "d2b8a79c50ab7a061533a67b75eb96aca538e9b2dbf909ded62e2d34820a169a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\models.ts",
+      "sha256": "7396c92cf593e5a64a4e877dcf07b9b0c7ad9934d3b4dfc209776da709822dbc"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\net-guard.test.ts",
+      "sha256": "6ea9de7a44ec55d8d015c5266767b07f5e62e58285569e932bfc1393d18c1a35"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\net-guard.ts",
+      "sha256": "367b3b826f6a9f5be60ed50bc6bdbf51a938643a7f2948df05b501b015b22d01"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\overview.test.ts",
+      "sha256": "e3e5af3d167c3df19655091e5eb2929589a62637ce60be1cdee1bc38b414efc3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\overview.ts",
+      "sha256": "c9973476453b33931099747b0dba339cae6ba0a619a4e0e0f10a1c4ebee9d128"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\phase3.integration.test.ts",
+      "sha256": "f5854cc25c9eed7c426c7c7c8c706825c5b83bee1acf99fbc5153e7afb83646f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\pipeline.test.ts",
+      "sha256": "9b71bb4043394e4aedcf0fc4e50ad0cf1ed3ab95bd80091291e043d1d0538534"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\pipeline.ts",
+      "sha256": "29bf539fd0dc6fb14fc71e87975c12bd16ae75dba47fdbc7111388ad8311a86b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\product-content.test.ts",
+      "sha256": "82d7cf799e312c413108282b57e431aff3a352d0aed0f9790ccd962266f9d81c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\product-content.ts",
+      "sha256": "e1a6d604ed3cd086776928de73564c12cc204dab7c37e14bc3e27d53bc41ea47"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\provider-workspace.test.ts",
+      "sha256": "0d93ea5fc7a67dea90def2e0117c5c4cda945c96fe43f9a95661b0a9c3ef9234"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\qa-browser.test.ts",
+      "sha256": "ed55f51ee837f91cc5c9996f9d2e41b79602c93d74b17edc080f0c7e5a4f69e2"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\qa-browser.ts",
+      "sha256": "df3d4e024ca23c21fd4e6a3fd9f03ebc008cc81ff4600c0f2838712e13fc8ef3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\qa-runs.test.ts",
+      "sha256": "9d068ae8631ff79a7283fddb379b586c8abe96dd6035a1066a88279aa3ce14b9"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\qa-runs.ts",
+      "sha256": "b771f824c00853cf236cf872612d8f5f14adf8277d48c3d4704fa7692c9438b6"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\qa-view.test.ts",
+      "sha256": "a3b99d17ca04475dbd6e695f8d6b7a222979fe7d77970cfff079aae429cb7e3a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\qa-view.ts",
+      "sha256": "1493da1dc7c072d6c9f840620b76f542dbe88714e3f4a442695725240b2ee3a3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\rate-limit.test.ts",
+      "sha256": "54c71eacebdd7dce09393d65adbb11df8ff0c2e047e6405166c5f70a52eecdf1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\rate-limit.ts",
+      "sha256": "b86c30170813df540ef181432da94bbc89fc332c4b67a68bc8ec91bf27e43b85"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\resources-phase3.test.ts",
+      "sha256": "002007414a88ce590f89509f5a831a603bcc9d500a4eeaaa3f0463420a049245"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\review-autofix.test.ts",
+      "sha256": "52cd36ea4dc24088401c880c4fca299b81ef83d683137f741d95536e46623b8f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\review-history.test.ts",
+      "sha256": "7e48a3b57d97545740e8bc5ec042d0d5a808bd6d3384d9dc6a0ca9ad8e5d3502"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\review-loop-planning.test.ts",
+      "sha256": "5b01c5da8851864b241b8171c67a39eab2fc005e37652888ac7dc4e507077e92"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\review-presentation.ts",
+      "sha256": "b18077d24f683e18670a49d962360f91c5f6b87eb36b4ccdb32db5ab229a4a4b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\review-source-mapping.test.ts",
+      "sha256": "6a18fe72659aed609a142ddfa83e68012e40cb65a6d5a323ca37b60bd0d44491"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\review.test.ts",
+      "sha256": "517228d2cb7419f5527a864ab1f6d0551e10839aeaa7e379e7fc4e566d87f08f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\review.ts",
+      "sha256": "979ff6f47057d71b86372599e9ea4b470dade6accce6829e5168e434f75538a3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\rpc.test.ts",
+      "sha256": "02b615f711eb0f9560cdd1f5a2de80b38241451f7285e0bfa755744b969e4bda"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\rpc.ts",
+      "sha256": "2e6a17e67c1bd92bc858ed97f3189585e7d5cfa685aa1dc9d9a5379f27fb967f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\run-pool.test.ts",
+      "sha256": "c93dc4537618d19ca86049acbbbf39dae8ccb3ee50cc29d49ba4ec060690d7bc"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\run-pool.ts",
+      "sha256": "b0889c78610d452ea34e38c26f143edf7c38c4b020513445e38649400f8ef1d2"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\secrets.test.ts",
+      "sha256": "8e0b215f4c4b0b8c86861d1e144a7bac2431aaa1dbc157bbe73299b5753660df"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\secrets.ts",
+      "sha256": "153ebd46405cfcf4b0d0238e74dc775fd2743c9ddf1954787e2f6cf2da14398b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-fetch.test.ts",
+      "sha256": "54f9cd68b498c70a8eac0138b006a3d73612e8fed07797420b0bfe5483e1bbbd"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-fetch.ts",
+      "sha256": "8a662cdd589bf75813cb0c8955e0cfbcdeb12189f86d9ac07d2ca09dc9480df0"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-mailbox-pipeline.test.ts",
+      "sha256": "c34d4bf8a27f8e61fba1866a94df0d157353bfe41a43201683358d3eebb725f4"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-mailbox-workspace.test.ts",
+      "sha256": "d63057dc18c107f92771a5f78d0b8b9161766bd44acbb1b7e51b6c443f7b3356"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-mailbox.test.ts",
+      "sha256": "1a66976de4abb23f765eab2e2fe84c91ffbcc2b21c8c50b197223ddeb4d2fea4"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-mailbox.ts",
+      "sha256": "03a9740a3b57897f10b698cf8e73859b28519c7d43f051b7de8c02994a0ee5c7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-tools-phase3.test.ts",
+      "sha256": "3df098db80bb3509fc405db84a87eac1fcddad7a1b6b9cb9e245f4415239b4fa"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\site-tools.ts",
+      "sha256": "2dd557c490fb774849426226d3f3ecc1cdbd7b3652def77ad0b3515471f04b23"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\smtp.test.ts",
+      "sha256": "df6b15c7419cbf28c28cf503cb51213cf90a13635094c1a2efdd58c902b86b4e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\smtp.ts",
+      "sha256": "5f514cd8a5e29bfe77108bf4c1b77df53c8656058cf70fc3aab3599bcbc08a1b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\store-selection.test.ts",
+      "sha256": "b76daf2ebb362e7d5366bc4372074240e1f8aa4f4ed836d95f99cb8dde1f8658"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\store.ts",
+      "sha256": "a739203b3680209bb576369ef4bbc39f01a347561a5a8ec88f2adfd295278db3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\style.test.ts",
+      "sha256": "3e3a064ae64b2ab7a8a35e9a9f8ce2546a4a20d1f28be5b89702b099d97bf371"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\style.ts",
+      "sha256": "336de7ca990d7481a81b47d4facf3752e16f253af2963fc8535597e0dad6f485"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\testing.ts",
+      "sha256": "79fc68c7c84a6d691bb148b2185f812c6d57b85cdd20e0609896b18ed95744bd"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\translation-model-migration.test.ts",
+      "sha256": "5c66515ea350939bc9ca8a56ecd3a1c2888b5f8fac15e3409f2d550609b87721"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\vision.test.ts",
+      "sha256": "f5f7b518d6bedb059d4ce05693458ed889be507d78dc7f4dbcb2ee5495ae872a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\vision.ts",
+      "sha256": "a18640c8679cfd9ea57fb06663b4d8933d69bd38b2997e92c01728107eadeb4a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\workspace-rpc-policy.ts",
+      "sha256": "d63faeabe47a2a6f01ffe47705f9b306df60792e9a76ee2e592278813b3e6eec"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\workspaces.test.ts",
+      "sha256": "a5ce3d424043540c1b0df88c6d2a15bc7777e8eb45b95055a858523c99b046fa"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\backend\\workspaces.ts",
+      "sha256": "f2f18b559e0da17f7915df6a6761993f3339a2173e29b4c9bfb85393416fdd9e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\index.html",
+      "sha256": "e72a85461c2d5091f40e47f9bc2d57938106eeefa64d30d3b38db113f2df4936"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\REWRITE_REPORT.md",
+      "sha256": "b7fcb7c4a7ea44bc1dda1689a6b12cbd09746bfe53483aee8eb8af4a9cf0eb58"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\THIRD_PARTY_NOTICES",
+      "sha256": "d28c723c33a18dfed6af67b1a0ac368724f79bcb80750d3e080dbcf8dedb9e4b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\App.tsx",
+      "sha256": "e04538d74c5cb449fda9f19879b5621f04a7d948046ea9e5865d77e99f6014e1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\env.d.ts",
+      "sha256": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\index.css",
+      "sha256": "795896a877121a9d943e32d453334a15dde45ac5e280c597e0a9f4437ddc3c2c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\main.tsx",
+      "sha256": "c6713f68e9761117b8e6ec9be2992af70f395b01b4d058d8baac0b6108ecc763"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routeTree.gen.ts",
+      "sha256": "de71c8d686f554f9155c9308094fc05c2d3501e16298c3d6a3758daed85b34f5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\abandon-site.tsx",
+      "sha256": "e3e9926d33fc879e7aa231ae5af1be69d9365c6ddd77b45e1d5f39112870cf29"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\assistant-state.test.ts",
+      "sha256": "c894ba287a263499beb29358ea00a893e7c690b9d86d3f1989fd7a1f5ecc6f3d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\assistant-state.ts",
+      "sha256": "f959142271df76105cc976344c34114ef2c9c68b3163b2e1c409416b8c1f9ee2"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\assistant-ui.test.ts",
+      "sha256": "655a18eb044e88646a75ffd4b9cf5a6ab87fc44987477a7c7ddbf82a22240efc"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\chat-markdown.test.ts",
+      "sha256": "f195f0d196a5d53637da08d73817a003299299f939486ee5d0da0d78aa8b9dab"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\chat-markdown.ts",
+      "sha256": "c83a20247fdde3d4d74dde7c34456e9beace90200ea049127e2227d7c0b66936"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\chat-message-utils.ts",
+      "sha256": "b61829c1edbef9366e85776650ef762ad6b9907eb979565181a0eee4e52af1c1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\chat-messages.test.ts",
+      "sha256": "5c074cf5446beed6c150ad40f2733c4fc989ffbfee63cac86539c5d63d4f46f7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\chat-messages.tsx",
+      "sha256": "9e2181e50e3276c0bdec977e56b77ed0c24696fd73253317c6c24147777d6c54"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\confirm-dialog.tsx",
+      "sha256": "a6198d517daef53d1a2331c4a8c22330af75ab2178bcf478786517767652ce28"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\confirmation-params.test.ts",
+      "sha256": "64a76eddc2c31c388b4e6b66052fbd2c59d702933dee63ad91b681c9370ddaf2"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\confirmation-params.ts",
+      "sha256": "f8ad794e8d495b54876f3700a3f9696b02bcd0b88166337d8d15b418513b4106"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\data-table.tsx",
+      "sha256": "f0df4e5ccaf976c233f128f11fc2f7ef63478c3687652e3db8caa3b45f2223c2"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\feedback.tsx",
+      "sha256": "e78df710d02ea58cb17fa8c26865f3496cbce2e29dae431dd08a59dd9fd700cb"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\global-assistant.tsx",
+      "sha256": "9c22deb07992b0f367795c0caa961d1374320c87678f572d377a65ad4d5a37f4"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\navigation-progress.tsx",
+      "sha256": "de8d9bb45d5eda7143e17e348d05d2e305e2cb4e693a129cb7726549784f4bd8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\page-state.tsx",
+      "sha256": "78ff02355abd8d66a0c3a9c50da1a9caf071f08e45f9890b7c9d968b377c2193"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\password-input.tsx",
+      "sha256": "e852285d58c903689ed711dd5abfe78398eb2778646d3424c79f5de4508db015"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\profile-dropdown.tsx",
+      "sha256": "c26a2689bf4e90a59493ee2f6b5ba841fc40065311ae48459d0ede4649a13819"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\search.tsx",
+      "sha256": "a01b016ae0157408c7473cf426ebafc1518047f5d4bba5324d3fb3cbc5d549c8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\skip-to-main.tsx",
+      "sha256": "66198520829be692579ced45550af4414eb07d4cd8d21e39481e564f23015433"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\theme-switch.tsx",
+      "sha256": "c016bc3bbcbebf63c418b67bcc7f31b648ff0bd823e753c28e63b949f6c7b0ce"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\layout\\app-sidebar.tsx",
+      "sha256": "ec4e1ecd87c56626c8e0fb4c9fc396b42525f111aeeb83e0698fa18afd492a8b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\layout\\authenticated-layout.tsx",
+      "sha256": "281d466ccbba21823ec169a51d46f25b2f77feb4aabac380f90c073970db562e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\layout\\header.tsx",
+      "sha256": "3bfefb16f2be166177059e519dfa3f0d9ff71e777ae32731d03a7e9ab69c3ea9"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\layout\\main.tsx",
+      "sha256": "eab34309e0bb3ccaf13f0d08c7b9a1b19670fdf22e84d691319482e5c9f5e758"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\layout\\nav-group.tsx",
+      "sha256": "483926ec9e7a72aba27010e30be2088a78cada1236e80995c5eedd73b3ba4a05"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\layout\\navigation.ts",
+      "sha256": "84a0af920d231af060b938a42201b9c42bd9acf98ac5160982e4e08632957e75"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\alert-dialog.tsx",
+      "sha256": "d57a96557b5dc52d245d8f5f53250055ac1b6ca39ec28715ec9e3eb29a223472"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\avatar.tsx",
+      "sha256": "62b046ff186a753a4318ccf7a3233d767904851e51a9c18e6808002bf735e0fd"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\badge.tsx",
+      "sha256": "59953420d01d23d172b4e32583426db153ff09226e2d460d53526b9f25282801"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\button.tsx",
+      "sha256": "c73281acb492e6a20a300222523cfbe3714ecdb85fdc368468544017b7d265c3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\card.tsx",
+      "sha256": "72728c3734479c247347759fc11bb01c3acac38f8e87da6aeb03d69c39e0f9cc"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\command.tsx",
+      "sha256": "e12267daad87ab06482c5f707adc58a7386ef1eca18b7030beaa27d7e3d9aa87"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\dialog.tsx",
+      "sha256": "9afb71e44ef4862ad811419e936ef7f6739b21be83dbdc17758c08e07362a40d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\dropdown-menu.tsx",
+      "sha256": "be17f9faea89bf81d806053441cbb7cd53aa6b14454ca66164c372a803f88ea4"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\input.tsx",
+      "sha256": "4f7d443722b4aeacb1179b863b98f773f7950514ceb1d897b66c967521f08072"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\label.tsx",
+      "sha256": "3e9699baf80185c5c598d7e197d448541d03a6e5bd92b8d4b591774e738af5ec"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\scroll-area.tsx",
+      "sha256": "45cc34df8c0f09595716cdc66a19ef31f9b168057912af75f7ca64f0c9431d04"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\select.tsx",
+      "sha256": "5ed4038feb430b44f7da060d44f21062932ade549ff809bdaf85844657d4f1d8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\separator.tsx",
+      "sha256": "8c8cb3818aa31cc8a38a047bb7fbbf815cd3b54e6997d389c2b01d8dcb3858a1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\sheet.tsx",
+      "sha256": "b29de8f2a9537a5c1b5d23858ec9b0e0e539a4c4de5b9dd1ba9eaf9eb32f373e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\sidebar.tsx",
+      "sha256": "97997a6498f81de852e1c5636bf15212f0eeac6ca5b3e36fc75d4af89abc6470"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\skeleton.tsx",
+      "sha256": "7617060c9ea8a25dafadf224a8567c91daebd4a43149d0e72143bba807fab457"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\table.tsx",
+      "sha256": "8ebadfa3965fc72792d160579ff6beb0b80d9dd0d3acd56db7a34168e956b531"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\components\\ui\\tooltip.tsx",
+      "sha256": "f29bedd31a31c1ac3ab8d3052f591c3b11f1c77ad03b4b2d6748e0ef67304dc5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\context\\theme-provider.tsx",
+      "sha256": "4dbc650b42b9cdc04b65da127ed2a7d888572242d602c873997f428d75e6b4b6"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\forms-validation.test.ts",
+      "sha256": "6d88b95c21966958703f1be2615cca1477747366bad1a09d06a1d818cec53f43"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\accounts\\accounts.tsx",
+      "sha256": "6d3a4238f0967858338a45eef0575e14b436d9fa4b0043ec21fbb1345935a06c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\accounts\\validation.ts",
+      "sha256": "a861fb8d25f2976d64da532855b5729a46c66f881485f195c8e58bca7cd65f6b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\auth\\change-password.tsx",
+      "sha256": "a917446cdbfeacd8d532be7bb54e495db4f378846923c3cbeb151379891992e3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\auth\\login.tsx",
+      "sha256": "723529f6a540e9b95b980752a07965243b93952653acc219472490b1f63ce676"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\auth\\validation.ts",
+      "sha256": "9329117a2aa7405cb70a6f59ad00e84553e693bb358ea59c0baa74eb2b7849ac"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\batches\\index.tsx",
+      "sha256": "94808c4970772d0e517ae20e56c2cf513482b817a7aad94f20e7a167349f56d8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\errors\\index.tsx",
+      "sha256": "3820b83b7233eb90170881d001563ad670d99a89426f42a5e78ccf516e89ba92"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\compose-dialog.tsx",
+      "sha256": "9657e6139bf0b989afac6e392d0c11441e454aa441505a2a3cb4b3b826d220b8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\contact-mapping-pane.tsx",
+      "sha256": "e499fa2257e3412c2f9525a9cdffaf1eda0414268cfc9d2caaf61c2d8c02542e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\credential-dialog.tsx",
+      "sha256": "c4adae7b1f7065866d2deccaf1cb0d15b442a0ed375b29948b64bfbeab4eee99"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-board-page.tsx",
+      "sha256": "5e8c2a6e201405733999f3c5651f3875992987550fd842d81020959995a97148"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-board.test.ts",
+      "sha256": "e5d4d5087cc5df07b17d840f8aebbc0e2533ebdd990ba556658f8a4ca843f747"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-body.test.ts",
+      "sha256": "0b6e73aea93b952e456dc19f0571ce1193ab7db0cf8788050672b4b739994550"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-body.ts",
+      "sha256": "fe755b09c0c98206973d71eef609fb0702f341f56547ba6b8376706ccbeffbe5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-case-card.tsx",
+      "sha256": "b8a6e51b28b781c0b13cd1c2ecf88c831780871124e6e00936a01048091ab395"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-case-correction-dialog.tsx",
+      "sha256": "3f3f3d359d70b74d45de354b8183d8f72ddb45bffbddc069e3e51de92055fea1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-case-drawer.tsx",
+      "sha256": "1337be9f58f320503918a9e957bf1d5aa663ab18ae9a6dbc6adcf0ce0bf4a215"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-compose-controller.ts",
+      "sha256": "ce3048d19834241e632c40d6e182568330ee408f2aea2b5bcd9a366fce232392"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-form.test.ts",
+      "sha256": "6d4c530cd2455344392e31ee537eebb43a2d63ed95230879c8a87cd25f7b1332"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-form.ts",
+      "sha256": "c4f60dcdd5a0944f1d13846cf4a6e6bc0572ad8d551449c9c49fcdcd544038c1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-interaction.test.ts",
+      "sha256": "8da85404e0c6528fb88f38b93031a39aaecb95d4f34fbfbe922c8a2ee7339c64"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-layout.test.ts",
+      "sha256": "05c6f708053cd62404bf13cd4fad21fa4733331dd687c0f16faa8d0f720bd934"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-layout.tsx",
+      "sha256": "2d9932c5330bcc607a61d51d7dfe31ddcb8f71a8d39b2aba5542e2c30af77f6a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-management-page.tsx",
+      "sha256": "78eaf3bc3aaad880c7b2b5cf2d7b64bc3455cc4aabd0aa27f7fe2e06b9028b97"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-open-state.test.ts",
+      "sha256": "cb842360d94209c4e5f1e5557a8659ac95638b86b2629e9673bda90ec1125eaf"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-open-state.ts",
+      "sha256": "b2ccdea0d7a4b325cc3a0f70bdba03df5b412f127bcf93b1d7ec85a5c2c19f5c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-page.tsx",
+      "sha256": "496e3d7c2a5b29a75c5309143a9751ae0a4a0e0f4436895dad14b3cb95d1498a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-review-page.tsx",
+      "sha256": "ae29216538bc7ec25908f3cd4b19d2d84b340ea36f2c4f66e7ecdaddd122e79f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-source-search.ts",
+      "sha256": "d0bc022f0f10ceb0accb30a1d2bd101d88e23391d50748e89b9fa0df1ecc09a9"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-task-outcome-dialog.tsx",
+      "sha256": "f1642e8278b3f7187dd70d991f29e1afca699410b39048a42d6e7fab1d1bc265"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-triage-client.ts",
+      "sha256": "a99368382029618f26debda04acea0da84dbbd9d6dbfbc9e5cab3cb225eb4918"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-triage-pages.test.ts",
+      "sha256": "4dc022060ab3d9cdf25a0e11966074e477da1663362da2eca9f3e90f35b85528"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mail-triage-settings-page.tsx",
+      "sha256": "e2d21e7468d76fc2b141b3a3ec83ef5f2cdeba10a0c71f8a34b26921341b280a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\mailbox-pane.tsx",
+      "sha256": "a6470bb8433145989388e72015eeb7142d84da6a6e1b3446a1887ef28c325c91"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\message-list-pane.tsx",
+      "sha256": "0cc08b76c43f13919374a29149f11c6b42c1945c16c95d56c6fff9689cc05f59"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\mail\\message-reader-pane.tsx",
+      "sha256": "6c2f289d07ca1d674a61f07b89f75e4b9472f9bbc95c55b7475247e9eda51dc6"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\new-batch\\batch-form.test.ts",
+      "sha256": "a43ad0bae5364c6f15f1103131d9e2542089a1176ff21eb04fff8d4f6ff9b153"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\new-batch\\batch-form.ts",
+      "sha256": "8d37839fa54b5376ca877ee15a6697fd2d48cee611153ceab477d34c04ad8ec5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\new-batch\\index.tsx",
+      "sha256": "ca239bd290b1bdb1db9ffd53603b227452a3ba45f5dc414bcc7a479280a9602f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\new-batch\\new-batch-page.test.ts",
+      "sha256": "fa9deb7938cbaa38c71336a769fa1d30755bdaf59d6e45cab1b3884af7964bd9"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\overview\\index.tsx",
+      "sha256": "5ab04a0673b62e48762dde1f96a07e7703f7b7fe58901d44127dd358e94b6157"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\settings\\settings-types.ts",
+      "sha256": "bbb3610b8a1926fac7af8e2d697f962e0fc6f1e890aa3b504420128a6abf3002"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\settings\\settings.tsx",
+      "sha256": "089e1e58669c29e0d459fa84a114d20aebdadf3d985ea84fa5ce2215ee7bf58d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\settings\\translation-role.test.ts",
+      "sha256": "a079eb1ff46564ebacfe9961fddb9f65b2fad3e4150ad8da5db2b7cf07ab9559"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\settings\\validation.ts",
+      "sha256": "7503efb02fa903b686400c8bcd49100d1001e9b93658c906833def7068f12833"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\sites\\index.tsx",
+      "sha256": "c08686cda6e210c2c27fd68da49f4d626837cf6cc05f702d0ae2d5b64b3306fb"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\sites\\components\\qa-report-model.test.ts",
+      "sha256": "e81b9689bdf2e6c3a784e0cc9cd1df255d9a90ea6b01275861db7aecd961c223"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\sites\\components\\qa-report-model.ts",
+      "sha256": "00b440363c6cac11f6aa86629f8215f4fe670f40d03d296d60bcb47c2fe8cecf"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\sites\\components\\qa-report.tsx",
+      "sha256": "8c45ffecb2767eb88dec871fa3f5f87742238deff274c5363706d7b35972ce4a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\sites\\components\\site-operations.tsx",
+      "sha256": "52ae880ca6bc5ab857d6f14f04f25c0ec2c4d3ac370621cee8ed44c6a62a106b"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\tables\\grist-iframe-contract.test.ts",
+      "sha256": "b32f784156ec132d969de98029320eca6c0fd3290249d99e9b7cc9a900131d51"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\tables\\grist-iframe.test.ts",
+      "sha256": "cf97a1704f6cd22fcf5906370f1893613b8fb9a873901db7fdfe52aa1843922f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\tables\\grist-iframe.ts",
+      "sha256": "bf0a99e87781a4b52a85bdae252623b850357ed8ea3850845eb624e0fb0ba03f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\tables\\grist-settings-helpers.test.ts",
+      "sha256": "108fde08883dd2dcc634ff2ed3e0ba950f7ef285fcdbdafb5d490b2e6cf22dd3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\tables\\grist-settings-helpers.ts",
+      "sha256": "c1a00202842aa31d42b212fe36bb7400753971c20e3b26e516247f46cb0769e3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\tables\\grist-settings.tsx",
+      "sha256": "49aa8c6332ed827f895745407af21300258c58e500ce879cd2657b33de01968d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\tables\\tables.tsx",
+      "sha256": "677701a40a00e047ce3f1b41668a4f8cc98ce0f578d2e83e01f768ee3017d495"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\users\\users.tsx",
+      "sha256": "bac9a5e7d74a15ec044d82b2166f75f10a0d37bd7cf0f6e09c2ef275dd24c2c6"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\features\\users\\validation.ts",
+      "sha256": "3da407f009c783a1ab14a0886a3eea46ed5fbe0dbe74470aec40c7417a44a5d1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\hooks\\use-mobile.tsx",
+      "sha256": "cef2003db553ef127ba219e8f4303a733cc76b85f83f17b1622131c0ecfd3b3c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\hooks\\use-session.ts",
+      "sha256": "12068387147c80ebd23211a1c7a49e818892456a1e8398db5bd89c82758292c1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\auth.test.ts",
+      "sha256": "cef9e88ffa2263d0666c7c7fa425463552ec7e6ccf218d79d270555845475fbc"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\auth.ts",
+      "sha256": "7a19c08e5bc037df5251754bc37e41692a9d55ea7b00c644056036fb6c37e6b5"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\backend.ts",
+      "sha256": "5ac3794f5b4e1f41db0a702e178fc8dd1ad31ecd4c84064865dfe88baed69c84"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\query-client.test.ts",
+      "sha256": "10025e9dea1657b508a88685092b73a4801ff66080660cb489de8479918538aa"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\query-client.ts",
+      "sha256": "9ab23fbf8b1f3cd75c38fb216afb895559b6bf3b23228ade356f120e1bd1f439"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\route-guards.ts",
+      "sha256": "568fc474fcecb7296da090a2884967a897995c968880901112d611c72ac92b15"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\route-params.ts",
+      "sha256": "c9f8d806f3da42210a9ad34313eb0f563c99b18616a4429dcbc68757f8c5f32f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\router-runtime.test.ts",
+      "sha256": "164ccd30da68839f3417e3b3b9446c45234b2e8c3613989498af6d0e30a22264"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\router.ts",
+      "sha256": "ce3797bfd88f17eda654329b90ca91839ed6a39f47937314d6a235f5ad3c0dda"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\routes.test.ts",
+      "sha256": "ab3109feb8a18bc3e3eb54e8b6afd31bb455c2026f4108b4cd4463a39f44c992"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\session.test.ts",
+      "sha256": "138007ce097f27ff59241cf77ca6c79b3fe09c2d17b2a2af000ba7353e2c2d17"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\session.ts",
+      "sha256": "4aca303c50d9e3f7ed6520420a8a70c6621d8af1eaf9f02e095007272e4482cd"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\site-csv.test.ts",
+      "sha256": "62d6b3dfcf618d060e8d28ea941a38ddec6f11a29a71607f1f9351c444d391e3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\site-csv.ts",
+      "sha256": "ed1e57af83966f058faf7bccdab7d1bf62e0963632a9c3d45351b806bee4b83f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\lib\\utils.ts",
+      "sha256": "14300d758170c270c75b057f38fedb3793a5920ea872f0477e29fb131185e8a7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\__root.tsx",
+      "sha256": "0900f9c6666580a626cbe24f9d46d374755e057258713ad8316366975882438c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.accounts.tsx",
+      "sha256": "48665d6147f96f1807e31c3cc56cb7f2eb438a65d411edddba9406304911c98f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.batches.$batchId.tsx",
+      "sha256": "695ef27167ddf88b266ce2a295502526bdc42c825635a28bd194d569c593850e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.batches.index.tsx",
+      "sha256": "8c7cd1e201616b079df5bc655d6e1270859a7be82cdc0247422eb192cfc67125"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.batches.tsx",
+      "sha256": "b77f9fbb30c0618f483427ed69cc679b2ff85d848921c06a2f625e83b813480e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.index.tsx",
+      "sha256": "25deafd9cd8c691e2daa6a5571b2669bb6626486960fef4efc411b1dfc4cac09"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.$mailboxId.$folder.$uid.tsx",
+      "sha256": "2ce3794fe99b4c5b1e0258bd4ade653fe1b92d2f1925e8f1606f32ab7008b14f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.$mailboxId.$folder.index.tsx",
+      "sha256": "1a15435314f100fbf41274d8d9a9896b50965c53cb529482896cfb6132621a4a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.$mailboxId.$folder.tsx",
+      "sha256": "c2d181983934567cb62505c5aaaa34c9edf83752aa47e6641b19a3a4ccc2d4c1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.$mailboxId.index.tsx",
+      "sha256": "f5947071c475bddabf721d6310e55c7a68219a4f3e0e82c7c0079b2f5f847920"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.$mailboxId.tsx",
+      "sha256": "1c5f2cde2ece261c687b3a1299d2e9c3b38287ee64235aabc363281e07a97115"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.cases.$caseId.tsx",
+      "sha256": "b87abbeb8911e8ccef29279f2b865c217d6e90b40b59b8607f6ecd319a8e5b54"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.inbox.tsx",
+      "sha256": "a12c1902d4e616577d0fda459b3aaa38f3311110688f613a92fdac524cc825ae"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.index.tsx",
+      "sha256": "8c9dac5ec149986cb8cf2c186990dcc51e4ed0fc12415c7f4bfe9bbe5076f904"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.manage.tsx",
+      "sha256": "2f8dc142575d19d44aa255c3ce99736bef436bebe3f8ffbfd16de5e86add6404"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.notifications.tsx",
+      "sha256": "98568e81b9e5deb7aa3254b64309ee4d7d2c8880720c37e15698ea26c1fe8fd0"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.reminders.tsx",
+      "sha256": "561be81d591fe5dff092939b5b44487d26466476eb19be58dcb7265f46ba4afb"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.review.tsx",
+      "sha256": "0da17f304a6f1a01132b8bfb3ec0c261f497669b609e0c4a5dc9b96430fce54c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.settings.tsx",
+      "sha256": "6d8da38d6d62f1f5d6170a1830e2646764da2905193844fec4da6c5d85c6d2e9"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.mail.tsx",
+      "sha256": "81e31d72e1603626404eaec2e9509abeef45872e9ee76b5fbf72b6a7f962422d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.new.tsx",
+      "sha256": "14725690b624767a77159e4ef0cc6abaabd0c5a24a26c4793cfc936017010272"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.settings.tsx",
+      "sha256": "1eb23c184088e09a397a7a3ca6476729d6ed4ccca7f1f785fc4707e23e6dc645"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.sites.$siteId.$tab.tsx",
+      "sha256": "a9331ceb2169962c7dee98c450e96ef15cf9d0e3f3a26ef606d7b78d768bd040"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.sites.$siteId.index.tsx",
+      "sha256": "61a0eb9153a4d5cfcdca9a2fa6cde9d737b74b702d8cb6d04309667215a61634"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.sites.$siteId.tsx",
+      "sha256": "2b8692c0ca2746513095e8176cb4555706c2422689ea35b87aaca8ab2cc92d58"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.sites.index.tsx",
+      "sha256": "a77e2e5048a5a03717a508488942fc86d0ddccdef6b04dfc137ccd8518db9eeb"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.sites.tsx",
+      "sha256": "a9b1306e28deb408c8b2cd5b7bc1015a3e768cbf01d1455efcc6e2b154a059fd"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.tables.tsx",
+      "sha256": "c68623a3a69dd5fbeb27e68e1bb2f610ecccbb6feb42c3c40ca9eaaa0c0c1a20"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.tsx",
+      "sha256": "aafe801cb70a8ed0a1c1cf778f13b7a9088cba5d7119a4ae842226384cab566c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\_authenticated.users.tsx",
+      "sha256": "d0db74361ce0494ea4e7af10ed44793ef1fa1da957e054c9561b5951d8f1c282"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\change-password.tsx",
+      "sha256": "3f3cce141f854a887f34c5534f4c3b395d59827779fc5e3713f0f3568273f287"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\errors.403.tsx",
+      "sha256": "d43fc4a95629fba641a2c21d59f458e722af4dc8c2e615a99cabbf4c345046c9"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\errors.404.tsx",
+      "sha256": "71b243968c0746e7623bbfa490762897e23fe86516e10c5708433d36bd69546f"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\errors.500.tsx",
+      "sha256": "f31fdb3c3d8bd6bbd55532bf69ec08d9f8327302ed49a4a95296032a297a615a"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\routes\\login.tsx",
+      "sha256": "b51198178a9f8f32e69e2a37926c1d7a547a660553d2a863a1d935ae46ae9ccc"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\styles\\app.css",
+      "sha256": "be9aadce5233110209a547d9180a7512c7ea6bfdc0cbcf85b4112d914e6bf1c8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\renderer\\src\\styles\\theme.css",
+      "sha256": "faee559c9a21b2084bf7bae193e70f0ab18b18a393a06fec1408669652c266a1"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\admin-db.ts",
+      "sha256": "bdff43c346121dd68b973913a4202f7ad436b8562e6d96208aae3ef1f386165e"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\assistant-access.test.ts",
+      "sha256": "3beef20be05139084280a9f2b03f0b3a28d620ba6bdddd3b132092ac721c56f7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\assistant-access.ts",
+      "sha256": "ec343f165e7c8429b5e116ebcc404fa2b89f9b6e211eb6f67324574ff79d72af"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\auth.test.ts",
+      "sha256": "92bfa58e550fed7781e0ddad9cf88b3b3ef7215c6481ec548057d240d3c65ac7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\auth.ts",
+      "sha256": "dc4ec1fdc94a5b964955c1c2e864c615e0c4f6d8a7df19f39b4e97c207d09e51"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-attachment-http.test.ts",
+      "sha256": "c319754ec9b20ab991b8257781ab85630c0ecd0ad4b5ca252262670fd0cc7f83"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-attachment-origin.test.ts",
+      "sha256": "22d2c83d5acf6fcc2fc4fae5224d86ad6ece5ea60504535a6adf653d00aadfd4"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-attachment-regression.test.ts",
+      "sha256": "3e1cd4755960832d4d9feb10582967794adc370b6f737692c88ac3e122ad8279"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-attachment-signing.test.ts",
+      "sha256": "da4e275f5f66ec3ffc83673fe8ff23ec2c78d8199e440ddd957c79a28ad5e150"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-attachment-signing.ts",
+      "sha256": "db42b3b1314f84aca30be630fbddea2b56bbc443ceaf19ce8222db90babc4827"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-attachment.test.ts",
+      "sha256": "b3db038e30752aa496638c14e0cedd32f203b22c0f60f4db381c9c3b76bcb793"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-attachment.ts",
+      "sha256": "4bc41436a948e50d30c090a1f334ad43d89d54a258812fce2fbad1710a68f0ae"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-http.test.ts",
+      "sha256": "c12d3dd61a29f56f0120dbb47fa38f052edbd2671251539032c2cf92475721a7"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-mcp.test.ts",
+      "sha256": "3815e3fb92a0021b8fa931ff9b8553dfcfe8826af87c174ebcd369a3a7997a9d"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-mcp.ts",
+      "sha256": "1d274dcdb00d880b33c85e88fbfe2b4c01c162032726df391402308ad5f159ed"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-tokens.test.ts",
+      "sha256": "370ad7a7cbba33b1ebc0771219ba87094f850e73b20a73e4c97eb02906659abe"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\grist-tokens.ts",
+      "sha256": "7b9afb9a87b6993172840bcc62cd29b3e2ec9ffb44f49be56cd512428d2da266"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\http.test.ts",
+      "sha256": "5cf82e43adb5976e9dcb5e63b90ec58f69405bb64eef255a0f86613479303b5c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\http.ts",
+      "sha256": "4452139b6824d062fa14ab5d5eaadaf98990eaa138e9a9bdc008d3462c04bf93"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\import-desktop.test.ts",
+      "sha256": "ac1fe61d62e32bc380685c84a69e144de6d18042e44c0505716260ada3901d0c"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\index.ts",
+      "sha256": "1ff1b873a44dbbdf4a20e93fa4e9681fc5bcf6efbcbc46e62b4c0dca891e9ba3"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\keys.ts",
+      "sha256": "7b878a7620445a178de58ace449cf31df1486e9581310a7a8cfb31f683a9feef"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\server\\lock.ts",
+      "sha256": "30c8497daa0388f16e87489aee6729a925e521246eb8c5ca34074f83769dd8c8"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\auth.ts",
+      "sha256": "21369cc422f1219b18dd62dce24eb74bd668f529afe0fbbc092c4911121c3169"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\forms.test.ts",
+      "sha256": "c7c5ad23100d185dcea5bc4f88cc4cabacabf5d456440a2c95f511bbc4380ccd"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\forms.ts",
+      "sha256": "a6bad1abd4c1e665055baf4e38b003da5f9130562d6fc859e615396c96813faf"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\mail-triage-types.ts",
+      "sha256": "74635a29aee3c03376e2122d758125dba3a5194b1e6106028f928ae308b9e273"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\mail-types.ts",
+      "sha256": "abe3db39c29d832be0591f8c2917f9c69ce57f2b44e3c406b0ced525fc113b30"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\protocol.ts",
+      "sha256": "129daf7e50974cb4eeb5f5fab4640aca01335d1517b79aa9688bf9f08cc67bfc"
+    },
+    {
+      "path": "F:\\projects\\website-gen\\src\\shared\\rules.ts",
+      "sha256": "72d286755da73dc685714113ca4f425ea8ad44833743a4170084c181fc9d14a6"
+    }
+  ],
+  "scope": "New static PNGs and design documentation only. Preserve all original images. No application edits, deployment or live service calls."
+}

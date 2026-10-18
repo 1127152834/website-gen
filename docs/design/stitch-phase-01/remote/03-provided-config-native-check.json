@@ -1,0 +1,13 @@
+{
+  "probe": "native list_projects after user supplied configuration",
+  "remote_write_calls_sent": 0,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Authentication required"
+      }
+    ],
+    "isError": true
+  }
+}

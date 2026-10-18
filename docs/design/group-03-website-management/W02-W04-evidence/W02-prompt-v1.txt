@@ -1,0 +1,27 @@
+Use case: ui-mockup. Create a realistic, production-quality Chinese desktop business-workbench UI prototype, a single full-page screen, not code. This is a continuation of the exact existing three-step website-creation wizard, NOT a new visual direction. Target dimensions 1489 x 1056, same aspect ratio and scale as first attached W03 image. No browser chrome, framing, mockup devices or captions outside the screen.
+
+REFERENCE ROLES: Image 1 is the authoritative existing W03 step 2: copy its full app shell, sidebar width about249px, header and footer, typography, colors, spacing, icon style, table styling, step positions and sample-client identity. Image 2 is the user's authoritative original COLOR reference only; do NOT restore its obsolete manual-customer-creation button or simplified sidebar. New content changes only the wizard main content and active step. Preserve the visual language: white background; ink navy headings (#000E39 approx), navy body #172D65, slate blue #607298 secondary text; navy primary buttons #12244C; blue interactive links, thin pale-blue borders, small 6px radii, very restrained selected pale blue rows. No purple, gradient theme, decorative analytics, giant cards or unnecessary badges. Continuous table/grouped surface, modest 14–16px text at this scale, visually aligned crisp Chinese. Avoid crowding and clipped fields.
+
+REPRODUCE SHELL: full left sidebar logo 业务工作台; groups 客户业务 (客户, 网关申请), 网站 (建站总览, 新建网站 ACTIVE pale blue and navy left indicator, 批次, 站点), 资源 (账号与域名, 邮箱, 表格), 系统 (设置, 用户管理); bottom 李敏 · 管理员. Header 网站 / 新建网站. Top right "10/17/2026  静态原型 · 全部为示例数据". Main h1 "新建网站"; subtitle "每位客户单独配置一个网站，支持单个或批量。" Right "操作人：李敏 · 提交成功后记录". Three horizontally aligned steps at same place: 1 客户与经营资料, 2 站点配置, 3 确认启动. Only designated current step navy filled circle; other circles pale blue and labels slate. All dates MM/DD/YYYY. Supplied date 10/17/2026.
+
+BUSINESS INVARIANTS: one customer = one company = one website; batch means independent customer items not multiple sites for same company. Only three fictional selected customers, each without existing website: Jamie Chen C002 / Cedar Living LLC; Taylor Brooks C003 / Paperfield LLC; Jordan Lee C004 / Harbor Supply LLC. Never use Alex/C001 (already has a site). No shared enterprise template or copy-all-business-data; no new customer creation, no uploads here, no fixed customer owner, no bank/material/gateway approval prerequisite. No SSN or driver's license details on a website form. Read-only imported company fields should be text, not misleading editable inputs. EIN is a business prerequisite only, NOT a published website field. All data in image fictional. Website creation not yet submitted. Do not show green successful website states or invent external resource verification. Focus on the requested stage with one clear primary action.
+
+SCREEN ID W02 — STEP 1 "客户与经营资料", active first circle. Design normal fully selected state immediately before moving to step2. Same row-expansion idiom as W03.
+
+At content section y280: left title "本次客户 · 3" with small helper "每家企业仅对应一个网站。"; right small outlined button "+ 选择客户". This opens an existing-customer selector, not a new-customer builder.
+Below a continuous full-width table at x278..1462, y325 with header columns: "客户 / 企业", "企业资料", "网站关联", "操作".
+Jamie selected lightly tinted row: Jamie Chen C002 above Cedar Living LLC; enterprise column "资料与 EIN 齐备"; association column "未关联网站"; last column blue "收起 ⌃  |  移出".
+Inline expanded area directly BELOW Jamie within same table, as W03's expanded area but taller:
+Header "Jamie Chen · 经营资料", small top-right blue "查看客户档案".
+Small source note: "企业信息、电话和邮箱来自客户档案；更正请到档案修改。"
+2 clear READ-ONLY rows, aligned in 3-column grid:
+row A: "企业法定名称" / Cedar Living LLC; "EIN" / 已录入 · 不对外展示; "网站联系电话" / +1 (202) 555-0126 with gray helper 来源：客户个人电话.
+row B: "企业地址" / 18 Demo Cedar Rd, Austin, TX 78701 occupying left two columns with source 企业档案; "商业邮箱" / hello@cedar-living.example in right column, fit fully.
+Under a simple horizontal divider: two groups of small editable numeric inputs, heading "订单处理（工作日）" with inputs 2 — 4, and "运输时效（工作日）" with inputs 5 — 10. Gray note below "请填写实际可履行的时效；仅用于此客户的网站。"
+Keep expanded area compact yet legible (around300px) to show all3customers. Do not add address dropdown since address is read-only inherited here.
+Then two normal compact rows:
+Taylor Brooks C003 / Paperfield LLC | 资料与 EIN 齐备 | 未关联网站 | 展开 ⌄ | 移出
+Jordan Lee C004 / Harbor Supply LLC | 资料与 EIN 齐备 | 未关联网站 | 展开 ⌄ | 移出
+Below table small info "企业资料与 EIN 齐备后才可建站；已有网站的客户不重复创建。"
+Fixed bottom footer at abouty964, same W03: left bold "本次 3 位客户 · 3 个网站", secondary "配置仅用于本次建站，不自动修改客户档案。"; right outlined "取消" and navy primary "下一步：站点配置".
+Everything must fit the 1056px frame; no cropped footer. Only FIRST STEP current. No start-building button. No domain chooser yet. The existing company name, address, phone and email are clearly from each person's own dossier, not a shared editable entity form.

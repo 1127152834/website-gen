@@ -1,0 +1,17 @@
+[
+  {
+    "source": "prompts/gateway-scenes.json",
+    "backup": "gateway-scenes.json",
+    "sha256": "7A9B287AA15F0B9865342BBCDD5632DD2998DB2018C33B1CBBC3E4A609EA5E9D"
+  },
+  {
+    "source": "prompts/gateway-state-scenes.json",
+    "backup": "gateway-state-scenes.json",
+    "sha256": "95A32101D7233E482F8396617530B7CA5FAA5C6D511C86642EC8D981F03AE42E"
+  },
+  {
+    "source": "plans/gateway-demo-data.md",
+    "backup": "gateway-demo-data.md",
+    "sha256": "CE0BEE02AD73B2C946DE505EC2A6BAA24874E5C2D7568AE4426FBFF684871EF1"
+  }
+]

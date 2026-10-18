@@ -1,0 +1,140 @@
+[
+  {
+    "id": "LNK-01",
+    "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/C08-review-v1.png",
+    "after": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/C08-review-v2.png",
+    "source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-5b226efa-75da-4dc7-9932-eeca5ec354d8.png",
+    "prompt": "Use case: precise-object-edit\nAsset type: Chinese enterprise internal-system static UI prototype\nPrimary request: Edit Image 1 only. Recolor C08 material review page to match the restrained navy, ink-blue, and muted blue-gray hierarchy in Images 2 and 3.\nInput images: Image 1 is the exact edit target; Image 2 is the authoritative user color reference; Image 3 is the authoritative customer dossier shell reference.\nExact changes:\n1. Change ordinary body copy, inactive dossier tabs, table labels, table non-link values, and secondary helper copy from bright saturated cobalt to deep ink navy or muted blue-gray.\n2. Keep bright blue only for genuine interactive text such as 查看, 复核, 重试, 检查 and focused/select controls.\n3. Keep the selected 材料审核 tab deep navy, the primary 开始审核 button deep navy, the secondary 只复核变化项 outlined, and preserve green/orange/gray status meanings.\nConstraints: Preserve the entire composition, 1489x1056 aspect, sidebar, top breadcrumb, 返回客户列表 row, Alex Morgan/C001, both customer/application status cards, all eight dossier tabs, every table row, all exact Chinese text, all dates, counts, buttons, dropdown, dividers, spacing and footer note. Do not delete, add, rename, rewrite, crop, blur, or rearrange any UI. This is color-only. No extra logos, watermark, mockup frame, or browser chrome.",
+    "refs": [
+      "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png",
+      "F:/projects/website-gen/docs/design/group-01-customer-dossier/C02-overview-v2.png"
+    ],
+    "issues": [
+      "L-01"
+    ],
+    "sha256": "623B77F127B0568C2C454D4771EE65E73C884FCBEA18E4BF75762FC40400D1A3",
+    "review": "通过：仅校正普通正文、未选导航与辅助文的色阶；5行审核表、状态、按钮、日期和说明完整保留。",
+    "postfix_prompt": null,
+    "postfix_source": null
+  },
+  {
+    "id": "LNK-02",
+    "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/C09-applications-active-v1.png",
+    "after": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/C09-applications-active-v2.png",
+    "source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-6f5784ab-7605-4fea-a061-aea3d05999a1.png",
+    "prompt": "Use case: precise-object-edit\nAsset type: Chinese enterprise internal-system static UI prototype\nPrimary request: Edit Image 1 only. Repair the C09 active gateway-application page so its customer dossier header exactly follows Image 2.\nInput images: Image 1 is the exact edit target; Image 2 is the authoritative C02 dossier shell reference.\nExact changes:\n1. Insert the dossier back row “← 返回客户列表” below the top breadcrumb bar and above Alex Morgan, using the same left alignment, height and vertical spacing as Image 2.\n2. Move the existing Alex Morgan/C001 header, customer status card, current application card, 更多 button and eight tabs down as one intact block to match Image 2.\n3. Remove only the design-process parenthetical “（落点待确认）” from the section title, leaving the title “补充证明” and preserving all three proof counts and the note “当前客户材料；不等于已发送给本次平台。”\n4. If vertical space becomes tight, reduce only nonessential gaps between lower content sections. Do not remove content.\nConstraints: Preserve all exact application data, PayPal active card, DEMO-PP-1048, dates, email, buttons, Stripe approval, history rows, status colors, source text, proof counts, bottom two-line note, sidebar and all eight tabs. Do not add a start-new-application button. Do not rewrite, crop, blur or omit any field/action. Keep the restrained navy and muted blue-gray palette. 1489x1056 landscape. No watermark or browser frame.",
+    "refs": [
+      "F:/projects/website-gen/docs/design/group-01-customer-dossier/C02-overview-v2.png"
+    ],
+    "issues": [
+      "L-02",
+      "L-03"
+    ],
+    "sha256": "9BCD2C1C6FB697C9E4C59BC6FE85295579395A116F8F06FBF208FF2682537850",
+    "review": "通过：恢复返回行与档案头位置，移除UI内设计备注；在办、获批、历史、证明计数和底部说明均保留。 追加核对：补充证明数量统一为1/1/1。",
+    "postfix_prompt": "Use case: precise-object-edit\nAsset type: Chinese enterprise internal-system static UI prototype\nPrimary request: Edit Image 1 only. Correct only the three supplemental-proof counts on the already repaired C09 active page.\nExact changes in the “补充证明” row: keep 履行协议 at 1份; change 库存照片 from 3份 to exactly 1份; change 其他证明 from 2份 to exactly 1份.\nConstraints: Preserve the restored 返回客户列表 row, the current header position, all customer/application status data, active PayPal application, Stripe approval, both history rows, all dates/owners/sources, buttons, proof-section note, bottom two-line note, layout, colors, and image dimensions. Do not reintroduce “落点待确认”. Do not change any other number or text.",
+    "postfix_source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-409fcba6-fa79-479f-ae0b-89f889be8be6.png"
+  },
+  {
+    "id": "LNK-03",
+    "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/C09-applications-idle-v1.png",
+    "after": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/C09-applications-idle-v2.png",
+    "source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-87cb7005-a369-4dbf-9e20-61222e73c4cc.png",
+    "prompt": "Use case: precise-object-edit\nAsset type: Chinese enterprise internal-system static UI prototype\nPrimary request: Edit Image 1 only. Repair the C09 idle gateway-application page so its customer dossier header exactly follows Image 2.\nInput images: Image 1 is the exact edit target; Image 2 is the authoritative C02 dossier shell reference.\nExact changes:\n1. Insert the dossier back row “← 返回客户列表” below the top breadcrumb bar and above Alex Morgan, using the same left alignment, height and vertical spacing as Image 2.\n2. Move the existing Alex Morgan/C001 header, customer completed card, current application 无在办 card, 更多 button and eight tabs down as one intact block to match Image 2.\n3. Remove only the design-process parenthetical “（落点待确认）” from the section title, leaving “补充证明” and preserving 履行协议1份、库存照片3份、其他证明2份 and the note “当前客户材料，不锁定某次申请，也不代表已发送。”\n4. Keep 开始新申请 visible because this is the no-active-application branch. If vertical space becomes tight, reduce only nonessential section gaps.\nConstraints: Preserve every existing field, empty-state text, latest review 未执行, approval/history rows, all dates, owners, sources, action links, sidebar, top breadcrumb, eight tabs, section borders and proof counts. Do not add an active application. Do not rewrite, crop, blur or omit any field/action. Keep restrained navy and muted blue-gray palette. 1489x1056 landscape. No watermark or browser frame.",
+    "refs": [
+      "F:/projects/website-gen/docs/design/group-01-customer-dossier/C02-overview-v2.png"
+    ],
+    "issues": [
+      "L-02",
+      "L-03"
+    ],
+    "sha256": "DE71174D7C9C80DC6802CF389C9C663AA1124388BDB821AE758EC69D6697BB11",
+    "review": "通过：恢复返回行与档案头位置，移除UI内设计备注；无在办、开始按钮、审核提示、获批/历史和证明计数均保留。 追加核对：历史两行已对齐active基准，补充证明统一为1/1/1。",
+    "postfix_prompt": "Use case: precise-object-edit\nAsset type: Chinese enterprise internal-system static UI prototype\nPrimary request: Edit Image 1 only. Align the C09 idle example with the active-page history baseline and current attachment counts.\nExact changes:\n1. In 历史申请, Stripe row: 开始日期 09/28/2026, 更新日期 10/12/2026, 当前申请负责人 王芳, 来源 人工确认.\n2. In 历史申请, Zen Payments row: 开始日期 08/05/2026, 更新日期 08/11/2026, 当前申请负责人 陈杰, 来源 邮件 AI.\n3. In 补充证明, show exactly 履行协议 1份, 库存照片 1份, 其他证明 1份.\nConstraints: Preserve the restored 返回客户列表 row, header alignment, 无在办 card, 开始新申请 button, empty-state copy, 最近材料审核 未执行, Stripe valid approval row, all action links, proof note, sidebar, eight tabs, layout and palette. Do not reintroduce “落点待确认”. Do not change any other data or text.",
+    "postfix_source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-81a5baad-6a93-4c7f-bf77-49f570f59800.png"
+  },
+  {
+    "id": "LNK-04",
+    "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-G04-start-application-v1.png",
+    "after": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-G04-start-application-v2.png",
+    "source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-c88efe5c-a817-4f8c-a130-639ee40ff60b.png",
+    "prompt": "Use case: precise-object-edit\nAsset type: Chinese enterprise internal-system static UI prototype\nPrimary request: Edit Image 1 only. Make two surgical corrections to the O-G04 “开始网关申请” modal.\nInput images: Image 1 is the exact edit target; Image 2 is the corrected authoritative C09 idle background.\nExact changes:\n1. Replace only the dimmed page behind the modal with Image 2 so the background includes the proper “← 返回客户列表” row and corrected dossier header position. Keep it dimmed at the same opacity.\n2. Keep both confirmation checkboxes visibly unchecked. Change the bottom-right “保存并开始记录” button to a clearly disabled state: pale blue-gray fill, muted gray-blue text, no strong navy emphasis. Keep “取消” available.\nConstraints: Keep the modal at exactly the same size and position. Preserve all exact modal text and values: PayPal, 李敏, hello@northline.example 已连接, DEMO-PP-1048, 最近材料审核 未执行, review link, 当前档案字段26项, 当前附件9份, all preview rows/dates/operators, both confirmation sentences, info notes and close icon. Do not check either checkbox. Do not remove or rewrite any content. Preserve 1489x1056 composition, typography, spacing and restrained palette. No watermark or browser frame.",
+    "refs": [
+      "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/C09-applications-idle-v2.png"
+    ],
+    "issues": [
+      "L-02",
+      "L-05"
+    ],
+    "sha256": "1DC713C50293938D6E131F9195811731D1B76575941322A9EF56B47A1FDDA473",
+    "review": "通过：灰底继承修正后的C09 idle返回行；两项确认保持未勾选，保存按钮已置灰禁用，定稿字段和附件预览未删。 追加核对：6行附件预览已对齐当前档案日期/操作人，银行协议改为履行协议。",
+    "postfix_prompt": "Use case: precise-object-edit\nAsset type: Chinese enterprise internal-system static UI prototype\nPrimary request: Edit Image 1 only. Align only the six-row 附件预览 data in the O-G04 application-draft modal with the current Alex Morgan dossier.\nExact attachment rows:\n1. 驾照正面 — 09/24/2026 — 李敏\n2. 企业成立文件 — 09/25/2026 — 李敏\n3. 银行流水 — 10/02/2026 — 李敏\n4. 银行介绍信 — 09/28/2026 — 李敏\n5. 履行协议 — 10/12/2026 — 李敏\n6. 库存照片 — 10/12/2026 — 李敏\nReplace the incorrect label 银行协议 with 履行协议.\nConstraints: Preserve all other modal data and layout: PayPal, 负责人李敏, connected mailbox, DEMO-PP-1048, 最近材料审核 未执行, 26 fields, 9 attachments, field preview, both unchecked confirmations, disabled 保存并开始记录 button, Cancel, notes, close icon, corrected background return row and dim overlay. Do not change any other date, count, value, text or state.",
+    "postfix_source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-336b278c-9219-4a51-9944-96efc1afd982.png"
+  },
+  {
+    "id": "LNK-05",
+    "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-C11-link-site-v1.png",
+    "after": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-C11-link-site-v2.png",
+    "source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-92043c83-8b4f-4338-a642-978cd7f54994.png",
+    "prompt": "Use case: precise-object-edit\nAsset type: Chinese enterprise internal-system static UI prototype\nPrimary request: Edit Image 1 only. Replace only the dimmed customer dossier page behind the “更换关联网站” drawer with the current C07 page from Image 2.\nInput images: Image 1 is the exact edit target; Image 2 is the authoritative current C07 website-and-mail page.\nExact change: The visible gray background must use the current enterprise address “260 Demo Blvd, Austin, TX 78702” and current C07 website/mail state. Preserve the same dark overlay opacity.\nConstraints: Keep the entire right drawer pixel-composition semantically unchanged: title, Alex Morgan/C001, current Northline Store/SITE-1042, search, all three candidate rows, selected LoneStar Market, lonestar-market.example, SITE-2086, Hostinger-A, Alex Morgan/C001 target, warning, cancel and confirm buttons, exact Chinese text and statuses. Do not alter selection, drawer width, spacing, colors or controls. Do not add/remove content. 1489x1056 landscape. No watermark or browser frame.",
+    "refs": [
+      "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/C07-website-mail-v1.png"
+    ],
+    "issues": [
+      "L-04"
+    ],
+    "sha256": "3E7B2C945FD5B19F2765CBD026295B96D81C75859D56B905C228C02D8E9B59F6",
+    "review": "通过：抽屉内容与选择不变；灰底企业地址改为260 Demo Blvd, Austin, TX 78702。",
+    "postfix_prompt": null,
+    "postfix_source": null
+  },
+  {
+    "id": "LNK-06",
+    "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-C12-link-mail-v1.png",
+    "after": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-C12-link-mail-v2.png",
+    "source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-4d69b737-8e6c-4c10-abfe-08aa20ba4ffd.png",
+    "prompt": "Use case: precise-object-edit\nAsset type: Chinese enterprise internal-system static UI prototype\nPrimary request: Edit Image 1 only. Replace only the dimmed customer dossier page behind the “更换商业邮箱” drawer with the current C07 page from Image 2.\nInput images: Image 1 is the exact edit target; Image 2 is the authoritative current C07 website-and-mail page.\nExact change: The visible gray background must use the current enterprise address “260 Demo Blvd, Austin, TX 78702” and current C07 website/mail state. Preserve the same dark overlay opacity.\nConstraints: Keep the entire right drawer semantically and visually unchanged: title, Alex Morgan/C001, current hello@northline.example, search, all candidate rows, selected sales@northline.example, northline.example, Hostinger-A, Alex Morgan/C001 target, info notes, external new-mail link, cancel and confirm buttons, exact Chinese text and statuses. Do not alter selection, drawer width, spacing, colors or controls. Do not add/remove content. 1489x1056 landscape. No watermark or browser frame.",
+    "refs": [
+      "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/C07-website-mail-v1.png"
+    ],
+    "issues": [
+      "L-04"
+    ],
+    "sha256": "F2AEEEC12C2BD91741268E81ED88EABF99B2DCD4270C4A490E991FF827F56193",
+    "review": "通过：抽屉内容与选择不变；灰底企业地址改为260 Demo Blvd, Austin, TX 78702。",
+    "postfix_prompt": null,
+    "postfix_source": null
+  },
+  {
+    "id": "LNK-07",
+    "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-C13-unlink-confirm-v1.png",
+    "after": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-C13-unlink-confirm-v2.png",
+    "source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-d57b6f20-3402-4788-a42c-ed51e8673a74.png",
+    "prompt": "Use case: precise-object-edit\nAsset type: Chinese enterprise internal-system static UI prototype\nPrimary request: Edit Image 1 only. Change only the confirmation-state affordance in the “解除网站关联” modal.\nExact change: Keep the checkbox “我已确认当前在办申请的影响。” visibly unchecked. Change the bottom-right “确认解除关联” button from active orange outline/text to an unmistakably disabled state using pale blue-gray fill or border and muted gray-blue text. Keep the normal “取消” button and the blue “改为更换关联” link available.\nConstraints: Preserve the complete background and modal composition, current site/domain/PayPal values, all warnings, possible-impact bullets, immutable application-draft statement, text, typography, spacing, close icon and dim overlay. Do not check the box, delete content, change status colors elsewhere, or alter the current application. 1489x1056 landscape. No watermark or browser frame.",
+    "refs": [],
+    "issues": [
+      "L-05"
+    ],
+    "sha256": "5B31BE99D308AE35AF0619B8DCDE85F128F36FEE1158B3BD7FA586C062843101",
+    "review": "通过：确认框保持未勾选，解除按钮改为禁用；影响说明、定稿保留、取消和更换入口保持。",
+    "postfix_prompt": null,
+    "postfix_source": null
+  },
+  {
+    "id": "LNK-08",
+    "before": "F:/projects/website-gen/docs/design/customer-management-completion-v1/02-customer-links/O-C14-public-info-v1.png",
+    "after": "F:/projects/website-gen/docs/design/customer-ui-consistency-20261017/corrected/links/O-C14-public-info-v2.png",
+    "source": "C:/Users/zhang/.codex/generated_images/01a14662-e9c9-7f11-b9d6-fa021c026710/exec-1ac685a0-f82a-4c4d-bbee-4bc2a3e91dee.png",
+    "prompt": "Use case: precise-object-edit\nAsset type: Chinese enterprise internal-system static UI prototype\nPrimary request: Edit Image 1 only. Re-style only the message strip beneath the public-information comparison table.\nExact change: Change the red error strip containing “联系电话未读取到 · 不代表该信息有误。” into a neutral blue-gray information strip consistent with the lower information note: very pale blue-gray background, navy/gray-blue information icon, muted ink-blue text. Preserve the sentence verbatim.\nConstraints: Keep everything else unchanged: drawer width and position, Northline Store/domain, latest-read time, source, reload button, all five comparison rows, values, green/orange/gray/blue status dots, the gray “未核对” phone state, explanatory note, footer buttons, background dossier, typography and spacing. Do not turn the missing phone read into a confirmed error or a material problem. 1489x1056 landscape. No watermark or browser frame.",
+    "refs": [
+      "F:/projects/website-gen/docs/design/group-02-customer-onboarding/references/C01-user-color-reference-20261017.png"
+    ],
+    "issues": [
+      "L-06"
+    ],
+    "sha256": "E8688047B9C46354CE0EC49DE4B3473A7C9009D5ADC861A45461D6883F86F4E1",
+    "review": "通过：联系电话未读取提示改为中性蓝灰信息条；对照值、状态、说明和操作保持。",
+    "postfix_prompt": null,
+    "postfix_source": null
+  }
+]
